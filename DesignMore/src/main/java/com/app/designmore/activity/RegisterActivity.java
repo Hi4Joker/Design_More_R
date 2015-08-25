@@ -51,4 +51,10 @@ public class RegisterActivity extends RxAppCompatActivity {
     }
     return super.onOptionsItemSelected(item);
   }
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
+
+    ButterKnife.unbind(RegisterActivity.this);
+  }
 }

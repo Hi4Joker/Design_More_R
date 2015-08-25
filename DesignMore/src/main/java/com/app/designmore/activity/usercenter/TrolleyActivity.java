@@ -26,7 +26,7 @@ import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 public class TrolleyActivity extends RxAppCompatActivity {
 
   private static final String TAG = TrolleyActivity.class.getSimpleName();
-  private static final String START_LOCATION_Y = "start_location_y";
+  private static final String START_LOCATION_Y = "START_LOCATION_Y";
   @Bind(R.id.white_toolbar) Toolbar toolbar;
   @Bind(R.id.trolley_layout_root_view) LinearLayout rootView;
 
@@ -49,6 +49,8 @@ public class TrolleyActivity extends RxAppCompatActivity {
 
     TrolleyActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
+
+    toolbar.findViewById(R.id.white_toolbar_iv).setVisibility(View.GONE);
     TextView title = (TextView) toolbar.findViewById(R.id.white_toolbar_title_tv);
     title.setVisibility(View.VISIBLE);
     title.setText("购物车");
@@ -68,6 +70,9 @@ public class TrolleyActivity extends RxAppCompatActivity {
 
     ViewCompat.setElevation(toolbar, 0);
 
+
+   /* ViewCompat.setScaleY(rootView, 0.0f);
+    ViewCompat.setPivotY(rootView,startLocationY);*/
     rootView.setScaleY(0.0f);
     rootView.setPivotY(startLocationY);
 
@@ -126,5 +131,10 @@ public class TrolleyActivity extends RxAppCompatActivity {
             overridePendingTransition(0, 0);
           }
         });
+  }
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
+    ButterKnife.unbind(TrolleyActivity.this);
   }
 }

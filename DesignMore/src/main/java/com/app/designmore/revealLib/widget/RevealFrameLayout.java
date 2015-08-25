@@ -92,9 +92,6 @@ public class RevealFrameLayout extends FrameLayout implements RevealAnimator {
       mRevealPath.reset();
       mRevealPath.addCircle(mRevealInfo.centerX, mRevealInfo.centerY, mRadius, Path.Direction.CW);
 
-     /* mRevealPath.addRect(mTargetBounds.left, mTargetBounds.top, mTargetBounds.right,
-          mTargetBounds.bottom, Path.Direction.CW);*/
-
       canvas.clipPath(mRevealPath);
 
       boolean isInvalided = super.drawChild(canvas, child, drawingTime);

@@ -37,4 +37,9 @@ public class RetrieveActivity extends RxAppCompatActivity {
   @Nullable @OnClick(R.id.retrieve_layout_toolbar_back_btn) void onBackClick() {
     RetrieveActivity.this.finish();
   }
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
+    ButterKnife.unbind(RetrieveActivity.this);
+  }
 }

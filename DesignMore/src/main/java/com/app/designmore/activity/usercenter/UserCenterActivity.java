@@ -72,9 +72,10 @@ public class UserCenterActivity extends RxAppCompatActivity {
     menuItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
 
+        SettingActivity.startFromLocation(UserCenterActivity.this);
+        overridePendingTransition(0, 0);
       }
     });
-
     return true;
   }
 
@@ -185,6 +186,7 @@ public class UserCenterActivity extends RxAppCompatActivity {
   @Override protected void onDestroy() {
     super.onDestroy();
 
+    ButterKnife.unbind(UserCenterActivity.this);
     EventBusInstance.getDefault().unregister(UserCenterActivity.this);
   }
 }
