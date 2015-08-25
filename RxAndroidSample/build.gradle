@@ -1,0 +1,22 @@
+apply plugin: 'com.android.application'
+
+android {
+  compileSdkVersion rootProject.ext.compileSdkVersion
+  buildToolsVersion rootProject.ext.buildToolsVersion
+
+  defaultConfig {
+    minSdkVersion 15
+    targetSdkVersion 22
+    versionCode 1
+    versionName '1.0'
+  }
+
+  compileOptions {
+    sourceCompatibility rootProject.ext.sourceCompatibility
+    targetCompatibility rootProject.ext.sourceCompatibility
+  }
+}
+
+dependencies {
+  compile 'io.reactivex:rxjava:1.0.14'
+}

@@ -1,0 +1,60 @@
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity"
+    >
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical"
+      >
+    <ImageView
+        android:id="@+id/iv1"
+        style="@style/style"
+        />
+    <com.joker.app.view.CircleView
+        android:id="@+id/circle"
+        style="@style/style"
+        app:cir_border_width="10dip"
+        />
+    <com.joker.app.view.CircleImageView
+        android:id="@+id/round"
+        style="@style/style"
+        app:border_width="0dip"
+        app:border_overlay="false"
+        />
+  </LinearLayout>
+
+  <RelativeLayout
+      android:layout_alignParentBottom="true"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="选择密码"
+        />
+    <android.inputmethodservice.KeyboardView
+        android:id="@+id/keyboard_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:background="@android:color/black"
+        android:keyTextColor="@android:color/white"
+        android:keyBackground="@android:color/holo_orange_light"
+        android:visibility="gone"/>
+  </RelativeLayout>
+
+</android.support.v4.widget.NestedScrollView>

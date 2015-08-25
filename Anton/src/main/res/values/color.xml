@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <color name="window_background">#FFF5F5F5</color>
+
+  <color name="btn_default_light_normal">#00000000</color>
+  <color name="btn_default_light_pressed">#40ffffff</color>
+
+
+  <color name="grey">#ffdedede</color>
+  <color name="blue">#ff0099cc</color>
+  <color name="blue_dark">#ff00719b</color>
+  <color name="red">#ffff4444</color>
+  <color name="red_dark">#ffcd3a3a</color>
+  <color name="green">#ff99cc00</color>
+  <color name="green_dark">#ff6d9b00</color>
+
+
+  <color name="cpb_background_color">#F63667</color>
+  <color name="cpb_background_text_color">#FFFCFD</color>
+  <color name="cpb_internal_color">#F63667</color>
+
+
+  <color name="snack_bar_background_color">#19B0A9</color>
+  <color name="snack_bar_text_color">#FFEE22</color>
+  <color name="snack_bar_action_color">#654100</color>
+
+
+  <color name="footer_bar_background_color">#BBBEAB</color>
+
+
+
+
+
+</resources>

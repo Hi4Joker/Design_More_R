@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/detail_item_rl"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/material_72dp"
+    android:paddingLeft="@dimen/material_16dp"
+    android:paddingRight="@dimen/material_16dp"
+    >
+  <ImageView
+      android:id="@+id/detail_item_avatar"
+      android:layout_width="@dimen/material_56dp"
+      android:layout_height="@dimen/material_56dp"
+      android:layout_marginRight="16dip"
+      android:layout_centerVertical="true"
+      />
+
+  <ImageView
+      android:id="@+id/divider"
+      android:layout_width="match_parent"
+      android:layout_height="1dip"
+      android:layout_alignParentBottom="true"
+      android:layout_marginTop="@dimen/material_8dp"
+      android:layout_marginLeft="@dimen/material_72dp"
+      android:background="@android:color/darker_gray"
+      />
+
+  <TextView
+      android:id="@+id/detail_item_text"
+      android:layout_above="@id/divider"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_centerVertical="true"
+      android:gravity="center_vertical"
+      android:layout_marginTop="@dimen/material_8dp"
+      android:layout_marginLeft="@dimen/material_72dp"
+      android:textSize="@dimen/material_14sp"
+      android:text=""
+      android:textAppearance="?attr/textAppearanceListItem"
+      />
+
+</RelativeLayout>

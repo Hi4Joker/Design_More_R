@@ -1,0 +1,73 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+  <!-- 这里分别用的Dark的R.G.B，以便更好的演示colorPrimary，colorPrimaryDark，colorAccent分别改变哪些控件的颜色-->
+  <style name="BaseAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <!-- Actionbar color......-->
+    <item name="colorPrimary">@android:color/holo_red_dark</item>
+    <!-- Status bar color......-->
+    <item name="colorPrimaryDark">@android:color/holo_green_dark</item>
+    <!--<item name="colorPrimaryDark">@color/nav_header_background</item>-->
+    <!-- Some Component color....-->
+    <item name="colorAccent">@android:color/holo_blue_dark</item>
+    <!-- Window color-->
+    <item name="android:windowBackground">@color/window_background</item>
+  </style>
+
+  <!--透明背景Activity，用于场景切换-->
+  <style name="BaseAppTheme.TransparentActivityTheme">
+    <item name="android:windowBackground">@android:color/transparent</item>
+    <item name="android:windowIsTranslucent">true</item>
+  </style>
+  <style name="BaseText" parent="android:TextAppearance.Holo.Large">
+    <item name="android:textColor">@color/temperature_base_text_color</item>
+    <item name="android:fontFamily" tools:targetApi="jelly_bean">sans-serif-light</item>
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:ellipsize">marquee</item>
+  </style>
+
+  <style name="stateText" parent="BaseText">
+    <item name="android:textSize">@dimen/state_text_size</item>
+    <item name="android:textColor">@android:color/black</item>
+    <item name="android:ellipsize">none</item>
+  </style>
+
+
+  <style name="LocationText" parent="BaseText">
+    <item name="android:textSize">@dimen/location_text_size</item>
+    <item name="android:ellipsize">none</item>
+  </style>
+
+  <style name="CurrentTemperatureText" parent="BaseText">
+    <item name="android:textSize">@dimen/current_temperature_text_size</item>
+    <item name="android:textColor">@color/current_temperature_text_color</item>
+    <item name="android:maxLines">1</item>
+    <item name="android:ellipsize">none</item>
+  </style>
+
+
+  <style name="WeatherForecastListItemText" parent="BaseText">
+    <item name="android:textSize">@dimen/weather_item_text_size</item>
+    <item name="android:paddingTop">@dimen/weather_item_text_padding</item>
+    <item name="android:paddingBottom">@dimen/weather_item_text_padding</item>
+    <item name="android:layout_width">0dip</item>
+    <item name="android:layout_height">match_parent</item>
+    <item name="android:gravity">center</item>
+    <item name="android:layout_marginRight">10dip</item>
+    <!-- To force the text views into columns -->
+  </style>
+
+  <style name="WeatherForecastListItemTextEmphasis" parent="WeatherForecastListItemText">
+    <item name="android:fontFamily" tools:targetApi="jelly_bean">sans-serif</item>
+  </style>
+
+  <style name="WeatherForecastListItemTextDeEmphasis" parent="WeatherForecastListItemText">
+    <item name="android:textColor">@color/text_de_emphasized</item>
+  </style>
+
+  <style name="AttributionText" parent="BaseText">
+    <item name="android:textSize">@dimen/attribution_text</item>
+    <item name="android:textColor">@color/text_faint</item>
+  </style>
+
+</resources>

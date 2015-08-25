@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <color name="transparent">#00FFFFFF</color>
+  <color name="primary">#00BCD4</color>
+  <color name="primary_dark">#0097A7</color>
+  <color name="window_background">#FFF5F5F5</color>
+  <color name="nav_header_background">#FCFCFD</color>
+
+  <color name="btn_default_light_normal">#00000000</color>
+  <color name="btn_default_light_pressed">#40ffffff</color>
+
+  <!-- dialog -->
+  <color name="card_shadow">#D4D4D4</color>
+  <color name="black_overlay">#60000000</color>
+  <color name="white_overlay">#40FFFFFF</color>
+
+
+  <color name="temperature_base_text_color">#333333</color>
+  <color name="state_text_color">#4F9ABD</color>
+  <color name="current_temperature_text_color">#33B5E5</color>
+
+  <color name="text_de_emphasized">#666666</color>
+  <color name="text_faint">#999999</color>
+
+  <color name="default_background">#88E5E5E5</color>
+  <color name="done_background">#ffffffff</color>
+
+</resources>

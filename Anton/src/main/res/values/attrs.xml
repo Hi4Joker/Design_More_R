@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+  <declare-styleable name="CircularProgressButton">
+
+    <attr name="cpb_is_stroke" format="boolean"/>
+    <attr name="cpb_text_color" format="color"/>
+
+    <attr name="cpb_idle_selector" format="reference"/>
+    <attr name="cpb_complete_selector" format="reference"/>
+    <attr name="cpb_error_selector" format="reference"/>
+    <attr name="cpb_complete_text" format="string"/>
+    <attr name="cpb_idle_text" format="string"/>
+    <attr name="cpb_error_text" format="string"/>
+    <attr name="cpb_idle_backgroundStroke_color" format="color"/>
+    <attr name="cpb_complete_backgroundStroke_color" format="color"/>
+    <attr name="cpb_error_backgroundStroke_color" format="color"/>
+    <attr name="cpb_progress_internal_color" format="color"/>
+    <attr name="cpb_indicator_color" format="color"/>
+    <attr name="cpb_error_icon" format="reference"/>
+    <attr name="cpb_complete_icon" format="reference"/>
+    <attr name="cpb_radius_corner" format="dimension"/>
+    <attr name="cpb_progress_padding" format="dimension"/>
+  </declare-styleable>
+
+  <declare-styleable name="RevealBackgroundAttr">
+    <attr name="reveal_color" format="color|reference"/>
+    <attr name="start_alpha" format="integer"/>
+    <attr name="end_alpha" format="integer"/>
+  </declare-styleable>
+
+  <declare-styleable name="CircleImageView">
+    <attr name="cir_border_width" format="dimension"/>
+    <attr name="cir_border_alpha" format="integer|reference"/>
+    <attr name="cir_border_color" format="color"/>
+  </declare-styleable>
+</resources>

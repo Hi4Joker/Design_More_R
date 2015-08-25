@@ -1,0 +1,10 @@
+
+2015.6.26:初次创建，添加依赖库
+
+        palette----取色版
+        recyclerview----加强版ListView
+        cardview----加强版FrameLayout
+        butterknife----依赖注入库
+        picasso----异步图片加载库
+        eventbus----事件发布/订阅框架
+        logger----打印log神器,https://github.com/Hi4Joker/logger

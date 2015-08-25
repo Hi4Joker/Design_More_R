@@ -1,0 +1,81 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".SampleActivityObservableTransfor"
+    >
+
+  <RelativeLayout
+      android:id="@+id/rl_buttonsHolder"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      >
+
+    <Button
+        android:id="@+id/btn_flatMap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:text="@string/btn_text_flat_map"
+        />
+
+    <Button
+        android:id="@+id/btn_concatMap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_flatMap"
+        android:text="@string/btn_text_concat_map"
+        />
+  </RelativeLayout>
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_above="@id/rl_buttonsHolder"
+      android:orientation="vertical"
+      >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/string_sample_observable_transformation"
+        />
+
+    <TextView
+        style="@style/AppTheme.TextViewTitle"
+        android:text="@string/tv_label_original_order"
+        />
+    <TextView
+        android:id="@+id/tv_streamOriginalOrder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+    <TextView
+        style="@style/AppTheme.TextViewTitle"
+        android:text="@string/tv_label_flatMap_result"
+        />
+    <TextView
+        android:id="@+id/tv_flatMapResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+    <TextView
+        style="@style/AppTheme.TextViewTitle"
+        android:text="@string/tv_label_concatMap_result"
+        />
+    <TextView
+        android:id="@+id/tv_concatMapResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+  </LinearLayout>
+
+</RelativeLayout>

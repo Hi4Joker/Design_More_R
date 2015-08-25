@@ -1,0 +1,26 @@
+<resources>
+  <string name="app_name">SupportDesign</string>
+
+  <string name="hello_world">Hello world!</string>
+  <string name="action_settings">Settings</string>
+  <string name="menu_settings">设置</string>
+  <string name="menu_inbox">INBOX</string>
+
+
+  <string name="attribution">信息来自于开源气象平台 OpenWeatherMap.org</string>
+  <string name="error_fetch_weather">Could not fetch weather data</string>
+  <string name="error_location_unavailable">Could not get current location</string>
+  <string name="today">今日</string>
+  <string name="tomorrow">明日</string>
+  <string name="monday">Monday</string>
+  <string name="sky_is_clear">sky is clear</string>
+  <string name="nineteen_degrees">19°</string>
+  <string name="fifteen_degrees">15°</string>
+
+
+  <string name="fetch_location_ing">正在获取位置信息....</string>
+  <string name="fetch_location_timeout">获取位置信息超时，请重试</string>
+  <string name="fetch_weather_ing">正在获取天气信息....</string>
+  <string name="fetch_weather_error">获取天气信息超时，请重试</string>
+
+</resources>

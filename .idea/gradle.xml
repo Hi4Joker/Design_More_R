@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="1.8" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/Anton" />
+            <option value="$PROJECT_DIR$/CircularProgressViewSample" />
+            <option value="$PROJECT_DIR$/CircularprogressLib" />
+            <option value="$PROJECT_DIR$/DaoExample" />
+            <option value="$PROJECT_DIR$/DesignMore" />
+            <option value="$PROJECT_DIR$/DrawableSample" />
+            <option value="$PROJECT_DIR$/FlatBuffs" />
+            <option value="$PROJECT_DIR$/ReactiveProgramming" />
+            <option value="$PROJECT_DIR$/RetrofitWeather" />
+            <option value="$PROJECT_DIR$/RxAndroidSample" />
+            <option value="$PROJECT_DIR$/RxJavaSample" />
+            <option value="$PROJECT_DIR$/RxLifecycleSample" />
+            <option value="$PROJECT_DIR$/RxMeetup" />
+            <option value="$PROJECT_DIR$/RxThreadSample" />
+            <option value="$PROJECT_DIR$/SupportDesignSample" />
+            <option value="$PROJECT_DIR$/leakcanary-analyzer" />
+            <option value="$PROJECT_DIR$/leakcanary-android" />
+            <option value="$PROJECT_DIR$/leakcanary-watcher" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>

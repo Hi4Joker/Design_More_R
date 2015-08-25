@@ -1,0 +1,42 @@
+
+apply plugin: 'com.android.application'
+
+dependencies {
+    compile 'io.reactivex:rxjava:1.0.12'
+    compile 'io.reactivex:rxandroid:0.23.0'
+    compile 'com.android.support:support-v4:21.0.3'
+
+    androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.1'
+
+    androidTestCompile('junit:junit:4.11')
+    androidTestCompile 'org.mockito:mockito-core:1.8.5'
+    androidTestCompile('org.robolectric:robolectric:2.3') {
+        exclude module: 'classworlds'
+        exclude module: 'commons-logging'
+        exclude module: 'httpclient'
+        exclude module: 'maven-artifact'
+        exclude module: 'maven-artifact-manager'
+        exclude module: 'maven-error-diagnostics'
+        exclude module: 'maven-model'
+        exclude module: 'maven-project'
+        exclude module: 'maven-settings'
+        exclude module: 'plexus-container-default'
+        exclude module: 'plexus-interpolation'
+        exclude module: 'plexus-utils'
+        exclude module: 'wagon-file'
+        exclude module: 'wagon-http-lightweight'
+        exclude module: 'wagon-provider-api'
+    }
+}
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+    }
+}

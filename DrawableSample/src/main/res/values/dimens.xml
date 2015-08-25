@@ -1,0 +1,8 @@
+<resources>
+  <!-- Default screen margins, per the Android Design guidelines. -->
+  <dimen name="activity_horizontal_margin">16dp</dimen>
+  <dimen name="activity_vertical_margin">16dp</dimen>
+
+  <!--自定义键盘高度-->
+  <dimen name="key_height">30dip</dimen>
+</resources>

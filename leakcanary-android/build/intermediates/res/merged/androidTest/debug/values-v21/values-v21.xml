@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/E:/Joker_Rx/leakcanary-android/build/intermediates/bundles/debug/res/values-v21/values-v21.xml -->
+    <eat-comment/>
+    <style name="__LeakCanary.Base" parent="android:Theme.Material">
+  </style>
+</resources>

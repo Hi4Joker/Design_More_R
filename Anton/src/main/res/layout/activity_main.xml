@@ -1,0 +1,148 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+  <ImageView
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:scaleType="centerCrop"
+      android:id="@+id/main_background"
+      android:src="@drawable/main_background"
+      />
+
+  <com.joker.app.view.AutoFocusView
+      android:id="@+id/main_focus_holder"
+      android:layout_width="0dip"
+      android:layout_height="0dip"
+      android:layout_alignParentLeft="true"
+      android:layout_alignParentTop="true"
+      android:focusableInTouchMode="true"/>
+
+
+  <!--放在父布局，抢夺焦点-->
+  <!-- android:focusable="true"
+      android:focusableInTouchMode="true"-->
+  <LinearLayout
+      android:id="@+id/main_username_root"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_centerInParent="true"
+      android:paddingLeft="20dip"
+      android:paddingRight="20dip"
+      android:orientation="vertical"
+      >
+
+    <RelativeLayout
+        android:id="@+id/main_username_rl"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/material_56dp"
+        >
+      <ImageView
+          android:id="@+id/main_username_icon"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginRight="20dip"
+          android:layout_centerVertical="true"
+          android:scaleType="centerCrop"
+          android:src="@drawable/ic_username"
+          />
+      <android.support.design.widget.TextInputLayout
+          android:id="@+id/main_username_text_input_layout"
+          android:layout_toRightOf="@id/main_username_icon"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          app:hintTextAppearance="@style/HintTextAppearance"
+          app:errorTextAppearance="@style/ErrorTextAppearance"
+          style="@style/TextLabel"
+          >
+        <android.support.v7.widget.AppCompatEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/material_18sp"
+            android:background="@drawable/edit_background"
+            />
+      </android.support.design.widget.TextInputLayout>
+    </RelativeLayout>
+
+    <!--分割线-->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="2dip"
+        android:background="@color/cpb_background_text_color"/>
+  </LinearLayout>
+
+
+  <LinearLayout
+      android:id="@+id/main_password_root"
+      android:layout_below="@id/main_username_root"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="20dip"
+      android:paddingLeft="20dip"
+      android:paddingRight="20dip"
+      android:orientation="vertical"
+      >
+    <RelativeLayout
+        android:id="@+id/main_password_rl"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/material_56dp"
+        >
+      <ImageView
+          android:id="@+id/main_password_icon"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginRight="20dip"
+          android:layout_centerVertical="true"
+          android:scaleType="centerCrop"
+          android:src="@drawable/ic_password"
+          />
+      <android.support.design.widget.TextInputLayout
+          android:id="@+id/main_password_text_input_layout"
+          android:layout_toRightOf="@id/main_password_icon"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          app:hintTextAppearance="@style/HintTextAppearance"
+          app:errorTextAppearance="@style/ErrorTextAppearance"
+          app:errorEnabled="true"
+          style="@style/TextLabel"
+          >
+        <android.support.v7.widget.AppCompatEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/material_18sp"
+            android:background="@drawable/edit_background"
+            />
+      </android.support.design.widget.TextInputLayout>
+    </RelativeLayout>
+
+    <!--分割线-->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="2dip"
+        android:background="@color/cpb_background_text_color"/>
+  </LinearLayout>
+
+  <com.joker.app.view.circularProgress.CircularProgressButton
+      android:id="@+id/main_login_btn"
+      android:layout_width="match_parent"
+      android:layout_height="64dip"
+      android:layout_alignParentBottom="true"
+      android:layout_marginBottom="70dip"
+      android:layout_marginLeft="20dip"
+      android:layout_marginRight="20dip"
+      android:textSize="18sp"
+      android:textColor="@color/cpb_background_text_color"
+      app:cpb_is_stroke="false"
+      app:cpb_radius_corner="48dip"
+      app:cpb_idle_text="@string/login"
+      app:cpb_progress_internal_color="@color/cpb_internal_color"
+      app:cpb_idle_selector="@drawable/idle_state_selector"
+      app:cpb_text_color="@color/cpb_background_text_color"
+      />
+
+</RelativeLayout>

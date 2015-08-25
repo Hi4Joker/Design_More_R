@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary_background_color"
+    >
+
+
+  <ImageView
+      android:id="@+id/login_layout_logo_iv"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/material_120dp"
+      android:layout_alignParentTop="true"
+      android:layout_centerHorizontal="true"
+      android:src="@drawable/login_layout_logo"
+      />
+
+  <RelativeLayout
+      android:id="@+id/login_layout_anim_root"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_marginTop="@dimen/material_40dp"
+      android:layout_below="@id/login_layout_logo_iv"
+      android:visibility="visible"
+      >
+
+    <LinearLayout
+        android:id="@+id/login_layout_input_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        >
+      <RelativeLayout
+          android:layout_width="match_parent"
+          android:layout_height="@dimen/material_48dp">
+
+        <ImageView
+            android:layout_width="@dimen/material_24dp"
+            android:layout_height="@dimen/material_24dp"
+            android:layout_marginLeft="@dimen/material_24dp"
+            android:layout_centerVertical="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/login_layout_name_icon"
+            />
+
+        <ImageView
+            android:id="@+id/login_layout_name_clear_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/material_24dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_delete"
+            />
+
+        <EditText
+            android:id="@+id/login_layout_name_et"
+            android:layout_toLeftOf="@id/login_layout_name_clear_btn"
+            android:hint="@string/user_name_hint"
+            style="@style/login_layout_et_style"
+            />
+      </RelativeLayout>
+
+      <!--分隔线-->
+      <ImageView
+          style="@style/divider_line_style"
+          />
+      <RelativeLayout
+          android:layout_width="match_parent"
+          android:layout_height="@dimen/material_48dp">
+
+        <ImageView
+            android:layout_width="@dimen/material_24dp"
+            android:layout_height="@dimen/material_24dp"
+            android:layout_marginLeft="@dimen/material_24dp"
+            android:layout_centerVertical="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/login_layout_password_icon"
+            />
+
+        <EditText
+            android:id="@+id/login_layout_password_et"
+            android:hint="@string/pass_word_hint"
+            android:inputType="textPassword"
+            style="@style/login_layout_et_style"/>
+      </RelativeLayout>
+    </LinearLayout>
+
+
+    <!--app:mrl_rippleOverlay="true"            // if true, ripple is drawn in foreground; false - background
+     app:mrl_rippleColor="#ff0000"             // color of ripple
+     app:mrl_rippleAlpha="0.1"                 // alpha of ripple
+     app:mrl_rippleDimension="10dp"            // radius of hover and starting ripple
+     app:mrl_rippleHover="true"                // if true, hover effect is drawn when view is touched
+     app:mrl_rippleRoundedCorners="10dp"       // radius of corners of ripples. Note: it uses software rendering pipeline for API 17 and below
+     app:mrl_rippleInAdapter="true"            // if true, MaterialRippleLayout will optimize for use in AdapterViews
+     app:mrl_rippleDuration="350"              // duration of ripple animation
+     app:mrl_rippleFadeDuration="75"           // duration of fade out effect on ripple
+     app:mrl_rippleDelayClick="true"           // if true, delays calls to OnClickListeners until ripple effect ends
+     app:mrl_rippleBackground="#FFFFFF"        // background under ripple drawable; used with rippleOverlay="false"
+     app:mrl_ripplePersistent="true"           // if true, ripple background color persists after animation, until setRadius(0) is called-->
+    <com.app.designmore.view.MaterialRippleLayout
+        android:id="@+id/login_layout_ripple_layout"
+        android:layout_below="@id/login_layout_input_ll"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/material_48dp"
+        android:layout_marginLeft="@dimen/material_24dp"
+        android:layout_marginRight="@dimen/material_24dp"
+        android:layout_marginTop="@dimen/material_32dp"
+        app:mrl_rippleDimension="20dip"
+        app:mrl_rippleRoundedCorners="@dimen/material_corners"
+        app:mrl_rippleFadeDuration="100"
+        app:mrl_rippleAlpha="0.4"
+        app:mrl_rippleDuration="600"
+        app:mrl_rippleHover="true"
+        app:mrl_rippleOverlay="true"
+        app:mrl_rippleDelayClick="true"
+        app:mrl_rippleColor="@android:color/holo_red_dark"
+        >
+      <Button
+          android:id="@+id/login_layout_login_btn"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:text="登  陆"
+          android:textSize="@dimen/material_16sp"
+          android:textColor="@android:color/white"
+          android:background="@drawable/login_layout_login_background"
+          />
+    </com.app.designmore.view.MaterialRippleLayout>
+
+    <RelativeLayout
+        android:layout_below="@id/login_layout_ripple_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/material_24dp"
+        android:layout_marginTop="@dimen/material_8dp"
+        android:layout_marginLeft="@dimen/material_24dp"
+        android:layout_marginRight="@dimen/material_24dp"
+        >
+      <TextView
+          android:id="@+id/login_layout_register_tv"
+          android:layout_alignParentLeft="true"
+          android:text="@string/login_layout_free_register"
+          style="@style/login_layout_tv_btn_style"/>
+      <TextView
+          android:id="@+id/login_layout_retrieve_password_tv"
+          android:layout_alignParentRight="true"
+          android:text="@string/login_layout_retrieve_password"
+          style="@style/login_layout_tv_btn_style"
+          />
+    </RelativeLayout>
+  </RelativeLayout>
+
+
+</RelativeLayout>

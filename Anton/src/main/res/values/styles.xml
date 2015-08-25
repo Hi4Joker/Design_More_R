@@ -1,0 +1,72 @@
+<resources>
+
+  <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <!-- Actionbar color......-->
+    <item name="colorPrimary">@android:color/holo_red_dark</item>
+    <!-- Status bar color......-->
+    <item name="colorPrimaryDark">@android:color/holo_green_dark</item>
+    <!-- Some Component color....e.g TextInputLayout hint color-->
+    <!--<item name="colorAccent">@android:color/holo_blue_dark</item>-->
+    <item name="colorAccent">@android:color/white</item>
+    <!-- Window color-->
+    <item name="android:windowBackground">@color/window_background</item>
+    <!--Text color-->
+    <item name="android:textColorHint">@android:color/darker_gray</item>
+  </style>
+
+  <!--TextInputLayout theme-->
+  <style name="TextLabel" parent="TextAppearance.AppCompat">
+    <!--hint color And Label Color in False State-->
+    <item name="android:textColorHint">@android:color/darker_gray</item>
+    <!-- Label color in True State And Bar Color False And True State-->
+    <item name="colorAccent">@android:color/darker_gray</item>
+    <item name="colorControlNormal">@android:color/darker_gray</item>
+    <item name="colorControlActivated">@android:color/darker_gray</item>
+    <item name="android:labelTextSize">@dimen/material_16sp</item>
+    <item name="android:textSize">@dimen/material_18sp</item>
+  </style>
+  <style name="ErrorTextAppearance" parent="TextAppearance.AppCompat">
+    <item name="android:textStyle">italic</item>
+    <item name="android:textColor">@android:color/holo_red_dark</item>
+    <item name="android:textSize">@dimen/material_12sp</item>
+  </style>
+  <style name="HintTextAppearance" parent="TextAppearance.AppCompat">
+    <item name="android:textColor">@android:color/darker_gray</item>
+    <item name="android:textSize">@dimen/material_18sp</item>
+  </style>
+
+  <style name="ExpandedAppBar" parent="@android:style/TextAppearance.Medium">
+    <item name="android:textSize">@dimen/material_18sp</item>
+    <item name="android:textColor">@android:color/white</item>
+  </style>
+
+  <style name="CollapsedAppBar" parent="@android:style/TextAppearance.Medium">
+    <item name="android:textSize">@dimen/material_16sp</item>
+    <item name="android:textColor">@android:color/holo_red_dark</item>
+  </style>
+
+
+  <style name="AppTheme.TransparentActivity">
+    <item name="android:windowBackground">@android:color/transparent</item>
+    <item name="android:windowIsTranslucent">true</item>
+  </style>
+
+  <style name="AppTheme.WhiteActivity">
+    <item name="android:windowBackground">@android:color/white</item>
+    <item name="android:windowIsTranslucent">true</item>
+  </style>
+
+  <style name="Widget.CardContent" parent="android:Widget">
+    <item name="android:paddingLeft">16dip</item>
+    <item name="android:paddingRight">16dip</item>
+    <item name="android:paddingTop">24dip</item>
+    <item name="android:paddingBottom">24dip</item>
+    <item name="android:orientation">vertical</item>
+  </style>
+
+
+  <!--Theme Editor-->
+  <style name="JokerTheme" parent="@style/Theme.AppCompat.NoActionBar"/>
+
+
+</resources>

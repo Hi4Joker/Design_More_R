@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.joker.app.revealLib.widget.RevealLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="150dip"
+    android:layout_height="220dip"
+    android:orientation="vertical"
+    android:visibility="invisible"
+    >
+
+  <LinearLayout
+      android:id="@+id/detail_sheet_root"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical"
+      >
+
+    <ImageView
+        android:id="@+id/detail_sheet_iv"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:scaleType="centerCrop"
+        android:src="@drawable/detail_avatar_2"
+        />
+
+  <!--  <TextView
+        android:id="@+id/detail_sheet_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="italic"
+        android:gravity="center"
+        android:textSize="13sp"
+        android:textColor="@android:color/holo_orange_dark"
+        android:text="@string/expanding_title"
+        />-->
+  </LinearLayout>
+
+</com.joker.app.revealLib.widget.RevealLinearLayout>

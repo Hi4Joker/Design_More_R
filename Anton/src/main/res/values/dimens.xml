@@ -1,0 +1,52 @@
+<resources>
+  <!-- Default screen margins, per the Android Design guidelines. -->
+  <dimen name="activity_horizontal_margin">16dp</dimen>
+  <dimen name="activity_vertical_margin">16dp</dimen>
+  <dimen name="detail_fab_margin_bottom">24dip</dimen>
+  <dimen name="detail_fab_elevation">4dip</dimen>
+
+
+  <dimen name="stroke_width">2dip</dimen>
+  <dimen name="progress_padding">20dip</dimen>
+
+
+  <dimen name="detail_app_bar_height">250dip</dimen>
+  <dimen name="card_margin">16dip</dimen>
+  <dimen name="fab_margin">16dip</dimen>
+
+
+  <dimen name="header_avatar_size">78dip</dimen>
+  <dimen name="detail_avatar_size">56dip</dimen>
+
+
+  <dimen name="fab_default_elevation">6dip</dimen>
+  <dimen name="sheet_width">150dip</dimen>
+  <dimen name="sheet_height">200dip</dimen>
+
+  <!--material dip-->
+  <dimen name="material_8dp">8dip</dimen>
+  <dimen name="material_16dp">16dip</dimen>
+  <dimen name="material_32dp">32dip</dimen>
+  <dimen name="material_40dp">40dip</dimen>
+  <dimen name="material_48dp">48dip</dimen>
+  <dimen name="material_56dp">56dip</dimen>
+  <dimen name="material_64dp">64dip</dimen>
+  <dimen name="material_72dp">72dip</dimen>
+  <dimen name="material_80dp">80dip</dimen>
+  <dimen name="material_248dp">248dip</dimen>
+  <dimen name="material_256dp">256dip</dimen>
+
+  <!--material sp-->
+  <dimen name="material_12sp">12sp</dimen>
+  <dimen name="material_14sp">14sp</dimen>
+  <dimen name="material_16sp">16sp</dimen>
+  <dimen name="material_18sp">18sp</dimen>
+  <dimen name="material_20sp">20sp</dimen>
+  <dimen name="material_24sp">24sp</dimen>
+
+
+  <dimen name="material_corners">2dip</dimen>
+  <dimen name="material_elevation_2dp">2dip</dimen>
+
+
+</resources>

@@ -1,0 +1,25 @@
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_root_drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="false"
+    >
+
+  <!--内容-->
+  <include layout="@layout/include_main_content_layout"/>
+
+  <!--侧滑菜单-->
+  <!--app:itemBackground="@android:color/holo_orange_light"
+  app:itemTextColor="@android:color/holo_orange_dark"-->
+  <!--app:itemIconTint="@android:color/black"-->
+  <android.support.design.widget.NavigationView
+      android:id="@+id/main_navigation_layout"
+      android:layout_height="match_parent"
+      android:layout_width="match_parent"
+      android:layout_gravity="start"
+      app:headerLayout="@layout/nav_header_layout"
+      app:menu="@menu/nav_menu_layout"
+      />
+
+</android.support.v4.widget.DrawerLayout>

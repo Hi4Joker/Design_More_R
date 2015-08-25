@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+  <declare-styleable name="MaterialRippleLayout">
+    <attr name="mrl_rippleColor" format="color" localization="suggested"/>
+    <attr name="mrl_rippleDimension" format="dimension" localization="suggested"/>
+    <attr name="mrl_rippleOverlay" format="boolean" localization="suggested"/>
+    <attr name="mrl_rippleAlpha" format="float" localization="suggested"/>
+    <attr name="mrl_rippleDuration" format="integer" localization="suggested"/>
+    <attr name="mrl_rippleFadeDuration" format="integer" localization="suggested"/>
+    <attr name="mrl_rippleHover" format="boolean" localization="suggested"/>
+    <attr name="mrl_rippleBackground" format="color" localization="suggested"/>
+    <attr name="mrl_rippleDelayClick" format="boolean" localization="suggested"/>
+    <attr name="mrl_ripplePersistent" format="boolean" localization="suggested"/>
+    <attr name="mrl_rippleInAdapter" format="boolean" localization="suggested"/>
+    <attr name="mrl_rippleRoundedCorners" format="dimension" localization="suggested"/>
+  </declare-styleable>
+
+
+  <declare-styleable name="CircleImageView">
+    <attr name="cir_border_width" format="dimension"/>
+    <attr name="cir_border_alpha" format="integer|reference"/>
+    <attr name="cir_border_color" format="color"/>
+  </declare-styleable>
+
+
+  <declare-styleable name="CircularProgressView">
+    <attr name="cpv_progress" format="float"/>
+    <attr name="cpv_maxProgress" format="float"/>
+    <attr name="cpv_animDuration" format="integer"/>
+    <attr name="cpv_animSwoopDuration" format="integer"/>
+    <attr name="cpv_animSyncDuration" format="integer"/>
+    <attr name="cpv_color" format="color"/>
+    <attr name="cpv_thickness" format="dimension"/>
+    <attr name="cpv_indeterminate" format="boolean"/>
+    <attr name="cpv_animAutostart" format="boolean"/>
+    <attr name="cpv_animSteps" format="integer"/>
+  </declare-styleable>
+
+
+  <declare-styleable name="LoadingLayout">
+    <attr name="loadingView" format="reference" />
+    <attr name="errorView" format="reference" />
+    <attr name="retryView" format="reference" />
+    <attr name="emptyView" format="reference" />
+  </declare-styleable>
+
+</resources>

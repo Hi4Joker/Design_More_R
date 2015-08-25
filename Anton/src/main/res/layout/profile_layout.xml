@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    >
+
+  <android.support.design.widget.AppBarLayout
+      android:id="@+id/profile_appBar_layout"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/material_248dp"
+      android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+      android:background="@android:color/transparent"
+      >
+    <android.support.design.widget.CollapsingToolbarLayout
+        android:id="@+id/profile_collapsing_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:minHeight="?attr/actionBarSize"
+        app:layout_scrollFlags="scroll|exitUntilCollapsed"
+        app:expandedTitleMarginStart="15dip"
+        >
+      <com.joker.app.revealLib.widget.RevealFrameLayout
+          android:id="@+id/profile_avatar_rf"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          app:layout_collapseMode="parallax"
+          app:layout_collapseParallaxMultiplier="0.8"
+          android:visibility="invisible"
+          >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+          <ImageView
+              android:id="@+id/profile_parallax_iv"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:scaleType="centerCrop"
+              android:src="@drawable/detail_background_2"
+              />
+          <ImageView
+              android:id="@+id/profile_avatar_iv"
+              android:layout_width="@dimen/material_56dp"
+              android:layout_height="@dimen/material_56dp"
+              android:layout_centerInParent="true"
+              android:scaleType="centerCrop"/>
+        </RelativeLayout>
+      </com.joker.app.revealLib.widget.RevealFrameLayout>
+
+      <android.support.v7.widget.Toolbar
+          android:id="@+id/profile_toolbar"
+          android:layout_width="match_parent"
+          android:layout_height="?attr/actionBarSize"
+          app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+          app:layout_scrollFlags="scroll|enterAlways"
+          >
+
+        <!--<RelativeLayout
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="match_parent"
+            android:paddingTop="6dip"
+            android:paddingBottom="6dip"
+            >
+          <com.joker.app.view.CircleView
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_centerInParent="true"
+              android:scaleType="centerCrop"
+              android:src="@drawable/author_avatar"
+              />
+        </RelativeLayout>-->
+
+      </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.CollapsingToolbarLayout>
+  </android.support.design.widget.AppBarLayout>
+
+
+  <android.support.v4.widget.NestedScrollView
+      android:id="@+id/profile_nested_scroll_view"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="24dp">
+
+      <android.support.v7.widget.CardView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_margin="@dimen/material_16dp"
+          app:cardCornerRadius="@dimen/material_corners"
+          app:elevation="@dimen/material_elevation_2dp"
+          >
+
+        <LinearLayout
+            style="@style/Widget.CardContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="Info"
+              android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="@string/cheese_ipsum"/>
+        </LinearLayout>
+      </android.support.v7.widget.CardView>
+
+      <android.support.v7.widget.CardView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="@dimen/material_16dp"
+          android:layout_marginLeft="@dimen/material_16dp"
+          android:layout_marginRight="@dimen/material_16dp"
+          app:cardCornerRadius="@dimen/material_corners"
+          app:elevation="@dimen/material_elevation_2dp"
+          >
+
+        <LinearLayout
+            style="@style/Widget.CardContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="Friends"
+              android:textAppearance="@style/TextAppearance.AppCompat.Title"
+              />
+
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="@string/cheese_ipsum"/>
+        </LinearLayout>
+
+      </android.support.v7.widget.CardView>
+
+      <android.support.v7.widget.CardView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="@dimen/material_16dp"
+          android:layout_marginLeft="@dimen/material_16dp"
+          android:layout_marginRight="@dimen/material_16dp"
+          app:cardCornerRadius="@dimen/material_corners"
+          app:elevation="@dimen/material_elevation_2dp"
+          >
+        <LinearLayout
+            style="@style/Widget.CardContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="Related"
+              android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="@string/cheese_ipsum"/>
+
+        </LinearLayout>
+      </android.support.v7.widget.CardView>
+    </LinearLayout>
+  </android.support.v4.widget.NestedScrollView>
+
+
+  <ImageView
+      android:id="@+id/profile_avatar"
+      android:layout_width="@dimen/material_56dp"
+      android:layout_height="@dimen/material_56dp"
+      android:scaleType="centerCrop"/>
+
+</android.support.design.widget.CoordinatorLayout>

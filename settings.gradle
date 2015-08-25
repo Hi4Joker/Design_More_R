@@ -1,0 +1,6 @@
+include ':Anton', ':DrawableSample', ':ReactiveProgramming', ':RetrofitWeather', ':DesignMore',
+    ':RxThreadSample',
+    ':RxJavaSample', ':RxMeetup', ':RxLifecycleSample', ':RxAndroidSample', ':FlatBuffs',
+    ':leakcanary-android', ':SupportDesignSample', ':leakcanary-analyzer', ':leakcanary-watcher'
+
+include ':CircularprogressLib', ':CircularProgressViewSample', ':DaoExample'

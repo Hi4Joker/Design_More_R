@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_item_avatar_size"
+    >
+
+  <TextView
+      android:id="@+id/weather_item_day"
+      android:layout_weight="3"
+      android:text="@string/monday"
+      style="@style/WeatherForecastListItemText"/>
+
+  <ImageView
+      android:id="@+id/weather_item_icon"
+      android:layout_width="0dip"
+      android:layout_height="match_parent"
+      android:layout_marginRight="10dip"
+      android:layout_weight="5"
+      android:src="@drawable/ic_inbox"
+      />
+
+  <TextView
+      android:id="@+id/weather_item_max_temperature"
+      android:text="@string/nineteen_degrees"
+      android:layout_weight="1"
+      style="@style/WeatherForecastListItemTextEmphasis"/>
+
+  <TextView
+      android:id="@+id/weather_item_min_temperature"
+      android:text="@string/fifteen_degrees"
+      android:layout_weight="1"
+      style="@style/WeatherForecastListItemTextDeEmphasis"/>
+
+</LinearLayout>

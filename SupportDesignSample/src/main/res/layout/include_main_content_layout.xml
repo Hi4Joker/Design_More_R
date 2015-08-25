@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--CoordinatorLayout：全新，更加彪悍的 FrameLayout。-->
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+  <!--AppBarLayout：全新，用来实现各种 Material Design 概念效果的一个Layout，主要负责对滑动的响应。-->
+  <android.support.design.widget.AppBarLayout
+      android:id="@+id/appBar_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+    <!-- scroll: 所有想滚动出屏幕的view都需要设置这个flag- 没有设置这个flag的view将被固定在屏幕顶部。
+    enterAlways: 这个flag让任意向下的滚动都会导致该view变为可见，启用快速“返回模式”。
+    所有使用scroll flag的view都必须定义在没有使用scroll flag的view的前面，这样才能确保所有的view从顶部退出，留下固定的元素。-->
+    <!--<include
+        android:id="@+id/toolbar"
+        layout="@layout/include_toolbar_layout"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:layout_scrollFlags="scroll|enterAlways"
+        />-->
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:minHeight="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:layout_scrollFlags="scroll|enterAlways"/>
+
+    <!-- app:tabIndicatorColor="@android:color/holo_blue_bright"
+        app:tabTextColor="@android:color/holo_green_light"
+        app:tabSelectedTextColor="@android:color/black"-->
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:tabMode="scrollable"
+        app:tabGravity="center"
+        app:tabIndicatorColor="@android:color/holo_blue_bright"
+        app:tabTextColor="@android:color/holo_green_light"
+        app:tabSelectedTextColor="@android:color/black"
+        />
+  </android.support.design.widget.AppBarLayout>
+
+  <android.support.v4.view.ViewPager
+      android:id="@+id/viewpager"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      app:layout_behavior="@string/appbar_scrolling_view_behavior"
+      />
+
+
+  <!--app:borderWidth="0dip"防止5.0以上无阴影 -->
+  <android.support.design.widget.FloatingActionButton
+      android:id="@+id/main_content_fab"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="end|bottom"
+      android:layout_margin="@dimen/fab_margin_bottom"
+      android:scaleType="centerCrop"
+      android:src="@drawable/main_fab_src"
+      app:elevation="@dimen/default_elevation"
+      app:borderWidth="0dip"
+      app:pressedTranslationZ="10dip"
+      />
+
+</android.support.design.widget.CoordinatorLayout>
