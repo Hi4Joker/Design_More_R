@@ -162,16 +162,16 @@
           android:textColor="@android:color/black"
           />
 
-      <ImageView
-          android:id="@+id/profile_layout_sex_navigate_iv"
-          style="@style/center_navigate_iv_style"/>
+      <!-- <ImageView
+           android:id="@+id/profile_layout_sex_navigate_iv"
+           style="@style/center_navigate_iv_style"/>-->
 
       <TextView
           android:id="@+id/profile_layout_sex_tv"
-          android:layout_toLeftOf="@+id/profile_layout_sex_navigate_iv"
           android:layout_width="wrap_content"
           android:layout_height="match_parent"
-          android:layout_marginRight="@dimen/material_8dp"
+          android:layout_alignParentRight="true"
+          android:layout_marginRight="@dimen/material_24dp"
           android:text="男"
           android:gravity="center"
           android:textSize="@dimen/material_16sp"
@@ -214,17 +214,17 @@
           android:textColor="@android:color/black"
           />
 
-      <ImageView
-          android:id="@+id/profile_layout_birthday_navigate_iv"
-          style="@style/center_navigate_iv_style"/>
+      <!-- <ImageView
+           android:id="@+id/profile_layout_birthday_navigate_iv"
+           style="@style/center_navigate_iv_style"/>-->
 
       <TextView
           android:id="@+id/profile_layout_birthday_tv"
-          android:layout_toLeftOf="@id/profile_layout_birthday_navigate_iv"
           android:layout_width="wrap_content"
           android:layout_height="match_parent"
-          android:layout_marginRight="@dimen/material_8dp"
-          android:text="1988-08-08"
+          android:layout_alignParentRight="true"
+          android:layout_marginRight="@dimen/material_24dp"
+          android:text="1988/08/08"
           android:gravity="center"
           android:textSize="@dimen/material_16sp"
           android:textColor="@android:color/black"

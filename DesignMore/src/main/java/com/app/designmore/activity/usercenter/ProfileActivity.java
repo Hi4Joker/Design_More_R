@@ -6,12 +6,18 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -35,11 +41,12 @@ public class ProfileActivity extends RxAppCompatActivity {
 
   @Nullable @Bind(R.id.profile_layout_root_view) LinearLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root) Toolbar toolbar;
-  @Nullable @Bind(R.id.profile_layout_avatar_iv) ImageView profileLayoutAa;
+  @Nullable @Bind(R.id.profile_layout_avatar_iv) ImageView AvatarIv;
   @Nullable @Bind(R.id.profile_layout_username_tv) TextView usernameTv;
   @Nullable @Bind(R.id.profile_layout_nickname_et) EditText nicknameEt;
   @Nullable @Bind(R.id.profile_layout_sex_tv) TextView sexTv;
   @Nullable @Bind(R.id.profile_layout_birthday_tv) TextView birthdayTv;
+  private DialogPlus dialogPlus;
 
   public static void startFromLocation(UserCenterActivity startingActivity, int startingLocationY) {
 
@@ -61,7 +68,7 @@ public class ProfileActivity extends RxAppCompatActivity {
     ProfileActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
 
-    toolbar.findViewById(R.id.white_toolbar_title_iv).setVisibility(View.INVISIBLE);
+    toolbar.findViewById(R.id.white_toolbar_title_iv).setVisibility(View.GONE);
     TextView title = (TextView) toolbar.findViewById(R.id.white_toolbar_title_tv);
     title.setVisibility(View.VISIBLE);
     title.setText("个人资料");
@@ -77,32 +84,76 @@ public class ProfileActivity extends RxAppCompatActivity {
     }
   }
 
+  @Override public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.menu_center_profile, menu);
+
+    MenuItem menuItem = menu.findItem(R.id.action_submit);
+    menuItem.setActionView(R.layout.menu_inbox_tv_item);
+
+    TextView textView = (TextView) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
+    textView.setText(getText(R.string.action_submit));
+
+    menuItem.getActionView().setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+
+      }
+    });
+    return true;
+  }
+
   @Nullable @OnClick(R.id.profile_layout_avatar_rl) void onAvatarClick(View view) {
 
   }
 
   @Nullable @OnClick(R.id.profile_layout_sex_rl) void onSexClick() {
 
-    DialogManager.getInstance()
-        .showPickSexDialog(ProfileActivity.this, R.layout.dialog_profile_pick_sex_layout,
-            new OnClickListener() {
+    dialogPlus = DialogManager.getInstance()
+        .showSelectorDialog(ProfileActivity.this, Gravity.BOTTOM,
+            R.layout.dialog_profile_pick_sex_layout, new OnClickListener() {
               @Override public void onClick(DialogPlus dialog, View view) {
-                sexTv.setText(((TextView) view).getText().toString());
+                if (view.getId() != R.id.pick_sex_cancel_tv) {
+                  sexTv.setText(((TextView) view).getText().toString());
+                }
                 dialog.dismiss();
               }
             });
   }
 
+  EditText yearEt, monthEt, dayEt;
+
   @Nullable @OnClick(R.id.profile_layout_birthday_rl) void onBirthdayClick() {
 
-    DialogManager.getInstance()
-        .showPickBirthdayDialog(ProfileActivity.this, R.layout.dialog_profile_pick_birthday_layout,
-            new OnClickListener() {
+    dialogPlus = DialogManager.getInstance()
+        .showSelectorDialog(ProfileActivity.this, Gravity.CENTER,
+            R.layout.dialog_profile_pick_birthday_layout, new OnClickListener() {
               @Override public void onClick(DialogPlus dialog, View view) {
 
+                if (view.getId() == R.id.pick_birthday_confirm_tv) {
+                  String year =
+                      "".endsWith(yearEt.getText().toString()) ? yearEt.getHint().toString()
+                          : yearEt.getText().toString();
+                  String month =
+                      "".endsWith(monthEt.getText().toString()) ? monthEt.getHint().toString()
+                          : monthEt.getText().toString();
+                  String day = "".endsWith(dayEt.getText().toString()) ? dayEt.getHint().toString()
+                      : dayEt.getText().toString();
+
+                  birthdayTv.setText(year + "/" + month + "/" + day);
+                }
                 dialog.dismiss();
               }
             });
+
+    ViewGroup viewGroup = (ViewGroup) dialogPlus.getHolderView();
+    yearEt = (EditText) viewGroup.findViewById(R.id.pick_birthday_year_et);
+    monthEt = (EditText) viewGroup.findViewById(R.id.pick_birthday_month_et);
+    dayEt = (EditText) viewGroup.findViewById(R.id.pick_birthday_day_et);
+
+    String[] split = birthdayTv.getText().toString().split("/");
+
+    yearEt.setHint(split[0]);
+    monthEt.setHint(split[1]);
+    dayEt.setHint(split[2]);
   }
 
   private void startEnterAnim(int startLocationY) {
@@ -125,9 +176,14 @@ public class ProfileActivity extends RxAppCompatActivity {
     return super.onOptionsItemSelected(item);
   }
 
-  @Override public void onBackPressed() {
-
-    ProfileActivity.this.startExitAnim();
+  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+      if (dialogPlus != null && dialogPlus.isShowing()) {
+        return true;
+      }
+      ProfileActivity.this.startExitAnim();
+    }
+    return false;
   }
 
   private void startExitAnim() {
@@ -146,6 +202,7 @@ public class ProfileActivity extends RxAppCompatActivity {
 
   @Override protected void onDestroy() {
     super.onDestroy();
+    this.dialogPlus = null;
     ButterKnife.unbind(ProfileActivity.this);
   }
 }

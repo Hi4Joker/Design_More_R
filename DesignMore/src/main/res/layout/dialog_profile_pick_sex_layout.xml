@@ -3,8 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
+    android:layout_height="@dimen/material_128dp"
+    android:orientation="vertical"
     android:background="@android:color/white"
     >
 
@@ -15,10 +15,9 @@
        app:elevation="@dimen/material_elevation_2dp"
        >-->
   <com.app.designmore.view.MaterialRippleLayout
-      android:layout_width="0dip"
+      android:layout_width="match_parent"
+      android:layout_height="0dip"
       android:layout_weight="1"
-      android:layout_height="@dimen/material_64dp"
-      android:layout_margin="@dimen/material_24dp"
       android:layout_gravity="center"
       app:mrl_rippleDimension="20dip"
       app:mrl_rippleFadeDuration="100"
@@ -27,27 +26,26 @@
       app:mrl_rippleHover="true"
       app:mrl_rippleOverlay="true"
       app:mrl_rippleDelayClick="true"
-      app:mrl_rippleColor="#5E84C5"
       >
 
     <TextView
-        android:id="@+id/pick_sex_male"
+        android:id="@+id/pick_sex_male_tv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
         android:textColor="@android:color/black"
-        android:textSize="@dimen/material_18sp"
+        android:textSize="@dimen/material_16sp"
         android:text="男"
         android:clickable="true"
-        android:background="#AECAE0"
         />
   </com.app.designmore.view.MaterialRippleLayout>
 
+  <ImageView style="@style/divider_line_style"/>
+
   <com.app.designmore.view.MaterialRippleLayout
-      android:layout_width="0dip"
+      android:layout_width="match_parent"
+      android:layout_height="0dip"
       android:layout_weight="1"
-      android:layout_height="@dimen/material_64dp"
-      android:layout_margin="@dimen/material_24dp"
       android:layout_gravity="center"
       app:mrl_rippleDimension="20dip"
       app:mrl_rippleFadeDuration="100"
@@ -56,22 +54,47 @@
       app:mrl_rippleHover="true"
       app:mrl_rippleOverlay="true"
       app:mrl_rippleDelayClick="true"
-      app:mrl_rippleColor="#DEACAB"
       >
 
     <TextView
-        android:id="@+id/pick_sex_female"
+        android:id="@+id/pick_sex_female_tv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
         android:textColor="@android:color/black"
-        android:textSize="@dimen/material_18sp"
+        android:textSize="@dimen/material_16sp"
         android:text="女"
         android:clickable="true"
-        android:background="#FFC3AB"
         />
   </com.app.designmore.view.MaterialRippleLayout>
-  <!--</android.support.v7.widget.CardView>-->
+
+  <ImageView style="@style/divider_line_style"/>
+
+  <com.app.designmore.view.MaterialRippleLayout
+      android:layout_width="match_parent"
+      android:layout_height="0dip"
+      android:layout_weight="1"
+      android:layout_gravity="center"
+      app:mrl_rippleDimension="20dip"
+      app:mrl_rippleFadeDuration="100"
+      app:mrl_rippleAlpha="0.4"
+      app:mrl_rippleDuration="600"
+      app:mrl_rippleHover="true"
+      app:mrl_rippleOverlay="true"
+      app:mrl_rippleDelayClick="true"
+      >
+
+    <TextView
+        android:id="@+id/pick_sex_cancel_tv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textColor="@android:color/holo_red_light"
+        android:textSize="@dimen/material_16sp"
+        android:text="取消"
+        android:clickable="true"
+        />
+  </com.app.designmore.view.MaterialRippleLayout>
 
 
 </LinearLayout>

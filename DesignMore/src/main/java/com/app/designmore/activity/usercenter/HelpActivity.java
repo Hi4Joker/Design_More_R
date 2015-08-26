@@ -7,6 +7,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -84,9 +85,11 @@ public class HelpActivity extends BaseActivity {
     return super.onOptionsItemSelected(item);
   }
 
-  @Override public void onBackPressed() {
-
-    HelpActivity.this.startExitAnim();
+  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+      HelpActivity.this.startExitAnim();
+    }
+    return false;
   }
 
   private void startExitAnim() {

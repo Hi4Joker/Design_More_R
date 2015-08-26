@@ -17,6 +17,7 @@
   <dimen name="material_72dp">72dip</dimen>
   <dimen name="material_80dp">80dip</dimen>
   <dimen name="material_120dp">120dip</dimen>
+  <dimen name="material_128dp">128dip</dimen>
   <dimen name="material_160dp">160dip</dimen>
   <dimen name="material_180dp">180dip</dimen>
   <dimen name="material_200dp">200dip</dimen>

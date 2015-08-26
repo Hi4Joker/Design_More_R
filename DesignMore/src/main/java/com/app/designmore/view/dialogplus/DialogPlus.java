@@ -14,7 +14,6 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 
-
 import com.app.designmore.R;
 
 /**
@@ -102,7 +101,8 @@ public class DialogPlus {
      * @link http://stackoverflow.com/questions/4486034/get-root-view-from-current-activity
      */
     decorView = (ViewGroup) activity.getWindow().getDecorView().findViewById(android.R.id.content);
-    rootView = (ViewGroup) layoutInflater.inflate(R.layout.dialog_plus_root_container, decorView, false);
+    rootView =
+        (ViewGroup) layoutInflater.inflate(R.layout.dialog_plus_root_container, decorView, false);
     rootView.setLayoutParams(builder.getOutmostLayoutParams());
 
     contentContainer = (ViewGroup) rootView.findViewById(R.id.content_container);
@@ -111,18 +111,13 @@ public class DialogPlus {
     outAnim = builder.getOutAnimation();
     inAnim = builder.getInAnimation();
 
-    initContentView(
-        layoutInflater,
-        builder.getHeaderView(),
-        builder.getFooterView(),
-        builder.getAdapter(),
-        builder.getContentPadding(),
-        builder.getContentMargin()
-    );
+    initContentView(layoutInflater, builder.getHeaderView(), builder.getFooterView(),
+        builder.getAdapter(), builder.getContentPadding(), builder.getContentMargin());
 
     initCancelable();
     if (builder.isExpanded()) {
-      initExpandAnimator(activity, builder.getDefaultContentHeight(), builder.getContentParams().gravity);
+      initExpandAnimator(activity, builder.getDefaultContentHeight(),
+          builder.getContentParams().gravity);
     }
   }
 
@@ -151,7 +146,8 @@ public class DialogPlus {
   }
 
   /**
-   * It is called when to dismiss the dialog, either by calling dismiss() method or with cancellable
+   * It is called when to dismiss the dialog, either by calling dismiss() method or with
+   * cancellable
    */
   public void dismiss() {
     if (isDismissing) {
@@ -159,16 +155,13 @@ public class DialogPlus {
     }
 
     outAnim.setAnimationListener(new Animation.AnimationListener() {
-      @Override
-      public void onAnimationStart(Animation animation) {
+      @Override public void onAnimationStart(Animation animation) {
 
       }
 
-      @Override
-      public void onAnimationEnd(Animation animation) {
+      @Override public void onAnimationEnd(Animation animation) {
         decorView.post(new Runnable() {
-          @Override
-          public void run() {
+          @Override public void run() {
             decorView.removeView(rootView);
             isDismissing = false;
             if (onDismissListener != null) {
@@ -178,8 +171,7 @@ public class DialogPlus {
         });
       }
 
-      @Override
-      public void onAnimationRepeat(Animation animation) {
+      @Override public void onAnimationRepeat(Animation animation) {
 
       }
     });
@@ -187,8 +179,7 @@ public class DialogPlus {
     isDismissing = true;
   }
 
-  @SuppressWarnings("unused")
-  public View findViewById(int resourceId) {
+  @SuppressWarnings("unused") public View findViewById(int resourceId) {
     return contentContainer.findViewById(resourceId);
   }
 
@@ -217,20 +208,20 @@ public class DialogPlus {
     }
     final AbsListView absListView = (AbsListView) view;
 
-    view.setOnTouchListener(ExpandTouchListener.newListener(
-        activity, absListView, contentContainer, gravity, displayHeight, defaultHeight
-    ));
+    view.setOnTouchListener(
+        ExpandTouchListener.newListener(activity, absListView, contentContainer, gravity,
+            displayHeight, defaultHeight));
   }
 
   /**
    * It is called in order to create content
    */
-  private void initContentView(LayoutInflater inflater, View header, View footer, BaseAdapter adapter,
-                               int[] padding, int[] margin) {
+  private void initContentView(LayoutInflater inflater, View header, View footer,
+      BaseAdapter adapter, int[] padding, int[] margin) {
     View contentView = createView(inflater, header, footer, adapter);
-    FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
-    );
+    FrameLayout.LayoutParams params =
+        new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT);
     params.setMargins(margin[0], margin[1], margin[2], margin[3]);
     contentView.setLayoutParams(params);
     getHolderView().setPadding(padding[0], padding[1], padding[2], padding[3]);
@@ -255,7 +246,8 @@ public class DialogPlus {
    * @param inflater used to inflate the content of the dialog
    * @return any view which is passed
    */
-  private View createView(LayoutInflater inflater, View headerView, View footerView, BaseAdapter adapter) {
+  private View createView(LayoutInflater inflater, View headerView, View footerView,
+      BaseAdapter adapter) {
     View view = holder.getView(inflater, rootView);
 
     if (holder instanceof ViewHolder) {
@@ -272,8 +264,7 @@ public class DialogPlus {
       HolderAdapter holderAdapter = (HolderAdapter) holder;
       holderAdapter.setAdapter(adapter);
       holderAdapter.setOnItemClickListener(new OnHolderListener() {
-        @Override
-        public void onItemClick(Object item, View view, int position) {
+        @Override public void onItemClick(Object item, View view, int position) {
           if (onItemClickListener == null) {
             return;
           }
@@ -316,8 +307,7 @@ public class DialogPlus {
     }
 
     view.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
+      @Override public void onClick(View v) {
         if (onClickListener == null) {
           return;
         }
@@ -337,11 +327,10 @@ public class DialogPlus {
 
     contentContainer.requestFocus();
     holder.setOnKeyListener(new View.OnKeyListener() {
-      @Override
-      public boolean onKey(View v, int keyCode, KeyEvent event) {
+      @Override public boolean onKey(View v, int keyCode, KeyEvent event) {
         switch (event.getAction()) {
           case KeyEvent.ACTION_UP:
-            if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
               if (onBackPressListener != null) {
                 onBackPressListener.onBackPressed(DialogPlus.this);
               }
@@ -373,8 +362,7 @@ public class DialogPlus {
    * Called when the user touch on black overlay in order to dismiss the dialog
    */
   private final View.OnTouchListener onCancelableTouchListener = new View.OnTouchListener() {
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
+    @Override public boolean onTouch(View v, MotionEvent event) {
       if (event.getAction() == MotionEvent.ACTION_DOWN) {
         if (onCancelListener != null) {
           onCancelListener.onCancel(DialogPlus.this);

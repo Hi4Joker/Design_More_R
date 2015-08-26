@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -79,7 +80,7 @@ public class TrolleyActivity extends RxAppCompatActivity {
   @Override public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.menu_center_trolley, menu);
 
-    MenuItem menuItem = menu.findItem(R.id.action_add);
+    MenuItem menuItem = menu.findItem(R.id.action_editor);
     menuItem.setActionView(R.layout.menu_inbox_tv_item);
     TextView textView = (TextView) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
     textView.setText(getText(R.string.action_editor));
@@ -101,9 +102,11 @@ public class TrolleyActivity extends RxAppCompatActivity {
     return super.onOptionsItemSelected(item);
   }
 
-  @Override public void onBackPressed() {
-
-    TrolleyActivity.this.startExitAnim();
+  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+      TrolleyActivity.this.startExitAnim();
+    }
+    return false;
   }
 
   private void startExitAnim() {

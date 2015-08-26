@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
-  <item android:id="@+id/action_editor"
-      android:title="@string/action_editor"
+  <item android:id="@+id/action_submit"
+      android:title="@string/action_submit"
       app:showAsAction="always"/>
 </menu>
