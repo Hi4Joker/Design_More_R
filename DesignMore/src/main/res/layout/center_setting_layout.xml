@@ -5,7 +5,7 @@
     android:id="@+id/setting_layout_reveal_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:visibility="invisible"
+    android:visibility="visible"
     android:background="@android:color/transparent"
     >
 
@@ -110,8 +110,15 @@
               android:text="清空缓存"
               style="@style/center_item_tv_style"
               />
-          <ImageView
-              style="@style/center_navigate_iv_style"/>
+          <TextView
+              android:id="@+id/setting_layout_cache_tv"
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:gravity="center"
+              android:layout_marginRight="@dimen/material_24dp"
+              android:text="正在获取......"
+              />
+
         </LinearLayout>
       </com.app.designmore.view.MaterialRippleLayout>
 

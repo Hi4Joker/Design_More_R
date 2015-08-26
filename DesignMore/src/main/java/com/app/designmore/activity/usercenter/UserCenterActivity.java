@@ -7,13 +7,11 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialog;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -29,7 +27,7 @@ public class UserCenterActivity extends RxAppCompatActivity {
 
   private static final String TAG = UserCenterActivity.class.getSimpleName();
 
-  @Nullable @Bind(R.id.toolbar) Toolbar toolbar;
+  @Nullable @Bind(R.id.transparent_toolbar_root) Toolbar toolbar;
   private AppCompatDialog dialog;
   private int statusBarHeight;
 
@@ -37,14 +35,13 @@ public class UserCenterActivity extends RxAppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.user_center_layout);
     ButterKnife.bind(this);
+    EventBusInstance.getDefault().register(UserCenterActivity.this);
 
     UserCenterActivity.this.initView();
   }
 
   private void initView() {
 
-    /*注册EventBus*/
-    EventBusInstance.getDefault().register(UserCenterActivity.this);
     UserCenterActivity.this.setSupportActionBar(toolbar);
     UserCenterActivity.this.getSupportActionBar().setTitle("");
 
@@ -63,16 +60,14 @@ public class UserCenterActivity extends RxAppCompatActivity {
     getMenuInflater().inflate(R.menu.menu_center, menu);
 
     MenuItem menuItem = menu.findItem(R.id.action_setting);
-    menuItem.setActionView(R.layout.menu_center_inbox_btn_item);
+    menuItem.setActionView(R.layout.menu_inbox_btn_item);
     ImageButton imageButton =
         (ImageButton) menuItem.getActionView().findViewById(R.id.action_inbox_btn);
-    imageButton.setScaleType(ImageView.ScaleType.CENTER);
     imageButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_setting));
 
     menuItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-
-        SettingActivity.startFromLocation(UserCenterActivity.this);
+        SettingActivity.navigateToSetting(UserCenterActivity.this);
         overridePendingTransition(0, 0);
       }
     });
@@ -134,18 +129,17 @@ public class UserCenterActivity extends RxAppCompatActivity {
 
   private int getLocationY(View item) {
 
-    int[] startingLocation = new int[2];
+    int[] startingLocation = new int[1];
     // 得到相对于整个屏幕的区域坐标（左上角坐标——右下角坐标）
     Rect viewRect = new Rect();
     item.getGlobalVisibleRect(viewRect);
 
-    startingLocation[0] = viewRect.left;
-    startingLocation[1] = (viewRect.top - statusBarHeight) + (viewRect.bottom - statusBarHeight);
+    startingLocation[0] = (viewRect.top - statusBarHeight) + (viewRect.bottom - statusBarHeight);
 
-    return startingLocation[1] / 2;
+    return startingLocation[0] / 2;
   }
 
-  public boolean onKeyDown(int keyCode, KeyEvent event) {
+  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
     if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
       UserCenterActivity.this.CreateDialog();
     }

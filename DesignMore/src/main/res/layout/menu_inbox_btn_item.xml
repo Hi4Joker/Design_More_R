@@ -19,6 +19,7 @@
       android:id="@+id/action_inbox_btn"
       android:layout_width="?attr/actionBarSize"
       android:layout_height="?attr/actionBarSize"
+      android:scaleType="center"
       android:background="@drawable/transparent_background"
       />
 </com.app.designmore.view.MaterialRippleLayout>

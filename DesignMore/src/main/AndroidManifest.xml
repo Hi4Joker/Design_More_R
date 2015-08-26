@@ -64,6 +64,21 @@
         android:theme="@style/AppTheme.TransparentActivity"
         >
     </activity>
+
+    <!--用户中心ACT -> 设置ACT -> 关于我们-->
+    <activity
+        android:name=".activity.usercenter.AboutActivity"
+        android:screenOrientation="portrait"
+        android:theme="@style/AppTheme.TransparentActivity"
+        >
+    </activity>
+    <!--用户中心ACT -> 设置ACT -> 帮助中心-->
+    <activity
+        android:name=".activity.usercenter.HelpActivity"
+        android:screenOrientation="portrait"
+        android:theme="@style/AppTheme.TransparentActivity"
+        >
+    </activity>
   </application>
 
 </manifest>

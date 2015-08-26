@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.Toolbar
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/white_toolbar"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/white_toolbar_root"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:background="@android:color/white"
@@ -21,13 +21,13 @@
         android:layout_weight="1"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:textSize="@dimen/material_16sp"
-        android:textColor="@android:color/black"
-        android:visibility="gone"
+        android:textColor="#77000000"
+        android:textSize="@dimen/material_18sp"
+        android:visibility="visible"
         />
 
     <ImageView
-        android:id="@+id/white_toolbar_iv"
+        android:id="@+id/white_toolbar_title_iv"
         android:layout_width="?attr/actionBarSize"
         android:layout_height="?attr/actionBarSize"
         android:visibility="gone"

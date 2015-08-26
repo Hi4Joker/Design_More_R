@@ -31,6 +31,8 @@
     <item name="android:textStyle">italic</item>
     <item name="android:background">@drawable/login_edit_background</item>
   </style>
+
+  <!--登录界面,注册、找回密码TV风格-->
   <style name="login_layout_tv_btn_style">
     <item name="android:layout_width">wrap_content</item>
     <item name="android:layout_height">match_parent</item>
@@ -39,6 +41,8 @@
     <item name="android:gravity">bottom</item>
     <item name="android:clickable">true</item>
   </style>
+
+  <!-- 登陆界面icon风格-->
   <style name="login_icon_style">
     <item name="android:layout_width">@dimen/material_24dp</item>
     <item name="android:layout_height">@dimen/material_24dp</item>
@@ -46,6 +50,8 @@
     <item name="android:layout_centerVertical">true</item>
     <item name="android:scaleType">centerCrop</item>
   </style>
+
+  <!--分割线分割，1dip-->
   <style name="divider_line_style">
     <item name="android:layout_width">match_parent</item>
     <item name="android:layout_height">1dip</item>
@@ -53,6 +59,8 @@
     <item name="android:layout_marginRight">@dimen/material_24dp</item>
     <item name="android:background">@android:color/darker_gray</item>
   </style>
+
+  <!--用户中心条目，TV风格-->
   <style name="center_item_tv_style">
     <item name="android:layout_width">0dip</item>
     <item name="android:layout_weight">1</item>
@@ -62,6 +70,8 @@
     <item name="android:textSize">@dimen/material_14sp</item>
     <item name="android:textColor">#bb3B3B3B</item>
   </style>
+
+  <!--用户中心条目中，跳转箭头风格-->
   <style name="center_navigate_iv_style">
     <item name="android:layout_width">@dimen/material_16dp</item>
     <item name="android:layout_height">@dimen/material_16dp</item>
@@ -70,6 +80,17 @@
     <item name="android:layout_alignParentRight">true</item>
     <item name="android:layout_gravity">center</item>
     <item name="android:src">@drawable/ic_navigate</item>
+  </style>
+
+  <!-- 帮助中心，cardView风格-->
+  <style name="Widget.CardContent" parent="android:Widget">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:paddingLeft">@dimen/material_8dp</item>
+    <item name="android:paddingRight">@dimen/material_8dp</item>
+    <item name="android:paddingTop">@dimen/material_16dp</item>
+    <item name="android:paddingBottom">@dimen/material_16dp</item>
+    <item name="android:orientation">vertical</item>
   </style>
 
 </resources>

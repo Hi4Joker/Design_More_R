@@ -2,10 +2,11 @@ package com.app.designmore.activity.usercenter;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -14,51 +15,66 @@ import android.view.animation.LinearInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
-import butterknife.ButterKnife;
+import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.R;
 import com.app.designmore.utils.DensityUtil;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
 /**
- * Created by Joker on 2015/8/25.
+ * Created by Joker on 2015/8/26.
  */
-public class TrolleyActivity extends RxAppCompatActivity {
+public class AboutActivity extends BaseActivity {
 
-  private static final String TAG = TrolleyActivity.class.getSimpleName();
   private static final String START_LOCATION_Y = "START_LOCATION_Y";
-  @Bind(R.id.white_toolbar_root) Toolbar toolbar;
-  @Bind(R.id.trolley_layout_root_view) LinearLayout rootView;
+  @Nullable @Bind(R.id.setting_layout_root_view) LinearLayout rootView;
+  @Nullable @Bind(R.id.white_toolbar_root) Toolbar toolbar;
+  @Nullable @Bind(R.id.about_layout_about_tv) TextView aboutTv;
 
-  public static void startFromLocation(UserCenterActivity startingActivity, int startingLocationY) {
+  public static void startFromLocation(SettingActivity startingActivity, int startingLocationY) {
 
-    Intent intent = new Intent(startingActivity, TrolleyActivity.class);
+    Intent intent = new Intent(startingActivity, AboutActivity.class);
     intent.putExtra(START_LOCATION_Y, startingLocationY);
     startingActivity.startActivity(intent);
   }
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.center_trolley_layout);
-    ButterKnife.bind(TrolleyActivity.this);
+    setContentView(R.layout.center_setting_about_layout);
 
-    TrolleyActivity.this.initView(savedInstanceState);
+    AboutActivity.this.initView(savedInstanceState);
   }
 
   private void initView(Bundle savedInstanceState) {
 
-    TrolleyActivity.this.setSupportActionBar(toolbar);
+    String html = "<!DOCTYPE html>\n"
+        + "<html>\n"
+        + "<body>\n"
+        + "<p><font color=\"#B9B9BC\" face=\"微软雅黑\">兑换码说明:</font><br/>\n"
+        + "<font color=\"black\" face=\"微软雅黑\"><b>一.兑换码是什么?</b></font><br/>\n"
+        + "<font color=\"#B9B9BC\" face=\"微软雅黑\">可兑换成积分/优惠券，积分/优惠券可在APP内使用</font></p>\n"
+        + "\n"
+        + "<p><font color=\"black\" face=\"微软雅黑\"><b>二.用户如何获得&nbsp;“兑换码”&nbsp;?\n</b></font><br/>\n"
+        + "<font color=\"#B9B9BC\" face=\"微软雅黑\">1、用户参加e洗车平台内活动领取兑换码;<br/>\n"
+        + "2、其他与e洗车合作的平台赠送的兑换码,<br/>\n"
+        + "兑换码由e洗车提供;</font></p>\n"
+        + "\n"
+        + "</body>\n"
+        + "</html>";
+
+    aboutTv.setText(Html.fromHtml(html));
+
+    AboutActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
 
-    toolbar.findViewById(R.id.white_toolbar_title_iv).setVisibility(View.GONE);
+    toolbar.findViewById(R.id.white_toolbar_title_iv).setVisibility(View.INVISIBLE);
     TextView title = (TextView) toolbar.findViewById(R.id.white_toolbar_title_tv);
     title.setVisibility(View.VISIBLE);
-    title.setText("购物车");
+    title.setText("关于我们");
 
     if (savedInstanceState == null) {
       rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
         @Override public boolean onPreDraw() {
           rootView.getViewTreeObserver().removeOnPreDrawListener(this);
-          TrolleyActivity.this.startEnterAnim(getIntent().getIntExtra(START_LOCATION_Y, 0));
+          AboutActivity.this.startEnterAnim(getIntent().getIntExtra(START_LOCATION_Y, 0));
           return true;
         }
       });
@@ -67,42 +83,19 @@ public class TrolleyActivity extends RxAppCompatActivity {
 
   private void startEnterAnim(int startLocationY) {
 
-    ViewCompat.setElevation(toolbar, 0);
-
     rootView.setScaleY(0.0f);
     rootView.setPivotY(startLocationY);
 
     ViewCompat.animate(rootView)
         .scaleY(1.0f)
         .setDuration(200)
-        .setInterpolator(new AccelerateInterpolator())
-        .setListener(new ViewPropertyAnimatorListenerAdapter() {
-          @Override public void onAnimationEnd(View view) {
-            ViewCompat.setElevation(toolbar, DensityUtil.dip2px(8));
-          }
-        });
-  }
-
-  @Override public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.menu_center_trolley, menu);
-
-    MenuItem menuItem = menu.findItem(R.id.action_add);
-    menuItem.setActionView(R.layout.menu_inbox_tv_item);
-    TextView textView = (TextView) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
-    textView.setText(getText(R.string.action_editor));
-
-    menuItem.getActionView().setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-
-      }
-    });
-    return true;
+        .setInterpolator(new AccelerateInterpolator());
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case android.R.id.home:
-        TrolleyActivity.this.startExitAnim();
+        AboutActivity.this.startExitAnim();
         return true;
     }
     return super.onOptionsItemSelected(item);
@@ -110,27 +103,20 @@ public class TrolleyActivity extends RxAppCompatActivity {
 
   @Override public void onBackPressed() {
 
-    TrolleyActivity.this.startExitAnim();
+    AboutActivity.this.startExitAnim();
   }
 
   private void startExitAnim() {
 
-    ViewCompat.setElevation(toolbar, 0);
-
     ViewCompat.animate(rootView)
-        .translationY(DensityUtil.getScreenHeight(TrolleyActivity.this))
-        .setDuration(400)
+        .translationY(DensityUtil.getScreenHeight(AboutActivity.this))
+        .setDuration(200)
         .setInterpolator(new LinearInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
-            TrolleyActivity.super.onBackPressed();
+            AboutActivity.super.onBackPressed();
             overridePendingTransition(0, 0);
           }
         });
-  }
-
-  @Override protected void onDestroy() {
-    super.onDestroy();
-    ButterKnife.unbind(TrolleyActivity.this);
   }
 }

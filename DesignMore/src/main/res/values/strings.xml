@@ -8,4 +8,15 @@
   <string name="user_name_hint">用户名/手机</string>
   <string name="login_layout_free_register">免费注册</string>
   <string name="login_layout_retrieve_password">找回密码</string>
+
+
+  <!--帮助中心-->
+  <string name="help_1">由京东快递发货的订单，在订单打印之前可以修改，打开“订单详情”页面，点击右上角的“修改订单”即可，若没有修改订单的按钮，则表示订单无法修改。
+  </string>
+  <string name="help_2">
+    一般订单未拆分的情况下，清单取消后普通京券和东券系统将在1-3个工作日自动退回您的账户（如订单拆分，优惠券是无法返还的），如果是活动促销领取的优惠券，订单取消后，优惠券是否退回，请以具体活动规则为准；或联系客服帮您处理。
+  </string>
+  <string name="help_3">由京东快递发货的订单，在订单打印之前可以修改。</string>
+  <string name="help_4">一般订单未拆分的情况下，订单取消后普通京券和东券系统将在1-3个工作日自动退回您的账户</string>
+
 </resources>

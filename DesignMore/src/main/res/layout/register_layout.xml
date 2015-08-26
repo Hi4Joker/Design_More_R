@@ -6,7 +6,7 @@
     android:background="@color/primary_background_color"
     >
 
-  <LinearLayout
+ <!-- <LinearLayout
       android:id="@+id/register_layout_toolbar"
       android:layout_width="match_parent"
       android:layout_height="?attr/actionBarSize"
@@ -38,19 +38,20 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginRight="@dimen/material_48dp"
+        android:layout_marginRight="?attr/actionBarSize"
         android:layout_gravity="center"
         android:gravity="center"
         android:text="注 册"
         android:textColor="#77000000"
         android:textSize="@dimen/material_18sp"
         />
+  </LinearLayout>-->
 
-  </LinearLayout>
+  <include layout="@layout/include_white_toolbar_layout"/>
 
   <LinearLayout
       android:id="@+id/register_layout_input_ll"
-      android:layout_below="@id/register_layout_toolbar"
+      android:layout_below="@id/white_toolbar_root"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginTop="@dimen/material_24dp"

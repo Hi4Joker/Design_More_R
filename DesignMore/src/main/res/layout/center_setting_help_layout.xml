@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/help_layout_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/primary_background_color"
+    >
+
+  <include layout="@layout/include_white_toolbar_layout"/>
+
+  <android.support.v4.widget.NestedScrollView
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_marginBottom="@dimen/material_2dp"
+      >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+      <android.support.v7.widget.CardView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="@dimen/material_2dp"
+          app:cardCornerRadius="@dimen/material_corners"
+          app:elevation="@dimen/material_elevation_2dp"
+          >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.CardContent"
+            >
+
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="4dip"
+              android:textColor="@android:color/black"
+              android:textSize="@dimen/material_14sp"
+              android:text="下单后可以修改订单吗"
+              />
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textColor="#BDBDBD"
+              android:textSize="@dimen/material_12sp"
+              android:text="@string/help_1"
+              />
+        </LinearLayout>
+      </android.support.v7.widget.CardView>
+
+      <android.support.v7.widget.CardView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="@dimen/material_2dp"
+          app:cardCornerRadius="@dimen/material_corners"
+          app:elevation="@dimen/material_elevation_2dp"
+          >
+
+        <LinearLayout
+            style="@style/Widget.CardContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="4dip"
+              android:textColor="@android:color/black"
+              android:textSize="@dimen/material_14sp"
+              android:text="我的订单已经取消了，何时给我退款或退优惠券"
+              />
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textColor="#BDBDBD"
+              android:textSize="@dimen/material_12sp"
+              android:text="@string/help_2"
+              />
+        </LinearLayout>
+
+      </android.support.v7.widget.CardView>
+
+      <android.support.v7.widget.CardView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="@dimen/material_2dp"
+          app:cardCornerRadius="@dimen/material_corners"
+          app:elevation="@dimen/material_elevation_2dp"
+          >
+        <LinearLayout
+            style="@style/Widget.CardContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="4dip"
+              android:textColor="@android:color/black"
+              android:textSize="@dimen/material_14sp"
+              android:text="下单后可以修改订单吗"
+              />
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textColor="#BDBDBD"
+              android:textSize="@dimen/material_12sp"
+              android:text="@string/help_4"
+              />
+        </LinearLayout>
+      </android.support.v7.widget.CardView>
+
+      <android.support.v7.widget.CardView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="@dimen/material_2dp"
+          app:cardCornerRadius="@dimen/material_corners"
+          app:elevation="@dimen/material_elevation_2dp"
+          >
+        <LinearLayout
+            style="@style/Widget.CardContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="4dip"
+              android:textColor="@android:color/black"
+              android:textSize="@dimen/material_14sp"
+              android:text="我的订单已经取消了，何时给我退款或退优惠券"
+              />
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textColor="#BDBDBD"
+              android:textSize="@dimen/material_12sp"
+              android:text="@string/help_4"
+              />
+        </LinearLayout>
+      </android.support.v7.widget.CardView>
+
+      <android.support.v7.widget.CardView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          app:cardCornerRadius="@dimen/material_corners"
+          app:elevation="@dimen/material_elevation_2dp"
+          >
+        <LinearLayout
+            style="@style/Widget.CardContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="4dip"
+              android:textColor="@android:color/black"
+              android:textSize="@dimen/material_14sp"
+              android:text="我的订单已经取消了，何时给我退款或退优惠券"
+              />
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textColor="#BDBDBD"
+              android:textSize="@dimen/material_12sp"
+              android:text="@string/help_2"
+              />
+        </LinearLayout>
+      </android.support.v7.widget.CardView>
+    </LinearLayout>
+  </android.support.v4.widget.NestedScrollView>
+
+
+</LinearLayout>
