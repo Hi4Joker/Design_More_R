@@ -33,7 +33,7 @@ public class UserCenterActivity extends RxAppCompatActivity {
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.user_center_layout);
+    setContentView(R.layout.center_main_layout);
     ButterKnife.bind(this);
     EventBusInstance.getDefault().register(UserCenterActivity.this);
 
@@ -106,7 +106,7 @@ public class UserCenterActivity extends RxAppCompatActivity {
    * 个人资料
    */
   @Nullable @OnClick(R.id.center_layout_information_ll) void onInfoClick(View view) {
-    TrolleyActivity.startFromLocation(UserCenterActivity.this,
+    ProfileActivity.startFromLocation(UserCenterActivity.this,
         UserCenterActivity.this.getLocationY(view));
     overridePendingTransition(0, 0);
   }

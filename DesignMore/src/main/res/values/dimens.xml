@@ -25,6 +25,7 @@
 
   <!--material sp-->
   <dimen name="material_12sp">12sp</dimen>
+  <dimen name="material_13sp">13sp</dimen>
   <dimen name="material_14sp">14sp</dimen>
   <dimen name="material_16sp">16sp</dimen>
   <dimen name="material_18sp">18sp</dimen>

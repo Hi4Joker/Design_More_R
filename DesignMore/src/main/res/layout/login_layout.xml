@@ -23,7 +23,7 @@
       android:layout_height="match_parent"
       android:layout_marginTop="@dimen/material_40dp"
       android:layout_below="@id/login_layout_logo_iv"
-      android:visibility="gone"
+      android:visibility="visible"
       >
 
     <LinearLayout
@@ -38,11 +38,7 @@
           android:layout_height="@dimen/material_48dp">
 
         <ImageView
-            android:layout_width="@dimen/material_24dp"
-            android:layout_height="@dimen/material_24dp"
-            android:layout_marginLeft="@dimen/material_24dp"
-            android:layout_centerVertical="true"
-            android:scaleType="centerCrop"
+            style="@style/login_icon_style"
             android:src="@drawable/login_layout_name_icon"
             />
 
@@ -73,11 +69,7 @@
           android:layout_height="@dimen/material_48dp">
 
         <ImageView
-            android:layout_width="@dimen/material_24dp"
-            android:layout_height="@dimen/material_24dp"
-            android:layout_marginLeft="@dimen/material_24dp"
-            android:layout_centerVertical="true"
-            android:scaleType="centerCrop"
+            style="@style/login_icon_style"
             android:src="@drawable/login_layout_password_icon"
             />
 

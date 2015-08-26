@@ -1,17 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/outmost_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_overlay"
     android:clickable="true">
 
-    <FrameLayout
-        android:id="@+id/content_container"
-        android:layout_width="wrap_content"
-        android:clickable="true"
-        android:layout_height="wrap_content">
-    </FrameLayout>
+  <FrameLayout
+      android:id="@+id/content_container"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:clickable="true"
+      >
+  </FrameLayout>
+
+  <!--<android.support.v7.widget.CardView
+      android:id="@+id/content_container"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_margin="@dimen/material_24dp"
+      android:clickable="true"
+      app:cardCornerRadius="@dimen/material_corners"
+      app:elevation="@dimen/material_elevation_2dp"
+      />-->
 
 </FrameLayout>
