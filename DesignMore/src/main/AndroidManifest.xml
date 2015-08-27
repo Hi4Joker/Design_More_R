@@ -44,7 +44,7 @@
 
     <!--用户中心ACT-->
     <activity
-        android:name=".activity.usercenter.UserCenterActivity"
+        android:name=".activity.UserCenterActivity"
         android:screenOrientation="portrait"
         >
       <intent-filter>
@@ -71,6 +71,13 @@
     <!--用户中心ACT -> 个人资料ACT-->
     <activity
         android:name=".activity.usercenter.ProfileActivity"
+        android:screenOrientation="portrait"
+        android:theme="@style/AppTheme.TransparentActivity"
+        >
+    </activity>
+    <!--用户中心ACT -> 个人资料ACT -> 账户安全-->
+    <activity
+        android:name=".activity.usercenter.SafetyActivity"
         android:screenOrientation="portrait"
         android:theme="@style/AppTheme.TransparentActivity"
         >

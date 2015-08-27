@@ -14,6 +14,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.webkit.WebView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
@@ -29,6 +30,8 @@ public class AboutActivity extends BaseActivity {
   private static final String START_LOCATION_Y = "START_LOCATION_Y";
   @Nullable @Bind(R.id.setting_layout_root_view) LinearLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root) Toolbar toolbar;
+  @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
+  @Nullable @Bind(R.id.white_toolbar_title_iv) ImageView toolbarTitleIv;
   @Nullable @Bind(R.id.about_layout_about_wv) WebView aboutWv;
 
   private String ABOUT_HTML = "file:///android_asset/about_designMore.html";
@@ -54,10 +57,8 @@ public class AboutActivity extends BaseActivity {
     AboutActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
 
-    toolbar.findViewById(R.id.white_toolbar_title_iv).setVisibility(View.INVISIBLE);
-    TextView title = (TextView) toolbar.findViewById(R.id.white_toolbar_title_tv);
-    title.setVisibility(View.VISIBLE);
-    title.setText("关于我们");
+    toolbarTitleIv.setVisibility(View.INVISIBLE);
+    toolbarTitleTv.setText("关于我们");
 
     if (savedInstanceState == null) {
       rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -72,8 +73,8 @@ public class AboutActivity extends BaseActivity {
 
   private void startEnterAnim(int startLocationY) {
 
-    rootView.setScaleY(0.0f);
     rootView.setPivotY(startLocationY);
+    rootView.setScaleY(0.0f);
 
     ViewCompat.animate(rootView)
         .scaleY(1.0f)

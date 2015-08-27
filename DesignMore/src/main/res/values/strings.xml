@@ -2,6 +2,7 @@
   <string name="app_name">设计猫</string>
 
   <string name="hello_world">Hello world!</string>
+  <string name="action_String"></string>
   <string name="action_settings">设置</string>
   <string name="action_submit">提交</string>
   <string name="action_editor">编辑</string>

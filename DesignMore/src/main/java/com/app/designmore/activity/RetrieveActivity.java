@@ -21,7 +21,10 @@ import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 public class RetrieveActivity extends RxAppCompatActivity {
 
   private static final String TAG = RetrieveActivity.class.getSimpleName();
+
   @Nullable @Bind(R.id.white_toolbar_root) Toolbar toolbar;
+  @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
+  @Nullable @Bind(R.id.white_toolbar_title_iv) ImageView toolbarTitleIv;
   @Nullable @Bind(R.id.retrieve_layout_phone_et) EditText phoneEt;
   @Nullable @Bind(R.id.retrieve_layout_name_clear_btn) ImageView phoneClearBtn;
   @Nullable @Bind(R.id.retrieve_layout_code_et) EditText codeEt;
@@ -42,9 +45,8 @@ public class RetrieveActivity extends RxAppCompatActivity {
     RetrieveActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
 
-    toolbar.findViewById(R.id.white_toolbar_title_iv).setVisibility(View.INVISIBLE);
-    TextView textView = (TextView) toolbar.findViewById(R.id.white_toolbar_title_tv);
-    textView.setText("找回密码");
+    toolbarTitleIv.setVisibility(View.INVISIBLE);
+    toolbarTitleTv.setText("找回密码");
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {

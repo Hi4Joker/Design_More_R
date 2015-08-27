@@ -10,18 +10,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
+import android.widget.ImageView;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
+import com.app.designmore.activity.UserCenterActivity;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
+import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.utils.Utils;
 import com.bumptech.glide.Glide;
-import java.util.Set;
 
 /**
  * Created by Joker on 2015/8/26.
@@ -31,11 +33,12 @@ public class SettingActivity extends BaseActivity {
   private static final String TAG = SettingActivity.class.getSimpleName();
   private static final int ANIM_DURATION = 300;
 
+  @Nullable @Bind(R.id.setting_layout_root_view) RevealFrameLayout revealFrameLayout;
   @Nullable @Bind(R.id.white_toolbar_root) Toolbar toolbar;
-  @Nullable @Bind(R.id.setting_layout_reveal_view) RevealFrameLayout revealFrameLayout;
+  @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
+  @Nullable @Bind(R.id.white_toolbar_title_iv) ImageView toolbarTitleIv;
   @Nullable @Bind(R.id.setting_layout_cache_tv) TextView cacheTv;
   private SupportAnimator revealAnimator;
-  private int statusBarHeight;
 
   public static void navigateToSetting(UserCenterActivity startingActivity) {
 
@@ -57,23 +60,13 @@ public class SettingActivity extends BaseActivity {
     cacheTv.setText(Utils.FormetFileSize(Glide.getPhotoCacheDir(SettingActivity.this).length()));
   }
 
-  private void getStatusBarHeight() {
-    statusBarHeight = 0;
-    int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-    if (resourceId > 0) {
-      statusBarHeight = getResources().getDimensionPixelSize(resourceId);
-    }
-  }
-
   private void initView(final Bundle savedInstanceState) {
 
     SettingActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
 
-    toolbar.findViewById(R.id.white_toolbar_title_iv).setVisibility(View.INVISIBLE);
-    TextView title = (TextView) toolbar.findViewById(R.id.white_toolbar_title_tv);
-    title.setVisibility(View.VISIBLE);
-    title.setText("设置");
+    toolbarTitleIv.setVisibility(View.INVISIBLE);
+    toolbarTitleTv.setText("设置");
 
     if (savedInstanceState == null) {
       revealFrameLayout.getViewTreeObserver()
@@ -87,8 +80,6 @@ public class SettingActivity extends BaseActivity {
     } else {
       revealFrameLayout.setVisibility(View.VISIBLE);
     }
-
-    SettingActivity.this.getStatusBarHeight();
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {
@@ -102,13 +93,13 @@ public class SettingActivity extends BaseActivity {
 
   @Nullable @OnClick(R.id.setting_layout_about_ll) void onAboutClick(View view) {
 
-    AboutActivity.startFromLocation(SettingActivity.this, SettingActivity.this.getLocationY(view));
+    AboutActivity.startFromLocation(SettingActivity.this, DensityUtil.getLocationY(view));
     overridePendingTransition(0, 0);
   }
 
   @Nullable @OnClick(R.id.setting_layout_help_ll) void onHelpClick(View view) {
 
-    HelpActivity.startFromLocation(SettingActivity.this, SettingActivity.this.getLocationY(view));
+    HelpActivity.startFromLocation(SettingActivity.this, DensityUtil.getLocationY(view));
     overridePendingTransition(0, 0);
   }
 
@@ -116,18 +107,6 @@ public class SettingActivity extends BaseActivity {
 
     Glide.get(SettingActivity.this).clearMemory();
     cacheTv.setText("0KB");
-  }
-
-  private int getLocationY(View item) {
-
-    int[] startingLocation = new int[1];
-    // 得到相对于整个屏幕的区域坐标（左上角坐标——右下角坐标）
-    Rect viewRect = new Rect();
-    item.getGlobalVisibleRect(viewRect);
-
-    startingLocation[0] = (viewRect.top - statusBarHeight) + (viewRect.bottom - statusBarHeight);
-
-    return startingLocation[0] / 2;
   }
 
   @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -185,6 +164,6 @@ public class SettingActivity extends BaseActivity {
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    ButterKnife.unbind(this);
+    ButterKnife.unbind(SettingActivity.this);
   }
 }

@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -17,7 +16,6 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,6 +23,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.R;
+import com.app.designmore.activity.UserCenterActivity;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.utils.DialogManager;
 import com.app.designmore.view.dialogplus.DialogPlus;
@@ -41,6 +40,8 @@ public class ProfileActivity extends RxAppCompatActivity {
 
   @Nullable @Bind(R.id.profile_layout_root_view) LinearLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root) Toolbar toolbar;
+  @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
+  @Nullable @Bind(R.id.white_toolbar_title_iv) ImageView toolbarTitleIv;
   @Nullable @Bind(R.id.profile_layout_avatar_iv) ImageView AvatarIv;
   @Nullable @Bind(R.id.profile_layout_username_tv) TextView usernameTv;
   @Nullable @Bind(R.id.profile_layout_nickname_et) EditText nicknameEt;
@@ -68,10 +69,8 @@ public class ProfileActivity extends RxAppCompatActivity {
     ProfileActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
 
-    toolbar.findViewById(R.id.white_toolbar_title_iv).setVisibility(View.GONE);
-    TextView title = (TextView) toolbar.findViewById(R.id.white_toolbar_title_tv);
-    title.setVisibility(View.VISIBLE);
-    title.setText("个人资料");
+    toolbarTitleIv.setVisibility(View.GONE);
+    toolbarTitleTv.setText("个人资料");
 
     if (savedInstanceState == null) {
       rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -85,11 +84,10 @@ public class ProfileActivity extends RxAppCompatActivity {
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.menu_center_profile, menu);
+    getMenuInflater().inflate(R.menu.menu_center, menu);
 
-    MenuItem menuItem = menu.findItem(R.id.action_submit);
+    MenuItem menuItem = menu.findItem(R.id.action_inbox);
     menuItem.setActionView(R.layout.menu_inbox_tv_item);
-
     TextView textView = (TextView) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
     textView.setText(getText(R.string.action_submit));
 
@@ -156,10 +154,16 @@ public class ProfileActivity extends RxAppCompatActivity {
     dayEt.setHint(split[2]);
   }
 
+  @Nullable @OnClick(R.id.profile_layout_safety_rl) void onSafetyClick(View view) {
+
+    SafetyActivity.startFromLocation(ProfileActivity.this, DensityUtil.getLocationY(view));
+    overridePendingTransition(0, 0);
+  }
+
   private void startEnterAnim(int startLocationY) {
 
-    rootView.setScaleY(0.0f);
     rootView.setPivotY(startLocationY);
+    rootView.setScaleY(0.0f);
 
     ViewCompat.animate(rootView)
         .scaleY(1.0f)

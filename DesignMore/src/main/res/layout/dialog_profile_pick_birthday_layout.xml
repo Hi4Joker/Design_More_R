@@ -142,7 +142,6 @@
           android:background="#44aaaaaa"
           />
     </com.app.designmore.view.MaterialRippleLayout>
-
   </RelativeLayout>
 
 </LinearLayout>

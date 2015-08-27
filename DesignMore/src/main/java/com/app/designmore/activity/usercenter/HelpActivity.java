@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
@@ -29,6 +30,8 @@ public class HelpActivity extends BaseActivity {
 
   @Nullable @Bind(R.id.help_layout_root) LinearLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root) Toolbar toolbar;
+  @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
+  @Nullable @Bind(R.id.white_toolbar_title_iv) ImageView toolbarTitleIv;
 
   public static void startFromLocation(SettingActivity startingActivity, int startingLocationY) {
 
@@ -49,10 +52,8 @@ public class HelpActivity extends BaseActivity {
     HelpActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
 
-    toolbar.findViewById(R.id.white_toolbar_title_iv).setVisibility(View.INVISIBLE);
-    TextView title = (TextView) toolbar.findViewById(R.id.white_toolbar_title_tv);
-    title.setVisibility(View.VISIBLE);
-    title.setText("帮助中心");
+    toolbarTitleIv.setVisibility(View.INVISIBLE);
+    toolbarTitleTv.setText("帮助中心");
 
     if (savedInstanceState == null) {
       rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -67,8 +68,8 @@ public class HelpActivity extends BaseActivity {
 
   private void startEnterAnim(int startLocationY) {
 
-    rootView.setScaleY(0.0f);
     rootView.setPivotY(startLocationY);
+    rootView.setScaleY(0.0f);
 
     ViewCompat.animate(rootView)
         .scaleY(1.0f)

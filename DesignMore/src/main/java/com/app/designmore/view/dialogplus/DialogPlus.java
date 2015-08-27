@@ -2,6 +2,8 @@ package com.app.designmore.view.dialogplus;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -15,6 +17,7 @@ import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 
 import com.app.designmore.R;
+import com.bumptech.glide.load.engine.Resource;
 
 /**
  * @author Orhan Obut
@@ -218,14 +221,21 @@ public class DialogPlus {
    */
   private void initContentView(LayoutInflater inflater, View header, View footer,
       BaseAdapter adapter, int[] padding, int[] margin) {
+
     View contentView = createView(inflater, header, footer, adapter);
-    FrameLayout.LayoutParams params =
+
+    // TODO: 2015/8/28  仓鼠
+    FrameLayout.LayoutParams params = //(FrameLayout.LayoutParams) contentView.getLayoutParams();
         new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT);
+
     params.setMargins(margin[0], margin[1], margin[2], margin[3]);
     contentView.setLayoutParams(params);
     getHolderView().setPadding(padding[0], padding[1], padding[2], padding[3]);
+
     contentContainer.addView(contentView);
+
+    //contentContainer.setBackgroundColor(Color.RED);
   }
 
   /**

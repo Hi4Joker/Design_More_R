@@ -3,6 +3,7 @@ package com.app.designmore.utils;
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
+import com.app.designmore.R;
 import com.app.designmore.view.dialogplus.DialogPlus;
 import com.app.designmore.view.dialogplus.OnBackPressListener;
 import com.app.designmore.view.dialogplus.OnCancelListener;
@@ -70,6 +71,39 @@ public class DialogManager {
           }
         })
         .setCancelable(cancelable)
+        .create();
+    dialog.show();
+
+    return dialog;
+  }
+
+  public DialogPlus showProgressDialog(Context context,
+      final OnBackPressListener onBackPressListener, final OnCancelListener onCancelListener,
+      final OnDismissListener onDismissListener) {
+
+    DialogPlus dialog = DialogPlus.newDialog(context)
+        .setContentHolder(new ViewHolder(R.layout.dialog_progressing_layout))
+        .setGravity(Gravity.CENTER)
+        .setInAnimation(R.anim.slide_in_bottom_super)
+        .setOutAnimation(R.anim.slide_out_bottom_super)
+        .setMargin(DensityUtil.dip2px(88), 0, DensityUtil.dip2px(88), 0)
+        .setPadding(0, DensityUtil.dip2px(24), 0, DensityUtil.dip2px(24))
+        .setOnBackPressListener(new OnBackPressListener() {
+          @Override public void onBackPressed(DialogPlus dialogPlus) {
+            if (onBackPressListener != null) onBackPressListener.onBackPressed(dialogPlus);
+          }
+        })
+        .setOnCancelListener(new OnCancelListener() {
+          @Override public void onCancel(DialogPlus dialog) {
+            if (onCancelListener != null) onCancelListener.onCancel(dialog);
+          }
+        })
+        .setOnDismissListener(new OnDismissListener() {
+          @Override public void onDismiss(DialogPlus dialog) {
+            if (onDismissListener != null) onDismissListener.onDismiss(dialog);
+          }
+        })
+        .setCancelable(true)
         .create();
     dialog.show();
 

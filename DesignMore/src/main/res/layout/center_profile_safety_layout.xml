@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/safety_layout_root_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/primary_background_color"
+    >
+
+  <include layout="@layout/include_white_toolbar_layout"/>
+
+  <!--原密码-->
+  <RelativeLayout
+      android:id="@+id/safety_layout_old_password_rl"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/material_48dp"
+      android:layout_marginTop="@dimen/material_16dp"
+      android:layout_marginBottom="1dip"
+      android:orientation="horizontal"
+      android:background="@android:color/white"
+      >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="@dimen/material_24dp"
+        android:text="旧密码"
+        android:gravity="center"
+        android:textSize="@dimen/material_16sp"
+        android:textColor="@android:color/black"
+        />
+
+    <EditText
+        android:id="@+id/safety_layout_old_password_et"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/material_24dp"
+        android:inputType="number"
+        android:hint="原密码"
+        android:textSize="@dimen/material_16sp"
+        android:background="@drawable/login_edit_background"
+        />
+  </RelativeLayout>
+
+
+  <!--新密码-->
+  <RelativeLayout
+      android:id="@+id/safety_layout_new_password_rl"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/material_48dp"
+      android:layout_marginBottom="1dip"
+      android:orientation="horizontal"
+      android:background="@android:color/white"
+      >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="@dimen/material_24dp"
+        android:text="新密码"
+        android:gravity="center"
+        android:textSize="@dimen/material_16sp"
+        android:textColor="@android:color/black"
+        />
+
+    <EditText
+        android:id="@+id/safety_layout_new_password_et"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/material_24dp"
+        android:inputType="textPassword"
+        android:hint="新密码"
+        android:textSize="@dimen/material_16sp"
+        android:background="@drawable/login_edit_background"
+        />
+  </RelativeLayout>
+
+
+  <!--再次确认密码-->
+  <RelativeLayout
+      android:id="@+id/safety_layout_conifrm_password_rl"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/material_48dp"
+      android:layout_marginBottom="1dip"
+      android:orientation="horizontal"
+      android:background="@android:color/white"
+      >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="@dimen/material_24dp"
+        android:text="再次确认密码"
+        android:gravity="center"
+        android:textSize="@dimen/material_16sp"
+        android:textColor="@android:color/black"
+        />
+
+    <EditText
+        android:id="@+id/safety_layout_confim_password_et"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/material_24dp"
+        android:inputType="textPassword"
+        android:hint="再次确认密码"
+        android:textSize="@dimen/material_16sp"
+        android:background="@drawable/login_edit_background"
+        />
+  </RelativeLayout>
+
+
+</LinearLayout>

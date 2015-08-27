@@ -40,7 +40,6 @@ public class LoginActivity extends BaseActivity {
   private static final String TAG = LoginActivity.class.getSimpleName();
 
   @Nullable @Bind(R.id.login_layout_anim_root) RelativeLayout animRootView;
-  @Nullable @Bind(R.id.login_layout_input_ll) LinearLayout loginInputLl;
   @Nullable @Bind(R.id.login_layout_logo_iv) ImageView loginLogo;
   @Nullable @Bind(R.id.login_layout_name_et) EditText userNameEt;
   @Nullable @Bind(R.id.login_layout_name_clear_btn) ImageView clearNameBtn;
@@ -85,7 +84,6 @@ public class LoginActivity extends BaseActivity {
         .setInterpolator(new OvershootInterpolator(1.2f))
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
-
             if (animRootView != null) animRootView.setVisibility(View.VISIBLE);
           }
         });

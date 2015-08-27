@@ -1,8 +1,6 @@
-package com.app.designmore.activity.usercenter;
+package com.app.designmore.activity;
 
 import android.content.DialogInterface;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -18,15 +16,17 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.R;
+import com.app.designmore.activity.usercenter.ProfileActivity;
+import com.app.designmore.activity.usercenter.SettingActivity;
+import com.app.designmore.activity.usercenter.TrolleyActivity;
 import com.app.designmore.event.FinishEvent;
 import com.app.designmore.manager.CropCircleTransformation;
 import com.app.designmore.manager.EventBusInstance;
+import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
-import com.malinskiy.materialicons.IconDrawable;
-import com.malinskiy.materialicons.Iconify;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import java.util.Arrays;
 import java.util.List;
@@ -59,10 +59,10 @@ public class UserCenterActivity extends RxAppCompatActivity {
 
   private void initView() {
 
+    this.statusBarHeight = DensityUtil.getStatusBarHeight(UserCenterActivity.this);
+
     UserCenterActivity.this.setSupportActionBar(toolbar);
     UserCenterActivity.this.getSupportActionBar().setTitle("");
-
-    UserCenterActivity.this.getStatusBarHeight();
   }
 
   private void setListener() {
@@ -72,22 +72,23 @@ public class UserCenterActivity extends RxAppCompatActivity {
 
     //progressLayout.showLoading(skipIds);
 
-    Drawable emptyDrawable =
-        new IconDrawable(this, Iconify.IconValue.zmdi_shopping_basket).colorRes(
-            android.R.color.white);
-    Drawable errorDrawable =
-        new IconDrawable(this, Iconify.IconValue.zmdi_wifi_off).colorRes(android.R.color.white);
+    /*Drawable emptyDrawable =
+        new IconDrawable(this, Iconify.IconValue.zmdi_shopping_cart_plus).colorRes(
+            android.R.color.white);*/
 
-    progressLayout.showEmpty(emptyDrawable, "Empty Shopping Cart",
-        "Please add things in the cart to continue.", skipIds);
+    /*Drawable errorDrawable = new IconDrawable(this, Iconify.IconValue.zmdi_wifi_off).colorRes(
+        android.R.color.white);*/
 
-    //progressLayout.showError(errorDrawable, "No Connection",
-    //    "We could not establish a connection with our servers. Please try again when you are connected to the internet.",
-    //    "Try Again", new View.OnClickListener() {
-    //      @Override public void onClick(View v) {
-    //
-    //      }
-    //    }, skipIds);
+    /*progressLayout.showEmpty(emptyDrawable, "Empty Shopping Cart",
+        "Please add things in the cart to continue.", skipIds);*/
+
+   /* progressLayout.showError(errorDrawable, "No Connection",
+        "We could not establish a connection with our servers. Please try again when you are connected to the internet.",
+        "Try Again", new View.OnClickListener() {
+          @Override public void onClick(View v) {
+
+          }
+        }, skipIds);*/
 
     BitmapPool bitmapPool = Glide.get(UserCenterActivity.this).getBitmapPool();
     Glide.with(UserCenterActivity.this)
@@ -101,18 +102,10 @@ public class UserCenterActivity extends RxAppCompatActivity {
         .into(avatarIv);
   }
 
-  private void getStatusBarHeight() {
-    statusBarHeight = 0;
-    int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-    if (resourceId > 0) {
-      statusBarHeight = getResources().getDimensionPixelSize(resourceId);
-    }
-  }
-
   @Override public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.menu_center, menu);
 
-    MenuItem menuItem = menu.findItem(R.id.action_setting);
+    MenuItem menuItem = menu.findItem(R.id.action_inbox);
     menuItem.setActionView(R.layout.menu_inbox_btn_item);
     ImageButton imageButton =
         (ImageButton) menuItem.getActionView().findViewById(R.id.action_inbox_btn);
@@ -132,8 +125,7 @@ public class UserCenterActivity extends RxAppCompatActivity {
    */
   @Nullable @OnClick(R.id.center_layout_trolley_ll) void onTrolleyClick(View view) {
 
-    TrolleyActivity.startFromLocation(UserCenterActivity.this,
-        UserCenterActivity.this.getLocationY(view));
+    TrolleyActivity.startFromLocation(UserCenterActivity.this, DensityUtil.getLocationY(view));
     overridePendingTransition(0, 0);
   }
 
@@ -141,8 +133,7 @@ public class UserCenterActivity extends RxAppCompatActivity {
    * 我的订单
    */
   @Nullable @OnClick(R.id.center_layout_order_ll) void onOrderClick(View view) {
-    TrolleyActivity.startFromLocation(UserCenterActivity.this,
-        UserCenterActivity.this.getLocationY(view));
+    TrolleyActivity.startFromLocation(UserCenterActivity.this, DensityUtil.getLocationY(view));
     overridePendingTransition(0, 0);
   }
 
@@ -150,8 +141,7 @@ public class UserCenterActivity extends RxAppCompatActivity {
    * 我的收藏
    */
   @Nullable @OnClick(R.id.center_layout_favorite_ll) void onFavoriteClick(View view) {
-    TrolleyActivity.startFromLocation(UserCenterActivity.this,
-        UserCenterActivity.this.getLocationY(view));
+    TrolleyActivity.startFromLocation(UserCenterActivity.this, DensityUtil.getLocationY(view));
     overridePendingTransition(0, 0);
   }
 
@@ -159,8 +149,7 @@ public class UserCenterActivity extends RxAppCompatActivity {
    * 个人资料
    */
   @Nullable @OnClick(R.id.center_layout_information_ll) void onInfoClick(View view) {
-    ProfileActivity.startFromLocation(UserCenterActivity.this,
-        UserCenterActivity.this.getLocationY(view));
+    ProfileActivity.startFromLocation(UserCenterActivity.this, DensityUtil.getLocationY(view));
     overridePendingTransition(0, 0);
   }
 
@@ -168,8 +157,7 @@ public class UserCenterActivity extends RxAppCompatActivity {
    * 地址管理
    */
   @Nullable @OnClick(R.id.center_layout_address_ll) void onAddressClick(View view) {
-    TrolleyActivity.startFromLocation(UserCenterActivity.this,
-        UserCenterActivity.this.getLocationY(view));
+    TrolleyActivity.startFromLocation(UserCenterActivity.this, DensityUtil.getLocationY(view));
     overridePendingTransition(0, 0);
   }
 
@@ -178,18 +166,6 @@ public class UserCenterActivity extends RxAppCompatActivity {
    */
   @Nullable @OnClick(R.id.center_layout_message_ll) void onMessageClick(View view) {
 
-  }
-
-  private int getLocationY(View item) {
-
-    int[] startingLocation = new int[1];
-    // 得到相对于整个屏幕的区域坐标（左上角坐标——右下角坐标）
-    Rect viewRect = new Rect();
-    item.getGlobalVisibleRect(viewRect);
-
-    startingLocation[0] = (viewRect.top - statusBarHeight) + (viewRect.bottom - statusBarHeight);
-
-    return startingLocation[0] / 2;
   }
 
   @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -210,7 +186,6 @@ public class UserCenterActivity extends RxAppCompatActivity {
           .setPositiveButton("确认", new DialogInterface.OnClickListener() {
             @Override public void onClick(DialogInterface dialog, int which) {
               dialog.dismiss();
-
               if (EventBusInstance.getDefault().hasSubscriberForEvent(FinishEvent.class)) {
                 EventBusInstance.getDefault().post(new FinishEvent());
               }
