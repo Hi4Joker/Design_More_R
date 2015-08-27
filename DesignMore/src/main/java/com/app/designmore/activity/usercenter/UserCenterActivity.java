@@ -2,6 +2,7 @@ package com.app.designmore.activity.usercenter;
 
 import android.content.DialogInterface;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -12,13 +13,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.R;
 import com.app.designmore.event.FinishEvent;
+import com.app.designmore.manager.CropCircleTransformation;
 import com.app.designmore.manager.EventBusInstance;
+import com.app.designmore.view.ProgressLayout;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.malinskiy.materialicons.IconDrawable;
+import com.malinskiy.materialicons.Iconify;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Joker on 2015/8/25.
@@ -27,9 +38,13 @@ public class UserCenterActivity extends RxAppCompatActivity {
 
   private static final String TAG = UserCenterActivity.class.getSimpleName();
 
+  @Nullable @Bind(R.id.center_layout_layout_root_view) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.transparent_toolbar_root) Toolbar toolbar;
+  @Nullable @Bind(R.id.user_center_layout_avatar_iv) ImageView avatarIv;
+
   private AppCompatDialog dialog;
   private int statusBarHeight;
+  private List<Integer> skipIds = Arrays.asList(R.id.center_layout_bar_layout);
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -38,6 +53,8 @@ public class UserCenterActivity extends RxAppCompatActivity {
     EventBusInstance.getDefault().register(UserCenterActivity.this);
 
     UserCenterActivity.this.initView();
+    UserCenterActivity.this.setListener();
+    UserCenterActivity.this.loadData();
   }
 
   private void initView() {
@@ -46,6 +63,42 @@ public class UserCenterActivity extends RxAppCompatActivity {
     UserCenterActivity.this.getSupportActionBar().setTitle("");
 
     UserCenterActivity.this.getStatusBarHeight();
+  }
+
+  private void setListener() {
+  }
+
+  private void loadData() {
+
+    //progressLayout.showLoading(skipIds);
+
+    Drawable emptyDrawable =
+        new IconDrawable(this, Iconify.IconValue.zmdi_shopping_basket).colorRes(
+            android.R.color.white);
+    Drawable errorDrawable =
+        new IconDrawable(this, Iconify.IconValue.zmdi_wifi_off).colorRes(android.R.color.white);
+
+    progressLayout.showEmpty(emptyDrawable, "Empty Shopping Cart",
+        "Please add things in the cart to continue.", skipIds);
+
+    //progressLayout.showError(errorDrawable, "No Connection",
+    //    "We could not establish a connection with our servers. Please try again when you are connected to the internet.",
+    //    "Try Again", new View.OnClickListener() {
+    //      @Override public void onClick(View v) {
+    //
+    //      }
+    //    }, skipIds);
+
+    BitmapPool bitmapPool = Glide.get(UserCenterActivity.this).getBitmapPool();
+    Glide.with(UserCenterActivity.this)
+        .load(R.drawable.test_background)
+        .centerCrop()
+        .crossFade()
+        .bitmapTransform(new CropCircleTransformation(bitmapPool))
+        .placeholder(R.drawable.center_profile_default_icon)
+        .error(R.drawable.center_profile_default_icon)
+        .diskCacheStrategy(DiskCacheStrategy.NONE)
+        .into(avatarIv);
   }
 
   private void getStatusBarHeight() {

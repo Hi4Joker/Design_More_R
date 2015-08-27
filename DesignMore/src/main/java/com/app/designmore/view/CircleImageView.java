@@ -168,14 +168,14 @@ public class CircleImageView extends ImageView {
             Bitmap.Config.ARGB_4444);
     tempCanvas = new Canvas(tempBitmap);
 
-    Log.e(TAG, "tempBitmap width:"
+    /*Log.e(TAG, "tempBitmap width:"
         + tempBitmap.getWidth()
         + "tempBitmap height:"
         + tempBitmap.getHeight());
     Log.e(TAG, "tempCanvas width:"
         + tempCanvas.getWidth()
         + "tempCanvas height:"
-        + tempCanvas.getHeight());
+        + tempCanvas.getHeight());*/
 
     sourceBitmap = clipSource(sourceBitmap);
     /*根据source创建shader，并在指定区域绘制source*/
@@ -256,7 +256,7 @@ public class CircleImageView extends ImageView {
     mMatrix.postTranslate(mBorderWidth / 4, mBorderWidth / 4);
     mBitmapShader.setLocalMatrix(mMatrix);
 
-    Log.e(TAG, "scale:" + scale);
+    //Log.e(TAG, "scale:" + scale);
 
     return scale;
   }
@@ -271,6 +271,8 @@ public class CircleImageView extends ImageView {
     /*回收BitmapShader中的sourceBitmap，然而这并没有什么乱用*/
     if (sourceBitmap != null && !sourceBitmap.isRecycled()) sourceBitmap.recycle();
     if (mBorderPaint != null) {
+
+
       tempCanvas.drawCircle(getWidth() / 2, getHeight() / 2, mRadius + mBorderOffset, mBorderPaint);
     }
 

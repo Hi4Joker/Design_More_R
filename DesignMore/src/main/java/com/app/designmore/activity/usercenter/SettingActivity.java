@@ -21,6 +21,7 @@ import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.utils.Utils;
 import com.bumptech.glide.Glide;
+import java.util.Set;
 
 /**
  * Created by Joker on 2015/8/26.
@@ -28,6 +29,7 @@ import com.bumptech.glide.Glide;
 public class SettingActivity extends BaseActivity {
 
   private static final String TAG = SettingActivity.class.getSimpleName();
+  private static final int ANIM_DURATION = 300;
 
   @Nullable @Bind(R.id.white_toolbar_root) Toolbar toolbar;
   @Nullable @Bind(R.id.setting_layout_reveal_view) RevealFrameLayout revealFrameLayout;
@@ -47,6 +49,12 @@ public class SettingActivity extends BaseActivity {
     ButterKnife.bind(this);
 
     SettingActivity.this.initView(savedInstanceState);
+    SettingActivity.this.getCache();
+  }
+
+  private void getCache() {
+
+    cacheTv.setText(Utils.FormetFileSize(Glide.getPhotoCacheDir(SettingActivity.this).length()));
   }
 
   private void getStatusBarHeight() {
@@ -106,7 +114,8 @@ public class SettingActivity extends BaseActivity {
 
   @Nullable @OnClick(R.id.setting_layout_clear_ll) void onClearClick() {
 
-
+    Glide.get(SettingActivity.this).clearMemory();
+    cacheTv.setText("0KB");
   }
 
   private int getLocationY(View item) {
@@ -135,7 +144,7 @@ public class SettingActivity extends BaseActivity {
     revealAnimator =
         ViewAnimationUtils.createCircularReveal(revealFrameLayout.getChildAt(0), bounds.right,
             bounds.top, 0, Utils.pythagorean(bounds.width(), bounds.height()));
-    revealAnimator.setDuration(200);
+    revealAnimator.setDuration(ANIM_DURATION);
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
       @Override public void onAnimationStart() {
@@ -149,7 +158,7 @@ public class SettingActivity extends BaseActivity {
 
     if (revealAnimator != null && !revealAnimator.isRunning()) {
       revealAnimator = revealAnimator.reverse();
-      revealAnimator.setDuration(200);
+      revealAnimator.setDuration(ANIM_DURATION);
       revealAnimator.setInterpolator(new AccelerateInterpolator());
       revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
         @Override public void onAnimationEnd() {

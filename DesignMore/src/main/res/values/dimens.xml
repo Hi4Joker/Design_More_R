@@ -6,6 +6,7 @@
 
   <!--material dip-->
   <dimen name="material_2dp">2dip</dimen>
+  <dimen name="material_4dp">4dip</dimen>
   <dimen name="material_8dp">8dip</dimen>
   <dimen name="material_16dp">16dip</dimen>
   <dimen name="material_24dp">24dip</dimen>

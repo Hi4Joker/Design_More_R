@@ -1,0 +1,1 @@
+ Cursor cursor = db.query(TABLENAME, null, FINISHED + " = ? ", new String[]{"true"}, null, null, ID + " asc");

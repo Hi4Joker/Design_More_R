@@ -45,4 +45,8 @@ dependencies {
   /*Greenrobot Library*/
   compile 'de.greenrobot:eventbus:2.4.0'
   compile 'de.greenrobot:greendao:2.0.0'
+
+
+  /*图标*/
+  compile 'com.malinskiy:materialicons:1.0.2'
 }

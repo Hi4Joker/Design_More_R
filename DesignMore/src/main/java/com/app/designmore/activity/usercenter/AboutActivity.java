@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
+import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
@@ -28,7 +29,9 @@ public class AboutActivity extends BaseActivity {
   private static final String START_LOCATION_Y = "START_LOCATION_Y";
   @Nullable @Bind(R.id.setting_layout_root_view) LinearLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root) Toolbar toolbar;
-  @Nullable @Bind(R.id.about_layout_about_tv) TextView aboutTv;
+  @Nullable @Bind(R.id.about_layout_about_wv) WebView aboutWv;
+
+  private String ABOUT_HTML = "file:///android_asset/about_designMore.html";
 
   public static void startFromLocation(SettingActivity startingActivity, int startingLocationY) {
 
@@ -46,22 +49,7 @@ public class AboutActivity extends BaseActivity {
 
   private void initView(Bundle savedInstanceState) {
 
-    String html = "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">\n"
-        + "<head>\n"
-        + "\t<meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\">\n"
-        + "\t<title>关于我们</title>\n"
-        + "</head>\n"
-        + "<body>\n"
-        + "\t<div id=\"container\" style=\"font-family\">\n"
-        + "\t\t<p><font face='微软雅黑'  color=\"gray\">欢迎来到聚美优品，深受千万用户信赖的全球领先化妆品限时特卖网站。</font></p>\n"
-        + "\t\t<p><font face='微软雅黑'  color=\"gray\">聚美优品由海归学子、陈欧、戴雨森、刘辉创立于2010年3月，致力于创造简单、有趣、值得信赖的化妆品购物体验。首创了“化妆品团购”概念：每天在网站推荐几百款热门化妆品，并以远低于市场价折扣限量出售。从创立伊始，聚美优品便坚持以用户体验为最高诉求，承诺“100%正品”、“100%实拍” 和 “30天拆封无条件退货” 政策，竭力为每一个女孩带来独一无二的美丽惊喜。\n"
-        + "\t\t</font></p>\n"
-        + "\t\t<p><font face='微软雅黑'  color=\"gray\">从2010年3月成立至今，凭借口碑传播，聚美优品已经发展成为在北京、上海、成都、广州、沈阳拥有总面积达五万多平米的自建仓储、专业客服中心、超过3000万注册用户、月销售超过6亿元中国领先的化。</font></p>\n"
-        + "\t</div>\n"
-        + "</body>\n"
-        + "</html>";
-
-    aboutTv.setText(Html.fromHtml(html));
+    aboutWv.loadUrl(ABOUT_HTML);
 
     AboutActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
@@ -121,5 +109,10 @@ public class AboutActivity extends BaseActivity {
             overridePendingTransition(0, 0);
           }
         });
+  }
+
+  @Override protected void onDestroy() {
+    if (aboutWv != null) aboutWv.destroy();
+    super.onDestroy();
   }
 }
