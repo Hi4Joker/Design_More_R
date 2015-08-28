@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/material_16dp"
+    android:layout_marginRight="@dimen/material_16dp"
+    app:cardCornerRadius="@dimen/material_corners"
+    app:elevation="@dimen/material_elevation_2dp"
+    app:cardBackgroundColor="@android:color/white"
+    >
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_marginLeft="@dimen/material_8dp"
+      android:layout_marginRight="@dimen/material_8dp"
+      android:layout_marginTop="@dimen/material_8dp"
+      android:layout_marginBottom="@dimen/material_8dp"
+      android:orientation="horizontal"
+      >
+    <com.app.designmore.view.progress.CircularProgressView
+        android:id="@+id/dialog_progressing_layout_cpv"
+        android:layout_width="@dimen/material_48dp"
+        android:layout_height="@dimen/material_48dp"
+        android:layout_marginLeft="@dimen/material_16dp"
+        android:layout_marginRight="@dimen/material_16dp"
+        app:cpv_animAutostart="true"
+        app:cpv_indeterminate="true"
+        app:cpv_color="@android:color/holo_blue_light"
+        app:cpv_thickness="@dimen/material_3dp"
+        />
+
+    <TextView
+        android:layout_toRightOf="@id/dialog_progressing_layout_cpv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textSize="@dimen/material_13sp"
+        android:textColor="@android:color/holo_blue_dark"
+        android:text="正在加载请稍后......"
+        />
+  </LinearLayout>
+
+</android.support.v7.widget.CardView>

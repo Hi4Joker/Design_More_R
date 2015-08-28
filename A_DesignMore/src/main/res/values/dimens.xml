@@ -38,6 +38,8 @@
 
   <dimen name="material_corners">2dip</dimen>
   <dimen name="material_elevation_2dp">2dip</dimen>
+  <dimen name="material_elevation_4dp">4dip</dimen>
+  <dimen name="material_elevation_6dp">6dip</dimen>
 
 
 </resources>

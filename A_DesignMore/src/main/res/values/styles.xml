@@ -6,6 +6,9 @@
     <!--<item name="colorAccent">@android:color/white</item>-->
   </style>
 
+  <style name="SplashTheme" parent="AppTheme">
+    <item name="android:background">@drawable/splash_background</item>
+  </style>
 
   <style name="AppTheme.TransparentActivity">
     <item name="android:windowBackground">@android:color/transparent</item>
@@ -14,7 +17,7 @@
 
   <style name="AppTheme.WhiteActivity">
     <item name="android:windowBackground">@android:color/white</item>
-    <item name="android:windowIsTranslucent">true</item>
+    <item name="android:windowIsTranslucent">false</item>
   </style>
 
 
@@ -93,5 +96,6 @@
     <item name="android:paddingBottom">@dimen/material_16dp</item>
     <item name="android:orientation">vertical</item>
   </style>
+
 
 </resources>
