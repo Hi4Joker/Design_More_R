@@ -1,15 +1,20 @@
 package com.app.designmore.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import butterknife.Bind;
@@ -22,7 +27,11 @@ import com.app.designmore.activity.usercenter.TrolleyActivity;
 import com.app.designmore.event.FinishEvent;
 import com.app.designmore.manager.CropCircleTransformation;
 import com.app.designmore.manager.EventBusInstance;
+import com.app.designmore.revealLib.animation.SupportAnimator;
+import com.app.designmore.revealLib.animation.ViewAnimationUtils;
+import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.utils.DensityUtil;
+import com.app.designmore.utils.Utils;
 import com.app.designmore.view.ProgressLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -37,14 +46,22 @@ import java.util.List;
 public class UserCenterActivity extends RxAppCompatActivity {
 
   private static final String TAG = UserCenterActivity.class.getSimpleName();
+  private static final int ANIM_DURATION = 600;
 
-  @Nullable @Bind(R.id.center_layout_layout_root_view) ProgressLayout progressLayout;
+  @Nullable @Bind(R.id.center_layout_root_view) RevealFrameLayout rootView;
+  @Nullable @Bind(R.id.center_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.transparent_toolbar_root) Toolbar toolbar;
   @Nullable @Bind(R.id.user_center_layout_avatar_iv) ImageView avatarIv;
 
   private AppCompatDialog dialog;
-  private int statusBarHeight;
   private List<Integer> skipIds = Arrays.asList(R.id.center_layout_bar_layout);
+  private SupportAnimator revealAnimator;
+
+  public static void navigateToUserCenter(AppCompatActivity startingActivity) {
+
+    Intent intent = new Intent(startingActivity, UserCenterActivity.class);
+    startingActivity.startActivity(intent);
+  }
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -52,17 +69,39 @@ public class UserCenterActivity extends RxAppCompatActivity {
     ButterKnife.bind(this);
     EventBusInstance.getDefault().register(UserCenterActivity.this);
 
-    UserCenterActivity.this.initView();
+    UserCenterActivity.this.initView(savedInstanceState);
     UserCenterActivity.this.setListener();
     UserCenterActivity.this.loadData();
   }
 
-  private void initView() {
-
-    this.statusBarHeight = DensityUtil.getStatusBarHeight(UserCenterActivity.this);
+  private void initView(Bundle savedInstanceState) {
 
     UserCenterActivity.this.setSupportActionBar(toolbar);
     UserCenterActivity.this.getSupportActionBar().setTitle("");
+
+    if (savedInstanceState == null) {
+
+      rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+        @Override public boolean onPreDraw() {
+          rootView.getViewTreeObserver().removeOnPreDrawListener(this);
+          UserCenterActivity.this.startEnterAnim();
+          return true;
+        }
+      });
+    }
+  }
+
+  private void startEnterAnim() {
+
+    final Rect bounds = new Rect();
+    rootView.getHitRect(bounds);
+
+    revealAnimator =
+        ViewAnimationUtils.createCircularReveal(rootView.getChildAt(0), bounds.left, bounds.top, 0,
+            Utils.pythagorean(bounds.width(), bounds.height()));
+    revealAnimator.setDuration(ANIM_DURATION);
+    revealAnimator.setInterpolator(new AccelerateInterpolator());
+    revealAnimator.start();
   }
 
   private void setListener() {

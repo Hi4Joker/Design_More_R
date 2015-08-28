@@ -33,7 +33,7 @@ public class SettingActivity extends BaseActivity {
   private static final String TAG = SettingActivity.class.getSimpleName();
   private static final int ANIM_DURATION = 300;
 
-  @Nullable @Bind(R.id.setting_layout_root_view) RevealFrameLayout revealFrameLayout;
+  @Nullable @Bind(R.id.setting_layout_root_view) RevealFrameLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root) Toolbar toolbar;
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
   @Nullable @Bind(R.id.white_toolbar_title_iv) ImageView toolbarTitleIv;
@@ -69,16 +69,13 @@ public class SettingActivity extends BaseActivity {
     toolbarTitleTv.setText("设置");
 
     if (savedInstanceState == null) {
-      revealFrameLayout.getViewTreeObserver()
-          .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override public boolean onPreDraw() {
-              revealFrameLayout.getViewTreeObserver().removeOnPreDrawListener(this);
-              SettingActivity.this.startEnterAnim();
-              return true;
-            }
-          });
-    } else {
-      revealFrameLayout.setVisibility(View.VISIBLE);
+      rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+        @Override public boolean onPreDraw() {
+          rootView.getViewTreeObserver().removeOnPreDrawListener(this);
+          SettingActivity.this.startEnterAnim();
+          return true;
+        }
+      });
     }
   }
 
@@ -118,18 +115,13 @@ public class SettingActivity extends BaseActivity {
 
   private void startEnterAnim() {
     final Rect bounds = new Rect();
-    revealFrameLayout.getHitRect(bounds);
+    rootView.getHitRect(bounds);
 
     revealAnimator =
-        ViewAnimationUtils.createCircularReveal(revealFrameLayout.getChildAt(0), bounds.right,
-            bounds.top, 0, Utils.pythagorean(bounds.width(), bounds.height()));
+        ViewAnimationUtils.createCircularReveal(rootView.getChildAt(0), bounds.right, bounds.top, 0,
+            Utils.pythagorean(bounds.width(), bounds.height()));
     revealAnimator.setDuration(ANIM_DURATION);
     revealAnimator.setInterpolator(new AccelerateInterpolator());
-    revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
-      @Override public void onAnimationStart() {
-        revealFrameLayout.setVisibility(View.VISIBLE);
-      }
-    });
     revealAnimator.start();
   }
 
@@ -141,7 +133,7 @@ public class SettingActivity extends BaseActivity {
       revealAnimator.setInterpolator(new AccelerateInterpolator());
       revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
         @Override public void onAnimationEnd() {
-          revealFrameLayout.setVisibility(View.GONE);
+          rootView.setVisibility(View.GONE);
           SettingActivity.this.finish();
         }
 

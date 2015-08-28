@@ -10,6 +10,7 @@ import android.text.Html;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewPropertyAnimator;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
@@ -28,7 +29,7 @@ import com.app.designmore.utils.DensityUtil;
 public class AboutActivity extends BaseActivity {
 
   private static final String START_LOCATION_Y = "START_LOCATION_Y";
-  @Nullable @Bind(R.id.setting_layout_root_view) LinearLayout rootView;
+  @Nullable @Bind(R.id.about_layout_root_view) LinearLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root) Toolbar toolbar;
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
   @Nullable @Bind(R.id.white_toolbar_title_iv) ImageView toolbarTitleIv;

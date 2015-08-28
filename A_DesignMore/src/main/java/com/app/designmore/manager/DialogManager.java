@@ -1,9 +1,15 @@
-package com.app.designmore.utils;
+package com.app.designmore.manager;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.drm.ProcessedData;
+import android.os.Message;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import com.app.designmore.R;
+import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.dialogplus.DialogPlus;
 import com.app.designmore.view.dialogplus.OnBackPressListener;
 import com.app.designmore.view.dialogplus.OnCancelListener;
@@ -77,36 +83,55 @@ public class DialogManager {
     return dialog;
   }
 
-  public DialogPlus showProgressDialog(Context context,
-      final OnBackPressListener onBackPressListener, final OnCancelListener onCancelListener,
-      final OnDismissListener onDismissListener) {
+  public ProgressDialog showProgressDialog(Context context,
+      final DialogInterface.OnShowListener onShowListener,
+      final DialogInterface.OnCancelListener onCancelListener) {
 
-    DialogPlus dialog = DialogPlus.newDialog(context)
-        .setContentHolder(new ViewHolder(R.layout.dialog_progressing_layout))
-        .setGravity(Gravity.CENTER)
-        .setInAnimation(R.anim.slide_in_bottom_super)
-        .setOutAnimation(R.anim.slide_out_bottom_super)
-        .setMargin(DensityUtil.dip2px(88), 0, DensityUtil.dip2px(88), 0)
-        .setPadding(0, DensityUtil.dip2px(24), 0, DensityUtil.dip2px(24))
-        .setOnBackPressListener(new OnBackPressListener() {
-          @Override public void onBackPressed(DialogPlus dialogPlus) {
-            if (onBackPressListener != null) onBackPressListener.onBackPressed(dialogPlus);
-          }
-        })
-        .setOnCancelListener(new OnCancelListener() {
-          @Override public void onCancel(DialogPlus dialog) {
-            if (onCancelListener != null) onCancelListener.onCancel(dialog);
-          }
-        })
-        .setOnDismissListener(new OnDismissListener() {
-          @Override public void onDismiss(DialogPlus dialog) {
-            if (onDismissListener != null) onDismissListener.onDismiss(dialog);
-          }
-        })
-        .setCancelable(true)
-        .create();
-    dialog.show();
+    ProgressDialog progressDialog = new ProgressDialog(context);
+    progressDialog.setCancelable(true);
+    progressDialog.setCanceledOnTouchOutside(false);
 
-    return dialog;
+    progressDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+      @Override public void onShow(DialogInterface dialog) {
+        if (onShowListener != null) onShowListener.onShow(dialog);
+      }
+    });
+
+    /*progressDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+      @Override public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0 && callback != null) {
+          callback.onBackPressListener(dialog);
+          return true;
+        }
+        return false;
+      }
+    });*/
+
+    progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+      @Override public void onCancel(DialogInterface dialog) {
+        if (onCancelListener != null) {
+          onCancelListener.onCancel(dialog);
+        }
+      }
+    });
+
+   /* progressDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+      @Override public void onDismiss(DialogInterface dialog) {
+        if (onDismissListener != null) {
+          onDismissListener.onDismiss(dialog);
+        }
+      }
+    });*/
+
+    progressDialog.show();
+    progressDialog.setContentView(R.layout.dialog_progressing_layout);
+
+    return progressDialog;
+  }
+
+  interface Callback {
+
+    void onBackPressListener(DialogInterface dialog);
   }
 }

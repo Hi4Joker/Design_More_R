@@ -25,7 +25,7 @@ import butterknife.OnClick;
 import com.app.designmore.R;
 import com.app.designmore.activity.UserCenterActivity;
 import com.app.designmore.utils.DensityUtil;
-import com.app.designmore.utils.DialogManager;
+import com.app.designmore.manager.DialogManager;
 import com.app.designmore.view.dialogplus.DialogPlus;
 import com.app.designmore.view.dialogplus.OnClickListener;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;

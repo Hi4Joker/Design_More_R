@@ -1,8 +1,11 @@
 package com.app.designmore.activity.usercenter;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.widget.Toolbar;
@@ -21,13 +24,20 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.app.designmore.R;
+import com.app.designmore.rx.schedulers.AndroidSchedulers;
 import com.app.designmore.utils.DensityUtil;
-import com.app.designmore.utils.DialogManager;
+import com.app.designmore.manager.DialogManager;
 import com.app.designmore.view.dialogplus.DialogPlus;
 import com.app.designmore.view.dialogplus.OnBackPressListener;
 import com.app.designmore.view.dialogplus.OnCancelListener;
 import com.app.designmore.view.dialogplus.OnDismissListener;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
+import java.util.concurrent.TimeUnit;
+import rx.Observable;
+import rx.Subscriber;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Joker on 2015/8/27.
@@ -114,25 +124,41 @@ public class SafetyActivity extends RxAppCompatActivity {
     TextView textView = (TextView) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
     textView.setText(getText(R.string.action_submit));
 
+    Observable.range(0, 60, Schedulers.computation()).first().filter(new Func1<Integer, Boolean>() {
+      @Override public Boolean call(Integer integer) {
+        return null;
+      }
+    }).timeout(new Func1<Integer, Observable<Integer>>() {
+      @Override public Observable<Integer> call(Integer integer) {
+
+        return null;
+      }
+    }, Observable.create(new Observable.OnSubscribe<Integer>() {
+      @Override public void call(Subscriber<? super Integer> subscriber) {
+
+      }
+    })).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+      @Override public void call(Integer integer) {
+        Log.e(TAG, "call:" + integer);
+      }
+    });
+
     menuItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
 
-        DialogPlus dialogPlus = DialogManager.getInstance()
-            .showProgressDialog(SafetyActivity.this, new OnBackPressListener() {
-              @Override public void onBackPressed(DialogPlus dialogPlus) {
-                Log.e(TAG, "onBackPressed");
+        DialogManager.getInstance()
+            .showProgressDialog(SafetyActivity.this, new DialogInterface.OnShowListener() {
+              @Override public void onShow(DialogInterface dialog) {
+                Log.e(TAG, "onShow");
               }
-            }, new OnCancelListener() {
-              @Override public void onCancel(DialogPlus dialog) {
+            }, new DialogInterface.OnCancelListener() {
+              @Override public void onCancel(DialogInterface dialog) {
                 Log.e(TAG, "onCancel");
-              }
-            }, new OnDismissListener() {
-              @Override public void onDismiss(DialogPlus dialog) {
-                Log.e(TAG, "onDismiss");
               }
             });
       }
     });
+
     return true;
   }
 

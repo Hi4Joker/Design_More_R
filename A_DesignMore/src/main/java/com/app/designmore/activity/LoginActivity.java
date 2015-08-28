@@ -4,18 +4,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPropertyAnimatorCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.OnClick;
 import com.app.designmore.R;
@@ -38,15 +37,22 @@ public class LoginActivity extends BaseActivity {
    Log.e(TAG, userInfoEntity.getPhone());*/
 
   private static final String TAG = LoginActivity.class.getSimpleName();
+  private static final long ANIM_DURATION = 600;
 
   @Nullable @Bind(R.id.login_layout_anim_root) RelativeLayout animRootView;
-  @Nullable @Bind(R.id.login_layout_logo_iv) ImageView loginLogo;
+  @Nullable @Bind(R.id.login_layout_logo_iv) ImageView loginLogoIv;
   @Nullable @Bind(R.id.login_layout_name_et) EditText userNameEt;
   @Nullable @Bind(R.id.login_layout_name_clear_btn) ImageView clearNameBtn;
   @Nullable @Bind(R.id.login_layout_password_et) EditText passwordEt;
   @Nullable @Bind(R.id.login_layout_login_btn) Button loginBtn;
 
   private Subscription subscription = Subscriptions.empty();
+
+  public static void navigateToLogin(AppCompatActivity startingActivity) {
+
+    Intent intent = new Intent(startingActivity, LoginActivity.class);
+    startingActivity.startActivity(intent);
+  }
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -58,10 +64,10 @@ public class LoginActivity extends BaseActivity {
   private void initView(Bundle savedInstanceState) {
 
     if (savedInstanceState == null) {
-      loginLogo.getViewTreeObserver()
+      loginLogoIv.getViewTreeObserver()
           .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override public boolean onPreDraw() {
-              loginLogo.getViewTreeObserver().removeOnPreDrawListener(this);
+              loginLogoIv.getViewTreeObserver().removeOnPreDrawListener(this);
               LoginActivity.this.startEnterAnim();
               return true;
             }
@@ -73,15 +79,20 @@ public class LoginActivity extends BaseActivity {
 
   private void startEnterAnim() {
 
-    ViewCompat.setTranslationY(loginLogo, DensityUtil.dip2px(120));
-    ViewCompat.setAlpha(loginLogo, 0);
+    int startY = DensityUtil.getScreenHeight(LoginActivity.this) - DensityUtil.getStatusBarHeight(
+        LoginActivity.this) - loginLogoIv.getHeight();
+    Log.e(TAG, "startEnterAnim :" + startY);
 
-    ViewCompat.animate(loginLogo)
+    ViewCompat.setY(loginLogoIv, startY / 2);
+    ViewCompat.setAlpha(loginLogoIv, 0);
+
+    //ViewCompat.setTranslationY(loginLogoIv, DensityUtil.dip2px(120));
+
+    ViewCompat.animate(loginLogoIv)
         .alpha(255)
         .translationY(0.0f)
-        .setDuration(1000)
-        .setStartDelay(400)
-        .setInterpolator(new OvershootInterpolator(1.2f))
+        .setDuration(ANIM_DURATION)
+        .setInterpolator(new LinearInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
             if (animRootView != null) animRootView.setVisibility(View.VISIBLE);
