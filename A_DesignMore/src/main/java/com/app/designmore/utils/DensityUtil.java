@@ -2,6 +2,7 @@ package com.app.designmore.utils;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.view.Display;
@@ -18,6 +19,7 @@ public class DensityUtil {
   private static int screenHeight;
   private static int screenWidth;
   private static int statusBarHeight;
+  private static int actionBarSize;
 
   /**
    * 根据手机的分辨率从 dp 的单位 转成为 px(像素)
@@ -51,6 +53,9 @@ public class DensityUtil {
     return (int) (spValue * fontScale + 0.5f);
   }
 
+  /**
+   * 获取屏幕高度
+   */
   public static int getScreenHeight(Context context) {
     if (screenHeight == 0) {
       WindowManager wm =
@@ -64,6 +69,9 @@ public class DensityUtil {
     return screenHeight;
   }
 
+  /**
+   * 获取屏幕宽度
+   */
   public static int getScreenWidth(Context context) {
     if (screenWidth == 0) {
       WindowManager wm =
@@ -77,6 +85,9 @@ public class DensityUtil {
     return screenWidth;
   }
 
+  /**
+   * 获取状态栏高度
+   */
   public static int getStatusBarHeight(Context context) {
 
     if (statusBarHeight == 0) {
@@ -89,6 +100,20 @@ public class DensityUtil {
       }
     }
     return statusBarHeight;
+  }
+
+  /**
+   * 获取ActionBarSize
+   */
+  public static int getActionBarSize(Context context) {
+
+    if (actionBarSize == 0) {
+      TypedArray actionbarSizeTypedArray =
+          context.obtainStyledAttributes(new int[] { android.R.attr.actionBarSize });
+      actionBarSize = (int) actionbarSizeTypedArray.getDimension(0, 0);
+    }
+
+    return actionBarSize;
   }
 
   public static int getLocationY(View item) {

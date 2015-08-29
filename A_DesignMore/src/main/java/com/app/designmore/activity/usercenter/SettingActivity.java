@@ -11,13 +11,15 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
-import com.app.designmore.activity.UserCenterActivity;
+import com.app.designmore.activity.MineActivity;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
@@ -31,16 +33,14 @@ import com.bumptech.glide.Glide;
 public class SettingActivity extends BaseActivity {
 
   private static final String TAG = SettingActivity.class.getSimpleName();
-  private static final int ANIM_DURATION = 300;
 
   @Nullable @Bind(R.id.setting_layout_root_view) RevealFrameLayout rootView;
-  @Nullable @Bind(R.id.white_toolbar_root) Toolbar toolbar;
+  @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
-  @Nullable @Bind(R.id.white_toolbar_title_iv) ImageView toolbarTitleIv;
   @Nullable @Bind(R.id.setting_layout_cache_tv) TextView cacheTv;
   private SupportAnimator revealAnimator;
 
-  public static void navigateToSetting(UserCenterActivity startingActivity) {
+  public static void navigateToSetting(MineActivity startingActivity) {
 
     Intent intent = new Intent(startingActivity, SettingActivity.class);
     startingActivity.startActivity(intent);
@@ -65,7 +65,9 @@ public class SettingActivity extends BaseActivity {
     SettingActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
 
-    toolbarTitleIv.setVisibility(View.INVISIBLE);
+    LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toolbarTitleTv.getLayoutParams();
+    params.rightMargin = DensityUtil.getActionBarSize(SettingActivity.this);
+    toolbarTitleTv.setVisibility(View.VISIBLE);
     toolbarTitleTv.setText("设置");
 
     if (savedInstanceState == null) {
@@ -118,9 +120,9 @@ public class SettingActivity extends BaseActivity {
     rootView.getHitRect(bounds);
 
     revealAnimator =
-        ViewAnimationUtils.createCircularReveal(rootView.getChildAt(0), bounds.right, bounds.top, 0,
+        ViewAnimationUtils.createCircularReveal(rootView.getChildAt(0), bounds.right, 0, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
-    revealAnimator.setDuration(ANIM_DURATION);
+    revealAnimator.setDuration(Constants.REVEAL_DURATION);
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.start();
   }
@@ -129,7 +131,7 @@ public class SettingActivity extends BaseActivity {
 
     if (revealAnimator != null && !revealAnimator.isRunning()) {
       revealAnimator = revealAnimator.reverse();
-      revealAnimator.setDuration(ANIM_DURATION);
+      revealAnimator.setDuration(Constants.REVEAL_DURATION);
       revealAnimator.setInterpolator(new AccelerateInterpolator());
       revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
         @Override public void onAnimationEnd() {

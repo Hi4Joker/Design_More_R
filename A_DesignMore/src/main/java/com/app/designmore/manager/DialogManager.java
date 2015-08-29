@@ -5,10 +5,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.drm.ProcessedData;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Button;
 import com.app.designmore.R;
+import com.app.designmore.activity.MineActivity;
+import com.app.designmore.event.FinishEvent;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.dialogplus.DialogPlus;
 import com.app.designmore.view.dialogplus.OnBackPressListener;
@@ -128,6 +132,31 @@ public class DialogManager {
     progressDialog.setContentView(R.layout.dialog_progressing_layout);
 
     return progressDialog;
+  }
+
+  public void showExitDialog(Context context,
+      final DialogInterface.OnClickListener onClickListener) {
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+    builder.setTitle("提示")
+        .setMessage("确认退出吗？")
+        .setCancelable(false)
+        .setInverseBackgroundForced(false)
+        .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialog, int which) {
+            dialog.dismiss();
+            if (onClickListener != null) {
+              onClickListener.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
+            }
+            EventBusInstance.getDefault().removeAllStickyEvents();
+          }
+        })
+        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialog, int which) {
+            dialog.dismiss();
+          }
+        });
+    builder.create().show();
   }
 
   interface Callback {

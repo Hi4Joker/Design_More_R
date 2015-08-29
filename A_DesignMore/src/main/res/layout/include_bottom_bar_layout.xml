@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottom_bar_root_view"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/material_48dp"
+    android:layout_alignParentBottom="true"
+    android:background="@android:color/white"
+    >
+
+  <!--首页-->
+  <RelativeLayout
+      android:id="@+id/bottom_bar_home_rl"
+      android:layout_width="0dip"
+      android:layout_weight="1"
+      android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/bottom_bar_home_iv"
+        android:src="@drawable/bottom_home_default_icon"
+        style="@style/bottom_bar_icon_style"/>
+    <TextView
+        android:id="@+id/bottom_bar_home_tv"
+        android:layout_below="@id/bottom_bar_home_iv"
+        android:text="首页"
+        style="@style/bottom_bar_text_style"/>
+  </RelativeLayout>
+
+  <!--上新-->
+  <RelativeLayout
+      android:id="@+id/bottom_bar_fashion_rl"
+      android:layout_width="0dip"
+      android:layout_weight="1"
+      android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/bottom_bar_fashion_iv"
+        android:src="@drawable/bottom_fashion_default_icon"
+        style="@style/bottom_bar_icon_style"
+        />
+    <TextView
+        android:id="@+id/bottom_bar_fashion_tv"
+        android:layout_below="@id/bottom_bar_fashion_iv"
+        android:text="上新"
+        style="@style/bottom_bar_text_style"
+        />
+  </RelativeLayout>
+
+  <!--杂志-->
+  <RelativeLayout
+      android:id="@+id/bottom_bar_journal_rl"
+      android:layout_width="0dip"
+      android:layout_weight="1"
+      android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/bottom_bar_journal_iv"
+        android:src="@drawable/bottom_journal_default_icon"
+        style="@style/bottom_bar_icon_style"
+        />
+    <TextView
+        android:id="@+id/bottom_bar_journal_tv"
+        android:layout_below="@id/bottom_bar_journal_iv"
+        android:text="杂志"
+        style="@style/bottom_bar_text_style"
+        />
+  </RelativeLayout>
+
+  <!--mine-->
+  <RelativeLayout
+      android:id="@+id/bottom_bar_mine_rl"
+      android:layout_width="0dip"
+      android:layout_weight="1"
+      android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/bottom_bar_mine_iv"
+        android:src="@drawable/bottom_center_mine_icon"
+        style="@style/bottom_bar_icon_style"
+        />
+    <TextView
+        android:id="@+id/bottom_bar_mine_tv"
+        android:layout_below="@id/bottom_bar_mine_iv"
+        android:text="我"
+        style="@style/bottom_bar_text_style"
+        />
+  </RelativeLayout>
+
+</LinearLayout>

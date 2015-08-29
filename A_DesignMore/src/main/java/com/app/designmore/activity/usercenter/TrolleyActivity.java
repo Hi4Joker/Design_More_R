@@ -19,7 +19,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.app.designmore.R;
-import com.app.designmore.activity.UserCenterActivity;
+import com.app.designmore.activity.MineActivity;
 import com.app.designmore.utils.DensityUtil;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
@@ -31,11 +31,10 @@ public class TrolleyActivity extends RxAppCompatActivity {
   private static final String TAG = TrolleyActivity.class.getSimpleName();
   private static final String START_LOCATION_Y = "START_LOCATION_Y";
   @Nullable @Bind(R.id.trolley_layout_root_view) LinearLayout rootView;
-  @Nullable @Bind(R.id.white_toolbar_root) Toolbar toolbar;
+  @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
-  @Nullable @Bind(R.id.white_toolbar_title_iv) ImageView toolbarTitleIv;
 
-  public static void startFromLocation(UserCenterActivity startingActivity, int startingLocationY) {
+  public static void startFromLocation(MineActivity startingActivity, int startingLocationY) {
 
     Intent intent = new Intent(startingActivity, TrolleyActivity.class);
     intent.putExtra(START_LOCATION_Y, startingLocationY);
@@ -55,7 +54,7 @@ public class TrolleyActivity extends RxAppCompatActivity {
     TrolleyActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
 
-    toolbarTitleIv.setVisibility(View.GONE);
+    toolbarTitleTv.setVisibility(View.VISIBLE);
     toolbarTitleTv.setText("购物车");
 
     if (savedInstanceState == null) {

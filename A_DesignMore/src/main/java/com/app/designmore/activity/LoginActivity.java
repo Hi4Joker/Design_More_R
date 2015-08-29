@@ -81,12 +81,9 @@ public class LoginActivity extends BaseActivity {
 
     int startY = DensityUtil.getScreenHeight(LoginActivity.this) - DensityUtil.getStatusBarHeight(
         LoginActivity.this) - loginLogoIv.getHeight();
-    Log.e(TAG, "startEnterAnim :" + startY);
 
     ViewCompat.setY(loginLogoIv, startY / 2);
     ViewCompat.setAlpha(loginLogoIv, 0);
-
-    //ViewCompat.setTranslationY(loginLogoIv, DensityUtil.dip2px(120));
 
     ViewCompat.animate(loginLogoIv)
         .alpha(255)

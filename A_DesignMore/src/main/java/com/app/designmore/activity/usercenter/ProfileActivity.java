@@ -23,7 +23,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.R;
-import com.app.designmore.activity.UserCenterActivity;
+import com.app.designmore.activity.MineActivity;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.view.dialogplus.DialogPlus;
@@ -39,9 +39,8 @@ public class ProfileActivity extends RxAppCompatActivity {
   private static final String START_LOCATION_Y = "START_LOCATION_Y";
 
   @Nullable @Bind(R.id.profile_layout_root_view) LinearLayout rootView;
-  @Nullable @Bind(R.id.white_toolbar_root) Toolbar toolbar;
+  @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
-  @Nullable @Bind(R.id.white_toolbar_title_iv) ImageView toolbarTitleIv;
   @Nullable @Bind(R.id.profile_layout_avatar_iv) ImageView AvatarIv;
   @Nullable @Bind(R.id.profile_layout_username_tv) TextView usernameTv;
   @Nullable @Bind(R.id.profile_layout_nickname_et) EditText nicknameEt;
@@ -49,7 +48,7 @@ public class ProfileActivity extends RxAppCompatActivity {
   @Nullable @Bind(R.id.profile_layout_birthday_tv) TextView birthdayTv;
   private DialogPlus dialogPlus;
 
-  public static void startFromLocation(UserCenterActivity startingActivity, int startingLocationY) {
+  public static void startFromLocation(MineActivity startingActivity, int startingLocationY) {
 
     Intent intent = new Intent(startingActivity, ProfileActivity.class);
     intent.putExtra(START_LOCATION_Y, startingLocationY);
@@ -69,7 +68,7 @@ public class ProfileActivity extends RxAppCompatActivity {
     ProfileActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
 
-    toolbarTitleIv.setVisibility(View.GONE);
+    toolbarTitleTv.setVisibility(View.VISIBLE);
     toolbarTitleTv.setText("个人资料");
 
     if (savedInstanceState == null) {

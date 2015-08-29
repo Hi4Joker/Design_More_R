@@ -26,16 +26,11 @@
       </intent-filter>
     </activity>
 
-    <activity
-        android:name=".activity.MainActivity"
-        android:screenOrientation="portrait"
-        >
-    </activity>
-
     <!--登陆ACT-->
     <activity
         android:name=".activity.LoginActivity"
         android:screenOrientation="portrait"
+        android:launchMode="singleTop"
         android:theme="@style/AppTheme.WhiteActivity"
         >
     </activity>
@@ -44,6 +39,7 @@
     <activity
         android:name=".activity.RegisterActivity"
         android:screenOrientation="portrait"
+        android:launchMode="singleTop"
         >
     </activity>
 
@@ -51,14 +47,43 @@
     <activity
         android:name=".activity.RetrieveActivity"
         android:screenOrientation="portrait"
+        android:launchMode="singleTop"
+        >
+    </activity>
+
+    <!--首页ACT-->
+    <activity
+        android:name=".activity.HomeActivity"
+        android:screenOrientation="portrait"
+        android:launchMode="singleTask"
+        android:theme="@style/AppTheme.WhiteActivity"
+        >
+    </activity>
+
+    <!--上新ACT-->
+    <activity
+        android:name=".activity.FashionActivity"
+        android:screenOrientation="portrait"
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.TransparentActivity"
+        >
+    </activity>
+
+    <!--上新ACT-->
+    <activity
+        android:name=".activity.JournalActivity"
+        android:screenOrientation="portrait"
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.TransparentActivity"
         >
     </activity>
 
     <!--用户中心ACT-->
     <activity
-        android:name=".activity.UserCenterActivity"
+        android:name=".activity.MineActivity"
         android:screenOrientation="portrait"
-        android:theme="@style/AppTheme.WhiteActivity"
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.TransparentActivity"
         >
     </activity>
 
@@ -66,6 +91,7 @@
     <activity
         android:name=".activity.usercenter.TrolleyActivity"
         android:screenOrientation="portrait"
+        android:launchMode="singleTop"
         android:theme="@style/AppTheme.TransparentActivity"
         >
     </activity>
@@ -74,6 +100,7 @@
     <activity
         android:name=".activity.usercenter.SettingActivity"
         android:screenOrientation="portrait"
+        android:launchMode="singleTop"
         android:theme="@style/AppTheme.TransparentActivity"
         >
     </activity>
@@ -81,6 +108,7 @@
     <activity
         android:name=".activity.usercenter.ProfileActivity"
         android:screenOrientation="portrait"
+        android:launchMode="singleTop"
         android:theme="@style/AppTheme.TransparentActivity"
         >
     </activity>
@@ -88,6 +116,7 @@
     <activity
         android:name=".activity.usercenter.SafetyActivity"
         android:screenOrientation="portrait"
+        android:launchMode="singleTop"
         android:theme="@style/AppTheme.TransparentActivity"
         >
     </activity>
@@ -96,6 +125,7 @@
     <activity
         android:name=".activity.usercenter.AboutActivity"
         android:screenOrientation="portrait"
+        android:launchMode="singleTop"
         android:theme="@style/AppTheme.TransparentActivity"
         >
     </activity>
@@ -103,6 +133,7 @@
     <activity
         android:name=".activity.usercenter.HelpActivity"
         android:screenOrientation="portrait"
+        android:launchMode="singleTop"
         android:theme="@style/AppTheme.TransparentActivity"
         >
     </activity>

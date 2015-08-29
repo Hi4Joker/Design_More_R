@@ -22,9 +22,8 @@ public class RegisterActivity extends RxAppCompatActivity {
 
   private static final String TAG = RegisterActivity.class.getSimpleName();
 
-  @Nullable @Bind(R.id.white_toolbar_root) Toolbar toolbar;
+  @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
-  @Nullable @Bind(R.id.white_toolbar_title_iv) ImageView toolbarTitleIv;
   @Nullable @Bind(R.id.register_layout_name_et) EditText userNameEt;
   @Nullable @Bind(R.id.register_layout_name_clear_btn) ImageView clearNameBtn;
   @Nullable @Bind(R.id.register_layout_password_et) EditText passwordEt;
@@ -45,7 +44,6 @@ public class RegisterActivity extends RxAppCompatActivity {
     RegisterActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
 
-    toolbarTitleIv.setVisibility(View.INVISIBLE);
     toolbarTitleTv.setText("注 册");
   }
 

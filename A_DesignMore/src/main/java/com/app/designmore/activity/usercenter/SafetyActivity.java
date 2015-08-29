@@ -1,11 +1,9 @@
 package com.app.designmore.activity.usercenter;
 
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.widget.Toolbar;
@@ -27,12 +25,7 @@ import com.app.designmore.R;
 import com.app.designmore.rx.schedulers.AndroidSchedulers;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.manager.DialogManager;
-import com.app.designmore.view.dialogplus.DialogPlus;
-import com.app.designmore.view.dialogplus.OnBackPressListener;
-import com.app.designmore.view.dialogplus.OnCancelListener;
-import com.app.designmore.view.dialogplus.OnDismissListener;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
-import java.util.concurrent.TimeUnit;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action1;
@@ -48,9 +41,8 @@ public class SafetyActivity extends RxAppCompatActivity {
   private static final String START_LOCATION_Y = "START_LOCATION_Y";
 
   @Nullable @Bind(R.id.safety_layout_root_view) LinearLayout rootView;
-  @Nullable @Bind(R.id.white_toolbar_root) Toolbar toolbar;
+  @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
-  @Nullable @Bind(R.id.white_toolbar_title_iv) ImageView toolbarTitleIv;
   @Nullable @Bind(R.id.safety_layout_old_password_et) EditText oldPasswordEt;
   @Nullable @Bind(R.id.safety_layout_new_password_et) EditText newPasswordEt;
   @Nullable @Bind(R.id.safety_layout_confim_password_et) EditText confimPasswordEt;
@@ -75,7 +67,6 @@ public class SafetyActivity extends RxAppCompatActivity {
     SafetyActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
 
-    toolbarTitleIv.setVisibility(View.GONE);
     toolbarTitleTv.setVisibility(View.VISIBLE);
     toolbarTitleTv.setText(getText(R.string.action_submit));
 

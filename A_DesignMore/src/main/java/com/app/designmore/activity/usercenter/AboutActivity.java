@@ -6,11 +6,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewPropertyAnimator;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
@@ -30,9 +28,8 @@ public class AboutActivity extends BaseActivity {
 
   private static final String START_LOCATION_Y = "START_LOCATION_Y";
   @Nullable @Bind(R.id.about_layout_root_view) LinearLayout rootView;
-  @Nullable @Bind(R.id.white_toolbar_root) Toolbar toolbar;
+  @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
-  @Nullable @Bind(R.id.white_toolbar_title_iv) ImageView toolbarTitleIv;
   @Nullable @Bind(R.id.about_layout_about_wv) WebView aboutWv;
 
   private String ABOUT_HTML = "file:///android_asset/about_designMore.html";
@@ -58,7 +55,9 @@ public class AboutActivity extends BaseActivity {
     AboutActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
 
-    toolbarTitleIv.setVisibility(View.INVISIBLE);
+    LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toolbarTitleTv.getLayoutParams();
+    params.rightMargin = DensityUtil.getActionBarSize(AboutActivity.this);
+    toolbarTitleTv.setVisibility(View.VISIBLE);
     toolbarTitleTv.setText("关于我们");
 
     if (savedInstanceState == null) {
@@ -107,14 +106,9 @@ public class AboutActivity extends BaseActivity {
         .setInterpolator(new LinearInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
-            AboutActivity.super.onBackPressed();
+            AboutActivity.this.finish();
             overridePendingTransition(0, 0);
           }
         });
-  }
-
-  @Override protected void onDestroy() {
-    if (aboutWv != null) aboutWv.destroy();
-    super.onDestroy();
   }
 }

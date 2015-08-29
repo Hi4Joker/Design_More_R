@@ -5,6 +5,7 @@
 
 
   <!--material dip-->
+  <dimen name="material_1dp">1dip</dimen>
   <dimen name="material_2dp">2dip</dimen>
   <dimen name="material_3dp">3dip</dimen>
   <dimen name="material_4dp">4dip</dimen>
@@ -27,6 +28,9 @@
   <dimen name="material_256dp">256dip</dimen>
 
   <!--material sp-->
+  <dimen name="material_8sp">8sp</dimen>
+  <dimen name="material_10sp">10sp</dimen>
+  <dimen name="material_11sp">11sp</dimen>
   <dimen name="material_12sp">12sp</dimen>
   <dimen name="material_13sp">13sp</dimen>
   <dimen name="material_14sp">14sp</dimen>

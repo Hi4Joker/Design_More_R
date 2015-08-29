@@ -97,5 +97,26 @@
     <item name="android:orientation">vertical</item>
   </style>
 
+  <!--底部导航栏，图标风格-->
+  <style name="bottom_bar_icon_style">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_alignParentTop">true</item>
+    <item name="android:layout_marginTop">@dimen/material_8dp</item>
+    <item name="android:layout_marginBottom">@dimen/material_2dp</item>
+    <item name="android:layout_centerInParent">true</item>
+    <item name="android:scaleType">center</item>
+  </style>
+
+  <!--底部导航栏，文字风格-->
+  <style name="bottom_bar_text_style">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_alignParentBottom">true</item>
+    <item name="android:layout_centerInParent">true</item>
+    <item name="android:gravity">center</item>
+    <item name="android:textSize">@dimen/material_12sp</item>
+  </style>
+
 
 </resources>

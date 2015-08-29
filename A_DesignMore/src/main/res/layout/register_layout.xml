@@ -51,7 +51,7 @@
 
   <LinearLayout
       android:id="@+id/register_layout_input_ll"
-      android:layout_below="@id/white_toolbar_root"
+      android:layout_below="@id/white_toolbar_root_view"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginTop="@dimen/material_24dp"
