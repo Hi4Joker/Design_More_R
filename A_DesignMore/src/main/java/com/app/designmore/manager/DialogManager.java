@@ -10,6 +10,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import com.app.designmore.R;
 import com.app.designmore.activity.MineActivity;
 import com.app.designmore.event.FinishEvent;
@@ -157,10 +158,5 @@ public class DialogManager {
           }
         });
     builder.create().show();
-  }
-
-  interface Callback {
-
-    void onBackPressListener(DialogInterface dialog);
   }
 }

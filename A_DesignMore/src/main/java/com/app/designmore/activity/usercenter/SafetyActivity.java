@@ -115,7 +115,7 @@ public class SafetyActivity extends RxAppCompatActivity {
     TextView textView = (TextView) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
     textView.setText(getText(R.string.action_submit));
 
-    Observable.range(0, 60, Schedulers.computation()).first().filter(new Func1<Integer, Boolean>() {
+  /*  Observable.range(0, 60, Schedulers.computation()).first().filter(new Func1<Integer, Boolean>() {
       @Override public Boolean call(Integer integer) {
         return null;
       }
@@ -132,7 +132,7 @@ public class SafetyActivity extends RxAppCompatActivity {
       @Override public void call(Integer integer) {
         Log.e(TAG, "call:" + integer);
       }
-    });
+    });*/
 
     menuItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {

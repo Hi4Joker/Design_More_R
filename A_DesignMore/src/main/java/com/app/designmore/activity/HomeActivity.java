@@ -17,6 +17,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import butterknife.Bind;
@@ -71,9 +72,7 @@ public class HomeActivity extends RxAppCompatActivity {
   private void initView(Bundle savedInstanceState) {
 
     HomeActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
-
-    toolbarTitleIv.setVisibility(View.VISIBLE);
+    //toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
 
     if (savedInstanceState == null) {
       rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -175,6 +174,10 @@ public class HomeActivity extends RxAppCompatActivity {
 
     DrawableCompat.setTint(DrawableCompat.wrap(homeIv.getDrawable().mutate()), Color.RED);
     homeTv.setTextColor(Color.RED);
+
+    LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toolbarTitleIv.getLayoutParams();
+    params.leftMargin = DensityUtil.getActionBarSize(HomeActivity.this) * 2;
+    toolbarTitleIv.setVisibility(View.VISIBLE);
 
     getMenuInflater().inflate(R.menu.menu_main, menu);
 

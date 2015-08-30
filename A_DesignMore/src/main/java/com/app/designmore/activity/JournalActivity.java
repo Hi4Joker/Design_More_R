@@ -43,8 +43,7 @@ public class JournalActivity extends RxAppCompatActivity {
 
   @Nullable @Bind(R.id.journal_layout_root_view) RevealFrameLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
-  @Nullable @Bind(R.id.white_toolbar_title_tv) TextView titleTv;
-  @Nullable @Bind(R.id.white_toolbar_title_iv) ImageView titleIv;
+  @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toobarTitleTv;
 
   @Nullable @Bind(R.id.journal_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.bottom_bar_journal_iv) ImageView journalIv;
@@ -74,14 +73,7 @@ public class JournalActivity extends RxAppCompatActivity {
   private void initView(Bundle savedInstanceState) {
 
     JournalActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
-
-    LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) titleTv.getLayoutParams();
-    params.leftMargin = DensityUtil.getActionBarSize(JournalActivity.this);
-
-    titleTv.setVisibility(View.VISIBLE);
-    titleIv.setVisibility(View.GONE);
-    titleTv.setText("杂 志");
+    //toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
 
     if (savedInstanceState == null) {
       rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -149,6 +141,7 @@ public class JournalActivity extends RxAppCompatActivity {
   @Nullable @OnClick(R.id.bottom_bar_home_rl) void onFashionClick() {
 
     HomeActivity.navigateToUserCenter(JournalActivity.this);
+    JournalActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -158,6 +151,7 @@ public class JournalActivity extends RxAppCompatActivity {
   @Nullable @OnClick(R.id.bottom_bar_fashion_rl) void onJournalClick() {
 
     FashionActivity.navigateToUserCenter(JournalActivity.this);
+    JournalActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -167,6 +161,7 @@ public class JournalActivity extends RxAppCompatActivity {
   @Nullable @OnClick(R.id.bottom_bar_mine_rl) void onMineClick() {
 
     MineActivity.navigateToUserCenter(JournalActivity.this);
+    JournalActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -174,6 +169,12 @@ public class JournalActivity extends RxAppCompatActivity {
 
     DrawableCompat.setTint(DrawableCompat.wrap(journalIv.getDrawable().mutate()), Color.RED);
     journalTv.setTextColor(Color.RED);
+
+    LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toobarTitleTv.getLayoutParams();
+    params.leftMargin = DensityUtil.getActionBarSize(JournalActivity.this) * 2;
+
+    toobarTitleTv.setVisibility(View.VISIBLE);
+    toobarTitleTv.setText("杂 志");
 
     getMenuInflater().inflate(R.menu.menu_main, menu);
 

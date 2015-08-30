@@ -2,7 +2,6 @@ package com.app.designmore.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,8 +43,7 @@ public class FashionActivity extends RxAppCompatActivity {
 
   @Nullable @Bind(R.id.fashion_layout_root_view) RevealFrameLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
-  @Nullable @Bind(R.id.white_toolbar_title_tv) TextView titleTv;
-  @Nullable @Bind(R.id.white_toolbar_title_iv) ImageView titleIv;
+  @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toobarTitleTv;
 
   @Nullable @Bind(R.id.fashion_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.bottom_bar_fashion_iv) ImageView fashionIv;
@@ -76,14 +73,7 @@ public class FashionActivity extends RxAppCompatActivity {
   private void initView(Bundle savedInstanceState) {
 
     FashionActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
-
-    LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) titleTv.getLayoutParams();
-    params.leftMargin = DensityUtil.getActionBarSize(FashionActivity.this);
-
-    titleTv.setVisibility(View.VISIBLE);
-    titleIv.setVisibility(View.GONE);
-    titleTv.setText("上 新");
+    //toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
 
     if (savedInstanceState == null) {
       rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -148,9 +138,10 @@ public class FashionActivity extends RxAppCompatActivity {
   /**
    * 主页
    */
-  @Nullable @OnClick(R.id.bottom_bar_home_rl) void onFashionClick() {
+  @Nullable @OnClick(R.id.bottom_bar_home_rl) void onHomeClick() {
 
     HomeActivity.navigateToUserCenter(FashionActivity.this);
+    FashionActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -160,6 +151,7 @@ public class FashionActivity extends RxAppCompatActivity {
   @Nullable @OnClick(R.id.bottom_bar_journal_rl) void onJournalClick() {
 
     JournalActivity.navigateToUserCenter(FashionActivity.this);
+    FashionActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -169,6 +161,7 @@ public class FashionActivity extends RxAppCompatActivity {
   @Nullable @OnClick(R.id.bottom_bar_mine_rl) void onMineClick() {
 
     MineActivity.navigateToUserCenter(FashionActivity.this);
+    FashionActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -176,6 +169,12 @@ public class FashionActivity extends RxAppCompatActivity {
 
     DrawableCompat.setTint(DrawableCompat.wrap(fashionIv.getDrawable().mutate()), Color.RED);
     fashionTv.setTextColor(Color.RED);
+
+    LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toobarTitleTv.getLayoutParams();
+    params.leftMargin = DensityUtil.getActionBarSize(FashionActivity.this)*2;
+
+    toobarTitleTv.setVisibility(View.VISIBLE);
+    toobarTitleTv.setText("上 新");
 
     getMenuInflater().inflate(R.menu.menu_main, menu);
 

@@ -220,7 +220,7 @@
           android:layout_height="match_parent"
           android:layout_alignParentRight="true"
           android:layout_marginRight="@dimen/material_24dp"
-          android:text="1988/08/08"
+          android:text="1989年12月03日"
           android:gravity="center"
           android:textSize="@dimen/material_16sp"
           android:textColor="@android:color/black"
@@ -228,43 +228,43 @@
     </RelativeLayout>
   </com.app.designmore.view.MaterialRippleLayout>
 
-    <!--账户安全-->
-    <com.app.designmore.view.MaterialRippleLayout
+  <!--账户安全-->
+  <com.app.designmore.view.MaterialRippleLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/material_48dp"
+      android:layout_marginBottom="1dip"
+      app:mrl_rippleDimension="20dip"
+      app:mrl_rippleFadeDuration="100"
+      app:mrl_rippleAlpha="0.4"
+      app:mrl_rippleDuration="600"
+      app:mrl_rippleHover="true"
+      app:mrl_rippleOverlay="true"
+      app:mrl_rippleDelayClick="true"
+      app:mrl_rippleColor="@android:color/darker_gray"
+      >
+    <RelativeLayout
+        android:id="@+id/profile_layout_safety_rl"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/material_48dp"
-        android:layout_marginBottom="1dip"
-        app:mrl_rippleDimension="20dip"
-        app:mrl_rippleFadeDuration="100"
-        app:mrl_rippleAlpha="0.4"
-        app:mrl_rippleDuration="600"
-        app:mrl_rippleHover="true"
-        app:mrl_rippleOverlay="true"
-        app:mrl_rippleDelayClick="true"
-        app:mrl_rippleColor="@android:color/darker_gray"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:background="@android:color/white"
         >
-        <RelativeLayout
-            android:id="@+id/profile_layout_safety_rl"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:background="@android:color/white"
-            >
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="@dimen/material_24dp"
-                android:text="账户安全"
-                android:gravity="center"
-                android:textSize="@dimen/material_16sp"
-                android:textColor="@android:color/black"
-                />
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:layout_alignParentLeft="true"
+          android:layout_marginLeft="@dimen/material_24dp"
+          android:text="账户安全"
+          android:gravity="center"
+          android:textSize="@dimen/material_16sp"
+          android:textColor="@android:color/black"
+          />
 
-            <ImageView
-                android:id="@+id/profile_layout_safety_navigate_iv"
-                style="@style/center_navigate_iv_style"/>
-        </RelativeLayout>
-    </com.app.designmore.view.MaterialRippleLayout>
+      <ImageView
+          android:id="@+id/profile_layout_safety_navigate_iv"
+          style="@style/center_navigate_iv_style"/>
+    </RelativeLayout>
+  </com.app.designmore.view.MaterialRippleLayout>
 
 </LinearLayout>

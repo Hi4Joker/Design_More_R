@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -24,6 +25,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.R;
 import com.app.designmore.activity.MineActivity;
+import com.app.designmore.utils.DatePickDialog;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.view.dialogplus.DialogPlus;
@@ -116,11 +118,17 @@ public class ProfileActivity extends RxAppCompatActivity {
             });
   }
 
-  EditText yearEt, monthEt, dayEt;
-
   @Nullable @OnClick(R.id.profile_layout_birthday_rl) void onBirthdayClick() {
 
-    dialogPlus = DialogManager.getInstance()
+
+    Log.e(TAG, "onBirthdayClick() returned: " + birthdayTv.getText().toString());
+
+    DatePickDialog dateTimePicKDialog = DatePickDialog.getInstance();
+    dateTimePicKDialog.showPickerDialog(ProfileActivity.this, birthdayTv,
+        birthdayTv.getText().toString());
+
+
+    /*dialogPlus = DialogManager.getInstance()
         .showSelectorDialog(ProfileActivity.this, Gravity.CENTER,
             R.layout.dialog_profile_pick_birthday_layout, new OnClickListener() {
               @Override public void onClick(DialogPlus dialog, View view) {
@@ -150,7 +158,7 @@ public class ProfileActivity extends RxAppCompatActivity {
 
     yearEt.setHint(split[0]);
     monthEt.setHint(split[1]);
-    dayEt.setHint(split[2]);
+    dayEt.setHint(split[2]);*/
   }
 
   @Nullable @OnClick(R.id.profile_layout_safety_rl) void onSafetyClick(View view) {
@@ -181,9 +189,6 @@ public class ProfileActivity extends RxAppCompatActivity {
 
   @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
     if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-      if (dialogPlus != null && dialogPlus.isShowing()) {
-        return true;
-      }
       ProfileActivity.this.startExitAnim();
     }
     return false;

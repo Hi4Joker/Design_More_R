@@ -87,7 +87,6 @@ public class MineActivity extends RxAppCompatActivity {
     MineActivity.this.getSupportActionBar().setTitle("");
 
     if (savedInstanceState == null) {
-
       rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
         @Override public boolean onPreDraw() {
           rootView.getViewTreeObserver().removeOnPreDrawListener(this);
@@ -264,6 +263,7 @@ public class MineActivity extends RxAppCompatActivity {
   @Nullable @OnClick(R.id.bottom_bar_home_rl) void onMineClick() {
 
     HomeActivity.navigateToUserCenter(MineActivity.this);
+    MineActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -273,6 +273,7 @@ public class MineActivity extends RxAppCompatActivity {
   @Nullable @OnClick(R.id.bottom_bar_fashion_rl) void onFashionClick() {
 
     FashionActivity.navigateToUserCenter(MineActivity.this);
+    MineActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -282,6 +283,7 @@ public class MineActivity extends RxAppCompatActivity {
   @Nullable @OnClick(R.id.bottom_bar_journal_rl) void onJournalClick() {
 
     JournalActivity.navigateToUserCenter(MineActivity.this);
+    MineActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
