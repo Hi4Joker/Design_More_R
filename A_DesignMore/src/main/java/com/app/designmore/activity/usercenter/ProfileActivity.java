@@ -1,5 +1,6 @@
 package com.app.designmore.activity.usercenter;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,12 +8,10 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
@@ -29,7 +28,6 @@ import com.app.designmore.utils.DatePickDialog;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.view.dialogplus.DialogPlus;
-import com.app.designmore.view.dialogplus.OnClickListener;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
 /**
@@ -39,6 +37,8 @@ public class ProfileActivity extends RxAppCompatActivity {
 
   private static final String TAG = ProfileActivity.class.getSimpleName();
   private static final String START_LOCATION_Y = "START_LOCATION_Y";
+  private static final int MALE = 0;
+  private static final int FEMALE = 1;
 
   @Nullable @Bind(R.id.profile_layout_root_view) LinearLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
@@ -46,7 +46,7 @@ public class ProfileActivity extends RxAppCompatActivity {
   @Nullable @Bind(R.id.profile_layout_avatar_iv) ImageView AvatarIv;
   @Nullable @Bind(R.id.profile_layout_username_tv) TextView usernameTv;
   @Nullable @Bind(R.id.profile_layout_nickname_et) EditText nicknameEt;
-  @Nullable @Bind(R.id.profile_layout_sex_tv) TextView sexTv;
+  @Nullable @Bind(R.id.profile_layout_sex_tv) TextView genderTv;
   @Nullable @Bind(R.id.profile_layout_birthday_tv) TextView birthdayTv;
   private DialogPlus dialogPlus;
 
@@ -104,22 +104,25 @@ public class ProfileActivity extends RxAppCompatActivity {
 
   }
 
-  @Nullable @OnClick(R.id.profile_layout_sex_rl) void onSexClick() {
+  @Nullable @OnClick(R.id.profile_layout_sex_rl) void onGenderClick() {
 
-    dialogPlus = DialogManager.getInstance()
-        .showSelectorDialog(ProfileActivity.this, Gravity.BOTTOM,
-            R.layout.dialog_profile_pick_sex_layout, new OnClickListener() {
-              @Override public void onClick(DialogPlus dialog, View view) {
-                if (view.getId() != R.id.pick_sex_cancel_tv) {
-                  sexTv.setText(((TextView) view).getText().toString());
+    DialogManager.getInstance()
+        .showGenderPickerDialog(ProfileActivity.this, genderTv.getText().toString(),
+            new DialogInterface.OnClickListener() {
+              @Override public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                  case MALE:
+                    genderTv.setText("男");
+                    break;
+                  case FEMALE:
+                    genderTv.setText("女");
+                    break;
                 }
-                dialog.dismiss();
               }
             });
   }
 
   @Nullable @OnClick(R.id.profile_layout_birthday_rl) void onBirthdayClick() {
-
 
     Log.e(TAG, "onBirthdayClick() returned: " + birthdayTv.getText().toString());
 

@@ -43,7 +43,7 @@ public class FashionActivity extends RxAppCompatActivity {
 
   @Nullable @Bind(R.id.fashion_layout_root_view) RevealFrameLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
-  @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toobarTitleTv;
+  @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
 
   @Nullable @Bind(R.id.fashion_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.bottom_bar_fashion_iv) ImageView fashionIv;
@@ -170,11 +170,11 @@ public class FashionActivity extends RxAppCompatActivity {
     DrawableCompat.setTint(DrawableCompat.wrap(fashionIv.getDrawable().mutate()), Color.RED);
     fashionTv.setTextColor(Color.RED);
 
-    LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toobarTitleTv.getLayoutParams();
+    LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toolbarTitleTv.getLayoutParams();
     params.leftMargin = DensityUtil.getActionBarSize(FashionActivity.this)*2;
 
-    toobarTitleTv.setVisibility(View.VISIBLE);
-    toobarTitleTv.setText("上 新");
+    toolbarTitleTv.setVisibility(View.VISIBLE);
+    toolbarTitleTv.setText("上 新");
 
     getMenuInflater().inflate(R.menu.menu_main, menu);
 
@@ -185,6 +185,8 @@ public class FashionActivity extends RxAppCompatActivity {
     searchButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_search_icon));
     searchItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
+        SearchActivity.navigateToSearch(FashionActivity.this);
+        overridePendingTransition(0, 0);
       }
     });
 

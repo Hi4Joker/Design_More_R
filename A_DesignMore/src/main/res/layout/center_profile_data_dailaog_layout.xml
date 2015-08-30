@@ -4,14 +4,11 @@
     android:layout_width="fill_parent" android:layout_height="fill_parent"
     android:orientation="vertical">
 
-  <DatePicker
+  <com.app.designmore.view.CustomDatePicker
       android:id="@+id/profile_data_dialog_date_picker"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="center"
       android:calendarViewShown="false"
-      android:calendarTextColor="@android:color/black"
-      android:theme="@style/AlertDialog.AppCompat"
       />
-
 </LinearLayout>

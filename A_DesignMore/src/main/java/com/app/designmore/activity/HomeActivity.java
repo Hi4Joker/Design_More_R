@@ -25,6 +25,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
+import com.app.designmore.activity.usercenter.SettingActivity;
 import com.app.designmore.event.FinishEvent;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
@@ -188,6 +189,8 @@ public class HomeActivity extends RxAppCompatActivity {
     searchButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_search_icon));
     searchItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
+        SearchActivity.navigateToSearch(HomeActivity.this);
+        overridePendingTransition(0, 0);
       }
     });
 

@@ -1,8 +1,9 @@
 package com.app.designmore.utils;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatDialog;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.DatePicker.OnDateChangedListener;
@@ -20,7 +21,7 @@ public class DatePickDialog implements OnDateChangedListener, OnTimeChangedListe
   private DatePicker datePicker;
   private String dateTime;
   private String initDateTime;
-  private AlertDialog alertDialog;
+  private AppCompatDialog alertDialog;
 
   private DatePickDialog() {
   }
@@ -115,7 +116,6 @@ public class DatePickDialog implements OnDateChangedListener, OnTimeChangedListe
   }
 
   @Override public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-    // �������ʵ��
     Calendar calendar = Calendar.getInstance();
 
     calendar.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());

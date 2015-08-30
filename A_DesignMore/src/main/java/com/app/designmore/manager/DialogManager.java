@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.drm.ProcessedData;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -135,11 +136,41 @@ public class DialogManager {
     return progressDialog;
   }
 
+  public void showGenderPickerDialog(Context context, String initGender,
+      final DialogInterface.OnClickListener onClickListener) {
+
+    final String[] arrayGender = new String[] { "男", "女" };
+
+    int which = "男".endsWith(initGender) ? 0 : 1;
+
+    new AlertDialog.Builder(context).setTitle("请选择性别")
+        .setCancelable(false)
+        .setInverseBackgroundForced(false)
+        .setSingleChoiceItems(arrayGender, which, new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialog, int which) {
+            if (onClickListener != null) {
+              onClickListener.onClick(dialog, which);
+            }
+          }
+        })
+        .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialog, int which) {
+            dialog.dismiss();
+          }
+        })
+        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialog, int which) {
+            dialog.dismiss();
+          }
+        })
+        .create()
+        .show();
+  }
+
   public void showExitDialog(Context context,
       final DialogInterface.OnClickListener onClickListener) {
 
-    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-    builder.setTitle("提示")
+    new AlertDialog.Builder(context).setTitle("提示")
         .setMessage("确认退出吗？")
         .setCancelable(false)
         .setInverseBackgroundForced(false)
@@ -156,7 +187,8 @@ public class DialogManager {
           @Override public void onClick(DialogInterface dialog, int which) {
             dialog.dismiss();
           }
-        });
-    builder.create().show();
+        })
+        .create()
+        .show();
   }
 }

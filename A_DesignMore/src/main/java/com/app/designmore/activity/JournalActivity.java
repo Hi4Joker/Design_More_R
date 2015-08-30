@@ -66,7 +66,6 @@ public class JournalActivity extends RxAppCompatActivity {
     EventBusInstance.getDefault().register(JournalActivity.this);
 
     JournalActivity.this.initView(savedInstanceState);
-
     JournalActivity.this.setListener();
   }
 
@@ -185,6 +184,8 @@ public class JournalActivity extends RxAppCompatActivity {
     searchButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_search_icon));
     searchItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
+        SearchActivity.navigateToSearch(JournalActivity.this);
+        overridePendingTransition(0, 0);
       }
     });
 

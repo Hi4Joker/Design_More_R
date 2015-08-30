@@ -69,7 +69,7 @@
         >
     </activity>
 
-    <!--上新ACT-->
+    <!--杂志ACT-->
     <activity
         android:name=".activity.JournalActivity"
         android:screenOrientation="portrait"
@@ -81,6 +81,15 @@
     <!--用户中心ACT-->
     <activity
         android:name=".activity.MineActivity"
+        android:screenOrientation="portrait"
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.TransparentActivity"
+        >
+    </activity>
+
+    <!--搜索ACT-->
+    <activity
+        android:name=".activity.SearchActivity"
         android:screenOrientation="portrait"
         android:launchMode="singleTop"
         android:theme="@style/AppTheme.TransparentActivity"

@@ -27,7 +27,7 @@
         android:layout_marginRight="@dimen/material_16dp"
         app:cpv_animAutostart="true"
         app:cpv_indeterminate="true"
-        app:cpv_color="@android:color/holo_blue_light"
+        app:cpv_color="@color/accent_material_light"
         app:cpv_thickness="@dimen/material_3dp"
         />
 
@@ -37,7 +37,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:textSize="@dimen/material_13sp"
-        android:textColor="@android:color/holo_blue_dark"
+        android:textColor="@color/accent_material_light"
         android:text="正在加载请稍后......"
         />
   </LinearLayout>

@@ -3,4 +3,5 @@
 
   <!--基色，灰色-->
   <color name="primary_background_color">#F0F0F0</color>
+  <color name="accent_material_light">#475898</color>
 </resources>

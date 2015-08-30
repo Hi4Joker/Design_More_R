@@ -24,7 +24,6 @@
         android:textColor="#88000000"
         android:textSize="@dimen/material_18sp"
         android:visibility="gone"
-        android:background="@android:color/holo_blue_bright"
         />
 
     <ImageView
@@ -36,7 +35,6 @@
         android:scaleType="center"
         android:src="@drawable/ic_title_icon"
         android:visibility="gone"
-        android:background="@android:color/holo_blue_bright"
         />
 
   </LinearLayout>
