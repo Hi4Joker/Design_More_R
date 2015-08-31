@@ -146,6 +146,24 @@
         android:theme="@style/AppTheme.TransparentActivity"
         >
     </activity>
-  </application>
 
+    <!-- 用户中心 -> 地址管理 -->
+    <activity
+        android:name=".activity.usercenter.AddressMangerActivity"
+        android:screenOrientation="portrait"
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.TransparentActivity"
+        >
+    </activity>
+
+    <!-- 用户中心 -> 地址管理 -> 新增地址-->
+    <activity
+        android:name=".activity.usercenter.AddressEditorActivity"
+        android:screenOrientation="portrait"
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.TransparentActivity"
+        >
+    </activity>
+
+  </application>
 </manifest>

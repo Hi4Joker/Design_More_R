@@ -24,6 +24,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
+import com.app.designmore.activity.usercenter.AddressMangerActivity;
 import com.app.designmore.activity.usercenter.ProfileActivity;
 import com.app.designmore.activity.usercenter.SettingActivity;
 import com.app.designmore.activity.usercenter.TrolleyActivity;
@@ -246,7 +247,7 @@ public class MineActivity extends RxAppCompatActivity {
    * 地址管理
    */
   @Nullable @OnClick(R.id.mine_layout_address_ll) void onAddressClick(View view) {
-    TrolleyActivity.startFromLocation(MineActivity.this, DensityUtil.getLocationY(view));
+    AddressMangerActivity.startFromLocation(MineActivity.this, DensityUtil.getLocationY(view));
     overridePendingTransition(0, 0);
   }
 

@@ -35,11 +35,15 @@ dependencies {
   compile 'com.jakewharton:butterknife:7.0.1'
   compile 'com.nineoldandroids:library:2.4.0'
   compile 'com.squareup.retrofit:retrofit:1.9.0'
-//  compile 'com.squareup.okio:okio:1.1.0'
-//  compile 'com.squareup.okhttp:okhttp:2.1.0'
-//  compile 'com.squareup.okhttp:okhttp-urlconnection:2.1.0'
-//  compile 'com.squareup.retrofit:retrofit:2.0.0-beta1'
-//  compile 'com.squareup.retrofit:adapter-rxjava:2.0.0-beta1'
+
+  compile 'com.squareup.okhttp:okhttp:2.1.0'
+  compile 'com.squareup.okio:okio:1.1.0'
+
+  /*compile 'com.squareup.okhttp:okhttp:2.5.0'
+  compile 'com.squareup.okio:okio:1.6.0'*/
+  //  compile 'com.squareup.okhttp:okhttp-urlconnection:2.1.0'
+  //  compile 'com.squareup.retrofit:retrofit:2.0.0-beta1'
+  //  compile 'com.squareup.retrofit:adapter-rxjava:2.0.0-beta1'
   /*ReactiveX library*/
   compile 'io.reactivex:rxjava:1.0.3'
   compile 'com.trello:rxlifecycle:0.2.0'

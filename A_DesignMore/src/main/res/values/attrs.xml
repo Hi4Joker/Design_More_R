@@ -25,6 +25,14 @@
   </declare-styleable>
 
 
+  <declare-styleable name="MaterialCheckBox">
+    <attr name="background_color" format="color"/>
+    <attr name="border_color" format="color"/>
+    <attr name="doneShape_color" format="color"/>
+    <attr name="border_width" format="dimension"/>
+  </declare-styleable>
+
+
   <declare-styleable name="CircularProgressView">
     <attr name="cpv_progress" format="float"/>
     <attr name="cpv_maxProgress" format="float"/>
