@@ -1,8 +1,10 @@
 package mu.node.rexweather.app.Services;
 
 import android.util.Log;
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
+import com.squareup.okhttp.internal.huc.JavaApiConverter;
 import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpException;
 
@@ -12,13 +14,22 @@ import java.util.List;
 import mu.node.rexweather.app.Models.CurrentWeather;
 import mu.node.rexweather.app.Models.WeatherForecast;
 import org.apache.http.HttpStatus;
+import org.apache.http.impl.conn.Wire;
+import retrofit.Callback;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.appengine.UrlFetchClient;
+import retrofit.client.OkClient;
+import retrofit.client.Response;
+import retrofit.converter.GsonConverter;
 import retrofit.http.GET;
 import retrofit.http.Query;
 import rx.Observable;
+import rx.Subscriber;
 import rx.functions.Func0;
 import rx.functions.Func1;
+import rx.internal.operators.OperatorMerge;
 
 public class WeatherService {
   // We are implementing against version 2.5 of the Open Weather Map web service.
@@ -37,6 +48,8 @@ public class WeatherService {
     RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(WEB_SERVICE_BASE_URL)
         .setRequestInterceptor(requestInterceptor)
         .setLogLevel(RestAdapter.LogLevel.FULL)
+        .setClient(new UrlFetchClient())
+        .setConverter(new GsonConverter(new Gson()))
         .build();
 
     mWebService = restAdapter.create(OpenWeatherMapWebService.class);
@@ -50,7 +63,17 @@ public class WeatherService {
         Observable.defer(new Func0<Observable<CurrentWeatherDataEnvelope>>() {
           @Override public Observable<CurrentWeatherDataEnvelope> call() {
 
-            return mWebService.fetchCurrentWeather(longitude, latitude);
+            return mWebService.fetchCurrentWeather(longitude, latitude,
+                new Callback<CurrentWeatherDataEnvelope>() {
+                  @Override
+                  public void success(CurrentWeatherDataEnvelope currentWeatherDataEnvelope,
+                      Response response) {
+                  }
+
+                  @Override public void failure(RetrofitError error) {
+
+                  }
+                });
           }
         })
             .flatMap(
@@ -59,9 +82,7 @@ public class WeatherService {
                   // Error out if the request was not successful.
                   @Override public Observable<? extends CurrentWeatherDataEnvelope> call(
                       final CurrentWeatherDataEnvelope data) {
-
                     Log.e("Joker", data.toString());
-
                     return data.filterWebServiceErrors();
                   }
                 })
@@ -115,11 +136,15 @@ public class WeatherService {
 
   private interface OpenWeatherMapWebService {
     @GET("/weather?units=metric") Observable<CurrentWeatherDataEnvelope> fetchCurrentWeather(
-        @Query("lon") double longitude, @Query("lat") double latitude);
+        @Query("lon") double longitude, @Query("lat") double latitude,
+        Callback<CurrentWeatherDataEnvelope> call);
 
     @GET("/forecast/daily?units=metric&cnt=7")
     Observable<WeatherForecastListDataEnvelope> fetchWeatherForecasts(
         @Query("lon") double longitude, @Query("lat") double latitude);
+
+    @GET("/forecast/daily?units=metric&cnt=7") Response call(@Query("lon") double longitude,
+        @Query("lat") double latitude);
   }
 
   /**

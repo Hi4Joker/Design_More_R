@@ -95,6 +95,8 @@ public class SafetyActivity extends RxAppCompatActivity {
 
   private void startExitAnim() {
 
+    rootView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(SafetyActivity.this))
         .setDuration(400)

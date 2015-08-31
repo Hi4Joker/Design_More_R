@@ -171,7 +171,7 @@ public class FashionActivity extends RxAppCompatActivity {
     fashionTv.setTextColor(Color.RED);
 
     LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toolbarTitleTv.getLayoutParams();
-    params.leftMargin = DensityUtil.getActionBarSize(FashionActivity.this)*2;
+    params.leftMargin = DensityUtil.getActionBarSize(FashionActivity.this) * 2;
 
     toolbarTitleTv.setVisibility(View.VISIBLE);
     toolbarTitleTv.setText("上 新");

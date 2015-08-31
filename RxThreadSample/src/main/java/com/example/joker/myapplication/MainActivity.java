@@ -18,9 +18,8 @@ import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func0;
 import rx.functions.Func1;
+import rx.functions.Func2;
 import rx.schedulers.Schedulers;
-import rx.schedulers.TimeInterval;
-import rx.subscriptions.BooleanSubscription;
 import rx.subscriptions.CompositeSubscription;
 import rx.subscriptions.Subscriptions;
 
@@ -176,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
     });
 
 
-/*    final Subscription intervalSubscription =
+   /* final Subscription intervalSubscription =
         Observable.interval(1, TimeUnit.SECONDS)
             .doOnUnsubscribe(new Action0() {
               @Override public void call() {
@@ -198,12 +197,11 @@ public class MainActivity extends AppCompatActivity {
 
     /*Observable.just(1).timeInterval().subscribe(new Action1<TimeInterval<Integer>>() {
       @Override public void call(TimeInterval<Integer> integerTimeInterval) {
-
         integerTimeInterval.getIntervalInMilliseconds();
       }
     });*/
 
-   /* Observable.<Integer>empty()
+    /*Observable.<Integer>empty()
         .delay(10, TimeUnit.SECONDS)
         .compose(SchedulersCompat.<Integer>applyTrampolineSchedulers())
         .subscribe(new Action1<Integer>() {
@@ -220,5 +218,129 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, "Unsubscribed ?" + subscription.isUnsubscribed());
           }
         });*/
+  }
+
+  @OnClick(R.id.scan_operator) void onScanClick() {
+    Observable.just(1, 2, 3).scan(new Func2<Integer, Integer, Integer>() {
+      @Override public Integer call(Integer sum, Integer item) {
+
+        Log.e(TAG, "sum: " + sum);
+        Log.e(TAG, "item: " + item);
+
+        return sum + item;
+      }
+    }).subscribe(new Subscriber<Integer>() {
+      @Override public void onNext(Integer item) {
+        Log.e(TAG, "onNext: " + item);
+      }
+
+      @Override public void onError(Throwable error) {
+        System.err.println("Error: " + error.getMessage());
+      }
+
+      @Override public void onCompleted() {
+        System.out.println("Sequence complete.");
+      }
+    });
+  }
+
+  @OnClick(R.id.distinct_operator) void onDistinctClick() {
+
+    Observable.just(1, 2, 1, 1, 2, 3).distinct(new Func1<Integer, String>() {
+      @Override public String call(Integer integer) {
+
+        return null;
+      }
+    }).elementAtOrDefault(1, 6666).subscribe(new Subscriber<Integer>() {
+      @Override public void onNext(Integer item) {
+        System.out.println("Next: " + item);
+      }
+
+      @Override public void onError(Throwable error) {
+        System.err.println("Error: " + error.getMessage());
+      }
+
+      @Override public void onCompleted() {
+        System.out.println("Sequence complete.");
+      }
+    });
+  }
+
+  @OnClick(R.id.first_operator) void onFirstClick() {
+
+    Observable.just(1, 2, 3, 4, 5).first().first(new Func1<Integer, Boolean>() {
+      @Override public Boolean call(Integer integer) {
+
+        /*如果没有符合条件item，则抛出"NoSuchElementException"*/
+        return null;
+      }
+    }).subscribe(new Subscriber<Integer>() {
+      @Override public void onNext(Integer item) {
+        Log.e(TAG, "Next: " + item);
+      }
+
+      @Override public void onError(Throwable error) {
+        Log.e(TAG, "Error: " + error.getMessage());
+        error.printStackTrace();
+      }
+
+      @Override public void onCompleted() {
+        Log.e(TAG, "Sequence complete.");
+      }
+    });
+  }
+
+  @OnClick(R.id.take_operator) void onTakeClick() {
+
+    Observable.just(1, 2, 3, 4).take(1).takeFirst(new Func1<Integer, Boolean>() {
+      @Override public Boolean call(Integer integer) {
+
+        /*如果没有符合条件item，不抛出"NoSuchElementException"*/
+        return null;
+      }
+    });
+  }
+
+  @OnClick(R.id.single_operator) void onSingleClick() {
+
+    Observable.just(1, 2, 3, 4)/*single(new Func1<Integer, Boolean>() {
+      @Override public Boolean call(Integer integer) {
+        return integer < 4;
+      }
+    })*/.single().singleOrDefault(0, new Func1<Integer, Boolean>() {
+      @Override public Boolean call(Integer integer) {
+        return integer < 4;
+      }
+    }).subscribe(new Subscriber<Integer>() {
+      @Override public void onNext(Integer item) {
+        Log.e(TAG, "Next: " + item);
+      }
+
+      @Override public void onError(Throwable error) {
+        Log.e(TAG, "Error: " + error.getMessage());
+        error.printStackTrace();
+      }
+
+      @Override public void onCompleted() {
+        Log.e(TAG, "Sequence complete.");
+      }
+    });
+
+    /*Observable.just(1).onErrorResumeNext(new Func1<Throwable, Observable<? extends Integer>>() {
+      @Override public Observable<? extends Integer> call(Throwable throwable) {
+        return null;
+      }
+    }).onErrorResumeNext(Observable.<Integer>empty());
+
+    Observable.just(1).onErrorReturn(new Func1<Throwable, Integer>() {
+      @Override public Integer call(Throwable throwable) {
+        return null;
+      }
+    });*/
+  }
+
+  @OnClick(R.id.publish_operator) void onPublishClick() {
+
+    Observable.just(1).publish().share();
   }
 }

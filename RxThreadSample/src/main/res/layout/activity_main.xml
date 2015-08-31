@@ -29,4 +29,44 @@
       android:text="Scheduler"
       />
 
+  <Button
+      android:id="@+id/scan_operator"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="scan_operator"
+      />
+
+  <Button
+      android:id="@+id/distinct_operator"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="distinct_operator"
+      />
+
+  <Button
+      android:id="@+id/first_operator"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="first_operator"
+      />
+
+  <Button
+      android:id="@+id/take_operator"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="take_operator"
+      />
+  <Button
+      android:id="@+id/single_operator"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="single_operator"
+      />
+  <Button
+      android:id="@+id/publish_operator"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="publish_operator"
+      />
+
 </LinearLayout>

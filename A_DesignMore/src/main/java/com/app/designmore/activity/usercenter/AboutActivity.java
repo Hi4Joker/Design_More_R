@@ -76,6 +76,8 @@ public class AboutActivity extends BaseActivity {
     rootView.setPivotY(startLocationY);
     rootView.setScaleY(0.0f);
 
+    rootView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
     ViewCompat.animate(rootView)
         .scaleY(1.0f)
         .setDuration(200)
