@@ -76,7 +76,6 @@ public class AddressRetrofit {
 
         Observable.defer(new Func0<Observable<AddressResponse>>() {
           @Override public Observable<AddressResponse> call() {
-
             /*获取地址列表，超时8秒*/
             return addressService.getAddressList(params)
                 .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);

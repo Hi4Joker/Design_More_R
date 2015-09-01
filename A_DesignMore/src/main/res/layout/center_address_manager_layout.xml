@@ -10,8 +10,6 @@
   <include layout="@layout/include_white_toolbar_layout"/>
 
 
-
-
   <com.app.designmore.view.ProgressLayout
       android:id="@+id/address_manager_layout_pl"
       android:layout_width="match_parent"
@@ -31,6 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
+        android:background="@color/primary_background_color"
         />
 
     <ImageView
