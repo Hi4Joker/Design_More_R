@@ -3,4 +3,4 @@ include ':Anton', ':DrawableSample', ':ReactiveProgramming', ':RetrofitWeather',
     ':RxJavaSample', ':RxMeetup', ':RxLifecycleSample', ':RxAndroidSample', ':FlatBuffs',
     ':leakcanary-android', ':SupportDesignSample', ':leakcanary-analyzer', ':leakcanary-watcher'
 
-include ':CircularprogressLib', ':CircularProgressViewSample', ':DaoExample'
+include ':CircularprogressLib', ':CircularProgressViewSample', ':DaoExample',':RetrofitEasy'
