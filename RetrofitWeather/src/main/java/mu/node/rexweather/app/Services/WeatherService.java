@@ -3,9 +3,6 @@ package mu.node.rexweather.app.Services;
 import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
-
-import com.squareup.okhttp.internal.huc.JavaApiConverter;
-import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpException;
 
 import java.util.ArrayList;
@@ -14,22 +11,18 @@ import java.util.List;
 import mu.node.rexweather.app.Models.CurrentWeather;
 import mu.node.rexweather.app.Models.WeatherForecast;
 import org.apache.http.HttpStatus;
-import org.apache.http.impl.conn.Wire;
 import retrofit.Callback;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.appengine.UrlFetchClient;
-import retrofit.client.OkClient;
 import retrofit.client.Response;
 import retrofit.converter.GsonConverter;
 import retrofit.http.GET;
 import retrofit.http.Query;
 import rx.Observable;
-import rx.Subscriber;
 import rx.functions.Func0;
 import rx.functions.Func1;
-import rx.internal.operators.OperatorMerge;
 
 public class WeatherService {
   // We are implementing against version 2.5 of the Open Weather Map web service.
@@ -102,6 +95,7 @@ public class WeatherService {
 
   public Observable<List<WeatherForecast>> fetchWeatherForecasts(final double longitude,
       final double latitude) {
+
     return mWebService.fetchWeatherForecasts(longitude, latitude)
         .flatMap(
             new Func1<WeatherForecastListDataEnvelope, Observable<? extends WeatherForecastListDataEnvelope>>() {
@@ -191,8 +185,8 @@ public class WeatherService {
    * Data structure for weather forecast results returned by the web service.
    */
   private class WeatherForecastListDataEnvelope extends WeatherDataEnvelope {
-    public Location city;
     public ArrayList<ForecastDataEnvelope> list;
+    public Location city;
 
     class Location {
       public String name;

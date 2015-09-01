@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
   compileSdkVersion 23
-  buildToolsVersion "23.0.0"
+  buildToolsVersion '23.0.0'
 
   defaultConfig {
     applicationId "com.app.designmore"
@@ -35,12 +35,11 @@ dependencies {
   compile 'com.jakewharton:butterknife:7.0.1'
   compile 'com.nineoldandroids:library:2.4.0'
   compile 'com.squareup.retrofit:retrofit:1.9.0'
-
+  compile 'com.squareup.okhttp:okhttp-urlconnection:2.1.0'
   compile 'com.squareup.okhttp:okhttp:2.1.0'
   compile 'com.squareup.okio:okio:1.1.0'
-
   /*compile 'com.squareup.okhttp:okhttp:2.5.0'
-  compile 'com.squareup.okio:okio:1.6.0'*/
+    compile 'com.squareup.okio:okio:1.6.0'*/
   //  compile 'com.squareup.okhttp:okhttp-urlconnection:2.1.0'
   //  compile 'com.squareup.retrofit:retrofit:2.0.0-beta1'
   //  compile 'com.squareup.retrofit:adapter-rxjava:2.0.0-beta1'
@@ -51,4 +50,5 @@ dependencies {
   /*Greenrobot Library*/
   compile 'de.greenrobot:eventbus:2.4.0'
   compile 'de.greenrobot:greendao:2.0.0'
+  compile 'com.squareup.retrofit:retrofit:1.6.1'
 }

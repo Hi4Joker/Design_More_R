@@ -66,7 +66,6 @@ public class HomeActivity extends RxAppCompatActivity {
     EventBusInstance.getDefault().register(HomeActivity.this);
 
     HomeActivity.this.initView(savedInstanceState);
-
     HomeActivity.this.setListener();
   }
 

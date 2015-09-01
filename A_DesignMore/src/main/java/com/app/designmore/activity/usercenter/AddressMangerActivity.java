@@ -7,6 +7,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,18 +15,25 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.app.designmore.R;
 import com.app.designmore.activity.MineActivity;
+import com.app.designmore.retrofit.AddressRetrofit;
+import com.app.designmore.retrofit.HttpException;
+import com.app.designmore.retrofit.entity.Address;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.MaterialCheckBox;
 import com.app.designmore.view.ProgressLayout;
+import com.trello.rxlifecycle.ActivityEvent;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.TimeoutException;
+import retrofit.RetrofitError;
+import rx.Subscriber;
 
 /**
  * Created by Joker on 2015/8/25.
@@ -72,6 +80,8 @@ public class AddressMangerActivity extends RxAppCompatActivity {
           return true;
         }
       });
+    } else {
+      AddressMangerActivity.this.loadData();
     }
   }
 
@@ -135,7 +145,53 @@ public class AddressMangerActivity extends RxAppCompatActivity {
 
   private void loadData() {
 
+    /*加载数据，显示进度条*/
+    progresslayout.showLoading();
+
+    AddressRetrofit addressRetrofit = AddressRetrofit.getInstance();
+
+    /* Action=GetUserByAddress&uid=2*/
+    HashMap<String, String> params = new HashMap<>(2);
+    params.put("Action", "GetUserByAddress");
+    params.put("uid", "2");
+
+    addressRetrofit.getAddressList(params)
+        .compose(this.<List<Address>>bindUntilEvent(ActivityEvent.DESTROY))
+        .subscribe(new Subscriber<List<Address>>() {
+                     @Override public void onCompleted() {
+
+                       /*加载完毕，显示内容界面*/
+                       progresslayout.showContent();
+                     }
+
+                     @Override public void onError(Throwable error) {
+
+                       if (error instanceof TimeoutException) {
+
+                       } else if (error instanceof RetrofitError
+                           || error instanceof HttpException) {
+
+                         //progresslayout.showError();
+                       } else {
+                         Log.e(TAG, error.getMessage());
+                         error.printStackTrace();
+                         throw new RuntimeException("See inner exception");
+                       }
+                     }
+
+                     @Override public void onNext(List<Address> addresses) {
+
+                     }
+                   }
+
+        );
   }
+
+  private View.OnClickListener retryClickListener = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+
+    }
+  };
 
   @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
     if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
