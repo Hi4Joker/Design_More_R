@@ -2,20 +2,21 @@ package com.app.designmore.retrofit.entity;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import java.io.Serializable;
 
 /**
  * Created by Joker on 2015/9/1.
  */
-public class Address {
+public class Address implements Serializable {
 
-  private String addressId;
-  private String userName;
-  private String province;
-  private String city;
-  private String address;
-  private String mobile;
-  private String zipcode;
-  private boolean isChecked;
+  protected String addressId;
+  protected String userName;
+  protected String province;
+  protected String city;
+  protected String address;
+  protected String mobile;
+  protected String zipcode;
+  protected boolean isChecked;
 
   public String getAddressId() {
     return addressId;

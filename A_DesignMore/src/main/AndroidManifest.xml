@@ -158,7 +158,7 @@
 
     <!-- 用户中心 -> 地址管理 -> 新增地址-->
     <activity
-        android:name=".activity.usercenter.AddressEditorActivity"
+        android:name=".activity.usercenter.AddressAddActivity"
         android:screenOrientation="portrait"
         android:launchMode="singleTop"
         android:theme="@style/AppTheme.TransparentActivity"

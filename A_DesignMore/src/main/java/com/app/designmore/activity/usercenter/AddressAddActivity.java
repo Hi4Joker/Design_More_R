@@ -3,6 +3,7 @@ package com.app.designmore.activity.usercenter;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -14,12 +15,14 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.event.EditorAddressEvent;
 import com.app.designmore.event.RefreshAddressEvent;
@@ -29,11 +32,12 @@ import com.app.designmore.retrofit.AddressRetrofit;
 import com.app.designmore.retrofit.HttpException;
 import com.app.designmore.retrofit.entity.Address;
 import com.app.designmore.revealLib.animation.SupportAnimator;
-import com.trello.rxlifecycle.ActivityEvent;
+import com.app.designmore.revealLib.animation.ViewAnimationUtils;
+import com.app.designmore.revealLib.widget.RevealFrameLayout;
+import com.app.designmore.utils.Utils;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
 import rx.Subscriber;
@@ -44,59 +48,94 @@ import rx.subscriptions.Subscriptions;
 /**
  * Created by Joker on 2015/8/25.
  */
-public class AddressEditorActivity extends RxAppCompatActivity {
+public class AddressAddActivity extends RxAppCompatActivity {
 
-  private static final String TAG = AddressEditorActivity.class.getSimpleName();
-  private static final String ADDRESS = "ADDRESS";
+  private static final String TAG = AddressAddActivity.class.getSimpleName();
 
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
-  @Nullable @Bind(R.id.address_editor_layout_root_view) LinearLayout rootView;
-  @Nullable @Bind(R.id.address_editor_layout_username_et) EditText usernameEt;
-  @Nullable @Bind(R.id.address_editor_layout_mobile_et) EditText mobileEt;
-  @Nullable @Bind(R.id.address_editor_layout_zipcode_et) EditText zipcodeEt;
-  @Nullable @Bind(R.id.address_editor_layout_province_tv) TextView provinceTv;
-  @Nullable @Bind(R.id.address_editor_layout_city_tv) TextView cityTv;
-  @Nullable @Bind(R.id.address_editor_layout_address_et) EditText addressEt;
+  @Nullable @Bind(R.id.address_add_layout_root_view) LinearLayout rootView;
+  @Nullable @Bind(R.id.address_add_layout_rfl) RevealFrameLayout revealFrameLayout;
 
+  @Nullable @Bind(R.id.address_add_layout_username_et) EditText usernameEt;
+  @Nullable @Bind(R.id.address_add_layout_mobile_et) EditText mobileEt;
+  @Nullable @Bind(R.id.address_add_layout_zipcode_et) EditText zipcodeEt;
+  @Nullable @Bind(R.id.address_add_layout_address_et) EditText addressEt;
+  @Nullable @Bind(R.id.address_add_layout_province_tv) TextView provinceTv;
+  @Nullable @Bind(R.id.address_add_layout_city_tv) TextView cityTv;
+
+  private SupportAnimator revealAnimator;
   private Subscription subscription = Subscriptions.empty();
   private ProgressDialog progressDialog;
-  private Address address;
 
-  public static void navigateToAddressEditor(AppCompatActivity startingActivity, Address address) {
+  public static void navigateToAddressEditor(AppCompatActivity startingActivity) {
 
-    Intent intent = new Intent(startingActivity, AddressEditorActivity.class);
-    Bundle bundle = new Bundle();
-    bundle.putSerializable(ADDRESS, address);
-
+    Intent intent = new Intent(startingActivity, AddressAddActivity.class);
     startingActivity.startActivity(intent);
   }
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.center_address_editor_layout);
-    ButterKnife.bind(AddressEditorActivity.this);
+    setContentView(R.layout.center_address_add_layout);
+    ButterKnife.bind(AddressAddActivity.this);
 
-    AddressEditorActivity.this.initView();
+    AddressAddActivity.this.initView(savedInstanceState);
   }
 
-  private void initView() {
+  private void initView(Bundle savedInstanceState) {
 
-    AddressEditorActivity.this.setSupportActionBar(toolbar);
+    AddressAddActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
 
     toolbarTitleTv.setVisibility(View.VISIBLE);
-    toolbarTitleTv.setText("编辑地址");
+    toolbarTitleTv.setText("新增地址");
 
-    /*bind value*/
-    address = (Address) getIntent().getSerializableExtra(ADDRESS);
-    usernameEt.setHint(address.getUserName());
-    mobileEt.setHint(address.getMobile());
-    zipcodeEt.setHint(address.getZipcode());
+    if (savedInstanceState == null) {
+      rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+        @Override public boolean onPreDraw() {
+          rootView.getViewTreeObserver().removeOnPreDrawListener(this);
+          AddressAddActivity.this.startEnterAnim();
+          return true;
+        }
+      });
+    }
+  }
 
-    provinceTv.setText(address.getProvince());
-    cityTv.setText(address.getCity());
-    addressEt.setHint(address.getAddress());
+  private void startEnterAnim() {
+
+    final Rect bounds = new Rect();
+    revealFrameLayout.getHitRect(bounds);
+
+    revealAnimator =
+        ViewAnimationUtils.createCircularReveal(revealFrameLayout.getChildAt(0), bounds.right, 0, 0,
+            Utils.pythagorean(bounds.width(), bounds.height()));
+    revealAnimator.setDuration(Constants.REVEAL_DURATION);
+    revealAnimator.setInterpolator(new AccelerateInterpolator());
+    revealAnimator.start();
+  }
+
+  private void startExitAnim() {
+
+    if (revealAnimator != null && !revealAnimator.isRunning()) {
+      revealAnimator = revealAnimator.reverse();
+      revealAnimator.setDuration(Constants.REVEAL_DURATION);
+      revealAnimator.setInterpolator(new AccelerateInterpolator());
+      revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
+        @Override public void onAnimationEnd() {
+          rootView.setVisibility(View.GONE);
+          AddressAddActivity.this.finish();
+        }
+
+        @Override public void onAnimationCancel() {
+          AddressAddActivity.this.finish();
+        }
+      });
+      revealAnimator.start();
+    } else if (revealAnimator != null && revealAnimator.isRunning()) {
+      revealAnimator.cancel();
+    } else if (revealAnimator == null) {
+      AddressAddActivity.this.finish();
+    }
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -109,26 +148,15 @@ public class AddressEditorActivity extends RxAppCompatActivity {
 
     menuItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        AddressEditorActivity.this.requestEditorAddress();
+        AddressAddActivity.this.requestAddAddress();
       }
     });
     return true;
   }
 
-  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
-    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-      AddressEditorActivity.this.finish();
-      overridePendingTransition(0, 0);
-    }
-    return false;
-  }
+  private void requestAddAddress() {
 
-  /**
-   * 修改地址
-   */
-  private void requestEditorAddress() {
-
-    if (!AddressEditorActivity.this.checkParams()) return;
+    if (!AddressAddActivity.this.checkParams()) return;
 
     /*Action=AddUserByAddress
         &consignee=Eric //收货人
@@ -139,7 +167,7 @@ public class AddressEditorActivity extends RxAppCompatActivity {
         &address= //详细地址
     &address_id= //收货地址ID*/
 
-    HashMap<String, String> params = new HashMap<>(8);
+    HashMap<String, String> params = new HashMap<>(7);
     params.put("Action", "AddUserByAddress");
     params.put("consignee", usernameEt.getText().toString());
     params.put("mobile", mobileEt.getText().toString());
@@ -147,25 +175,22 @@ public class AddressEditorActivity extends RxAppCompatActivity {
     params.put("province", URLEncoder.encode(provinceTv.getText().toString()));
     params.put("city", URLEncoder.encode(cityTv.getText().toString()));
     params.put("address", addressEt.getText().toString());
-    params.put("address_id", address.getAddressId());
 
     subscription =
-        AddressRetrofit.getInstance().requestEditorAddress(params).doOnSubscribe(new Action0() {
+        AddressRetrofit.getInstance().requestAddAddress(params).doOnSubscribe(new Action0() {
           @Override public void call() {
 
             /*加载数据，显示进度条*/
             progressDialog = DialogManager.
-                getInstance().showProgressDialog(AddressEditorActivity.this, null, cancelListener);
+                getInstance().showProgressDialog(AddressAddActivity.this, null, cancelListener);
           }
-        }).subscribe(new Subscriber<Address>() {
+        }).subscribe(new Subscriber<RefreshAddressEvent>() {
           @Override public void onCompleted() {
 
             /*修改成功，隐藏进度条*/
             if (progressDialog != null && progressDialog.isShowing()) {
-
               progressDialog.dismiss();
-              AddressEditorActivity.this.finish();
-              overridePendingTransition(0, 0);
+              AddressAddActivity.this.startExitAnim();
             }
           }
 
@@ -174,7 +199,7 @@ public class AddressEditorActivity extends RxAppCompatActivity {
             if (subscription.isUnsubscribed()) return;
 
             if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
-            AddressEditorActivity.this.showSnackBar("网络连接超时，请重试");
+            AddressAddActivity.this.showSnackBar("网络连接超时，请重试");
 
             if (error instanceof TimeoutException) {
               Log.e(TAG, "TimeoutException");
@@ -189,11 +214,10 @@ public class AddressEditorActivity extends RxAppCompatActivity {
             }
           }
 
-          @Override public void onNext(Address address) {
+          @Override public void onNext(RefreshAddressEvent refreshAddressEvent) {
 
             if (subscription.isUnsubscribed()) return;
-
-            EventBusInstance.getDefault().post((EditorAddressEvent) address);
+            EventBusInstance.getDefault().post(refreshAddressEvent);
           }
         });
   }
@@ -204,27 +228,27 @@ public class AddressEditorActivity extends RxAppCompatActivity {
   private boolean checkParams() {
 
     if (TextUtils.isEmpty(usernameEt.getText().toString())) {
-      AddressEditorActivity.this.showSnackBar("请填写收货人");
+      AddressAddActivity.this.showSnackBar("请填写收货人");
       return false;
     }
     if (TextUtils.isEmpty(mobileEt.getText().toString())) {
-      AddressEditorActivity.this.showSnackBar("请填写手机号码");
+      AddressAddActivity.this.showSnackBar("请填写手机号码");
       return false;
     }
     if (TextUtils.isEmpty(zipcodeEt.getText().toString())) {
-      AddressEditorActivity.this.showSnackBar("请填写邮编");
+      AddressAddActivity.this.showSnackBar("请填写邮编");
       return false;
     }
     if (TextUtils.isEmpty(provinceTv.getText().toString())) {
-      AddressEditorActivity.this.showSnackBar("请选择省份");
+      AddressAddActivity.this.showSnackBar("请选择省份");
       return false;
     }
     if (TextUtils.isEmpty(cityTv.getText().toString())) {
-      AddressEditorActivity.this.showSnackBar("请选择城市");
+      AddressAddActivity.this.showSnackBar("请选择城市");
       return false;
     }
     if (TextUtils.isEmpty(addressEt.getText().toString())) {
-      AddressEditorActivity.this.showSnackBar("请填写地址");
+      AddressAddActivity.this.showSnackBar("请填写地址");
       return false;
     }
 
@@ -238,15 +262,31 @@ public class AddressEditorActivity extends RxAppCompatActivity {
   private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
     @Override public void onCancel(DialogInterface dialog) {
       subscription.unsubscribe();
-      AddressEditorActivity.this.showSnackBar("修改操作被终止");
+      AddressAddActivity.this.showSnackBar("增加操作被终止");
     }
   };
+
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case android.R.id.home:
+        AddressAddActivity.this.startExitAnim();
+        return true;
+    }
+    return super.onOptionsItemSelected(item);
+  }
+
+  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+      AddressAddActivity.this.startExitAnim();
+    }
+    return false;
+  }
 
   @Override protected void onDestroy() {
     super.onDestroy();
 
     this.progressDialog = null;
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();
-    ButterKnife.unbind(AddressEditorActivity.this);
+    ButterKnife.unbind(AddressAddActivity.this);
   }
 }

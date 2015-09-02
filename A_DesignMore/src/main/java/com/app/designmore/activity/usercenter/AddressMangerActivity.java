@@ -1,11 +1,14 @@
 package com.app.designmore.activity.usercenter;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -24,12 +27,14 @@ import butterknife.ButterKnife;
 import com.app.designmore.R;
 import com.app.designmore.activity.MineActivity;
 import com.app.designmore.adapter.AddressAdapter;
-import com.app.designmore.event.AddressEvent;
+import com.app.designmore.event.EditorAddressEvent;
+import com.app.designmore.event.RefreshAddressEvent;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.retrofit.AddressRetrofit;
 import com.app.designmore.retrofit.HttpException;
 import com.app.designmore.retrofit.entity.Address;
+import com.app.designmore.retrofit.result.AddressResponse;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
 import com.trello.rxlifecycle.ActivityEvent;
@@ -40,7 +45,10 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.functions.Action0;
+import rx.functions.Func1;
+import rx.subscriptions.Subscriptions;
 
 /**
  * Created by Joker on 2015/8/25.
@@ -59,7 +67,11 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
   private AddressAdapter addressAdapter;
 
   private List<Address> items = new ArrayList<>();
-  private int currentPosition = -1;
+  private int defaultPosition = -1;
+  private int editorPosition = -1;
+  private int deletePosition = -1;
+  private Subscription subscription = Subscriptions.empty();
+  private ProgressDialog progressDialog;
 
   public static void startFromLocation(MineActivity startingActivity, int startingLocationY) {
 
@@ -114,6 +126,7 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
     recyclerView.setHasFixedSize(true);
     recyclerView.setAdapter(addressAdapter);
     recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+    recyclerView.setItemAnimator(new DefaultItemAnimator());
     recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
       @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
         if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
@@ -151,7 +164,7 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
 
     menuItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        AddressEditorActivity.navigateToAddressEditor(AddressMangerActivity.this);
+        AddressAddActivity.navigateToAddressEditor(AddressMangerActivity.this);
         overridePendingTransition(0, 0);
       }
     });
@@ -172,14 +185,13 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
    */
   private void loadData() {
 
-    final AddressRetrofit addressRetrofit = AddressRetrofit.getInstance();
-
     /* Action=GetUserByAddress&uid=2*/
     HashMap<String, String> params = new HashMap<>(2);
     params.put("Action", "GetUserByAddress");
     params.put("uid", "2");
 
-    addressRetrofit.getAddressList(params)
+    AddressRetrofit.getInstance()
+        .getAddressList(params)
         .doOnSubscribe(new Action0() {
           @Override public void call() {
             /*加载数据，显示进度条*/
@@ -204,27 +216,19 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
 
             if (error instanceof TimeoutException) {
 
-              progresslayout.showError(
-                  getResources().getDrawable(R.drawable.login_layout_logo_icon),
-                  getResources().getString(R.string.timeout_title),
-                  getResources().getString(R.string.timeout_content),
-                  getResources().getString(R.string.retry_button_text), retryClickListener);
+              AddressMangerActivity.this.showError(getResources().getString(R.string.timeout_title),
+                  getResources().getString(R.string.timeout_content));
             } else if (error instanceof RetrofitError) {
 
               Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
 
-              progresslayout.showError(
-                  getResources().getDrawable(R.drawable.login_layout_logo_icon),
-                  getResources().getString(R.string.timeout_title),
-                  getResources().getString(R.string.timeout_content),
-                  getResources().getString(R.string.retry_button_text), retryClickListener);
+              AddressMangerActivity.this.showError(getResources().getString(R.string.timeout_title),
+                  getResources().getString(R.string.timeout_content));
             } else if (error instanceof HttpException) {
 
-              progresslayout.showError(
-                  getResources().getDrawable(R.drawable.login_layout_logo_icon),
+              AddressMangerActivity.this.showError(
                   getResources().getString(R.string.http_exception_title),
-                  getResources().getString(R.string.http_exception_content),
-                  getResources().getString(R.string.retry_button_text), retryClickListener);
+                  getResources().getString(R.string.http_exception_content));
             } else {
               Log.e(TAG, error.getMessage());
               error.printStackTrace();
@@ -236,14 +240,20 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
 
             if (addresses.size() == 0) {
               progresslayout.showEmpty(
-                  getResources().getDrawable(R.drawable.login_layout_logo_icon), "您还没有添加地址", null);
+                  getResources().getDrawable(R.drawable.login_layout_logo_icon), "您还没有收货地址", null);
             } else {
-
               AddressMangerActivity.this.items = addresses;
               addressAdapter.updateItems(addresses);
             }
           }
         });
+  }
+
+  private void showError(String errorTitle, String errorContent) {
+
+    progresslayout.showError(getResources().getDrawable(R.drawable.login_layout_logo_icon),
+        errorTitle, errorContent, getResources().getString(R.string.retry_button_text),
+        retryClickListener);
   }
 
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
@@ -277,7 +287,7 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
 
   private void checkAddress() {
 
-    if (currentPosition != -1) {//更改默认地址
+    if (defaultPosition != -1) {//更改默认地址
       DialogManager.showAddressChangeDialog(AddressMangerActivity.this, onConfirmClick);
     }
   }
@@ -285,43 +295,121 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
   private DialogInterface.OnClickListener onConfirmClick = new DialogInterface.OnClickListener() {
     @Override public void onClick(DialogInterface dialog, int which) {
       // TODO: 2015/9/2 请求修改默认地址接口
-      Address currentAddress = items.get(currentPosition);
+      Address currentAddress = items.get(defaultPosition);
     }
   };
-
-  @Override protected void onDestroy() {
-    super.onDestroy();
-    EventBusInstance.getDefault().unregister(AddressMangerActivity.this);
-    ButterKnife.unbind(AddressMangerActivity.this);
-  }
 
   //AddressAdapter回调
   /*点击删除按钮*/
   @Override public void onDeleteClick(int position) {
 
-    // TODO: 2015/9/2 请求删除地址接口
+    this.deletePosition = position;
+    final Address deleteAddress = items.get(position);
 
+    HashMap<String, String> params = new HashMap<>(3);
+    params.put("Action", "DelUserByAddress");
+    params.put("address_id", deleteAddress.getAddressId());
+    params.put("uid", "2");
+
+    subscription =
+        AddressRetrofit.getInstance().requestDeleteAddress(params).doOnSubscribe(new Action0() {
+          @Override public void call() {
+            /*加载数据，显示进度条*/
+            progressDialog = DialogManager.
+                getInstance().showProgressDialog(AddressMangerActivity.this, null, cancelListener);
+          }
+        }).map(new Func1<AddressResponse, Address>() {
+          @Override public Address call(AddressResponse addressResponse) {
+            return deleteAddress;
+          }
+        }).filter(new Func1<Address, Boolean>() {
+          @Override public Boolean call(Address address) {
+            return !subscription.isUnsubscribed();
+          }
+        }).doOnCompleted(new Action0() {
+          @Override public void call() {
+            /*删除成功，隐藏进度条*/
+            if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
+          }
+        }).subscribe(addressAdapter);
+  }
+
+  private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
+    @Override public void onCancel(DialogInterface dialog) {
+      subscription.unsubscribe();
+      AddressMangerActivity.this.showSnackBar("删除操作被终止");
+    }
+  };
+
+  private void showSnackBar(String text) {
+    Snackbar.make(rootView, text, Snackbar.LENGTH_SHORT).setAction("确定", null).show();
   }
 
   /*点击编辑按钮*/
   @Override public void onEditorClick(int position) {
 
+    this.editorPosition = position;
+    AddressEditorActivity.navigateToAddressEditor(AddressMangerActivity.this, items.get(position));
+    overridePendingTransition(0, 0);
   }
 
   /*点击RadioButton*/
   @Override public void onCheckChange(int position) {
-    currentPosition = position;
+    this.defaultPosition = position;
   }
 
   /*发生错误回调*/
   @Override public void onError(Throwable error) {
 
+    if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
+    AddressMangerActivity.this.showSnackBar("网络连接超时，请重试");
+
+    if (error instanceof TimeoutException) {
+      Log.e(TAG, "TimeoutException");
+    } else if (error instanceof RetrofitError) {
+      Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
+    } else if (error instanceof HttpException) {
+      Log.e(TAG, "HttpException");
+    } else {
+      Log.e(TAG, error.getMessage());
+      error.printStackTrace();
+      throw new RuntimeException("See inner exception");
+    }
   }
 
-  public void onEventMainThread(AddressEvent event) {
+  /**
+   * 新增地址 -> 刷新界面
+   */
+  public void onEventMainThread(RefreshAddressEvent event) {
 
+    AddressMangerActivity.this.loadData();
+  }
 
+  /**
+   * 新增地址 -> 刷新界面
+   */
+  public void onEventMainThread(EditorAddressEvent event) {
 
+    Address address = items.get(editorPosition);
 
+    address.setAddressId(event.getAddressId());
+    address.setUserName(event.getUserName());
+    address.setProvince(event.getProvince());
+    address.setCity(event.getCity());
+    address.setAddress(event.getAddress());
+    address.setMobile(event.getMobile());
+    address.setZipcode(event.getZipcode());
+    address.setIsChecked(event.isChecked());
+
+    this.addressAdapter.updateItem(address, editorPosition);
+  }
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
+
+    progressDialog = null;
+    if (!subscription.isUnsubscribed()) subscription.unsubscribe();
+    EventBusInstance.getDefault().unregister(AddressMangerActivity.this);
+    ButterKnife.unbind(AddressMangerActivity.this);
   }
 }

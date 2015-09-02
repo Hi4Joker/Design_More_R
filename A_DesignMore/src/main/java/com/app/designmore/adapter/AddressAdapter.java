@@ -19,6 +19,7 @@ import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.retrofit.entity.Address;
 import java.util.List;
+import rx.Observable;
 import rx.Observer;
 
 /**
@@ -34,7 +35,8 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
 
   private Context context;
 
-  private int currentPosition;
+  private int defaultPosition = -1;
+  private int deletePosition = -1;
 
   public AddressAdapter(Context context) {
     this.context = context;
@@ -66,7 +68,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
     holder.userAddress.setText(address.getProvince() + address.getCity() + address.getAddress());
 
     if (address.isChecked()) {
-      this.currentPosition = items.indexOf(address);
+      this.defaultPosition = items.indexOf(address);
       holder.radioBtn.setImageDrawable(
           context.getResources().getDrawable(R.drawable.ic_radio_selected));
     } else {
@@ -104,24 +106,35 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
   }
 
   @Override public void onCompleted() {
-    AddressAdapter.this.notifyDataSetChanged();
+    AddressAdapter.this.notifyItemRemoved(deletePosition);
   }
 
   @Override public void onError(Throwable e) {
-
     if (callback != null) {
       callback.onError(e);
     }
   }
 
   @Override public void onNext(Address address) {
+    this.deletePosition = items.indexOf(address);
     items.remove(address);
   }
 
-  /*更新数据*/
+  /**
+   * 更新整张列表
+   */
   public void updateItems(List<Address> items) {
     this.items = items;
     AddressAdapter.this.notifyDataSetChanged();
+  }
+
+  /**
+   * 更新单个条目数据
+   */
+  public void updateItem(Address address, int editorPosition) {
+
+    this.items.set(editorPosition, address);
+    AddressAdapter.this.notifyItemChanged(editorPosition);
   }
 
   public class ViewHolder extends RecyclerView.ViewHolder {
@@ -159,12 +172,12 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
 
       int position = (int) button.getTag();
 
-      if (position != currentPosition) {
-        items.get(currentPosition).setIsChecked(false);
+      if (position != defaultPosition) {
+        items.get(defaultPosition).setIsChecked(false);
         items.get(position).setIsChecked(true);
 
         /*true -> false*/
-        AddressAdapter.this.notifyItemChanged(currentPosition);
+        AddressAdapter.this.notifyItemChanged(defaultPosition);
         /*false -> true*/
         AddressAdapter.this.notifyItemChanged(position);
 

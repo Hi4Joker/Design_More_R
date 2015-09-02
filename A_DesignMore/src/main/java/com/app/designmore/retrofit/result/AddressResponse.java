@@ -63,11 +63,6 @@ public class AddressResponse extends BaseResponse {
   }
 
   @Override public String toString() {
-
-   /* for (Address address : addressList) {
-
-    }*/
-
     return "AddressResponse{" +
         "addressList=" + addressList +
         '}';
