@@ -1,12 +1,9 @@
 package com.app.designmore.adapter;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
-import android.support.v7.internal.VersionUtils;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +18,6 @@ import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.retrofit.entity.Address;
 import com.app.designmore.view.MaterialCheckBox;
-import java.util.ArrayList;
 import java.util.List;
 import rx.Observer;
 
@@ -29,7 +25,7 @@ import rx.Observer;
  * Created by Joker on 2015/9/1.
  */
 public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHolder>
-    implements Observer<Address> {
+    implements Observer<Address>, MaterialCheckBox.OnCheckedChangeListener {
 
   private List<Address> items;
   private int lastAnimatedPosition = -1;
@@ -53,6 +49,10 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
 
     holder.deleteBtn.setTag(position);
     holder.editorBtn.setTag(position);
+    holder.checkBox.setTag(position);
+
+    /*bindCheckbox监听事件*/
+    holder.checkBox.setOnCheckedChangedListener(AddressAdapter.this);
 
     /*绑定数据*/
     AddressAdapter.this.bindToValue(holder, items.get(position));
@@ -66,6 +66,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
     holder.userName.setText(address.getUserName());
     holder.userMobile.setText(address.getMobile());
     holder.userAddress.setText(address.getAddress());
+    holder.checkBox.setChecked(address.getChecked());
   }
 
   private void runEnterAnimation(View itemView, int position) {
@@ -150,6 +151,13 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
     this.delayEnterAnimation = delayEnterAnimation;
   }*/
 
+  @Override public void onCheckedChanged(MaterialCheckBox materialCheckBox, boolean isChecked) {
+
+    if (callback != null) {
+      callback.onCheckChange(materialCheckBox, isChecked, (Integer) materialCheckBox.getTag());
+    }
+  }
+
   public void setCallback(Callback callback) {
     this.callback = callback;
   }
@@ -161,6 +169,9 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
 
     /*点击编辑按钮*/
     void onEditorClick(int position);
+
+    /*checkbox状态改变*/
+    void onCheckChange(MaterialCheckBox checkBox, boolean isCheck, int position);
 
     void onError(Throwable error);
   }

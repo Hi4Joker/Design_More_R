@@ -14,6 +14,7 @@ public class Address {
   private String userName;
   private String address;
   private String mobile;
+  private boolean isChecked;
 
   public String getUserId() {
     return userId;
@@ -63,6 +64,14 @@ public class Address {
     this.mobile = mobile;
   }
 
+  public boolean getChecked() {
+    return isChecked;
+  }
+
+  public void setChecked(boolean isChecked) {
+    this.isChecked = isChecked;
+  }
+
   public Address newInstance() {
 
     try {
@@ -76,5 +85,16 @@ public class Address {
   @Override protected Object clone() throws CloneNotSupportedException {
     Address address = (Address) super.clone();
     return address;
+  }
+
+  @Override public String toString() {
+    return "Address{" +
+        "userId='" + userId + '\'' +
+        ", addressId='" + addressId + '\'' +
+        ", addressName='" + addressName + '\'' +
+        ", userName='" + userName + '\'' +
+        ", address='" + address + '\'' +
+        ", mobile='" + mobile + '\'' +
+        '}';
   }
 }

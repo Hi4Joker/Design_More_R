@@ -41,7 +41,7 @@ public class MaterialCheckBox extends View {
   private boolean checked;                  //选择状态
   private float correctProgress;            //划对号的进度
 
-  private boolean drawRecting;
+  private boolean drawReacting;
   private boolean isAnim;
   private OnCheckedChangeListener listener;
 
@@ -108,7 +108,7 @@ public class MaterialCheckBox extends View {
         setChecked(!isChecked());
       }
     });
-    drawRecting = true;
+    drawReacting = true;
   }
 
   @Override protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -136,7 +136,7 @@ public class MaterialCheckBox extends View {
   @Override protected void onDraw(Canvas canvas) {
     RectF rect = new RectF(padding, padding, width - padding, height - padding);
     canvas.drawRoundRect(rect, baseWidth, baseWidth, paintBlue);
-    if (drawRecting) {
+    if (drawReacting) {
       canvas.drawRect(padding + borderWidth, padding + borderWidth, width - padding - borderWidth,
           height - padding - borderWidth, paintCenter);
     } else {
@@ -191,7 +191,7 @@ public class MaterialCheckBox extends View {
       return;
     }
     isAnim = true;
-    drawRecting = true;
+    drawReacting = true;
     ValueAnimator va = ValueAnimator.ofFloat(0, 1).setDuration(DURATION);
     va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
       @Override public void onAnimationUpdate(ValueAnimator animation) {
@@ -217,7 +217,7 @@ public class MaterialCheckBox extends View {
       return;
     }
     isAnim = true;
-    drawRecting = true;
+    drawReacting = true;
     ValueAnimator va = ValueAnimator.ofFloat(0, 1).setDuration(DURATION);
     va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
       @Override public void onAnimationUpdate(ValueAnimator animation) {
@@ -227,7 +227,7 @@ public class MaterialCheckBox extends View {
         invalidate();
         if (p >= 1) {
           isAnim = false;
-          drawRecting = false;
+          drawReacting = false;
           showCorrect();
         }
       }
@@ -241,7 +241,7 @@ public class MaterialCheckBox extends View {
     }
     isAnim = true;
     correctProgress = 0;
-    drawRecting = false;
+    drawReacting = false;
     ValueAnimator va = ValueAnimator.ofFloat(0, 1).setDuration(DURATION);
     va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
       @Override public void onAnimationUpdate(ValueAnimator animation) {
@@ -265,7 +265,7 @@ public class MaterialCheckBox extends View {
     }
     isAnim = true;
     correctProgress = 1;
-    drawRecting = false;
+    drawReacting = false;
     ValueAnimator va = ValueAnimator.ofFloat(0, 1).setDuration(DURATION);
     va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
       @Override public void onAnimationUpdate(ValueAnimator animation) {
@@ -285,8 +285,8 @@ public class MaterialCheckBox extends View {
     this.listener = listener;
   }
 
-  interface OnCheckedChangeListener {
-    void onCheckedChanged(View view, boolean isChecked);
+  public interface OnCheckedChangeListener {
+    void onCheckedChanged(MaterialCheckBox materialCheckBox, boolean isChecked);
   }
 
   private int evaluate(float fraction, int startValue, int endValue) {

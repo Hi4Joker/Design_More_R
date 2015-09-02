@@ -17,7 +17,7 @@
       app:progressEmptyStateBackgroundColor="@android:color/holo_blue_dark"
       app:progressEmptyStateContentTextColor="#FFFFFF"
       app:progressEmptyStateTitleTextColor="#FFFFFF"
-      app:progressErrorStateBackgroundColor="@android:color/holo_red_dark"
+      app:progressErrorStateBackgroundColor="@android:color/white"
       app:progressErrorStateButtonTextColor="#FFFFFF"
       app:progressErrorStateContentTextColor="#FFFFFF"
       app:progressErrorStateTitleTextColor="#FFFFFF"

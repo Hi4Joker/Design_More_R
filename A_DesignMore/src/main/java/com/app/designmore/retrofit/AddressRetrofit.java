@@ -15,7 +15,6 @@ import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 import retrofit.converter.GsonConverter;
-import retrofit.http.Body;
 import retrofit.http.FieldMap;
 import retrofit.http.POST;
 import rx.Observable;
@@ -99,15 +98,23 @@ public class AddressRetrofit {
 
             Address addressInstance = new Address();
 
-            for (AddressResponse.Address entity : addressManagerResponse.addressList) {
+            for (AddressResponse.Address entity : addressManagerResponse.getAddressList()) {
               Address clone = addressInstance.newInstance();
 
               clone.setUserId(entity.userId);
               clone.setAddressId(entity.addressId);
               clone.setAddressName(entity.addressName);
               clone.setUserName(entity.consignee);
-              clone.setAddress(entity.address);
               clone.setMobile(entity.mobile);
+
+              clone.setAddress(entity.country
+                  + entity.province
+                  + entity.city
+                  + entity.district
+                  + entity.address);
+
+              /*默认选项*/
+              clone.setChecked(entity.isChecked);
 
               addressArrayList.add(clone);
             }

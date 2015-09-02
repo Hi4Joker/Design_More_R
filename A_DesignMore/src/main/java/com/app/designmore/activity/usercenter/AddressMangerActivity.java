@@ -33,6 +33,7 @@ import com.trello.rxlifecycle.ActivityEvent;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
@@ -56,6 +57,8 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
 
   private List<Address> items = new ArrayList<>();
   private AddressAdapter addressAdapter;
+
+  private int currentPosition = -1;
 
   public static void startFromLocation(MineActivity startingActivity, int startingLocationY) {
 
@@ -138,6 +141,15 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
 
   private void startExitAnim() {
 
+    if (items != null && items.size() > 0) {
+
+      for (Iterator<Address> iterator = items.iterator(); iterator.hasNext(); ) {
+        if (iterator.next().getChecked()) {
+          return;
+        }
+      }
+    }
+
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(AddressMangerActivity.this))
         .setDuration(400)
@@ -210,13 +222,28 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
 
             if (error instanceof TimeoutException) {
 
+              progresslayout.showError(
+                  getResources().getDrawable(R.drawable.login_layout_logo_icon),
+                  getResources().getString(R.string.timeout_title),
+                  getResources().getString(R.string.timeout_content),
+                  getResources().getString(R.string.retry_button_text), retryClickListener);
             } else if (error instanceof RetrofitError) {
               Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
+
+              progresslayout.showError(
+                  getResources().getDrawable(R.drawable.login_layout_logo_icon),
+                  getResources().getString(R.string.timeout_title),
+                  getResources().getString(R.string.timeout_content),
+                  getResources().getString(R.string.retry_button_text), retryClickListener);
 
               //progresslayout.showError();
             } else if (error instanceof HttpException) {
 
-              Log.e(TAG, "HttpException");
+              progresslayout.showError(
+                  getResources().getDrawable(R.drawable.login_layout_logo_icon),
+                  getResources().getString(R.string.http_exception_title),
+                  getResources().getString(R.string.http_exception_content),
+                  getResources().getString(R.string.retry_button_text), retryClickListener);
             } else {
               Log.e(TAG, error.getMessage());
               error.printStackTrace();
@@ -236,6 +263,7 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
 
+      AddressMangerActivity.this.loadData();
     }
   };
 
@@ -260,6 +288,12 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
   /*点击编辑按钮*/
   @Override public void onEditorClick(int position) {
 
+  }
+
+  /*checkbox状态改变*/
+  @Override public void onCheckChange(MaterialCheckBox checkBox, boolean isCheck, int position) {
+
+    //items.get(position).setChecked(isCheck);
   }
 
   /*发生错误回调*/
