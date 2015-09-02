@@ -42,8 +42,6 @@ public class AddressEditorActivity extends RxAppCompatActivity {
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
   @Nullable @Bind(R.id.address_editor_layout_root_view) LinearLayout rootView;
   @Nullable @Bind(R.id.address_editor_layout_rfl) RevealFrameLayout revealFrameLayout;
-  @Nullable @Bind(R.id.address_editor_layout_pl) ProgressLayout progresslayout;
-  @Nullable @Bind(R.id.address_editor_layout_rv) RecyclerView recyclerView;
   private SupportAnimator revealAnimator;
 
   public static void navigateToAddressEditor(AppCompatActivity startingActivity) {

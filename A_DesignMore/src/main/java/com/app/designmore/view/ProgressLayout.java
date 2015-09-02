@@ -11,10 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import com.app.designmore.view.progress.CircularProgressView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -49,8 +47,7 @@ public class ProgressLayout extends RelativeLayout {
   private TextView errorStateContentTextView;
   private Button errorStateButton;
 
-  int loadingStateProgressBarWidth;
-  int loadingStateProgressBarHeight;
+  int loadingStateBackgroundColor;
 
   int emptyStateImageWidth;
   int emptyStateImageHeight;
@@ -98,11 +95,9 @@ public class ProgressLayout extends RelativeLayout {
 
       try {
         //Loading currentState attrs
-        loadingStateProgressBarWidth = typedArray.getDimensionPixelSize(
-            R.styleable.ProgressLayout_progressLoadingStateProgressBarWidth, 108);
-
-        loadingStateProgressBarHeight = typedArray.getDimensionPixelSize(
-            R.styleable.ProgressLayout_progressLoadingStateProgressBarHeight, 108);
+        loadingStateBackgroundColor =
+            typedArray.getColor(R.styleable.ProgressLayout_progressLoadingStateBackgroundColor,
+                Color.TRANSPARENT);
 
         //Empty currentState attrs
         emptyStateImageWidth = typedArray.getDimensionPixelSize(
@@ -361,19 +356,10 @@ public class ProgressLayout extends RelativeLayout {
         (RelativeLayout) view.findViewById(R.id.loadingStateRelativeLayout);
     loadingStateRelativeLayout.setTag(TAG_LOADING);
 
-    CircularProgressView loadingStateProgressBar =
-        (CircularProgressView) view.findViewById(R.id.loadingStateProgressBar);
-
-    loadingStateProgressBar.getLayoutParams().width = loadingStateProgressBarWidth;
-    loadingStateProgressBar.getLayoutParams().height = loadingStateProgressBarHeight;
-    loadingStateProgressBar.requestLayout();
-
-    loadingStateRelativeLayout.setBackgroundColor(Color.TRANSPARENT);
-
     //Set background color if not TRANSPARENT
-    /*if (loadingStateBackgroundColor != Color.TRANSPARENT) {
+    if (loadingStateBackgroundColor != Color.TRANSPARENT) {
       loadingStateRelativeLayout.setBackgroundColor(loadingStateBackgroundColor);
-    }*/
+    }
 
     layoutParams =
         new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);

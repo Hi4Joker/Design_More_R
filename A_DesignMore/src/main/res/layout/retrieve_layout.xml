@@ -77,7 +77,7 @@
           android:id="@+id/retrieve_layout_phone_et"
           android:layout_toLeftOf="@id/retrieve_layout_name_clear_btn"
           android:hint="请输入已经验证的手机号"
-          android:inputType="number"
+          android:inputType="phone"
           android:maxLength="11"
           style="@style/login_layout_et_style"
           />

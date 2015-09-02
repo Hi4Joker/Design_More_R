@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@android:color/white"
+        android:background="@color/white"
         >
       <RelativeLayout
           android:layout_width="match_parent"
@@ -109,7 +109,7 @@
         app:mrl_rippleHover="true"
         app:mrl_rippleOverlay="true"
         app:mrl_rippleDelayClick="true"
-        app:mrl_rippleColor="@android:color/holo_red_dark"
+        app:mrl_rippleColor="@color/holo_red_dark"
         >
       <Button
           android:id="@+id/login_layout_login_btn"
@@ -117,7 +117,7 @@
           android:layout_height="match_parent"
           android:text="登  陆"
           android:textSize="@dimen/material_16sp"
-          android:textColor="@android:color/white"
+          android:textColor="@color/white"
           android:background="@drawable/login_layout_login_background"
           />
     </com.app.designmore.view.MaterialRippleLayout>

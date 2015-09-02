@@ -9,18 +9,17 @@
 
   <include layout="@layout/include_white_toolbar_layout"/>
 
-
   <com.app.designmore.view.ProgressLayout
       android:id="@+id/address_manager_layout_pl"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      app:progressEmptyStateBackgroundColor="@android:color/holo_blue_dark"
-      app:progressEmptyStateContentTextColor="#FFFFFF"
-      app:progressEmptyStateTitleTextColor="#FFFFFF"
-      app:progressErrorStateBackgroundColor="@android:color/white"
-      app:progressErrorStateButtonTextColor="#FFFFFF"
-      app:progressErrorStateContentTextColor="#FFFFFF"
-      app:progressErrorStateTitleTextColor="#FFFFFF"
+      app:progressEmptyStateBackgroundColor="@color/white"
+      app:progressEmptyStateContentTextColor="@color/black"
+      app:progressEmptyStateTitleTextColor="@color/black"
+      app:progressErrorStateBackgroundColor="@color/holo_red_light"
+      app:progressErrorStateButtonTextColor="@color/black"
+      app:progressErrorStateContentTextColor="@color/black"
+      app:progressErrorStateTitleTextColor="@color/black"
       android:background="@color/primary_background_color"
       >
 

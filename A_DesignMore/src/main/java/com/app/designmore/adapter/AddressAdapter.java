@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -17,7 +18,6 @@ import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.retrofit.entity.Address;
-import com.app.designmore.view.MaterialCheckBox;
 import java.util.List;
 import rx.Observer;
 
@@ -25,7 +25,7 @@ import rx.Observer;
  * Created by Joker on 2015/9/1.
  */
 public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHolder>
-    implements Observer<Address>, MaterialCheckBox.OnCheckedChangeListener {
+    implements Observer<Address> {
 
   private List<Address> items;
   private int lastAnimatedPosition = -1;
@@ -34,9 +34,10 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
 
   private Context context;
 
-  public AddressAdapter(Context context, List<Address> items) {
+  private int currentPosition;
+
+  public AddressAdapter(Context context) {
     this.context = context;
-    this.items = items;
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -49,10 +50,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
 
     holder.deleteBtn.setTag(position);
     holder.editorBtn.setTag(position);
-    holder.checkBox.setTag(position);
-
-    /*bindCheckbox监听事件*/
-    holder.checkBox.setOnCheckedChangedListener(AddressAdapter.this);
+    holder.radioBtn.setTag(position);
 
     /*绑定数据*/
     AddressAdapter.this.bindToValue(holder, items.get(position));
@@ -65,8 +63,16 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
 
     holder.userName.setText(address.getUserName());
     holder.userMobile.setText(address.getMobile());
-    holder.userAddress.setText(address.getAddress());
-    holder.checkBox.setChecked(address.getChecked());
+    holder.userAddress.setText(address.getProvince() + address.getCity() + address.getAddress());
+
+    if (address.isChecked()) {
+      this.currentPosition = items.indexOf(address);
+      holder.radioBtn.setImageDrawable(
+          context.getResources().getDrawable(R.drawable.ic_radio_selected));
+    } else {
+      holder.radioBtn.setImageDrawable(
+          context.getResources().getDrawable(R.drawable.ic_radio_normal));
+    }
   }
 
   private void runEnterAnimation(View itemView, int position) {
@@ -112,12 +118,18 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
     items.remove(address);
   }
 
+  /*更新数据*/
+  public void updateItems(List<Address> items) {
+    this.items = items;
+    AddressAdapter.this.notifyDataSetChanged();
+  }
+
   public class ViewHolder extends RecyclerView.ViewHolder {
 
     @Nullable @Bind(R.id.address_manager_item_name) TextView userName;
     @Nullable @Bind(R.id.address_manager_item_phone) TextView userMobile;
     @Nullable @Bind(R.id.address_manager_item_address) TextView userAddress;
-    @Nullable @Bind(R.id.address_manager_item_radio_btn) MaterialCheckBox checkBox;
+    @Nullable @Bind(R.id.address_manager_item_radio_btn) ImageButton radioBtn;
     @Nullable @Bind(R.id.address_manager_item_delete_btn) Button deleteBtn;
     @Nullable @Bind(R.id.address_manager_item_editor_btn) Button editorBtn;
 
@@ -141,21 +153,30 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
         callback.onEditorClick(pos);
       }
     }
+
+    @Nullable @OnClick(R.id.address_manager_item_editor_btn) void onRadionClick(
+        ImageButton button) {
+
+      int position = (int) button.getTag();
+
+      if (position != currentPosition) {
+        items.get(currentPosition).setIsChecked(false);
+        items.get(position).setIsChecked(true);
+
+        /*true -> false*/
+        AddressAdapter.this.notifyItemChanged(currentPosition);
+        /*false -> true*/
+        AddressAdapter.this.notifyItemChanged(position);
+
+        if (callback != null) {
+          callback.onCheckChange(position);
+        }
+      }
+    }
   }
 
   public void setAnimationsLocked(boolean animationsLocked) {
     this.animationsLocked = animationsLocked;
-  }
-
-  /*public void setDelayEnterAnimation(boolean delayEnterAnimation) {
-    this.delayEnterAnimation = delayEnterAnimation;
-  }*/
-
-  @Override public void onCheckedChanged(MaterialCheckBox materialCheckBox, boolean isChecked) {
-
-    if (callback != null) {
-      callback.onCheckChange(materialCheckBox, isChecked, (Integer) materialCheckBox.getTag());
-    }
   }
 
   public void setCallback(Callback callback) {
@@ -171,7 +192,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
     void onEditorClick(int position);
 
     /*checkbox状态改变*/
-    void onCheckChange(MaterialCheckBox checkBox, boolean isCheck, int position);
+    void onCheckChange(int position);
 
     void onError(Throwable error);
   }

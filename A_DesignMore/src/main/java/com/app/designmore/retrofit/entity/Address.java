@@ -8,21 +8,14 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Address {
 
-  private String userId;
   private String addressId;
-  private String addressName;
   private String userName;
+  private String province;
+  private String city;
   private String address;
   private String mobile;
+  private String zipcode;
   private boolean isChecked;
-
-  public String getUserId() {
-    return userId;
-  }
-
-  public void setUserId(String userId) {
-    this.userId = userId;
-  }
 
   public String getAddressId() {
     return addressId;
@@ -32,20 +25,28 @@ public class Address {
     this.addressId = addressId;
   }
 
-  public String getAddressName() {
-    return addressName;
-  }
-
-  public void setAddressName(String addressName) {
-    this.addressName = addressName;
-  }
-
   public String getUserName() {
     return userName;
   }
 
   public void setUserName(String userName) {
     this.userName = userName;
+  }
+
+  public String getProvince() {
+    return province;
+  }
+
+  public void setProvince(String province) {
+    this.province = province;
+  }
+
+  public String getCity() {
+    return city;
+  }
+
+  public void setCity(String city) {
+    this.city = city;
   }
 
   public String getAddress() {
@@ -64,11 +65,19 @@ public class Address {
     this.mobile = mobile;
   }
 
-  public boolean getChecked() {
+  public String getZipcode() {
+    return zipcode;
+  }
+
+  public void setZipcode(String zipcode) {
+    this.zipcode = zipcode;
+  }
+
+  public boolean isChecked() {
     return isChecked;
   }
 
-  public void setChecked(boolean isChecked) {
+  public void setIsChecked(boolean isChecked) {
     this.isChecked = isChecked;
   }
 
@@ -89,12 +98,14 @@ public class Address {
 
   @Override public String toString() {
     return "Address{" +
-        "userId='" + userId + '\'' +
-        ", addressId='" + addressId + '\'' +
-        ", addressName='" + addressName + '\'' +
+        "addressId='" + addressId + '\'' +
         ", userName='" + userName + '\'' +
+        ", province='" + province + '\'' +
+        ", city='" + city + '\'' +
         ", address='" + address + '\'' +
         ", mobile='" + mobile + '\'' +
+        ", zipcode='" + zipcode + '\'' +
+        ", isChecked=" + isChecked +
         '}';
   }
 }

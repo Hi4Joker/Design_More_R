@@ -12,17 +12,17 @@
       android:layout_height="match_parent"
       android:layout_marginBottom="@dimen/material_48dp"
       android:layout_alignParentTop="true"
-      android:background="@android:color/white"
+      android:background="@color/white"
       >
 
     <com.app.designmore.view.ProgressLayout
         android:id="@+id/mine_layout_pl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:progressEmptyStateBackgroundColor="@android:color/holo_blue_dark"
+        app:progressEmptyStateBackgroundColor="@color/holo_blue_dark"
         app:progressEmptyStateContentTextColor="#FFFFFF"
         app:progressEmptyStateTitleTextColor="#FFFFFF"
-        app:progressErrorStateBackgroundColor="@android:color/holo_red_dark"
+        app:progressErrorStateBackgroundColor="@color/holo_red_dark"
         app:progressErrorStateButtonTextColor="#FFFFFF"
         app:progressErrorStateContentTextColor="#FFFFFF"
         app:progressErrorStateTitleTextColor="#FFFFFF"
@@ -84,14 +84,14 @@
             app:mrl_rippleHover="true"
             app:mrl_rippleOverlay="true"
             app:mrl_rippleDelayClick="true"
-            app:mrl_rippleColor="@android:color/darker_gray"
+            app:mrl_rippleColor="@color/darker_gray"
             >
           <LinearLayout
               android:id="@+id/mine_layout_trolley_ll"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="horizontal"
-              android:background="@android:color/white"
+              android:background="@color/white"
               >
 
             <ImageView
@@ -125,14 +125,14 @@
             app:mrl_rippleHover="true"
             app:mrl_rippleOverlay="true"
             app:mrl_rippleDelayClick="true"
-            app:mrl_rippleColor="@android:color/darker_gray"
+            app:mrl_rippleColor="@color/darker_gray"
             >
           <LinearLayout
               android:id="@+id/mine_layout_order_ll"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="horizontal"
-              android:background="@android:color/white"
+              android:background="@color/white"
               >
             <ImageView
                 android:layout_width="@dimen/material_24dp"
@@ -163,14 +163,14 @@
             app:mrl_rippleHover="true"
             app:mrl_rippleOverlay="true"
             app:mrl_rippleDelayClick="true"
-            app:mrl_rippleColor="@android:color/darker_gray"
+            app:mrl_rippleColor="@color/darker_gray"
             >
           <LinearLayout
               android:id="@+id/mine_layout_favorite_ll"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="horizontal"
-              android:background="@android:color/white"
+              android:background="@color/white"
               >
             <ImageView
                 android:layout_width="@dimen/material_24dp"
@@ -202,14 +202,14 @@
             app:mrl_rippleHover="true"
             app:mrl_rippleOverlay="true"
             app:mrl_rippleDelayClick="true"
-            app:mrl_rippleColor="@android:color/darker_gray"
+            app:mrl_rippleColor="@color/darker_gray"
             >
           <LinearLayout
               android:id="@+id/mine_layout_information_ll"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="horizontal"
-              android:background="@android:color/white"
+              android:background="@color/white"
               >
             <ImageView
                 android:layout_width="@dimen/material_24dp"
@@ -240,14 +240,14 @@
             app:mrl_rippleHover="true"
             app:mrl_rippleOverlay="true"
             app:mrl_rippleDelayClick="true"
-            app:mrl_rippleColor="@android:color/darker_gray"
+            app:mrl_rippleColor="@color/darker_gray"
             >
           <LinearLayout
               android:id="@+id/mine_layout_address_ll"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="horizontal"
-              android:background="@android:color/white"
+              android:background="@color/white"
               >
             <ImageView
                 android:layout_width="@dimen/material_24dp"
@@ -277,14 +277,14 @@
             app:mrl_rippleHover="true"
             app:mrl_rippleOverlay="true"
             app:mrl_rippleDelayClick="true"
-            app:mrl_rippleColor="@android:color/darker_gray"
+            app:mrl_rippleColor="@color/darker_gray"
             >
           <LinearLayout
               android:id="@+id/mine_layout_message_ll"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="horizontal"
-              android:background="@android:color/white"
+              android:background="@color/white"
               >
             <ImageView
                 android:layout_width="@dimen/material_24dp"

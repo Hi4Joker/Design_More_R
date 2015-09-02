@@ -13,7 +13,7 @@
       android:layout_centerInParent="true"
       app:cpv_animAutostart="true"
       app:cpv_indeterminate="true"
-      app:cpv_color="@android:color/holo_blue_light"
+      app:cpv_color="@color/holo_blue_light"
       app:cpv_thickness="@dimen/material_3dp"
       />
 

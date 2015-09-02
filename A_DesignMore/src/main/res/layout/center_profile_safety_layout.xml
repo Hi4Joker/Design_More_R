@@ -40,7 +40,7 @@
         android:inputType="number"
         android:hint="原密码"
         android:textSize="@dimen/material_16sp"
-        android:background="@drawable/login_edit_background"
+        android:background="@drawable/transparent_background"
         />
   </RelativeLayout>
 
@@ -75,7 +75,7 @@
         android:inputType="textPassword"
         android:hint="新密码"
         android:textSize="@dimen/material_16sp"
-        android:background="@drawable/login_edit_background"
+        android:background="@drawable/transparent_background"
         />
   </RelativeLayout>
 
@@ -110,7 +110,7 @@
         android:inputType="textPassword"
         android:hint="再次确认密码"
         android:textSize="@dimen/material_16sp"
-        android:background="@drawable/login_edit_background"
+        android:background="@drawable/transparent_background"
         />
   </RelativeLayout>
 

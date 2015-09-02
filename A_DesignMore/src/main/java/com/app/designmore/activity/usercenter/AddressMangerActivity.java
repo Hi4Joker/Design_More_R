@@ -1,5 +1,6 @@
 package com.app.designmore.activity.usercenter;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,17 +24,18 @@ import butterknife.ButterKnife;
 import com.app.designmore.R;
 import com.app.designmore.activity.MineActivity;
 import com.app.designmore.adapter.AddressAdapter;
+import com.app.designmore.event.AddressEvent;
+import com.app.designmore.manager.DialogManager;
+import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.retrofit.AddressRetrofit;
 import com.app.designmore.retrofit.HttpException;
 import com.app.designmore.retrofit.entity.Address;
 import com.app.designmore.utils.DensityUtil;
-import com.app.designmore.view.MaterialCheckBox;
 import com.app.designmore.view.ProgressLayout;
 import com.trello.rxlifecycle.ActivityEvent;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
@@ -53,11 +55,10 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
   @Nullable @Bind(R.id.address_manager_layout_pl) ProgressLayout progresslayout;
   @Nullable @Bind(R.id.address_manager_layout_rv) RecyclerView recyclerView;
-  @Nullable @Bind(R.id.address_manager_item_radio_btn) MaterialCheckBox checkBox;
 
-  private List<Address> items = new ArrayList<>();
   private AddressAdapter addressAdapter;
 
+  private List<Address> items = new ArrayList<>();
   private int currentPosition = -1;
 
   public static void startFromLocation(MineActivity startingActivity, int startingLocationY) {
@@ -71,6 +72,7 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
     super.onCreate(savedInstanceState);
     setContentView(R.layout.center_address_manager_layout);
     ButterKnife.bind(AddressMangerActivity.this);
+    EventBusInstance.getDefault().register(AddressMangerActivity.this);
 
     AddressMangerActivity.this.initView(savedInstanceState);
   }
@@ -105,7 +107,7 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
     linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
     linearLayoutManager.setSmoothScrollbarEnabled(true);
 
-    addressAdapter = new AddressAdapter(this, items);
+    addressAdapter = new AddressAdapter(this);
     addressAdapter.setCallback(AddressMangerActivity.this);
 
     recyclerView.setLayoutManager(linearLayoutManager);
@@ -139,29 +141,6 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
         });
   }
 
-  private void startExitAnim() {
-
-    if (items != null && items.size() > 0) {
-
-      for (Iterator<Address> iterator = items.iterator(); iterator.hasNext(); ) {
-        if (iterator.next().getChecked()) {
-          return;
-        }
-      }
-    }
-
-    ViewCompat.animate(rootView)
-        .translationY(DensityUtil.getScreenHeight(AddressMangerActivity.this))
-        .setDuration(400)
-        .setInterpolator(new LinearInterpolator())
-        .setListener(new ViewPropertyAnimatorListenerAdapter() {
-          @Override public void onAnimationEnd(View view) {
-            AddressMangerActivity.super.onBackPressed();
-            overridePendingTransition(0, 0);
-          }
-        });
-  }
-
   @Override public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.menu_center, menu);
 
@@ -188,6 +167,9 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
     return super.onOptionsItemSelected(item);
   }
 
+  /**
+   * 加载数据
+   */
   private void loadData() {
 
     final AddressRetrofit addressRetrofit = AddressRetrofit.getInstance();
@@ -207,7 +189,7 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
         .doOnUnsubscribe(new Action0() {
           @Override public void call() {
             /*清理操作*/
-            items.clear();
+            addressAdapter.updateItems(null);
             addressAdapter = null;
           }
         })
@@ -228,6 +210,7 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
                   getResources().getString(R.string.timeout_content),
                   getResources().getString(R.string.retry_button_text), retryClickListener);
             } else if (error instanceof RetrofitError) {
+
               Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
 
               progresslayout.showError(
@@ -235,8 +218,6 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
                   getResources().getString(R.string.timeout_title),
                   getResources().getString(R.string.timeout_content),
                   getResources().getString(R.string.retry_button_text), retryClickListener);
-
-              //progresslayout.showError();
             } else if (error instanceof HttpException) {
 
               progresslayout.showError(
@@ -253,16 +234,20 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
 
           @Override public void onNext(List<Address> addresses) {
 
-            items.clear();
-            items.addAll(addresses);
-            addressAdapter.notifyDataSetChanged();
+            if (addresses.size() == 0) {
+              progresslayout.showEmpty(
+                  getResources().getDrawable(R.drawable.login_layout_logo_icon), "您还没有添加地址", null);
+            } else {
+
+              AddressMangerActivity.this.items = addresses;
+              addressAdapter.updateItems(addresses);
+            }
           }
         });
   }
 
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
-
       AddressMangerActivity.this.loadData();
     }
   };
@@ -274,14 +259,47 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
     return false;
   }
 
+  private void startExitAnim() {
+
+    AddressMangerActivity.this.checkAddress();
+
+    ViewCompat.animate(rootView)
+        .translationY(DensityUtil.getScreenHeight(AddressMangerActivity.this))
+        .setDuration(400)
+        .setInterpolator(new LinearInterpolator())
+        .setListener(new ViewPropertyAnimatorListenerAdapter() {
+          @Override public void onAnimationEnd(View view) {
+            AddressMangerActivity.super.onBackPressed();
+            overridePendingTransition(0, 0);
+          }
+        });
+  }
+
+  private void checkAddress() {
+
+    if (currentPosition != -1) {//更改默认地址
+      DialogManager.showAddressChangeDialog(AddressMangerActivity.this, onConfirmClick);
+    }
+  }
+
+  private DialogInterface.OnClickListener onConfirmClick = new DialogInterface.OnClickListener() {
+    @Override public void onClick(DialogInterface dialog, int which) {
+      // TODO: 2015/9/2 请求修改默认地址接口
+      Address currentAddress = items.get(currentPosition);
+    }
+  };
+
   @Override protected void onDestroy() {
     super.onDestroy();
+    EventBusInstance.getDefault().unregister(AddressMangerActivity.this);
     ButterKnife.unbind(AddressMangerActivity.this);
   }
 
   //AddressAdapter回调
   /*点击删除按钮*/
   @Override public void onDeleteClick(int position) {
+
+    // TODO: 2015/9/2 请求删除地址接口
 
   }
 
@@ -290,14 +308,20 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
 
   }
 
-  /*checkbox状态改变*/
-  @Override public void onCheckChange(MaterialCheckBox checkBox, boolean isCheck, int position) {
-
-    //items.get(position).setChecked(isCheck);
+  /*点击RadioButton*/
+  @Override public void onCheckChange(int position) {
+    currentPosition = position;
   }
 
   /*发生错误回调*/
   @Override public void onError(Throwable error) {
+
+  }
+
+  public void onEventMainThread(AddressEvent event) {
+
+
+
 
   }
 }

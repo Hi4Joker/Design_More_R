@@ -34,7 +34,7 @@
         android:inputType="number"
         android:maxLength="4"
         android:hint="1988"
-        android:background="@drawable/login_edit_background"
+        android:background="@drawable/transparent_background"
         />
     <TextView
         android:layout_width="wrap_content"
@@ -54,7 +54,7 @@
         android:inputType="number"
         android:maxLength="2"
         android:hint="08"
-        android:background="@drawable/login_edit_background"
+        android:background="@drawable/transparent_background"
         />
     <TextView
         android:layout_width="wrap_content"
@@ -74,7 +74,7 @@
         android:inputType="number"
         android:maxLength="2"
         android:hint="08"
-        android:background="@drawable/login_edit_background"
+        android:background="@drawable/transparent_background"
         />
   </LinearLayout>
 

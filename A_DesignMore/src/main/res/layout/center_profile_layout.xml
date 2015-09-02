@@ -23,14 +23,14 @@
       app:mrl_rippleHover="true"
       app:mrl_rippleOverlay="true"
       app:mrl_rippleDelayClick="true"
-      app:mrl_rippleColor="@android:color/darker_gray"
+      app:mrl_rippleColor="@color/darker_gray"
       >
     <RelativeLayout
         android:id="@+id/profile_layout_avatar_rl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:background="@android:color/white"
+        android:background="@color/white"
         >
 
       <TextView
@@ -41,7 +41,7 @@
           android:text="我的头像"
           android:gravity="center"
           android:textSize="@dimen/material_16sp"
-          android:textColor="@android:color/black"
+          android:textColor="@color/black"
           />
 
       <ImageView
@@ -65,7 +65,7 @@
       android:layout_height="@dimen/material_48dp"
       android:layout_marginBottom="1dip"
       android:orientation="horizontal"
-      android:background="@android:color/white"
+      android:background="@color/white"
       >
     <TextView
         android:layout_width="wrap_content"
@@ -75,7 +75,7 @@
         android:text="用户名"
         android:gravity="center"
         android:textSize="@dimen/material_16sp"
-        android:textColor="@android:color/black"
+        android:textColor="@color/black"
         />
 
     <TextView
@@ -87,7 +87,7 @@
         android:text="正在获取......"
         android:gravity="center"
         android:textSize="@dimen/material_16sp"
-        android:textColor="@android:color/black"
+        android:textColor="@color/black"
         />
   </RelativeLayout>
 
@@ -99,7 +99,7 @@
       android:layout_height="@dimen/material_48dp"
       android:layout_marginBottom="1dip"
       android:orientation="horizontal"
-      android:background="@android:color/white"
+      android:background="@color/white"
       >
 
     <TextView
@@ -110,7 +110,7 @@
         android:text="昵称"
         android:gravity="center"
         android:textSize="@dimen/material_16sp"
-        android:textColor="@android:color/black"
+        android:textColor="@color/black"
         />
 
     <EditText
@@ -121,7 +121,7 @@
         android:layout_marginRight="@dimen/material_24dp"
         android:hint="昵称"
         android:textSize="@dimen/material_16sp"
-        android:background="@drawable/login_edit_background"
+        android:background="@drawable/transparent_background"
         />
   </RelativeLayout>
 
@@ -138,14 +138,14 @@
       app:mrl_rippleHover="true"
       app:mrl_rippleOverlay="true"
       app:mrl_rippleDelayClick="true"
-      app:mrl_rippleColor="@android:color/darker_gray"
+      app:mrl_rippleColor="@color/darker_gray"
       >
     <RelativeLayout
         android:id="@+id/profile_layout_sex_rl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:background="@android:color/white"
+        android:background="@color/white"
         >
 
       <TextView
@@ -156,7 +156,7 @@
           android:text="性别"
           android:gravity="center"
           android:textSize="@dimen/material_16sp"
-          android:textColor="@android:color/black"
+          android:textColor="@color/black"
           />
 
       <!-- <ImageView
@@ -172,7 +172,7 @@
           android:text="男"
           android:gravity="center"
           android:textSize="@dimen/material_16sp"
-          android:textColor="@android:color/black"
+          android:textColor="@color/black"
           />
     </RelativeLayout>
   </com.app.designmore.view.MaterialRippleLayout>
@@ -189,14 +189,14 @@
       app:mrl_rippleHover="true"
       app:mrl_rippleOverlay="true"
       app:mrl_rippleDelayClick="true"
-      app:mrl_rippleColor="@android:color/darker_gray"
+      app:mrl_rippleColor="@color/darker_gray"
       >
     <RelativeLayout
         android:id="@+id/profile_layout_birthday_rl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:background="@android:color/white"
+        android:background="@color/white"
         >
 
       <TextView
@@ -207,7 +207,7 @@
           android:text="出生日期"
           android:gravity="center"
           android:textSize="@dimen/material_16sp"
-          android:textColor="@android:color/black"
+          android:textColor="@color/black"
           />
 
       <!-- <ImageView
@@ -223,7 +223,7 @@
           android:text="1989年12月03日"
           android:gravity="center"
           android:textSize="@dimen/material_16sp"
-          android:textColor="@android:color/black"
+          android:textColor="@color/black"
           />
     </RelativeLayout>
   </com.app.designmore.view.MaterialRippleLayout>
@@ -240,14 +240,14 @@
       app:mrl_rippleHover="true"
       app:mrl_rippleOverlay="true"
       app:mrl_rippleDelayClick="true"
-      app:mrl_rippleColor="@android:color/darker_gray"
+      app:mrl_rippleColor="@color/darker_gray"
       >
     <RelativeLayout
         android:id="@+id/profile_layout_safety_rl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:background="@android:color/white"
+        android:background="@color/white"
         >
 
       <TextView
@@ -258,7 +258,7 @@
           android:text="账户安全"
           android:gravity="center"
           android:textSize="@dimen/material_16sp"
-          android:textColor="@android:color/black"
+          android:textColor="@color/black"
           />
 
       <ImageView

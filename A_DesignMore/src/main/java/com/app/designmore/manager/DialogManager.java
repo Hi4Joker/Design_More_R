@@ -191,4 +191,28 @@ public class DialogManager {
         .create()
         .show();
   }
+
+  public static void showAddressChangeDialog(Context context,
+      final DialogInterface.OnClickListener onClickListener) {
+
+    new AlertDialog.Builder(context).setTitle("提示")
+        .setMessage("默认地址已经更改")
+        .setCancelable(false)
+        .setInverseBackgroundForced(false)
+        .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialog, int which) {
+            dialog.dismiss();
+            if (onClickListener != null) {
+              onClickListener.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
+            }
+          }
+        })
+        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialog, int which) {
+            dialog.dismiss();
+          }
+        })
+        .create()
+        .show();
+  }
 }

@@ -1,5 +1,6 @@
 package com.app.designmore.rx;
 
+import com.app.designmore.manager.ExecutorManager;
 import com.app.designmore.rx.schedulers.AndroidSchedulers;
 import rx.Observable;
 import rx.schedulers.Schedulers;
@@ -12,7 +13,6 @@ public class SchedulersCompat {
   private static final Observable.Transformer computationTransformer =
       new Observable.Transformer() {
         @Override public Object call(Object observable) {
-
           return ((Observable) observable).subscribeOn(Schedulers.newThread())
               .observeOn(AndroidSchedulers.mainThread());
         }
@@ -20,22 +20,26 @@ public class SchedulersCompat {
 
   private static final Observable.Transformer ioTransformer = new Observable.Transformer() {
     @Override public Object call(Object observable) {
-
       return ((Observable) observable).subscribeOn(Schedulers.newThread())
           .observeOn(AndroidSchedulers.mainThread());
     }
   };
   private static final Observable.Transformer newTransformer = new Observable.Transformer() {
     @Override public Object call(Object observable) {
-
       return ((Observable) observable).subscribeOn(Schedulers.newThread())
           .observeOn(AndroidSchedulers.mainThread());
     }
   };
   private static final Observable.Transformer trampolineTransformer = new Observable.Transformer() {
     @Override public Object call(Object observable) {
-
       return ((Observable) observable).subscribeOn(Schedulers.newThread())
+          .observeOn(AndroidSchedulers.mainThread());
+    }
+  };
+
+  private static final Observable.Transformer executorTransformer = new Observable.Transformer() {
+    @Override public Object call(Object observable) {
+      return ((Observable) observable).subscribeOn(Schedulers.from(ExecutorManager.eventExecutor))
           .observeOn(AndroidSchedulers.mainThread());
     }
   };
@@ -59,6 +63,11 @@ public class SchedulersCompat {
   }
 
   public static <T> Observable.Transformer<T, T> applyTrampolineSchedulers() {
+
+    return (Observable.Transformer<T, T>) trampolineTransformer;
+  }
+
+  public static <T> Observable.Transformer<T, T> applyExecutorSchedulers() {
 
     return (Observable.Transformer<T, T>) trampolineTransformer;
   }

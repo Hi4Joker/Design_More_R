@@ -56,7 +56,7 @@
       android:layout_height="wrap_content"
       android:layout_marginTop="@dimen/material_24dp"
       android:orientation="vertical"
-      android:background="@android:color/white"
+      android:background="@color/white"
       >
 
     <!-- 请输入用户名-->
@@ -125,7 +125,7 @@
       <EditText
           android:id="@+id/register_layout_phone_et"
           android:hint="请输入手机号"
-          android:inputType="number"
+          android:inputType="phone"
           android:maxLength="11"
           style="@style/login_layout_et_style"/>
     </RelativeLayout>
@@ -160,7 +160,7 @@
           app:mrl_rippleHover="true"
           app:mrl_rippleOverlay="true"
           app:mrl_rippleDelayClick="true"
-          app:mrl_rippleColor="@android:color/darker_gray"
+          app:mrl_rippleColor="@color/darker_gray"
           >
         <Button
             android:id="@+id/register_layout_code_btn"
@@ -168,7 +168,7 @@
             android:layout_height="match_parent"
             android:text="点击获取"
             android:textSize="@dimen/material_12sp"
-            android:textColor="@android:color/darker_gray"
+            android:textColor="@color/darker_gray"
             android:background="@drawable/white_corner_background"
             />
       </com.app.designmore.view.MaterialRippleLayout>
@@ -197,7 +197,7 @@
       app:mrl_rippleHover="true"
       app:mrl_rippleOverlay="true"
       app:mrl_rippleDelayClick="true"
-      app:mrl_rippleColor="@android:color/holo_red_dark"
+      app:mrl_rippleColor="@color/holo_red_dark"
       >
     <Button
         android:id="@+id/register_layout_register_btn"
@@ -205,7 +205,7 @@
         android:layout_height="match_parent"
         android:text="立即注册"
         android:textSize="@dimen/material_16sp"
-        android:textColor="@android:color/white"
+        android:textColor="@color/white"
         android:background="@drawable/login_layout_login_background"
         />
   </com.app.designmore.view.MaterialRippleLayout>

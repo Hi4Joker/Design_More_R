@@ -1,5 +1,6 @@
 package com.app.designmore.retrofit;
 
+import android.util.Log;
 import com.app.designmore.Constants;
 import com.app.designmore.retrofit.entity.Address;
 import com.app.designmore.retrofit.result.AddressResponse;
@@ -11,9 +12,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import javax.security.auth.login.LoginException;
+import retrofit.Callback;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
+import retrofit.RetrofitError;
 import retrofit.client.OkClient;
+import retrofit.client.Response;
 import retrofit.converter.GsonConverter;
 import retrofit.http.FieldMap;
 import retrofit.http.POST;
@@ -26,6 +31,8 @@ import rx.functions.Func2;
  * Created by Joker on 2015/9/1.
  */
 public class AddressRetrofit {
+
+  private static final String TAG = AddressRetrofit.class.getSimpleName();
 
   interface AddressService {
 
@@ -72,9 +79,9 @@ public class AddressRetrofit {
   public Observable<List<Address>> getAddressList(final Map<String, String> params) {
 
     Observable<List<Address>> observable =
-
         Observable.defer(new Func0<Observable<AddressResponse>>() {
           @Override public Observable<AddressResponse> call() {
+
             /*获取地址列表，超时8秒*/
             return addressService.getAddressList(params)
                 .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
@@ -101,26 +108,23 @@ public class AddressRetrofit {
             for (AddressResponse.Address entity : addressManagerResponse.getAddressList()) {
               Address clone = addressInstance.newInstance();
 
-              clone.setUserId(entity.userId);
               clone.setAddressId(entity.addressId);
-              clone.setAddressName(entity.addressName);
-              clone.setUserName(entity.consignee);
+              clone.setUserName(entity.userName);
               clone.setMobile(entity.mobile);
+              clone.setZipcode(entity.zipcode);
 
-              clone.setAddress(entity.country
-                  + entity.province
-                  + entity.city
-                  + entity.district
-                  + entity.address);
+              clone.setProvince(entity.province);
+              clone.setCity(entity.city);
+              clone.setAddress(entity.address);
 
               /*默认选项*/
-              clone.setChecked(entity.isChecked);
+              clone.setIsChecked(entity.isChecked);
 
               addressArrayList.add(clone);
             }
             return addressArrayList;
           }
-        }).compose(SchedulersCompat.<List<Address>>applyNewSchedulers());
+        }).compose(SchedulersCompat.<List<Address>>applyExecutorSchedulers());
 
     return observable;
   }

@@ -46,7 +46,6 @@
             android:gravity="center"
             android:lineSpacingExtra="5.5dp"
             tools:text="content" />
-
     </RelativeLayout>
 
 </RelativeLayout>

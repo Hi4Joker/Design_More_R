@@ -48,6 +48,7 @@
 
 
   <declare-styleable name="ProgressLayout">
+    <attr name="progressLoadingStateBackgroundColor" format="color"/>
     <attr name="progressLoadingStateProgressBarWidth" format="dimension"/>
     <attr name="progressLoadingStateProgressBarHeight" format="dimension"/>
 

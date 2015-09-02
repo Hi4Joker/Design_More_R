@@ -39,33 +39,25 @@ public class AddressResponse extends BaseResponse {
 
   public class Address {
 
-    @Expose @SerializedName("user_id") public String userId;
     @Expose @SerializedName("address_id") public String addressId;
-    @Expose @SerializedName("address_name") public String addressName;
-    @Expose public String consignee;
-    @Expose public String country;
+    @Expose @SerializedName("consignee") public String userName;
     @Expose public String province;
     @Expose public String city;
-    @Expose public String district;
     @Expose public String address;
-    @Expose public String zipcode;
     @Expose public String mobile;
+    @Expose public String zipcode;
 
     public boolean isChecked;
 
     @Override public String toString() {
       return "Address{" +
-          "userId='" + userId + '\'' +
           ", addressId='" + addressId + '\'' +
-          ", addressName='" + addressName + '\'' +
-          ", consignee='" + consignee + '\'' +
-          ", country='" + country + '\'' +
+          ", consignee='" + userName + '\'' +
           ", province='" + province + '\'' +
           ", city='" + city + '\'' +
-          ", district='" + district + '\'' +
           ", address='" + address + '\'' +
-          ", zipcode='" + zipcode + '\'' +
           ", mobile='" + mobile + '\'' +
+          ", zipcode='" + zipcode + '\'' +
           '}';
     }
   }
