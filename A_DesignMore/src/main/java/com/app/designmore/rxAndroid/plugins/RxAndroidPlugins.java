@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.app.designmore.rx.plugins;
+package com.app.designmore.rxAndroid.plugins;
 
 import java.util.concurrent.atomic.AtomicReference;
 import rx.annotations.Beta;

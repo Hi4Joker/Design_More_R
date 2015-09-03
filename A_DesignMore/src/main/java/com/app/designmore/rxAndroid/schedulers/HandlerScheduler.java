@@ -11,10 +11,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.app.designmore.rx.schedulers;
+package com.app.designmore.rxAndroid.schedulers;
 
 import android.os.Handler;
-import com.app.designmore.rx.plugins.RxAndroidPlugins;
+import com.app.designmore.rxAndroid.plugins.RxAndroidPlugins;
 import java.util.concurrent.TimeUnit;
 import rx.Scheduler;
 import rx.Subscription;

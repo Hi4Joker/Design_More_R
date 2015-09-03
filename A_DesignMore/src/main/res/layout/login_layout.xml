@@ -22,7 +22,7 @@
       android:layout_height="match_parent"
       android:layout_marginTop="@dimen/material_40dp"
       android:layout_below="@id/login_layout_logo_iv"
-      android:visibility="gone"
+      android:visibility="visible"
       >
 
     <LinearLayout
@@ -118,7 +118,7 @@
           android:text="登  陆"
           android:textSize="@dimen/material_16sp"
           android:textColor="@color/white"
-          android:background="@drawable/login_layout_login_background"
+          android:background="@drawable/red_background"
           />
     </com.app.designmore.view.MaterialRippleLayout>
 

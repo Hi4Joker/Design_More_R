@@ -4,10 +4,12 @@
   <!--基色，灰色-->
   <color name="primary_background_color">#F0F0F0</color>
   <color name="accent_material_light">#475898</color>
+  <color name="design_more_red">#DA498C</color>
 
 
   <color name="white">#ffffffff</color>
   <color name="black">#ff000000</color>
+  <color name="transparent">#00000000</color>
 
   <!-- For settings framework -->
   <color name="lighter_gray">#ddd</color>

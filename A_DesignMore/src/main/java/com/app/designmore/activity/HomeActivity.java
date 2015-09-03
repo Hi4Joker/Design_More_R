@@ -172,8 +172,8 @@ public class HomeActivity extends RxAppCompatActivity {
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
 
-    DrawableCompat.setTint(DrawableCompat.wrap(homeIv.getDrawable().mutate()), Color.RED);
-    homeTv.setTextColor(Color.RED);
+    DrawableCompat.setTint(DrawableCompat.wrap(homeIv.getDrawable().mutate()),getResources().getColor(R.color.design_more_red));
+    homeTv.setTextColor(getResources().getColor(R.color.design_more_red));
 
     LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toolbarTitleIv.getLayoutParams();
     params.leftMargin = DensityUtil.getActionBarSize(HomeActivity.this) * 2;

@@ -29,12 +29,14 @@ import com.app.designmore.activity.MineActivity;
 import com.app.designmore.adapter.AddressAdapter;
 import com.app.designmore.event.EditorAddressEvent;
 import com.app.designmore.event.RefreshAddressEvent;
+import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.retrofit.AddressRetrofit;
-import com.app.designmore.retrofit.HttpException;
 import com.app.designmore.retrofit.entity.Address;
-import com.app.designmore.retrofit.result.AddressResponse;
+import com.app.designmore.retrofit.request.address.AddressRequest;
+import com.app.designmore.retrofit.request.address.DeleteAddressRequest;
+import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
 import com.trello.rxlifecycle.ActivityEvent;
@@ -181,28 +183,16 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
   }
 
   /**
-   * 加载数据
+   * 刷新数据
    */
   private void loadData() {
 
-    /* Action=GetUserByAddress&uid=2*/
-    HashMap<String, String> params = new HashMap<>(2);
-    params.put("Action", "GetUserByAddress");
-    params.put("uid", "2");
-
     AddressRetrofit.getInstance()
-        .getAddressList(params)
+        .getAddressList(new AddressRequest("GetUserByAddress", "2"))
         .doOnSubscribe(new Action0() {
           @Override public void call() {
             /*加载数据，显示进度条*/
             progresslayout.showLoading();
-          }
-        })
-        .doOnUnsubscribe(new Action0() {
-          @Override public void call() {
-            /*清理操作*/
-            addressAdapter.updateItems(null);
-            addressAdapter = null;
           }
         })
         .compose(AddressMangerActivity.this.<List<Address>>bindUntilEvent(ActivityEvent.DESTROY))
@@ -214,33 +204,14 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
 
           @Override public void onError(Throwable error) {
 
-            if (error instanceof TimeoutException) {
-
-              AddressMangerActivity.this.showError(getResources().getString(R.string.timeout_title),
-                  getResources().getString(R.string.timeout_content));
-            } else if (error instanceof RetrofitError) {
-
-              Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
-
-              AddressMangerActivity.this.showError(getResources().getString(R.string.timeout_title),
-                  getResources().getString(R.string.timeout_content));
-            } else if (error instanceof HttpException) {
-
-              AddressMangerActivity.this.showError(
-                  getResources().getString(R.string.http_exception_title),
-                  getResources().getString(R.string.http_exception_content));
-            } else {
-              Log.e(TAG, error.getMessage());
-              error.printStackTrace();
-              throw new RuntimeException("See inner exception");
-            }
+            AddressMangerActivity.this.showError(error);
           }
 
           @Override public void onNext(List<Address> addresses) {
 
             if (addresses.size() == 0) {
-              progresslayout.showEmpty(
-                  getResources().getDrawable(R.drawable.login_layout_logo_icon), "您还没有收货地址", null);
+              progresslayout.showEmpty(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
+                  "您还没有收货地址", null);
             } else {
               AddressMangerActivity.this.items = addresses;
               addressAdapter.updateItems(addresses);
@@ -251,9 +222,8 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
 
   private void showError(String errorTitle, String errorContent) {
 
-    progresslayout.showError(getResources().getDrawable(R.drawable.login_layout_logo_icon),
-        errorTitle, errorContent, getResources().getString(R.string.retry_button_text),
-        retryClickListener);
+    progresslayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon), errorTitle,
+        errorContent, getResources().getString(R.string.retry_button_text), retryClickListener);
   }
 
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
@@ -306,32 +276,37 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
     this.deletePosition = position;
     final Address deleteAddress = items.get(position);
 
-    HashMap<String, String> params = new HashMap<>(3);
-    params.put("Action", "DelUserByAddress");
-    params.put("address_id", deleteAddress.getAddressId());
-    params.put("uid", "2");
-
-    subscription =
-        AddressRetrofit.getInstance().requestDeleteAddress(params).doOnSubscribe(new Action0() {
+    subscription = AddressRetrofit.getInstance()
+        .requestDeleteAddress(
+            new DeleteAddressRequest("DelUserByAddress", deleteAddress.getAddressId(), "2"))
+        .doOnSubscribe(new Action0() {
           @Override public void call() {
             /*加载数据，显示进度条*/
             progressDialog = DialogManager.
                 getInstance().showProgressDialog(AddressMangerActivity.this, null, cancelListener);
           }
-        }).map(new Func1<AddressResponse, Address>() {
-          @Override public Address call(AddressResponse addressResponse) {
-            return deleteAddress;
-          }
-        }).filter(new Func1<Address, Boolean>() {
-          @Override public Boolean call(Address address) {
-            return !subscription.isUnsubscribed();
-          }
-        }).doOnCompleted(new Action0() {
+        })
+        .doOnTerminate(new Action0() {
           @Override public void call() {
-            /*删除成功，隐藏进度条*/
+            /*隐藏进度条*/
             if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
           }
-        }).subscribe(addressAdapter);
+        })
+        .map(new Func1<BaseResponse, Integer>() {
+          @Override public Integer call(BaseResponse baseResponse) {
+
+            /*删除成功，提示*/
+            AddressMangerActivity.this.showSnackBar(baseResponse.MessageString);
+
+            return AddressMangerActivity.this.deletePosition;
+          }
+        })
+        .filter(new Func1<Integer, Boolean>() {
+          @Override public Boolean call(Integer position) {
+            return !subscription.isUnsubscribed();
+          }
+        })
+        .subscribe(addressAdapter);
   }
 
   private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
@@ -342,7 +317,13 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
   };
 
   private void showSnackBar(String text) {
-    Snackbar.make(rootView, text, Snackbar.LENGTH_SHORT).setAction("确定", null).show();
+    Snackbar.make(rootView, text, Snackbar.LENGTH_SHORT)
+        .setAction("确定", new View.OnClickListener() {
+          @Override public void onClick(View v) {
+            /*do nothing*/
+          }
+        })
+        .show();
   }
 
   /*点击编辑按钮*/
@@ -361,15 +342,24 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
   /*发生错误回调*/
   @Override public void onError(Throwable error) {
 
-    if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
-    AddressMangerActivity.this.showSnackBar("网络连接超时，请重试");
+    AddressMangerActivity.this.showError(error);
+  }
+
+  private void showError(Throwable error) {
 
     if (error instanceof TimeoutException) {
-      Log.e(TAG, "TimeoutException");
+
+      AddressMangerActivity.this.showError(getResources().getString(R.string.timeout_title),
+          getResources().getString(R.string.timeout_content));
     } else if (error instanceof RetrofitError) {
+
       Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
-    } else if (error instanceof HttpException) {
-      Log.e(TAG, "HttpException");
+
+      AddressMangerActivity.this.showError("网络连接异常", ((RetrofitError) error).getKind() + "");
+    } else if (error instanceof WebServiceException) {
+
+      AddressMangerActivity.this.showError(getResources().getString(R.string.http_exception_title),
+          error.getMessage());
     } else {
       Log.e(TAG, error.getMessage());
       error.printStackTrace();

@@ -1,4 +1,4 @@
-package com.app.designmore.rx;
+package com.app.designmore.rxAndroid;
 
 import rx.Observer;
 

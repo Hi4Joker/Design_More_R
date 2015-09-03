@@ -1,4 +1,4 @@
-package com.app.designmore.retrofit.result;
+package com.app.designmore.retrofit.response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

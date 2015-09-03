@@ -17,28 +17,24 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.app.designmore.R;
 import com.app.designmore.event.EditorAddressEvent;
-import com.app.designmore.event.RefreshAddressEvent;
+import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.retrofit.AddressRetrofit;
-import com.app.designmore.retrofit.HttpException;
 import com.app.designmore.retrofit.entity.Address;
-import com.app.designmore.revealLib.animation.SupportAnimator;
-import com.trello.rxlifecycle.ActivityEvent;
+import com.app.designmore.retrofit.request.address.EditorAddressRequest;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
+import rx.functions.Func1;
 import rx.subscriptions.Subscriptions;
 
 /**
@@ -130,58 +126,57 @@ public class AddressEditorActivity extends RxAppCompatActivity {
 
     if (!AddressEditorActivity.this.checkParams()) return;
 
-    /*Action=AddUserByAddress
-        &consignee=Eric //收货人
-        &mobile=18622816323 //手机号码
-        &zipcode=1000111  //邮政编码
-        &province=%E5%8C%97%E4%BA%AC //省市
-        &city=%E5%8C%97%E4%BA%AC //城市
-        &address= //详细地址
-    &address_id= //收货地址ID*/
+    EditorAddressRequest addUserByAddress = new EditorAddressRequest("AddUserByAddress", //
+        usernameEt.getText().toString(),//
+        mobileEt.getText().toString(),//
+        zipcodeEt.getText().toString(),//
+        URLEncoder.encode(provinceTv.getText().toString()),//
+        URLEncoder.encode(cityTv.getText().toString()),//
+        addressEt.getText().toString(),//
+        address.getAddressId());
 
-    HashMap<String, String> params = new HashMap<>(8);
-    params.put("Action", "AddUserByAddress");
-    params.put("consignee", usernameEt.getText().toString());
-    params.put("mobile", mobileEt.getText().toString());
-    params.put("zipcode", zipcodeEt.getText().toString());
-    params.put("province", URLEncoder.encode(provinceTv.getText().toString()));
-    params.put("city", URLEncoder.encode(cityTv.getText().toString()));
-    params.put("address", addressEt.getText().toString());
-    params.put("address_id", address.getAddressId());
-
-    subscription =
-        AddressRetrofit.getInstance().requestEditorAddress(params).doOnSubscribe(new Action0() {
+    subscription = AddressRetrofit.getInstance()
+        .requestEditorAddress(addUserByAddress)
+        .doOnSubscribe(new Action0() {
           @Override public void call() {
 
             /*加载数据，显示进度条*/
             progressDialog = DialogManager.
                 getInstance().showProgressDialog(AddressEditorActivity.this, null, cancelListener);
           }
-        }).subscribe(new Subscriber<Address>() {
-          @Override public void onCompleted() {
+        })
+        .doOnTerminate(new Action0() {
+          @Override public void call() {
+
 
             /*修改成功，隐藏进度条*/
-            if (progressDialog != null && progressDialog.isShowing()) {
+            if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
+          }
+        })
+        .filter(new Func1<Address, Boolean>() {
+          @Override public Boolean call(Address address) {
+            return !subscription.isUnsubscribed();
+          }
+        })
+        .subscribe(new Subscriber<Address>() {
+          @Override public void onCompleted() {
 
-              progressDialog.dismiss();
-              AddressEditorActivity.this.finish();
-              overridePendingTransition(0, 0);
-            }
+            AddressEditorActivity.this.finish();
+            overridePendingTransition(0, 0);
           }
 
           @Override public void onError(Throwable error) {
 
             if (subscription.isUnsubscribed()) return;
 
-            if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
-            AddressEditorActivity.this.showSnackBar("网络连接超时，请重试");
-
             if (error instanceof TimeoutException) {
-              Log.e(TAG, "TimeoutException");
+              AddressEditorActivity.this.showSnackBar(
+                  getResources().getString(R.string.timeout_title));
             } else if (error instanceof RetrofitError) {
-              Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
-            } else if (error instanceof HttpException) {
-              Log.e(TAG, "HttpException");
+              AddressEditorActivity.this.showSnackBar(
+                  "网络连接异常:" + ((RetrofitError) error).getKind());
+            } else if (error instanceof WebServiceException) {
+              AddressEditorActivity.this.showSnackBar("很抱歉:" + error.getMessage());
             } else {
               Log.e(TAG, error.getMessage());
               error.printStackTrace();
@@ -190,8 +185,6 @@ public class AddressEditorActivity extends RxAppCompatActivity {
           }
 
           @Override public void onNext(Address address) {
-
-            if (subscription.isUnsubscribed()) return;
 
             EventBusInstance.getDefault().post((EditorAddressEvent) address);
           }

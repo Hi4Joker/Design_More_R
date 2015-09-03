@@ -11,9 +11,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.app.designmore.rx.plugins;
+package com.app.designmore.rxAndroid.plugins;
 
-import com.app.designmore.rx.schedulers.AndroidSchedulers;
+import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import rx.Scheduler;
 import rx.functions.Action0;
 

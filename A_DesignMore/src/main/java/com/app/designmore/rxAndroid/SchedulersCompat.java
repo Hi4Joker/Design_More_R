@@ -1,7 +1,7 @@
-package com.app.designmore.rx;
+package com.app.designmore.rxAndroid;
 
 import com.app.designmore.manager.ExecutorManager;
-import com.app.designmore.rx.schedulers.AndroidSchedulers;
+import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 

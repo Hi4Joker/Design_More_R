@@ -2,7 +2,7 @@
  * Copyright (C) 2015 android10.org. All rights reserved.
  * @author Fernando Cejas (the android10 coder)
  */
-package com.app.designmore.rx;
+package com.app.designmore.rxAndroid;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/primary_background_color"
+    android:background="@android:color/transparent"
     >
 
   <android.support.v7.widget.Toolbar
@@ -35,7 +35,9 @@
             android:paddingLeft="@dimen/material_8dp"
             android:textSize="@dimen/material_13sp"
             android:textCursorDrawable="@drawable/black_et_cursor"
+            android:singleLine="true"
             android:hint="请输入要查找的商品"
+            android:imeOptions="actionSearch"
             android:background="@drawable/primary_background"
             />
 
@@ -54,8 +56,9 @@
   <LinearLayout
       android:id="@+id/search_layout_tip_ll"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
+      android:layout_height="match_parent"
       android:orientation="vertical"
+      android:background="@color/primary_background_color"
       >
     <TextView
         android:layout_width="match_parent"

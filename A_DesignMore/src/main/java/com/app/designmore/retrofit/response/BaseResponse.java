@@ -1,7 +1,7 @@
-package com.app.designmore.retrofit.result;
+package com.app.designmore.retrofit.response;
 
 import com.app.designmore.Constants;
-import com.app.designmore.retrofit.HttpException;
+import com.app.designmore.exception.WebServiceException;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import rx.Observable;
@@ -25,7 +25,7 @@ public class BaseResponse {
     if (resultCode == Constants.RESULT_OK) {
       return Observable.just(this);
     } else {
-      return Observable.error(new HttpException("There was a problem fetching the web service."));
+      return Observable.error(new WebServiceException(BaseResponse.this.MessageString));
     }
   }
 }

@@ -1,29 +1,28 @@
 package com.app.designmore.retrofit;
 
-import android.util.Log;
 import com.app.designmore.Constants;
 import com.app.designmore.event.EditorAddressEvent;
 import com.app.designmore.event.RefreshAddressEvent;
 import com.app.designmore.retrofit.entity.Address;
-import com.app.designmore.retrofit.result.AddressResponse;
-import com.app.designmore.rx.SchedulersCompat;
+import com.app.designmore.retrofit.request.address.AddAddressRequest;
+import com.app.designmore.retrofit.request.address.AddressRequest;
+import com.app.designmore.retrofit.request.address.DeleteAddressRequest;
+import com.app.designmore.retrofit.request.address.EditorAddressRequest;
+import com.app.designmore.retrofit.response.AddressResponse;
+import com.app.designmore.retrofit.response.BaseResponse;
+import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import javax.security.auth.login.LoginException;
-import retrofit.Callback;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
-import retrofit.RetrofitError;
 import retrofit.client.OkClient;
-import retrofit.client.Response;
 import retrofit.converter.GsonConverter;
-import retrofit.http.FieldMap;
+import retrofit.http.Body;
 import retrofit.http.POST;
 import rx.Observable;
 import rx.functions.Func0;
@@ -41,16 +40,16 @@ public class AddressRetrofit {
 
     //@Headers("Accept-Encoding: application/json")
     @POST("/mobile/api/client/interface.php") Observable<AddressResponse> getAddressList(
-        @FieldMap Map<String, String> params);
+        @Body AddressRequest addressRequest);
 
     @POST("/mobile/api/client/interface.php") Observable<AddressResponse> requestEditorAddress(
-        @FieldMap Map<String, String> params);
+        @Body EditorAddressRequest editorAddressRequest);
 
     @POST("/mobile/api/client/interface.php") Observable<AddressResponse> requestAddAddress(
-        @FieldMap Map<String, String> params);
+        @Body AddAddressRequest addAddressRequest);
 
-    @POST("/mobile/api/client/interface.php") Observable<AddressResponse> requestDeleteAddress(
-        @FieldMap Map<String, String> params);
+    @POST("/mobile/api/client/interface.php") Observable<BaseResponse> requestDeleteAddress(
+        @Body DeleteAddressRequest deleteAddressRequest);
   }
 
   private final AddressService addressService;
@@ -88,20 +87,20 @@ public class AddressRetrofit {
   /**
    * 获取地址列表
    */
-  public Observable<List<Address>> getAddressList(final Map<String, String> params) {
+  public Observable<List<Address>> getAddressList(final AddressRequest addressRequest) {
 
     Observable<List<Address>> observable =
         Observable.defer(new Func0<Observable<AddressResponse>>() {
           @Override public Observable<AddressResponse> call() {
 
-            /*获取地址列表，超时8秒*/
-            return addressService.getAddressList(params)
+             /*获取地址列表，超时8秒*/
+            return addressService.getAddressList(addressRequest)
                 .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
           }
         }).retry(new Func2<Integer, Throwable, Boolean>() {
           @Override public Boolean call(Integer integer, Throwable throwable) {
 
-            if (throwable instanceof TimeoutException && integer < 1) {//可重试一次
+            if (throwable instanceof TimeoutException && integer < 1) {//连接超时，重试一次
               return true;
             }
             return false;
@@ -144,18 +143,18 @@ public class AddressRetrofit {
   /**
    * 编辑地址
    */
-  public Observable<Address> requestEditorAddress(final HashMap<String, String> params) {
+  public Observable<Address> requestEditorAddress(final EditorAddressRequest editorAddressRequest) {
 
     return Observable.defer(new Func0<Observable<AddressResponse>>() {
       @Override public Observable<AddressResponse> call() {
 
-        return addressService.requestEditorAddress(params)
+        return addressService.requestEditorAddress(editorAddressRequest)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
       }
     }).retry(new Func2<Integer, Throwable, Boolean>() {
       @Override public Boolean call(Integer integer, Throwable throwable) {
 
-        if (throwable instanceof TimeoutException && integer < 1) {//可重试一次
+        if (throwable instanceof TimeoutException && integer < 1) {//连接超时，重试一次
           return true;
         }
         return false;
@@ -182,18 +181,19 @@ public class AddressRetrofit {
   /**
    * 添加地址
    */
-  public Observable<RefreshAddressEvent> requestAddAddress(final HashMap<String, String> params) {
+  public Observable<RefreshAddressEvent> requestAddAddress(
+      final AddAddressRequest addAddressRequest) {
 
     return Observable.defer(new Func0<Observable<AddressResponse>>() {
       @Override public Observable<AddressResponse> call() {
 
-        return addressService.requestAddAddress(params)
+        return addressService.requestAddAddress(addAddressRequest)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
       }
     }).retry(new Func2<Integer, Throwable, Boolean>() {
       @Override public Boolean call(Integer integer, Throwable throwable) {
 
-        if (throwable instanceof TimeoutException && integer < 1) {//可重试一次
+        if (throwable instanceof TimeoutException && integer < 1) {//连接超时，重试一次
           return true;
         }
         return false;
@@ -215,33 +215,34 @@ public class AddressRetrofit {
   /**
    * 删除地址
    */
-  public Observable<AddressResponse> requestDeleteAddress(final HashMap<String, String> params) {
+  public Observable<BaseResponse> requestDeleteAddress(
+      final DeleteAddressRequest deleteAddressRequest) {
 
-    return Observable.defer(new Func0<Observable<AddressResponse>>() {
-      @Override public Observable<AddressResponse> call() {
+    return Observable.defer(new Func0<Observable<BaseResponse>>() {
+      @Override public Observable<BaseResponse> call() {
 
-        return addressService.requestDeleteAddress(params)
+        return addressService.requestDeleteAddress(deleteAddressRequest)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
       }
     }).retry(new Func2<Integer, Throwable, Boolean>() {
       @Override public Boolean call(Integer integer, Throwable throwable) {
 
-        if (throwable instanceof TimeoutException && integer < 1) {//可重试一次
+        if (throwable instanceof TimeoutException && integer < 1) {//连接超时，重试一次
           return true;
         }
         return false;
       }
-    }).concatMap(new Func1<AddressResponse, Observable<AddressResponse>>() {
-      @Override public Observable<AddressResponse> call(AddressResponse addressResponse) {
+    }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
+      @Override public Observable<BaseResponse> call(BaseResponse addressResponse) {
 
         return addressResponse.filterWebServiceErrors();
       }
-    }).map(new Func1<AddressResponse, AddressResponse>() {
-      @Override public AddressResponse call(AddressResponse addressResponse) {
+    }).map(new Func1<BaseResponse, BaseResponse>() {
+      @Override public BaseResponse call(BaseResponse baseResponse) {
 
         /*添加成功*/
-        return addressResponse;
+        return baseResponse;
       }
-    }).compose(SchedulersCompat.<AddressResponse>applyExecutorSchedulers());
+    }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
   }
 }

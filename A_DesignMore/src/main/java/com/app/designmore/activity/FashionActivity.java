@@ -167,8 +167,9 @@ public class FashionActivity extends RxAppCompatActivity {
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
 
-    DrawableCompat.setTint(DrawableCompat.wrap(fashionIv.getDrawable().mutate()), Color.RED);
-    fashionTv.setTextColor(Color.RED);
+    DrawableCompat.setTint(DrawableCompat.wrap(fashionIv.getDrawable().mutate()),
+        getResources(). getColor(R.color.design_more_red));
+    fashionTv.setTextColor(getResources().getColor(R.color.design_more_red));
 
     LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toolbarTitleTv.getLayoutParams();
     params.leftMargin = DensityUtil.getActionBarSize(FashionActivity.this) * 2;

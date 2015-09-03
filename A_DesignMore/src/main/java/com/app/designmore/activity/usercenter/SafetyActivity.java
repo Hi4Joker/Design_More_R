@@ -16,21 +16,14 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.app.designmore.R;
-import com.app.designmore.rx.schedulers.AndroidSchedulers;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.manager.DialogManager;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
-import rx.Observable;
-import rx.Subscriber;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Joker on 2015/8/27.

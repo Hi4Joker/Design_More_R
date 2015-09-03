@@ -13,13 +13,13 @@
       android:id="@+id/address_manager_layout_pl"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      app:progressEmptyStateBackgroundColor="@color/white"
-      app:progressEmptyStateContentTextColor="@color/black"
+      app:progressEmptyStateBackgroundColor="@color/primary_background_color"
       app:progressEmptyStateTitleTextColor="@color/black"
-      app:progressErrorStateBackgroundColor="@color/holo_red_light"
-      app:progressErrorStateButtonTextColor="@color/black"
-      app:progressErrorStateContentTextColor="@color/black"
+      app:progressEmptyStateContentTextColor="@color/black"
+      app:progressErrorStateBackgroundColor="@color/primary_background_color"
       app:progressErrorStateTitleTextColor="@color/black"
+      app:progressErrorStateContentTextColor="@color/black"
+      app:progressErrorStateButtonTextColor="@color/white"
       android:background="@color/primary_background_color"
       >
 
@@ -31,12 +31,12 @@
         android:background="@color/primary_background_color"
         />
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scaleType="center"
-        android:src="@drawable/test_background"
-        />
+    <!-- <ImageView
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:scaleType="center"
+         android:src="@drawable/test_background"
+         />-->
   </com.app.designmore.view.ProgressLayout>
 
 </LinearLayout>

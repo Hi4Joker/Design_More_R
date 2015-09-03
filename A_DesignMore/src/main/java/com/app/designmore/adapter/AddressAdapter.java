@@ -26,7 +26,7 @@ import rx.Observer;
  * Created by Joker on 2015/9/1.
  */
 public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHolder>
-    implements Observer<Address> {
+    implements Observer<Integer> {
 
   private List<Address> items;
   private int lastAnimatedPosition = -1;
@@ -36,7 +36,6 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
   private Context context;
 
   private int defaultPosition = -1;
-  private int deletePosition = -1;
 
   public AddressAdapter(Context context) {
     this.context = context;
@@ -106,7 +105,8 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
   }
 
   @Override public void onCompleted() {
-    AddressAdapter.this.notifyItemRemoved(deletePosition);
+
+    /*Never Invoked*/
   }
 
   @Override public void onError(Throwable e) {
@@ -115,9 +115,9 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
     }
   }
 
-  @Override public void onNext(Address address) {
-    this.deletePosition = items.indexOf(address);
-    items.remove(address);
+  @Override public void onNext(Integer deletePosition) {
+    items.remove(deletePosition);
+    AddressAdapter.this.notifyItemRemoved(deletePosition);
   }
 
   /**

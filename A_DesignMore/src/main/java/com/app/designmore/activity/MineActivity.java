@@ -190,8 +190,9 @@ public class MineActivity extends RxAppCompatActivity {
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
 
-    DrawableCompat.setTint(DrawableCompat.wrap(mineIv.getDrawable().mutate()), Color.RED);
-    mineTv.setTextColor(Color.RED);
+    DrawableCompat.setTint(DrawableCompat.wrap(mineIv.getDrawable().mutate()),
+        getResources().getColor(R.color.design_more_red));
+    mineTv.setTextColor(getResources().getColor(R.color.design_more_red));
 
     getMenuInflater().inflate(R.menu.menu_center, menu);
 

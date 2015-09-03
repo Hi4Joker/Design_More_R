@@ -24,25 +24,24 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
-import com.app.designmore.event.EditorAddressEvent;
 import com.app.designmore.event.RefreshAddressEvent;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.retrofit.AddressRetrofit;
-import com.app.designmore.retrofit.HttpException;
-import com.app.designmore.retrofit.entity.Address;
+import com.app.designmore.exception.WebServiceException;
+import com.app.designmore.retrofit.request.address.AddAddressRequest;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.utils.Utils;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
+import rx.functions.Func1;
 import rx.subscriptions.Subscriptions;
 
 /**
@@ -158,55 +157,55 @@ public class AddressAddActivity extends RxAppCompatActivity {
 
     if (!AddressAddActivity.this.checkParams()) return;
 
-    /*Action=AddUserByAddress
-        &consignee=Eric //收货人
-        &mobile=18622816323 //手机号码
-        &zipcode=1000111  //邮政编码
-        &province=%E5%8C%97%E4%BA%AC //省市
-        &city=%E5%8C%97%E4%BA%AC //城市
-        &address= //详细地址
-    &address_id= //收货地址ID*/
+    AddAddressRequest addAddressRequest = new AddAddressRequest("AddUserByAddress", //
+        usernameEt.getText().toString(),//
+        mobileEt.getText().toString(),//
+        zipcodeEt.getText().toString(),//
+        URLEncoder.encode(provinceTv.getText().toString()),//
+        URLEncoder.encode(cityTv.getText().toString()),//
+        addressEt.getText().toString()//
+    );
 
-    HashMap<String, String> params = new HashMap<>(7);
-    params.put("Action", "AddUserByAddress");
-    params.put("consignee", usernameEt.getText().toString());
-    params.put("mobile", mobileEt.getText().toString());
-    params.put("zipcode", zipcodeEt.getText().toString());
-    params.put("province", URLEncoder.encode(provinceTv.getText().toString()));
-    params.put("city", URLEncoder.encode(cityTv.getText().toString()));
-    params.put("address", addressEt.getText().toString());
-
-    subscription =
-        AddressRetrofit.getInstance().requestAddAddress(params).doOnSubscribe(new Action0() {
+    subscription = AddressRetrofit.getInstance()
+        .requestAddAddress(addAddressRequest)
+        .doOnSubscribe(new Action0() {
           @Override public void call() {
 
             /*加载数据，显示进度条*/
             progressDialog = DialogManager.
                 getInstance().showProgressDialog(AddressAddActivity.this, null, cancelListener);
           }
-        }).subscribe(new Subscriber<RefreshAddressEvent>() {
+        })
+        .doOnTerminate(new Action0() {
+          @Override public void call() {
+
+            if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
+          }
+        })
+        .filter(new Func1<RefreshAddressEvent, Boolean>() {
+          @Override public Boolean call(RefreshAddressEvent refreshAddressEvent) {
+
+            return !subscription.isUnsubscribed();
+          }
+        })
+        .subscribe(new Subscriber<RefreshAddressEvent>() {
           @Override public void onCompleted() {
 
-            /*修改成功，隐藏进度条*/
-            if (progressDialog != null && progressDialog.isShowing()) {
-              progressDialog.dismiss();
-              AddressAddActivity.this.startExitAnim();
-            }
+            /*增加成功，返回，刷新*/
+            AddressAddActivity.this.startExitAnim();
           }
 
           @Override public void onError(Throwable error) {
 
             if (subscription.isUnsubscribed()) return;
 
-            if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
-            AddressAddActivity.this.showSnackBar("网络连接超时，请重试");
-
             if (error instanceof TimeoutException) {
-              Log.e(TAG, "TimeoutException");
+              AddressAddActivity.this.showSnackBar(
+                  getResources().getString(R.string.timeout_title));
             } else if (error instanceof RetrofitError) {
-              Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
-            } else if (error instanceof HttpException) {
-              Log.e(TAG, "HttpException");
+              AddressAddActivity.this.showSnackBar("网络连接异常:" + ((RetrofitError) error).getKind());
+            } else if (error instanceof WebServiceException) {
+              AddressAddActivity.this.showSnackBar("很抱歉:" + error.getMessage());
             } else {
               Log.e(TAG, error.getMessage());
               error.printStackTrace();
@@ -216,7 +215,7 @@ public class AddressAddActivity extends RxAppCompatActivity {
 
           @Override public void onNext(RefreshAddressEvent refreshAddressEvent) {
 
-            if (subscription.isUnsubscribed()) return;
+            /*通过eventBus发送通知，刷新地址列表*/
             EventBusInstance.getDefault().post(refreshAddressEvent);
           }
         });
@@ -256,7 +255,13 @@ public class AddressAddActivity extends RxAppCompatActivity {
   }
 
   private void showSnackBar(String text) {
-    Snackbar.make(rootView, text, Snackbar.LENGTH_SHORT).setAction("确定", null).show();
+    Snackbar.make(rootView, text, Snackbar.LENGTH_SHORT)
+        .setAction("确定", new View.OnClickListener() {
+          @Override public void onClick(View v) {
+        /*do nothing*/
+          }
+        })
+        .show();
   }
 
   private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {

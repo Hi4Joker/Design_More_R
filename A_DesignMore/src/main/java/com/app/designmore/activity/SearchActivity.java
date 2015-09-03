@@ -1,5 +1,6 @@
 package com.app.designmore.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -9,13 +10,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.revealLib.animation.SupportAnimator;
@@ -38,6 +44,9 @@ public class SearchActivity extends RxAppCompatActivity {
   @Nullable @Bind(R.id.search_layout_tip_ll) LinearLayout tipLl;
   private SupportAnimator revealAnimator;
 
+  /*键盘*/
+  private InputMethodManager inputMethodManager;
+
   public static void navigateToSearch(AppCompatActivity startingActivity) {
 
     Intent intent = new Intent(startingActivity, SearchActivity.class);
@@ -50,12 +59,16 @@ public class SearchActivity extends RxAppCompatActivity {
     ButterKnife.bind(SearchActivity.this);
 
     SearchActivity.this.initView(savedInstanceState);
+    SearchActivity.this.setListener();
   }
 
   private void initView(Bundle savedInstanceState) {
 
     SearchActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+
+    inputMethodManager =
+        (InputMethodManager) SearchActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
     if (savedInstanceState == null) {
       toolbar.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -68,9 +81,25 @@ public class SearchActivity extends RxAppCompatActivity {
     }
   }
 
+  private void setListener() {
+
+    searchEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+      @Override public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+
+          /*关闭键盘*/
+          inputMethodManager.hideSoftInputFromWindow(revealRootView.getApplicationWindowToken(), 0);
+          return true;
+        }
+        return false;
+      }
+    });
+  }
+
   private void startEnterAnim() {
 
     ViewCompat.setAlpha(tipLl, 0.0f);
+    ViewCompat.setTranslationY(tipLl, tipLl.getHeight());
 
     final Rect bounds = new Rect();
     revealRootView.getHitRect(bounds);
@@ -80,13 +109,23 @@ public class SearchActivity extends RxAppCompatActivity {
     revealAnimator.setDuration(Constants.REVEAL_DURATION);
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
-      @Override public void onAnimationEnd() {
+      @Override public void onAnimationStart() {
+
         if (tipLl != null) {
-          ViewCompat.animate(tipLl).alpha(1.0f).setDuration(Constants.REVEAL_DURATION);
+          ViewCompat.animate(tipLl)
+              .alpha(1.0f)
+              .translationY(0.0f)
+              .setDuration(Constants.REVEAL_DURATION);
         }
       }
     });
     revealAnimator.start();
+  }
+
+  @Nullable @OnClick(R.id.search_layout_btn) void onSearchClick() {
+
+     /*关闭键盘*/
+    inputMethodManager.hideSoftInputFromWindow(revealRootView.getApplicationWindowToken(), 0);
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {

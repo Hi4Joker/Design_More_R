@@ -166,8 +166,9 @@ public class JournalActivity extends RxAppCompatActivity {
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
 
-    DrawableCompat.setTint(DrawableCompat.wrap(journalIv.getDrawable().mutate()), Color.RED);
-    journalTv.setTextColor(Color.RED);
+    DrawableCompat.setTint(DrawableCompat.wrap(journalIv.getDrawable().mutate()),
+        getResources().getColor(R.color.design_more_red));
+    journalTv.setTextColor(getResources().getColor(R.color.design_more_red));
 
     LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toobarTitleTv.getLayoutParams();
     params.leftMargin = DensityUtil.getActionBarSize(JournalActivity.this) * 2;
