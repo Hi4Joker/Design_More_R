@@ -8,44 +8,63 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
+import com.app.designmore.adapter.SearchAdapter;
+import com.app.designmore.exception.WebServiceException;
+import com.app.designmore.retrofit.SearchRetrofit;
+import com.app.designmore.retrofit.entity.SearchItemEntity;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.utils.Utils;
+import com.app.designmore.view.ProgressLayout;
+import com.trello.rxlifecycle.ActivityEvent;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeoutException;
+import retrofit.RetrofitError;
+import rx.functions.Action0;
+import rx.functions.Action1;
 
 /**
  * Created by Joker on 2015/8/30.
  */
-public class SearchActivity extends RxAppCompatActivity {
+public class SearchActivity extends RxAppCompatActivity implements SearchAdapter.Callback {
 
   private static final String TAG = SearchActivity.class.getSimpleName();
 
   @Nullable @Bind(R.id.search_layout_toolbar) Toolbar toolbar;
   @Nullable @Bind(R.id.search_layout_toolbar_rfl) RevealFrameLayout revealRootView;
   @Nullable @Bind(R.id.search_layout_et) AppCompatEditText searchEt;
-  @Nullable @Bind(R.id.search_layout_btn) ImageButton searchBtn;
-  @Nullable @Bind(R.id.search_layout_tip_ll) LinearLayout tipLl;
+  @Nullable @Bind(R.id.search_layout_pl) ProgressLayout progressLayout;
+  @Nullable @Bind(R.id.search_layout_rv) RecyclerView recyclerView;
+
   private SupportAnimator revealAnimator;
 
   /*键盘*/
   private InputMethodManager inputMethodManager;
+  /*adapter*/
+  private SearchAdapter searchAdapter;
+  private List<SearchItemEntity> items;
 
   public static void navigateToSearch(AppCompatActivity startingActivity) {
 
@@ -70,6 +89,9 @@ public class SearchActivity extends RxAppCompatActivity {
     inputMethodManager =
         (InputMethodManager) SearchActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
+     /*创建Adapter*/
+    SearchActivity.this.setupAdapter();
+
     if (savedInstanceState == null) {
       toolbar.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
         @Override public boolean onPreDraw() {
@@ -78,7 +100,23 @@ public class SearchActivity extends RxAppCompatActivity {
           return true;
         }
       });
+    } else {
+      SearchActivity.this.loadData();
     }
+  }
+
+  private void setupAdapter() {
+
+    GridLayoutManager gridLayoutManager = new GridLayoutManager(SearchActivity.this, 5);
+    gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+    gridLayoutManager.setSmoothScrollbarEnabled(true);
+
+    searchAdapter = new SearchAdapter(this);
+    searchAdapter.setCallback(SearchActivity.this);
+
+    recyclerView.setLayoutManager(gridLayoutManager);
+    recyclerView.setHasFixedSize(true);
+    recyclerView.setAdapter(searchAdapter);
   }
 
   private void setListener() {
@@ -86,7 +124,6 @@ public class SearchActivity extends RxAppCompatActivity {
     searchEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
       @Override public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-
           /*关闭键盘*/
           inputMethodManager.hideSoftInputFromWindow(revealRootView.getApplicationWindowToken(), 0);
           return true;
@@ -98,8 +135,8 @@ public class SearchActivity extends RxAppCompatActivity {
 
   private void startEnterAnim() {
 
-    ViewCompat.setAlpha(tipLl, 0.0f);
-    ViewCompat.setTranslationY(tipLl, tipLl.getHeight());
+    ViewCompat.setAlpha(progressLayout, 0.0f);
+    ViewCompat.setTranslationY(progressLayout, progressLayout.getHeight());
 
     final Rect bounds = new Rect();
     revealRootView.getHitRect(bounds);
@@ -111,15 +148,51 @@ public class SearchActivity extends RxAppCompatActivity {
     revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
       @Override public void onAnimationStart() {
 
-        if (tipLl != null) {
-          ViewCompat.animate(tipLl)
+        if (progressLayout != null) {
+          ViewCompat.animate(progressLayout)
               .alpha(1.0f)
               .translationY(0.0f)
               .setDuration(Constants.REVEAL_DURATION);
         }
       }
+
+      @Override public void onAnimationEnd() {
+        if (progressLayout != null) SearchActivity.this.loadData();
+      }
     });
     revealAnimator.start();
+  }
+
+  /**
+   * 加载热搜数据
+   */
+  private void loadData() {
+
+    /*Action=GetKeywordList*/
+    Map<String, String> params = new HashMap<>(1);
+    params.put("Action", "GetKeywordList");
+
+    SearchRetrofit.getInstance()
+        .getHotSearchList(params)
+        .doOnSubscribe(new Action0() {
+          @Override public void call() {
+            /*加载数据，显示加载界面*/
+            progressLayout.showLoading();
+          }
+        })
+        .doOnNext(new Action1<List<SearchItemEntity>>() {
+          @Override public void call(List<SearchItemEntity> searchItemEntities) {
+            SearchActivity.this.items = searchItemEntities;
+          }
+        })
+        .doOnCompleted(new Action0() {
+          @Override public void call() {
+            /*显示内容界面*/
+            if (items != null && items.size() != 0) progressLayout.showContent();
+          }
+        })
+        .compose(SearchActivity.this.<List<SearchItemEntity>>bindUntilEvent(ActivityEvent.DESTROY))
+        .subscribe(searchAdapter);
   }
 
   @Nullable @OnClick(R.id.search_layout_btn) void onSearchClick() {
@@ -139,6 +212,40 @@ public class SearchActivity extends RxAppCompatActivity {
     return super.onOptionsItemSelected(item);
   }
 
+  @Override public void onError(Throwable error) {
+
+    if (error instanceof TimeoutException) {
+
+      SearchActivity.this.showError(getResources().getString(R.string.timeout_title),
+          getResources().getString(R.string.timeout_content));
+    } else if (error instanceof RetrofitError) {
+
+      Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
+
+      SearchActivity.this.showError("网络连接异常", ((RetrofitError) error).getKind() + "");
+    } else if (error instanceof WebServiceException) {
+
+      SearchActivity.this.showError(getResources().getString(R.string.service_exception_title),
+          getResources().getString(R.string.service_exception_content));
+    } else {
+      Log.e(TAG, error.getMessage());
+      error.printStackTrace();
+      throw new RuntimeException("See inner exception");
+    }
+  }
+
+  private void showError(String errorTitle, String errorContent) {
+
+    progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon), errorTitle,
+        errorContent, getResources().getString(R.string.retry_button_text), retryClickListener);
+  }
+
+  private View.OnClickListener retryClickListener = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      SearchActivity.this.loadData();
+    }
+  };
+
   @Override public void finish() {
     super.finish();
     overridePendingTransition(0, 0);
@@ -149,5 +256,11 @@ public class SearchActivity extends RxAppCompatActivity {
 
     if (revealAnimator != null && revealAnimator.isRunning()) revealAnimator.cancel();
     ButterKnife.unbind(SearchActivity.this);
+  }
+
+  @Override public void onItemClick(int position) {
+
+    // TODO: 2015/9/4 跳转搜索
+
   }
 }

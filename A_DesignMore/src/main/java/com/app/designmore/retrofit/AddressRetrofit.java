@@ -4,25 +4,23 @@ import com.app.designmore.Constants;
 import com.app.designmore.event.EditorAddressEvent;
 import com.app.designmore.event.RefreshAddressEvent;
 import com.app.designmore.retrofit.entity.Address;
-import com.app.designmore.retrofit.request.address.AddAddressRequest;
-import com.app.designmore.retrofit.request.address.AddressRequest;
-import com.app.designmore.retrofit.request.address.DeleteAddressRequest;
-import com.app.designmore.retrofit.request.address.EditorAddressRequest;
 import com.app.designmore.retrofit.response.AddressResponse;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
+import retrofit.android.AndroidLog;
 import retrofit.client.OkClient;
 import retrofit.converter.GsonConverter;
-import retrofit.http.Body;
+import retrofit.http.FieldMap;
+import retrofit.http.FormUrlEncoded;
 import retrofit.http.POST;
 import rx.Observable;
 import rx.functions.Func0;
@@ -39,17 +37,17 @@ public class AddressRetrofit {
   interface AddressService {
 
     //@Headers("Accept-Encoding: application/json")
-    @POST("/mobile/api/client/interface.php") Observable<AddressResponse> getAddressList(
-        @Body AddressRequest addressRequest);
+    @FormUrlEncoded @POST("/mobile/api/client/interface.php")
+    Observable<AddressResponse> getAddressList(@FieldMap Map<String, String> params);
 
-    @POST("/mobile/api/client/interface.php") Observable<AddressResponse> requestEditorAddress(
-        @Body EditorAddressRequest editorAddressRequest);
+    @FormUrlEncoded @POST("/mobile/api/client/interface.php")
+    Observable<AddressResponse> requestEditorAddress(@FieldMap Map<String, String> params);
 
-    @POST("/mobile/api/client/interface.php") Observable<AddressResponse> requestAddAddress(
-        @Body AddAddressRequest addAddressRequest);
+    @FormUrlEncoded @POST("/mobile/api/client/interface.php")
+    Observable<AddressResponse> requestAddAddress(@FieldMap Map<String, String> params);
 
-    @POST("/mobile/api/client/interface.php") Observable<BaseResponse> requestDeleteAddress(
-        @Body DeleteAddressRequest deleteAddressRequest);
+    @FormUrlEncoded @POST("/mobile/api/client/interface.php")
+    Observable<BaseResponse> requestDeleteAddress(@FieldMap Map<String, String> params);
   }
 
   private final AddressService addressService;
@@ -58,17 +56,19 @@ public class AddressRetrofit {
     RequestInterceptor requestInterceptor = new RequestInterceptor() {
       @Override public void intercept(RequestInterceptor.RequestFacade request) {
         request.addHeader("Accept-Encoding", "application/json");
+        //request.addHeader("Content-Type", "application/json");
       }
     };
 
     Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation() //不导出实体中没有用@Expose注解的属性
         .enableComplexMapKeySerialization() //支持Map的key为复杂对象的形式
-        .create();
+        .serializeNulls().create();
 
     // TODO: 2015/9/1  每次创建OkHttp，待优化
     RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(Constants.BASE_URL)
         .setRequestInterceptor(requestInterceptor)
         .setLogLevel(RestAdapter.LogLevel.FULL)
+        .setLog(new AndroidLog("Joker_DesignMore"))
         .setClient(new OkClient())
         .setConverter(new GsonConverter(gson))
         .build();
@@ -87,14 +87,14 @@ public class AddressRetrofit {
   /**
    * 获取地址列表
    */
-  public Observable<List<Address>> getAddressList(final AddressRequest addressRequest) {
+  public Observable<List<Address>> getAddressList(final Map<String, String> params) {
 
     Observable<List<Address>> observable =
         Observable.defer(new Func0<Observable<AddressResponse>>() {
           @Override public Observable<AddressResponse> call() {
 
              /*获取地址列表，超时8秒*/
-            return addressService.getAddressList(addressRequest)
+            return addressService.getAddressList(params)
                 .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
           }
         }).retry(new Func2<Integer, Throwable, Boolean>() {
@@ -113,7 +113,6 @@ public class AddressRetrofit {
           @Override public List<Address> call(AddressResponse addressResponse) {
 
             final ArrayList<Address> addressArrayList = new ArrayList<>();
-
             Address addressInstance = new Address();
 
             for (AddressResponse.Address entity : addressResponse.getAddressList()) {
@@ -143,12 +142,12 @@ public class AddressRetrofit {
   /**
    * 编辑地址
    */
-  public Observable<Address> requestEditorAddress(final EditorAddressRequest editorAddressRequest) {
+  public Observable<Address> requestEditorAddress(final Map<String, String> params) {
 
     return Observable.defer(new Func0<Observable<AddressResponse>>() {
       @Override public Observable<AddressResponse> call() {
 
-        return addressService.requestEditorAddress(editorAddressRequest)
+        return addressService.requestEditorAddress(params)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
       }
     }).retry(new Func2<Integer, Throwable, Boolean>() {
@@ -181,13 +180,12 @@ public class AddressRetrofit {
   /**
    * 添加地址
    */
-  public Observable<RefreshAddressEvent> requestAddAddress(
-      final AddAddressRequest addAddressRequest) {
+  public Observable<RefreshAddressEvent> requestAddAddress(final Map<String, String> params) {
 
     return Observable.defer(new Func0<Observable<AddressResponse>>() {
       @Override public Observable<AddressResponse> call() {
 
-        return addressService.requestAddAddress(addAddressRequest)
+        return addressService.requestAddAddress(params)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
       }
     }).retry(new Func2<Integer, Throwable, Boolean>() {
@@ -215,13 +213,12 @@ public class AddressRetrofit {
   /**
    * 删除地址
    */
-  public Observable<BaseResponse> requestDeleteAddress(
-      final DeleteAddressRequest deleteAddressRequest) {
+  public Observable<BaseResponse> requestDeleteAddress(final Map<String, String> params) {
 
     return Observable.defer(new Func0<Observable<BaseResponse>>() {
       @Override public Observable<BaseResponse> call() {
 
-        return addressService.requestDeleteAddress(deleteAddressRequest)
+        return addressService.requestDeleteAddress(params)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
       }
     }).retry(new Func2<Integer, Throwable, Boolean>() {

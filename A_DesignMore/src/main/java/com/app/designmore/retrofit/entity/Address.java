@@ -1,13 +1,11 @@
 package com.app.designmore.retrofit.entity;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 
 /**
  * Created by Joker on 2015/9/1.
  */
-public class Address implements Serializable {
+public class Address implements Serializable, Cloneable {
 
   protected String addressId;
   protected String userName;

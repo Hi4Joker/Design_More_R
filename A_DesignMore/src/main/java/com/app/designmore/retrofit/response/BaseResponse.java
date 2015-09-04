@@ -11,21 +11,20 @@ import rx.Observable;
  */
 public class BaseResponse {
 
-  /*"Result": false,
-  "MessageCode": 102,
-  "MessageString": "无效调用",
-  "InsertID": 0,
-  "Charset": ""*/
+  /*
+    "result": [{  }],
+    "code": 1,
+    "message": ""
+  */
 
-  @Expose @SerializedName("MessageCode") private int resultCode;
-  @Expose public String MessageString;
-  @Expose public long InsertID;
+  @Expose @SerializedName("code") private int resultCode;
+  @Expose public String message;
 
   public Observable filterWebServiceErrors() {
     if (resultCode == Constants.RESULT_OK) {
       return Observable.just(this);
     } else {
-      return Observable.error(new WebServiceException(BaseResponse.this.MessageString));
+      return Observable.error(new WebServiceException(BaseResponse.this.message));
     }
   }
 }

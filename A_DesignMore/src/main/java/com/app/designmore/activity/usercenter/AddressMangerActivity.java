@@ -34,8 +34,6 @@ import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.retrofit.AddressRetrofit;
 import com.app.designmore.retrofit.entity.Address;
-import com.app.designmore.retrofit.request.address.AddressRequest;
-import com.app.designmore.retrofit.request.address.DeleteAddressRequest;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
@@ -44,6 +42,7 @@ import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
 import rx.Subscriber;
@@ -187,8 +186,14 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
    */
   private void loadData() {
 
+    /* Action=GetUserByAddress&uid=1*/
+
+    Map<String, String> params = new HashMap<>(2);
+    params.put("Action", "GetUserByAddress");
+    params.put("uid", "1");
+
     AddressRetrofit.getInstance()
-        .getAddressList(new AddressRequest("GetUserByAddress", "2"))
+        .getAddressList(params)
         .doOnSubscribe(new Action0() {
           @Override public void call() {
             /*加载数据，显示进度条*/
@@ -199,7 +204,7 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
         .subscribe(new Subscriber<List<Address>>() {
           @Override public void onCompleted() {
             /*加载完毕，显示内容界面*/
-            progresslayout.showContent();
+            if (AddressMangerActivity.this.items.size() != 0) progresslayout.showContent();
           }
 
           @Override public void onError(Throwable error) {
@@ -232,29 +237,6 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
     }
   };
 
-  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
-    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-      AddressMangerActivity.this.startExitAnim();
-    }
-    return false;
-  }
-
-  private void startExitAnim() {
-
-    AddressMangerActivity.this.checkAddress();
-
-    ViewCompat.animate(rootView)
-        .translationY(DensityUtil.getScreenHeight(AddressMangerActivity.this))
-        .setDuration(400)
-        .setInterpolator(new LinearInterpolator())
-        .setListener(new ViewPropertyAnimatorListenerAdapter() {
-          @Override public void onAnimationEnd(View view) {
-            AddressMangerActivity.super.onBackPressed();
-            overridePendingTransition(0, 0);
-          }
-        });
-  }
-
   private void checkAddress() {
 
     if (defaultPosition != -1) {//更改默认地址
@@ -276,37 +258,37 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
     this.deletePosition = position;
     final Address deleteAddress = items.get(position);
 
-    subscription = AddressRetrofit.getInstance()
-        .requestDeleteAddress(
-            new DeleteAddressRequest("DelUserByAddress", deleteAddress.getAddressId(), "2"))
-        .doOnSubscribe(new Action0() {
+    /* Action=DelUserByAddress&address_id=1&uid=2*/
+    Map<String, String> params = new HashMap<>(3);
+    params.put("Action", "DelUserByAddress");
+    params.put("address_id", deleteAddress.getAddressId());
+    params.put("uid", "1");
+
+    subscription =
+        AddressRetrofit.getInstance().requestDeleteAddress(params).doOnSubscribe(new Action0() {
           @Override public void call() {
             /*加载数据，显示进度条*/
             progressDialog = DialogManager.
                 getInstance().showProgressDialog(AddressMangerActivity.this, null, cancelListener);
           }
-        })
-        .doOnTerminate(new Action0() {
+        }).doOnTerminate(new Action0() {
           @Override public void call() {
             /*隐藏进度条*/
             if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
           }
-        })
-        .map(new Func1<BaseResponse, Integer>() {
+        }).map(new Func1<BaseResponse, Integer>() {
           @Override public Integer call(BaseResponse baseResponse) {
 
             /*删除成功，提示*/
-            AddressMangerActivity.this.showSnackBar(baseResponse.MessageString);
+            AddressMangerActivity.this.showSnackBar(baseResponse.message);
 
             return AddressMangerActivity.this.deletePosition;
           }
-        })
-        .filter(new Func1<Integer, Boolean>() {
+        }).filter(new Func1<Integer, Boolean>() {
           @Override public Boolean call(Integer position) {
             return !subscription.isUnsubscribed();
           }
-        })
-        .subscribe(addressAdapter);
+        }).subscribe(addressAdapter);
   }
 
   private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
@@ -358,7 +340,7 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
       AddressMangerActivity.this.showError("网络连接异常", ((RetrofitError) error).getKind() + "");
     } else if (error instanceof WebServiceException) {
 
-      AddressMangerActivity.this.showError(getResources().getString(R.string.http_exception_title),
+      AddressMangerActivity.this.showError(getResources().getString(R.string.service_exception_title),
           error.getMessage());
     } else {
       Log.e(TAG, error.getMessage());
@@ -376,7 +358,7 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
   }
 
   /**
-   * 新增地址 -> 刷新界面
+   * 编辑地址 -> 刷新界面
    */
   public void onEventMainThread(EditorAddressEvent event) {
 
@@ -392,6 +374,29 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
     address.setIsChecked(event.isChecked());
 
     this.addressAdapter.updateItem(address, editorPosition);
+  }
+
+  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+      AddressMangerActivity.this.startExitAnim();
+    }
+    return false;
+  }
+
+  private void startExitAnim() {
+
+    AddressMangerActivity.this.checkAddress();
+
+    ViewCompat.animate(rootView)
+        .translationY(DensityUtil.getScreenHeight(AddressMangerActivity.this))
+        .setDuration(400)
+        .setInterpolator(new LinearInterpolator())
+        .setListener(new ViewPropertyAnimatorListenerAdapter() {
+          @Override public void onAnimationEnd(View view) {
+            AddressMangerActivity.super.onBackPressed();
+            overridePendingTransition(0, 0);
+          }
+        });
   }
 
   @Override protected void onDestroy() {

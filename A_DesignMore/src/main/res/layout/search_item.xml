@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/material_4dp"
+    android:orientation="vertical"
+    android:background="@color/white"
+    >
+
+  <com.app.designmore.view.MaterialRippleLayout
+      android:layout_width="wrap_content"
+      android:layout_height="@dimen/material_32dp"
+      android:layout_gravity="center"
+      app:mrl_rippleDimension="4dip"
+      app:mrl_rippleFadeDuration="100"
+      app:mrl_rippleAlpha="0.4"
+      app:mrl_rippleDuration="600"
+      app:mrl_rippleHover="true"
+      app:mrl_rippleOverlay="true"
+      app:mrl_rippleDelayClick="true"
+      app:mrl_rippleColor="@color/darker_gray"
+      >
+    <Button
+        android:id="@+id/search_item_btn"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="数码"
+        android:background="@drawable/search_tv_background"
+        />
+  </com.app.designmore.view.MaterialRippleLayout>
+</LinearLayout>

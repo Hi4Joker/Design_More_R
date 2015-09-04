@@ -30,8 +30,8 @@
   <!--progress  layout 提示-->
   <string name="timeout_title">网络连接超时</string>
   <string name="timeout_content">请检查您的网络或者点击重试</string>
-  <string name="http_exception_title">很抱歉</string>
-  <string name="http_exception_content">服务器开小差了，请重试</string>
+  <string name="service_exception_title">很抱歉</string>
+  <string name="service_exception_content">服务器开小差了，请稍后点击重试</string>
   <string name="retry_button_text">重试</string>
 
 </resources>

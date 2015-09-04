@@ -19,7 +19,6 @@ import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.retrofit.entity.Address;
 import java.util.List;
-import rx.Observable;
 import rx.Observer;
 
 /**
@@ -32,7 +31,6 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
   private int lastAnimatedPosition = -1;
   private boolean animationsLocked = false;
   private Callback callback;
-
   private Context context;
 
   private int defaultPosition = -1;
@@ -43,15 +41,15 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-    return new ViewHolder(LayoutInflater.from(parent.getContext())
+    return new ViewHolder(LayoutInflater.from(context)
         .inflate(R.layout.address_manager_item, parent, false));
   }
 
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
 
-    holder.deleteBtn.setTag(position);
-    holder.editorBtn.setTag(position);
     holder.radioBtn.setTag(position);
+    holder.editorBtn.setTag(position);
+    holder.deleteBtn.setTag(position);
 
     /*绑定数据*/
     AddressAdapter.this.bindToValue(holder, items.get(position));
@@ -96,7 +94,8 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
             @Override public void onAnimationEnd(View view) {
               AddressAdapter.this.animationsLocked = true;
             }
-          });
+          })
+          .start();
     }
   }
 
@@ -105,7 +104,6 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
   }
 
   @Override public void onCompleted() {
-
     /*Never Invoked*/
   }
 
@@ -116,15 +114,19 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
   }
 
   @Override public void onNext(Integer deletePosition) {
-    items.remove(deletePosition);
+
+    int pos = deletePosition;
+    this.items.remove(pos);
     AddressAdapter.this.notifyItemRemoved(deletePosition);
   }
 
   /**
    * 更新整张列表
    */
-  public void updateItems(List<Address> items) {
-    this.items = items;
+  public void updateItems(List<Address> addresses) {
+    // TODO: 2015/9/4  设置默认地址
+    this.items = addresses;
+    this.items.get(0).setIsChecked(true);
     AddressAdapter.this.notifyDataSetChanged();
   }
 
@@ -148,7 +150,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
 
     public ViewHolder(View itemView) {
       super(itemView);
-      ButterKnife.bind(itemView);
+      ButterKnife.bind(ViewHolder.this, itemView);
     }
 
     @Nullable @OnClick(R.id.address_manager_item_delete_btn) void onDeleteClick(Button button) {
@@ -167,22 +169,24 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
       }
     }
 
-    @Nullable @OnClick(R.id.address_manager_item_editor_btn) void onRadionClick(
-        ImageButton button) {
+    @Nullable @OnClick(R.id.address_manager_item_radio_btn) void onRadionClick(ImageButton button) {
 
-      int position = (int) button.getTag();
+      int pos = (int) button.getTag();
 
-      if (position != defaultPosition) {
+      if (pos != defaultPosition) {
+
         items.get(defaultPosition).setIsChecked(false);
-        items.get(position).setIsChecked(true);
+        items.get(pos).setIsChecked(true);
 
         /*true -> false*/
         AddressAdapter.this.notifyItemChanged(defaultPosition);
         /*false -> true*/
-        AddressAdapter.this.notifyItemChanged(position);
+        AddressAdapter.this.notifyItemChanged(pos);
+
+        //AddressAdapter.this.defaultPosition = position;
 
         if (callback != null) {
-          callback.onCheckChange(position);
+          callback.onCheckChange(pos);
         }
       }
     }

@@ -5,47 +5,46 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/emptyViewRelativeLayout"
+  <RelativeLayout
+      android:id="@+id/emptyViewRelativeLayout"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerInParent="true"
+      >
+
+    <ImageView
+        android:id="@+id/emptyStateImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        tools:ignore="UselessParent">
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_grey_logo_icon"
+        />
 
-        <ImageView
-            android:id="@+id/emptyStateImageView"
-            android:layout_width="108dp"
-            android:layout_height="108dp"
-            android:layout_centerHorizontal="true"
-            tools:background="#000000"
-            tools:ignore="ContentDescription" />
+    <TextView
+        android:id="@+id/emptyStateTitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/emptyStateImageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/material_8dp"
+        android:layout_marginLeft="@dimen/material_16dp"
+        android:layout_marginRight="@dimen/material_16dp"
+        android:textSize="@dimen/material_16sp"
+        android:textStyle="bold"
+        tools:text=""/>
 
-        <TextView
-            android:id="@+id/emptyStateTitleTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/emptyStateImageView"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="20dp"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            tools:text="" />
-
-        <TextView
-            android:id="@+id/emptyStateContentTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/emptyStateTitleTextView"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="16dp"
-            android:layout_marginLeft="56dp"
-            android:layout_marginRight="56dp"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:lineSpacingExtra="5.5dp"
-            tools:text="content" />
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/emptyStateContentTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/emptyStateTitleTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/material_8dp"
+        android:layout_marginBottom="@dimen/material_16dp"
+        android:layout_marginLeft="@dimen/material_56dp"
+        android:layout_marginRight="@dimen/material_56dp"
+        android:gravity="center"
+        tools:text=""/>
+  </RelativeLayout>
 
 </RelativeLayout>

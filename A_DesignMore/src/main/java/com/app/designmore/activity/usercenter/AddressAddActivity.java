@@ -29,13 +29,14 @@ import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.retrofit.AddressRetrofit;
 import com.app.designmore.exception.WebServiceException;
-import com.app.designmore.retrofit.request.address.AddAddressRequest;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.utils.Utils;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
 import rx.Subscriber;
@@ -153,42 +154,51 @@ public class AddressAddActivity extends RxAppCompatActivity {
     return true;
   }
 
+  /**
+   * 增加地址
+   */
   private void requestAddAddress() {
 
     if (!AddressAddActivity.this.checkParams()) return;
 
-    AddAddressRequest addAddressRequest = new AddAddressRequest("AddUserByAddress", //
-        usernameEt.getText().toString(),//
-        mobileEt.getText().toString(),//
-        zipcodeEt.getText().toString(),//
-        URLEncoder.encode(provinceTv.getText().toString()),//
-        URLEncoder.encode(cityTv.getText().toString()),//
-        addressEt.getText().toString()//
-    );
+    /*Action=AddUserByAddress
+        &consignee=Eric //收货人
+        &mobile=18622816323 //手机号码
+        &zipcode=1000111  //邮政编码
+        &province=%E5%8C%97%E4%BA%AC //省市
+        &city=%E5%8C%97%E4%BA%AC //城市
+        &address= //详细地址*/
 
-    subscription = AddressRetrofit.getInstance()
-        .requestAddAddress(addAddressRequest)
-        .doOnSubscribe(new Action0() {
+    Map<String, String> params = new HashMap<>(8);
+
+    params.put("Action", "AddUserByAddress");
+    params.put("consignee", usernameEt.getText().toString());
+    params.put("mobile", mobileEt.getText().toString());
+    params.put("zipcode", zipcodeEt.getText().toString());
+    params.put("province", provinceTv.getText().toString());
+    params.put("city", cityTv.getText().toString());
+    params.put("address", addressEt.getText().toString());
+    params.put("uid", "1");
+
+    subscription =
+        AddressRetrofit.getInstance().requestAddAddress(params).doOnSubscribe(new Action0() {
           @Override public void call() {
 
             /*加载数据，显示进度条*/
             progressDialog = DialogManager.
                 getInstance().showProgressDialog(AddressAddActivity.this, null, cancelListener);
           }
-        })
-        .doOnTerminate(new Action0() {
+        }).doOnTerminate(new Action0() {
           @Override public void call() {
 
             if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
           }
-        })
-        .filter(new Func1<RefreshAddressEvent, Boolean>() {
+        }).filter(new Func1<RefreshAddressEvent, Boolean>() {
           @Override public Boolean call(RefreshAddressEvent refreshAddressEvent) {
 
             return !subscription.isUnsubscribed();
           }
-        })
-        .subscribe(new Subscriber<RefreshAddressEvent>() {
+        }).subscribe(new Subscriber<RefreshAddressEvent>() {
           @Override public void onCompleted() {
 
             /*增加成功，返回，刷新*/

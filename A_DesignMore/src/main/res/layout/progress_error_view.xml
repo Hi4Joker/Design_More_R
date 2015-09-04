@@ -11,14 +11,13 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_centerInParent="true"
-      tools:ignore="UselessParent">
+      >
 
     <ImageView
         android:id="@+id/errorStateImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        tools:ignore="ContentDescription"
         android:src="@drawable/ic_grey_logo_icon"
         />
 
@@ -28,10 +27,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/errorStateImageView"
         android:layout_centerHorizontal="true"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="20dp"
-        android:textSize="15sp"
+        android:layout_marginTop="@dimen/material_8dp"
+        android:layout_marginLeft="@dimen/material_16dp"
+        android:layout_marginRight="@dimen/material_16dp"
+        android:textSize="16sp"
         android:textStyle="bold"
         tools:text=""/>
 
@@ -41,18 +40,18 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/errorStateTitleTextView"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="56dp"
-        android:layout_marginRight="56dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/material_8dp"
+        android:layout_marginLeft="@dimen/material_56dp"
+        android:layout_marginRight="@dimen/material_56dp"
+        android:textSize="@dimen/material_13sp"
         android:gravity="center"
-        android:lineSpacingExtra="5.5dp"
         tools:text=""/>
 
     <com.app.designmore.view.MaterialRippleLayout
         android:layout_below="@+id/errorStateContentTextView"
         android:layout_width="@dimen/material_128dp"
         android:layout_height="@dimen/material_48dp"
+        android:layout_marginTop="@dimen/material_16dp"
         android:layout_centerHorizontal="true"
         app:mrl_rippleDimension="4dip"
         app:mrl_rippleFadeDuration="100"

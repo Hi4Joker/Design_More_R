@@ -26,9 +26,9 @@ import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.retrofit.AddressRetrofit;
 import com.app.designmore.retrofit.entity.Address;
-import com.app.designmore.retrofit.request.address.EditorAddressRequest;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
-import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
 import rx.Subscriber;
@@ -64,6 +64,7 @@ public class AddressEditorActivity extends RxAppCompatActivity {
     Intent intent = new Intent(startingActivity, AddressEditorActivity.class);
     Bundle bundle = new Bundle();
     bundle.putSerializable(ADDRESS, address);
+    intent.putExtras(bundle);
 
     startingActivity.startActivity(intent);
   }
@@ -126,39 +127,56 @@ public class AddressEditorActivity extends RxAppCompatActivity {
 
     if (!AddressEditorActivity.this.checkParams()) return;
 
-    EditorAddressRequest addUserByAddress = new EditorAddressRequest("AddUserByAddress", //
-        usernameEt.getText().toString(),//
-        mobileEt.getText().toString(),//
-        zipcodeEt.getText().toString(),//
-        URLEncoder.encode(provinceTv.getText().toString()),//
-        URLEncoder.encode(cityTv.getText().toString()),//
-        addressEt.getText().toString(),//
-        address.getAddressId());
+    /*Action=AddUserByAddress
+        &consignee=Eric //收货人
+        &mobile=18622816323 //手机号码
+        &zipcode=1000111  //邮政编码
+        &province=%E5%8C%97%E4%BA%AC //省市
+        &city=%E5%8C%97%E4%BA%AC //城市
+        &address= //详细地址
+        &address_id= //收货地址ID*/
 
-    subscription = AddressRetrofit.getInstance()
-        .requestEditorAddress(addUserByAddress)
-        .doOnSubscribe(new Action0() {
+    Map<String, String> params = new HashMap<>(8);
+
+    String userName =
+        TextUtils.isEmpty(usernameEt.getText().toString()) ? usernameEt.getHint().toString()
+            : usernameEt.getText().toString();
+    String mobile = TextUtils.isEmpty(mobileEt.getText().toString()) ? mobileEt.getHint().toString()
+        : mobileEt.getText().toString();
+    String zipcode =
+        TextUtils.isEmpty(zipcodeEt.getText().toString()) ? zipcodeEt.getHint().toString()
+            : zipcodeEt.getText().toString();
+    String addr = TextUtils.isEmpty(addressEt.getText().toString()) ? addressEt.getHint().toString()
+        : addressEt.getText().toString();
+
+    params.put("Action", "AddUserByAddress");
+    params.put("consignee", userName);
+    params.put("mobile", mobile);
+    params.put("zipcode", zipcode);
+    params.put("province", provinceTv.getText().toString());
+    params.put("city", cityTv.getText().toString());
+    params.put("address", addr);
+    params.put("address_id", address.getAddressId());
+
+    subscription =
+        AddressRetrofit.getInstance().requestEditorAddress(params).doOnSubscribe(new Action0() {
           @Override public void call() {
 
             /*加载数据，显示进度条*/
             progressDialog = DialogManager.
                 getInstance().showProgressDialog(AddressEditorActivity.this, null, cancelListener);
           }
-        })
-        .doOnTerminate(new Action0() {
+        }).doOnTerminate(new Action0() {
           @Override public void call() {
-
 
             /*修改成功，隐藏进度条*/
             if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
           }
-        })
-        .filter(new Func1<Address, Boolean>() {
+        }).filter(new Func1<Address, Boolean>() {
           @Override public Boolean call(Address address) {
             return !subscription.isUnsubscribed();
           }
-        })
-        .subscribe(new Subscriber<Address>() {
+        }).subscribe(new Subscriber<Address>() {
           @Override public void onCompleted() {
 
             AddressEditorActivity.this.finish();
@@ -196,15 +214,19 @@ public class AddressEditorActivity extends RxAppCompatActivity {
    */
   private boolean checkParams() {
 
-    if (TextUtils.isEmpty(usernameEt.getText().toString())) {
+    if (TextUtils.isEmpty(usernameEt.getText().toString()) && TextUtils.isEmpty(
+        usernameEt.getHint().toString())) {
       AddressEditorActivity.this.showSnackBar("请填写收货人");
       return false;
     }
-    if (TextUtils.isEmpty(mobileEt.getText().toString())) {
+    if (TextUtils.isEmpty(mobileEt.getText().toString()) && TextUtils.isEmpty(
+        mobileEt.getHint().toString())) {
+
       AddressEditorActivity.this.showSnackBar("请填写手机号码");
       return false;
     }
-    if (TextUtils.isEmpty(zipcodeEt.getText().toString())) {
+    if (TextUtils.isEmpty(zipcodeEt.getText().toString()) && TextUtils.isEmpty(
+        zipcodeEt.getHint().toString())) {
       AddressEditorActivity.this.showSnackBar("请填写邮编");
       return false;
     }
@@ -216,7 +238,8 @@ public class AddressEditorActivity extends RxAppCompatActivity {
       AddressEditorActivity.this.showSnackBar("请选择城市");
       return false;
     }
-    if (TextUtils.isEmpty(addressEt.getText().toString())) {
+    if (TextUtils.isEmpty(addressEt.getText().toString()) && TextUtils.isEmpty(
+        addressEt.getHint().toString())) {
       AddressEditorActivity.this.showSnackBar("请填写地址");
       return false;
     }
