@@ -29,10 +29,6 @@ public class AddressResponse extends BaseResponse {
 
   @Expose @SerializedName("result") public List<Address> addressList = new ArrayList<>();
 
-  public List<Address> setAddressList() {
-    return addressList;
-  }
-
   public List<Address> getAddressList() {
     return addressList;
   }

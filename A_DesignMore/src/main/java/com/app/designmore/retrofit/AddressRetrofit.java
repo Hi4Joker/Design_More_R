@@ -112,7 +112,8 @@ public class AddressRetrofit {
         }).map(new Func1<AddressResponse, List<Address>>() {
           @Override public List<Address> call(AddressResponse addressResponse) {
 
-            final ArrayList<Address> addressArrayList = new ArrayList<>();
+            final ArrayList<Address> addressArrayList =
+                new ArrayList<>(addressResponse.getAddressList().size());
             Address addressInstance = new Address();
 
             for (AddressResponse.Address entity : addressResponse.getAddressList()) {
@@ -198,12 +199,10 @@ public class AddressRetrofit {
       }
     }).concatMap(new Func1<AddressResponse, Observable<AddressResponse>>() {
       @Override public Observable<AddressResponse> call(AddressResponse addressResponse) {
-
         return addressResponse.filterWebServiceErrors();
       }
     }).map(new Func1<AddressResponse, RefreshAddressEvent>() {
       @Override public RefreshAddressEvent call(AddressResponse addressResponse) {
-
         /*添加成功*/
         return new RefreshAddressEvent();
       }

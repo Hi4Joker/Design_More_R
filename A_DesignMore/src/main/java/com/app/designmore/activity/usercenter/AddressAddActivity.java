@@ -145,7 +145,6 @@ public class AddressAddActivity extends RxAppCompatActivity {
     menuItem.setActionView(R.layout.menu_inbox_tv_item);
     TextView textView = (TextView) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
     textView.setText(getText(R.string.action_done));
-
     menuItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         AddressAddActivity.this.requestAddAddress();
@@ -167,7 +166,9 @@ public class AddressAddActivity extends RxAppCompatActivity {
         &zipcode=1000111  //邮政编码
         &province=%E5%8C%97%E4%BA%AC //省市
         &city=%E5%8C%97%E4%BA%AC //城市
-        &address= //详细地址*/
+        &address= //详细地址
+        &uid= //用户id
+        */
 
     Map<String, String> params = new HashMap<>(8);
 
@@ -183,39 +184,36 @@ public class AddressAddActivity extends RxAppCompatActivity {
     subscription =
         AddressRetrofit.getInstance().requestAddAddress(params).doOnSubscribe(new Action0() {
           @Override public void call() {
-
             /*加载数据，显示进度条*/
             progressDialog = DialogManager.
                 getInstance().showProgressDialog(AddressAddActivity.this, null, cancelListener);
           }
         }).doOnTerminate(new Action0() {
           @Override public void call() {
-
+            /*隐藏进度条*/
             if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
           }
         }).filter(new Func1<RefreshAddressEvent, Boolean>() {
           @Override public Boolean call(RefreshAddressEvent refreshAddressEvent) {
-
             return !subscription.isUnsubscribed();
           }
         }).subscribe(new Subscriber<RefreshAddressEvent>() {
           @Override public void onCompleted() {
-
             /*增加成功，返回，刷新*/
             AddressAddActivity.this.startExitAnim();
           }
 
           @Override public void onError(Throwable error) {
 
-            if (subscription.isUnsubscribed()) return;
-
             if (error instanceof TimeoutException) {
               AddressAddActivity.this.showSnackBar(
                   getResources().getString(R.string.timeout_title));
             } else if (error instanceof RetrofitError) {
-              AddressAddActivity.this.showSnackBar("网络连接异常:" + ((RetrofitError) error).getKind());
+              Log.e(TAG, "kind:  " + ((RetrofitError) error).getKind());
+              AddressAddActivity.this.showSnackBar(getResources().getString(R.string.six_word));
             } else if (error instanceof WebServiceException) {
-              AddressAddActivity.this.showSnackBar("很抱歉:" + error.getMessage());
+              AddressAddActivity.this.showSnackBar(
+                  getResources().getString(R.string.service_exception_content));
             } else {
               Log.e(TAG, error.getMessage());
               error.printStackTrace();
@@ -277,7 +275,6 @@ public class AddressAddActivity extends RxAppCompatActivity {
   private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
     @Override public void onCancel(DialogInterface dialog) {
       subscription.unsubscribe();
-      AddressAddActivity.this.showSnackBar("增加操作被终止");
     }
   };
 

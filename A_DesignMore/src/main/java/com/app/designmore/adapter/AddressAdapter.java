@@ -41,8 +41,8 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-    return new ViewHolder(LayoutInflater.from(context)
-        .inflate(R.layout.address_manager_item, parent, false));
+    return new ViewHolder(
+        LayoutInflater.from(context).inflate(R.layout.address_manager_item, parent, false));
   }
 
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
@@ -126,7 +126,10 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
   public void updateItems(List<Address> addresses) {
     // TODO: 2015/9/4  设置默认地址
     this.items = addresses;
-    this.items.get(0).setIsChecked(true);
+
+    if (addresses.size() != 0) {
+      this.items.get(0).setIsChecked(true);
+    }
     AddressAdapter.this.notifyDataSetChanged();
   }
 

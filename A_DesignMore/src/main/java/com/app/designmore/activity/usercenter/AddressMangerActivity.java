@@ -65,14 +65,23 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
   @Nullable @Bind(R.id.address_manager_layout_pl) ProgressLayout progresslayout;
   @Nullable @Bind(R.id.address_manager_layout_rv) RecyclerView recyclerView;
 
+  private ProgressDialog progressDialog;
   private AddressAdapter addressAdapter;
+  private List<Address> items;
 
-  private List<Address> items = new ArrayList<>();
+  /*默认地址*/
   private int defaultPosition = -1;
+  /*编辑地址*/
   private int editorPosition = -1;
+  /*删除地址*/
   private int deletePosition = -1;
   private Subscription subscription = Subscriptions.empty();
-  private ProgressDialog progressDialog;
+
+  private View.OnClickListener retryClickListener = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      AddressMangerActivity.this.loadData();
+    }
+  };
 
   public static void startFromLocation(MineActivity startingActivity, int startingLocationY) {
 
@@ -162,7 +171,6 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
     menuItem.setActionView(R.layout.menu_inbox_tv_item);
     TextView textView = (TextView) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
     textView.setText(getText(R.string.action_add));
-
     menuItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         AddressAddActivity.navigateToAddressEditor(AddressMangerActivity.this);
@@ -187,7 +195,6 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
   private void loadData() {
 
     /* Action=GetUserByAddress&uid=1*/
-
     Map<String, String> params = new HashMap<>(2);
     params.put("Action", "GetUserByAddress");
     params.put("uid", "1");
@@ -204,42 +211,34 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
         .subscribe(new Subscriber<List<Address>>() {
           @Override public void onCompleted() {
             /*加载完毕，显示内容界面*/
-            if (AddressMangerActivity.this.items.size() != 0) progresslayout.showContent();
+            if (items != null && items.size() != 0) {
+              progresslayout.showContent();
+            } else if (items != null && items.size() == 0) {
+              progresslayout.showEmpty(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
+                  "您还没有收货地址", null);
+            }
           }
 
           @Override public void onError(Throwable error) {
-
+            /*加载失败，显示错误界面*/
             AddressMangerActivity.this.showError(error);
           }
 
           @Override public void onNext(List<Address> addresses) {
 
-            if (addresses.size() == 0) {
-              progresslayout.showEmpty(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
-                  "您还没有收货地址", null);
-            } else {
-              AddressMangerActivity.this.items = addresses;
-              addressAdapter.updateItems(addresses);
-            }
+            AddressMangerActivity.this.items = addresses;
+            addressAdapter.updateItems(items);
           }
         });
   }
 
   private void showError(String errorTitle, String errorContent) {
-
     progresslayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon), errorTitle,
         errorContent, getResources().getString(R.string.retry_button_text), retryClickListener);
   }
 
-  private View.OnClickListener retryClickListener = new View.OnClickListener() {
-    @Override public void onClick(View v) {
-      AddressMangerActivity.this.loadData();
-    }
-  };
-
   private void checkAddress() {
-
-    if (defaultPosition != -1) {//更改默认地址
+    if (this.defaultPosition != -1) {//更改默认地址
       DialogManager.showAddressChangeDialog(AddressMangerActivity.this, onConfirmClick);
     }
   }
@@ -251,7 +250,9 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
     }
   };
 
-  //AddressAdapter回调
+  /**
+   * ************************************** AddressAdapter回调
+   */
   /*点击删除按钮*/
   @Override public void onDeleteClick(int position) {
 
@@ -271,18 +272,14 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
             progressDialog = DialogManager.
                 getInstance().showProgressDialog(AddressMangerActivity.this, null, cancelListener);
           }
+        }).map(new Func1<BaseResponse, Integer>() {
+          @Override public Integer call(BaseResponse baseResponse) {
+            return AddressMangerActivity.this.deletePosition;
+          }
         }).doOnTerminate(new Action0() {
           @Override public void call() {
             /*隐藏进度条*/
             if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
-          }
-        }).map(new Func1<BaseResponse, Integer>() {
-          @Override public Integer call(BaseResponse baseResponse) {
-
-            /*删除成功，提示*/
-            AddressMangerActivity.this.showSnackBar(baseResponse.message);
-
-            return AddressMangerActivity.this.deletePosition;
           }
         }).filter(new Func1<Integer, Boolean>() {
           @Override public Boolean call(Integer position) {
@@ -294,23 +291,11 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
   private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
     @Override public void onCancel(DialogInterface dialog) {
       subscription.unsubscribe();
-      AddressMangerActivity.this.showSnackBar("删除操作被终止");
     }
   };
 
-  private void showSnackBar(String text) {
-    Snackbar.make(rootView, text, Snackbar.LENGTH_SHORT)
-        .setAction("确定", new View.OnClickListener() {
-          @Override public void onClick(View v) {
-            /*do nothing*/
-          }
-        })
-        .show();
-  }
-
   /*点击编辑按钮*/
   @Override public void onEditorClick(int position) {
-
     this.editorPosition = position;
     AddressEditorActivity.navigateToAddressEditor(AddressMangerActivity.this, items.get(position));
     overridePendingTransition(0, 0);
@@ -323,14 +308,12 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
 
   /*发生错误回调*/
   @Override public void onError(Throwable error) {
-
     AddressMangerActivity.this.showError(error);
   }
 
   private void showError(Throwable error) {
 
     if (error instanceof TimeoutException) {
-
       AddressMangerActivity.this.showError(getResources().getString(R.string.timeout_title),
           getResources().getString(R.string.timeout_content));
     } else if (error instanceof RetrofitError) {
@@ -340,8 +323,9 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
       AddressMangerActivity.this.showError("网络连接异常", ((RetrofitError) error).getKind() + "");
     } else if (error instanceof WebServiceException) {
 
-      AddressMangerActivity.this.showError(getResources().getString(R.string.service_exception_title),
-          error.getMessage());
+      AddressMangerActivity.this.showError(
+          getResources().getString(R.string.service_exception_title),
+          getResources().getString(R.string.service_exception_content));
     } else {
       Log.e(TAG, error.getMessage());
       error.printStackTrace();
@@ -402,7 +386,7 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
   @Override protected void onDestroy() {
     super.onDestroy();
 
-    progressDialog = null;
+    this.progressDialog = null;
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();
     EventBusInstance.getDefault().unregister(AddressMangerActivity.this);
     ButterKnife.unbind(AddressMangerActivity.this);

@@ -112,14 +112,6 @@ public class AddressEditorActivity extends RxAppCompatActivity {
     return true;
   }
 
-  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
-    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-      AddressEditorActivity.this.finish();
-      overridePendingTransition(0, 0);
-    }
-    return false;
-  }
-
   /**
    * 修改地址
    */
@@ -161,14 +153,12 @@ public class AddressEditorActivity extends RxAppCompatActivity {
     subscription =
         AddressRetrofit.getInstance().requestEditorAddress(params).doOnSubscribe(new Action0() {
           @Override public void call() {
-
             /*加载数据，显示进度条*/
             progressDialog = DialogManager.
                 getInstance().showProgressDialog(AddressEditorActivity.this, null, cancelListener);
           }
         }).doOnTerminate(new Action0() {
           @Override public void call() {
-
             /*修改成功，隐藏进度条*/
             if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
           }
@@ -185,16 +175,16 @@ public class AddressEditorActivity extends RxAppCompatActivity {
 
           @Override public void onError(Throwable error) {
 
-            if (subscription.isUnsubscribed()) return;
-
             if (error instanceof TimeoutException) {
               AddressEditorActivity.this.showSnackBar(
                   getResources().getString(R.string.timeout_title));
             } else if (error instanceof RetrofitError) {
-              AddressEditorActivity.this.showSnackBar(
-                  "网络连接异常:" + ((RetrofitError) error).getKind());
+
+              Log.e(TAG, "kind:  " + ((RetrofitError) error).getKind());
+              AddressEditorActivity.this.showSnackBar(getResources().getString(R.string.six_word));
             } else if (error instanceof WebServiceException) {
-              AddressEditorActivity.this.showSnackBar("很抱歉:" + error.getMessage());
+              AddressEditorActivity.this.showSnackBar(
+                  getResources().getString(R.string.service_exception_content));
             } else {
               Log.e(TAG, error.getMessage());
               error.printStackTrace();
@@ -257,6 +247,14 @@ public class AddressEditorActivity extends RxAppCompatActivity {
       AddressEditorActivity.this.showSnackBar("修改操作被终止");
     }
   };
+
+  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+      AddressEditorActivity.this.finish();
+      overridePendingTransition(0, 0);
+    }
+    return false;
+  }
 
   @Override protected void onDestroy() {
     super.onDestroy();
