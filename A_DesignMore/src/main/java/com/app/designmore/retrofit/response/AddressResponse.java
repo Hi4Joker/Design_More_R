@@ -27,7 +27,7 @@ public class AddressResponse extends BaseResponse {
       "best_time": "0"//
 */
 
-  @Expose @SerializedName("result") public List<Address> addressList = new ArrayList<>();
+  @Expose @SerializedName("result") private List<Address> addressList = new ArrayList<>();
 
   public List<Address> getAddressList() {
     return addressList;

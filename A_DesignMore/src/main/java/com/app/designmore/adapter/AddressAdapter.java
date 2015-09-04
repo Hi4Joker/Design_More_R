@@ -27,13 +27,14 @@ import rx.Observer;
 public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHolder>
     implements Observer<Integer> {
 
-  private List<Address> items;
   private int lastAnimatedPosition = -1;
   private boolean animationsLocked = false;
   private Callback callback;
   private Context context;
-
   private int defaultPosition = -1;
+
+  /*数据*/
+  private List<Address> items;
 
   public AddressAdapter(Context context) {
     this.context = context;
@@ -108,15 +109,12 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
   }
 
   @Override public void onError(Throwable e) {
-    if (callback != null) {
-      callback.onError(e);
-    }
+    if (callback != null) callback.onError(e);
   }
 
   @Override public void onNext(Integer deletePosition) {
 
-    int pos = deletePosition;
-    this.items.remove(pos);
+    this.items.remove(deletePosition);
     AddressAdapter.this.notifyItemRemoved(deletePosition);
   }
 

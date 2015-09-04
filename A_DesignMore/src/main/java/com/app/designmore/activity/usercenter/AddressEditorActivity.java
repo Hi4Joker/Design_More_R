@@ -21,11 +21,13 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.app.designmore.R;
 import com.app.designmore.event.EditorAddressEvent;
+import com.app.designmore.event.RefreshAddressEvent;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.retrofit.AddressRetrofit;
 import com.app.designmore.retrofit.entity.Address;
+import com.trello.rxlifecycle.ActivityEvent;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import java.util.HashMap;
 import java.util.Map;
@@ -151,52 +153,60 @@ public class AddressEditorActivity extends RxAppCompatActivity {
     params.put("address_id", address.getAddressId());
 
     subscription =
-        AddressRetrofit.getInstance().requestEditorAddress(params).doOnSubscribe(new Action0() {
-          @Override public void call() {
+        AddressRetrofit.getInstance()
+            .requestEditorAddress(params)
+            .doOnSubscribe(new Action0() {
+              @Override public void call() {
             /*加载数据，显示进度条*/
-            progressDialog = DialogManager.
-                getInstance().showProgressDialog(AddressEditorActivity.this, null, cancelListener);
-          }
-        }).doOnTerminate(new Action0() {
-          @Override public void call() {
+                progressDialog = DialogManager.
+                    getInstance()
+                    .showProgressDialog(AddressEditorActivity.this, null, cancelListener);
+              }
+            })
+            .doOnTerminate(new Action0() {
+              @Override public void call() {
             /*修改成功，隐藏进度条*/
-            if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
-          }
-        }).filter(new Func1<Address, Boolean>() {
-          @Override public Boolean call(Address address) {
-            return !subscription.isUnsubscribed();
-          }
-        }).subscribe(new Subscriber<Address>() {
-          @Override public void onCompleted() {
+                if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
+              }
+            })
+            .filter(new Func1<Address, Boolean>() {
+              @Override public Boolean call(Address address) {
+                return !subscription.isUnsubscribed();
+              }
+            })
+            .compose(AddressEditorActivity.this.<Address>bindUntilEvent(ActivityEvent.DESTROY))
+            .subscribe(new Subscriber<Address>() {
+              @Override public void onCompleted() {
 
-            AddressEditorActivity.this.finish();
-            overridePendingTransition(0, 0);
-          }
+                AddressEditorActivity.this.finish();
+                overridePendingTransition(0, 0);
+              }
 
-          @Override public void onError(Throwable error) {
+              @Override public void onError(Throwable error) {
 
-            if (error instanceof TimeoutException) {
-              AddressEditorActivity.this.showSnackBar(
-                  getResources().getString(R.string.timeout_title));
-            } else if (error instanceof RetrofitError) {
+                if (error instanceof TimeoutException) {
+                  AddressEditorActivity.this.showSnackBar(
+                      getResources().getString(R.string.timeout_title));
+                } else if (error instanceof RetrofitError) {
 
-              Log.e(TAG, "kind:  " + ((RetrofitError) error).getKind());
-              AddressEditorActivity.this.showSnackBar(getResources().getString(R.string.six_word));
-            } else if (error instanceof WebServiceException) {
-              AddressEditorActivity.this.showSnackBar(
-                  getResources().getString(R.string.service_exception_content));
-            } else {
-              Log.e(TAG, error.getMessage());
-              error.printStackTrace();
-              throw new RuntimeException("See inner exception");
-            }
-          }
+                  Log.e(TAG, "kind:  " + ((RetrofitError) error).getKind());
+                  AddressEditorActivity.this.showSnackBar(
+                      getResources().getString(R.string.six_word));
+                } else if (error instanceof WebServiceException) {
+                  AddressEditorActivity.this.showSnackBar(
+                      getResources().getString(R.string.service_exception_content));
+                } else {
+                  Log.e(TAG, error.getMessage());
+                  error.printStackTrace();
+                  throw new RuntimeException("See inner exception");
+                }
+              }
 
-          @Override public void onNext(Address address) {
+              @Override public void onNext(Address address) {
 
-            EventBusInstance.getDefault().post((EditorAddressEvent) address);
-          }
-        });
+                EventBusInstance.getDefault().post((EditorAddressEvent) address);
+              }
+            });
   }
 
   /**

@@ -20,6 +20,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -56,6 +57,7 @@ public class SearchActivity extends RxAppCompatActivity implements SearchAdapter
   @Nullable @Bind(R.id.search_layout_toolbar_rfl) RevealFrameLayout revealRootView;
   @Nullable @Bind(R.id.search_layout_et) AppCompatEditText searchEt;
   @Nullable @Bind(R.id.search_layout_pl) ProgressLayout progressLayout;
+  @Nullable @Bind(R.id.search_layout_recycler_root_view) LinearLayout recyclerRootView;
   @Nullable @Bind(R.id.search_layout_rv) RecyclerView recyclerView;
 
   private SupportAnimator revealAnimator;
@@ -188,7 +190,10 @@ public class SearchActivity extends RxAppCompatActivity implements SearchAdapter
         .doOnCompleted(new Action0() {
           @Override public void call() {
             /*显示内容界面*/
-            if (items != null && items.size() != 0) progressLayout.showContent();
+            if (items != null && items.size() != 0) {
+              recyclerRootView.setVisibility(View.VISIBLE);
+              progressLayout.showContent();
+            }
           }
         })
         .compose(SearchActivity.this.<List<SearchItemEntity>>bindUntilEvent(ActivityEvent.DESTROY))

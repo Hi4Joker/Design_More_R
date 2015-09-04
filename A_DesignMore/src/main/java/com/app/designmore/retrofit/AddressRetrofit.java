@@ -236,7 +236,7 @@ public class AddressRetrofit {
     }).map(new Func1<BaseResponse, BaseResponse>() {
       @Override public BaseResponse call(BaseResponse baseResponse) {
 
-        /*添加成功*/
+        /*删除成功*/
         return baseResponse;
       }
     }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.app.designmore.view.MaterialRippleLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="1dip"
+    app:mrl_rippleDimension="60dip"
+    app:mrl_rippleFadeDuration="100"
+    app:mrl_rippleAlpha="0.4"
+    app:mrl_rippleDuration="600"
+    app:mrl_rippleHover="true"
+    app:mrl_rippleOverlay="true"
+    app:mrl_rippleDelayClick="true"
+    app:mrl_rippleColor="@color/darker_gray"
+    >
+
+  <RelativeLayout
+      android:id="@+id/collection_layout_item_root_view"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_marginBottom="@dimen/material_1dp"
+      android:padding="@dimen/material_8dp"
+      android:background="@color/white"
+      >
+
+    <ImageView
+        android:id="@+id/collection_layout_good_iv"
+        android:layout_width="@dimen/material_120dp"
+        android:layout_height="@dimen/material_120dp"
+        android:layout_alignParentLeft="true"
+        android:scaleType="centerCrop"
+        />
+
+    <RelativeLayout
+        android:layout_toRightOf="@id/collection_layout_good_iv"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/material_120dp"
+        >
+
+      <TextView
+          android:id="@+id/collection_layout_good_name_tv"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_alignParentTop="true"
+          android:layout_marginLeft="@dimen/material_16dp"
+          android:layout_marginRight="@dimen/material_16dp"
+          android:textColor="@color/black"
+          android:textSize="@dimen/material_13sp"
+          android:text="这是商品名称这是商品名称这是商品名称"
+          />
+
+      <RelativeLayout
+          android:layout_width="match_parent"
+          android:layout_height="@dimen/material_32dp"
+          android:layout_marginLeft="@dimen/material_16dp"
+          android:layout_marginBottom="@dimen/material_4dp"
+          android:layout_alignParentBottom="true"
+          >
+
+        <TextView
+            android:id="@+id/collection_layout_good_price_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="@dimen/material_8dp"
+            android:textColor="@color/design_more_red"
+            android:textSize="@dimen/material_14sp"
+            android:text="¥ 100"
+            />
+
+        <com.app.designmore.view.MaterialRippleLayout
+            android:layout_width="@dimen/material_48dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            app:mrl_rippleDimension="20dip"
+            app:mrl_rippleFadeDuration="100"
+            app:mrl_rippleAlpha="0.4"
+            app:mrl_rippleDuration="600"
+            app:mrl_rippleHover="true"
+            app:mrl_rippleOverlay="true"
+            app:mrl_rippleDelayClick="true"
+            app:mrl_rippleColor="@color/darker_gray"
+            >
+
+          <ImageButton
+              android:id="@+id/collection_layout_good_more_btn"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_alignParentBottom="true"
+              android:text="¥ 100"
+              android:scaleType="center"
+              android:src="@drawable/ic_delete_black_icon"
+              android:background="@drawable/transparent_background"
+              />
+        </com.app.designmore.view.MaterialRippleLayout>
+      </RelativeLayout>
+    </RelativeLayout>
+  </RelativeLayout>
+
+</com.app.designmore.view.MaterialRippleLayout>

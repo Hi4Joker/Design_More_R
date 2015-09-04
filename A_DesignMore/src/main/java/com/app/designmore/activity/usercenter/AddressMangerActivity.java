@@ -39,7 +39,6 @@ import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
 import com.trello.rxlifecycle.ActivityEvent;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +61,7 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
   @Nullable @Bind(R.id.address_manager_layout_root_view) LinearLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
-  @Nullable @Bind(R.id.address_manager_layout_pl) ProgressLayout progresslayout;
+  @Nullable @Bind(R.id.address_manager_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.address_manager_layout_rv) RecyclerView recyclerView;
 
   private ProgressDialog progressDialog;
@@ -74,12 +73,17 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
   /*编辑地址*/
   private int editorPosition = -1;
   /*删除地址*/
-  private int deletePosition = -1;
+  //private int deletePosition = -1;
   private Subscription subscription = Subscriptions.empty();
 
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
       AddressMangerActivity.this.loadData();
+    }
+  };
+  private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
+    @Override public void onCancel(DialogInterface dialog) {
+      subscription.unsubscribe();
     }
   };
 
@@ -204,7 +208,7 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
         .doOnSubscribe(new Action0() {
           @Override public void call() {
             /*加载数据，显示进度条*/
-            progresslayout.showLoading();
+            progressLayout.showLoading();
           }
         })
         .compose(AddressMangerActivity.this.<List<Address>>bindUntilEvent(ActivityEvent.DESTROY))
@@ -212,9 +216,9 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
           @Override public void onCompleted() {
             /*加载完毕，显示内容界面*/
             if (items != null && items.size() != 0) {
-              progresslayout.showContent();
+              progressLayout.showContent();
             } else if (items != null && items.size() == 0) {
-              progresslayout.showEmpty(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
+              progressLayout.showEmpty(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
                   "您还没有收货地址", null);
             }
           }
@@ -233,7 +237,7 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
   }
 
   private void showError(String errorTitle, String errorContent) {
-    progresslayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon), errorTitle,
+    progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon), errorTitle,
         errorContent, getResources().getString(R.string.retry_button_text), retryClickListener);
   }
 
@@ -254,9 +258,8 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
    * ************************************** AddressAdapter回调
    */
   /*点击删除按钮*/
-  @Override public void onDeleteClick(int position) {
+  @Override public void onDeleteClick(final int position) {
 
-    this.deletePosition = position;
     final Address deleteAddress = items.get(position);
 
     /* Action=DelUserByAddress&address_id=1&uid=2*/
@@ -266,33 +269,35 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
     params.put("uid", "1");
 
     subscription =
-        AddressRetrofit.getInstance().requestDeleteAddress(params).doOnSubscribe(new Action0() {
-          @Override public void call() {
+        AddressRetrofit.getInstance()
+            .requestDeleteAddress(params)
+            .doOnSubscribe(new Action0() {
+              @Override public void call() {
             /*加载数据，显示进度条*/
-            progressDialog = DialogManager.
-                getInstance().showProgressDialog(AddressMangerActivity.this, null, cancelListener);
-          }
-        }).map(new Func1<BaseResponse, Integer>() {
-          @Override public Integer call(BaseResponse baseResponse) {
-            return AddressMangerActivity.this.deletePosition;
-          }
-        }).doOnTerminate(new Action0() {
-          @Override public void call() {
+                progressDialog = DialogManager.
+                    getInstance()
+                    .showProgressDialog(AddressMangerActivity.this, null, cancelListener);
+              }
+            })
+            .map(new Func1<BaseResponse, Integer>() {
+              @Override public Integer call(BaseResponse baseResponse) {
+                return position;
+              }
+            })
+            .doOnTerminate(new Action0() {
+              @Override public void call() {
             /*隐藏进度条*/
-            if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
-          }
-        }).filter(new Func1<Integer, Boolean>() {
-          @Override public Boolean call(Integer position) {
-            return !subscription.isUnsubscribed();
-          }
-        }).subscribe(addressAdapter);
+                if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
+              }
+            })
+            .filter(new Func1<Integer, Boolean>() {
+              @Override public Boolean call(Integer position) {
+                return !subscription.isUnsubscribed();
+              }
+            })
+            .compose(AddressMangerActivity.this.<Integer>bindUntilEvent(ActivityEvent.DESTROY))
+            .subscribe(addressAdapter);
   }
-
-  private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
-    @Override public void onCancel(DialogInterface dialog) {
-      subscription.unsubscribe();
-    }
-  };
 
   /*点击编辑按钮*/
   @Override public void onEditorClick(int position) {
@@ -308,7 +313,13 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
 
   /*发生错误回调*/
   @Override public void onError(Throwable error) {
-    AddressMangerActivity.this.showError(error);
+
+    Snackbar.make(rootView, "删除失败，请稍后重试", Snackbar.LENGTH_LONG)
+        .setAction("确定", new View.OnClickListener() {
+          @Override public void onClick(View v) {
+            /*do nothing*/
+          }
+        });
   }
 
   private void showError(Throwable error) {

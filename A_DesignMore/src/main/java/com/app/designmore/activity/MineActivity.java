@@ -25,6 +25,7 @@ import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.usercenter.AddressMangerActivity;
+import com.app.designmore.activity.usercenter.CollectionActivity;
 import com.app.designmore.activity.usercenter.ProfileActivity;
 import com.app.designmore.activity.usercenter.SettingActivity;
 import com.app.designmore.activity.usercenter.TrolleyActivity;
@@ -232,7 +233,7 @@ public class MineActivity extends RxAppCompatActivity {
    * 我的收藏
    */
   @Nullable @OnClick(R.id.mine_layout_favorite_ll) void onFavoriteClick(View view) {
-    TrolleyActivity.startFromLocation(MineActivity.this, DensityUtil.getLocationY(view));
+    CollectionActivity.startFromLocation(MineActivity.this, DensityUtil.getLocationY(view));
     overridePendingTransition(0, 0);
   }
 

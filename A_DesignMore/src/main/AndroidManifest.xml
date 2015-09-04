@@ -104,6 +104,14 @@
         android:theme="@style/AppTheme.TransparentActivity"
         >
     </activity>
+    <!--用户中心ACT -> 我的收藏ACT-->
+    <activity
+        android:name=".activity.usercenter.CollectionActivity"
+        android:screenOrientation="portrait"
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.TransparentActivity"
+        >
+    </activity>
 
     <!--用户中心ACT -> 设置ACT-->
     <activity

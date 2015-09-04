@@ -33,6 +33,7 @@ import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.utils.Utils;
+import com.trello.rxlifecycle.ActivityEvent;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -182,51 +183,58 @@ public class AddressAddActivity extends RxAppCompatActivity {
     params.put("uid", "1");
 
     subscription =
-        AddressRetrofit.getInstance().requestAddAddress(params).doOnSubscribe(new Action0() {
-          @Override public void call() {
+        AddressRetrofit.getInstance()
+            .requestAddAddress(params)
+            .doOnSubscribe(new Action0() {
+              @Override public void call() {
             /*加载数据，显示进度条*/
-            progressDialog = DialogManager.
-                getInstance().showProgressDialog(AddressAddActivity.this, null, cancelListener);
-          }
-        }).doOnTerminate(new Action0() {
-          @Override public void call() {
+                progressDialog = DialogManager.
+                    getInstance().showProgressDialog(AddressAddActivity.this, null, cancelListener);
+              }
+            })
+            .doOnTerminate(new Action0() {
+              @Override public void call() {
             /*隐藏进度条*/
-            if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
-          }
-        }).filter(new Func1<RefreshAddressEvent, Boolean>() {
-          @Override public Boolean call(RefreshAddressEvent refreshAddressEvent) {
-            return !subscription.isUnsubscribed();
-          }
-        }).subscribe(new Subscriber<RefreshAddressEvent>() {
-          @Override public void onCompleted() {
+                if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
+              }
+            })
+            .filter(new Func1<RefreshAddressEvent, Boolean>() {
+              @Override public Boolean call(RefreshAddressEvent refreshAddressEvent) {
+                return !subscription.isUnsubscribed();
+              }
+            })
+            .compose(
+                AddressAddActivity.this.<RefreshAddressEvent>bindUntilEvent(ActivityEvent.DESTROY))
+            .subscribe(new Subscriber<RefreshAddressEvent>() {
+              @Override public void onCompleted() {
             /*增加成功，返回，刷新*/
-            AddressAddActivity.this.startExitAnim();
-          }
+                AddressAddActivity.this.startExitAnim();
+              }
 
-          @Override public void onError(Throwable error) {
+              @Override public void onError(Throwable error) {
 
-            if (error instanceof TimeoutException) {
-              AddressAddActivity.this.showSnackBar(
-                  getResources().getString(R.string.timeout_title));
-            } else if (error instanceof RetrofitError) {
-              Log.e(TAG, "kind:  " + ((RetrofitError) error).getKind());
-              AddressAddActivity.this.showSnackBar(getResources().getString(R.string.six_word));
-            } else if (error instanceof WebServiceException) {
-              AddressAddActivity.this.showSnackBar(
-                  getResources().getString(R.string.service_exception_content));
-            } else {
-              Log.e(TAG, error.getMessage());
-              error.printStackTrace();
-              throw new RuntimeException("See inner exception");
-            }
-          }
+                if (error instanceof TimeoutException) {
+                  AddressAddActivity.this.showSnackBar(
+                      getResources().getString(R.string.timeout_title));
+                } else if (error instanceof RetrofitError) {
+                  Log.e(TAG, "kind:  " + ((RetrofitError) error).getKind());
+                  AddressAddActivity.this.showSnackBar(getResources().getString(R.string.six_word));
+                } else if (error instanceof WebServiceException) {
+                  AddressAddActivity.this.showSnackBar(
+                      getResources().getString(R.string.service_exception_content));
+                } else {
+                  Log.e(TAG, error.getMessage());
+                  error.printStackTrace();
+                  throw new RuntimeException("See inner exception");
+                }
+              }
 
-          @Override public void onNext(RefreshAddressEvent refreshAddressEvent) {
+              @Override public void onNext(RefreshAddressEvent refreshAddressEvent) {
 
             /*通过eventBus发送通知，刷新地址列表*/
-            EventBusInstance.getDefault().post(refreshAddressEvent);
-          }
-        });
+                EventBusInstance.getDefault().post(refreshAddressEvent);
+              }
+            });
   }
 
   /**
