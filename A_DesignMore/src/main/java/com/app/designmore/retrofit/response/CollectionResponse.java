@@ -79,9 +79,9 @@ public class CollectionResponse extends BaseResponse {
 
       @Expose @SerializedName("goods_id") public String goodId;
       @Expose @SerializedName("goods_name") public String goodName;
-      @Expose @SerializedName("shop_price") public String goodPrice;
       @Expose @SerializedName("goods_thumb") public String goodThumb;
       @Expose @SerializedName("goods_img") public String goodImage;
+      @Expose @SerializedName("shop_price") public String goodPrice;
 
       @Override public String toString() {
         return "GoodInfo{" +

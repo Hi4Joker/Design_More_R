@@ -2,7 +2,6 @@ package com.app.designmore.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,6 +24,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
+import com.app.designmore.activity.usercenter.TrolleyActivity;
 import com.app.designmore.event.FinishEvent;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
@@ -140,7 +140,7 @@ public class FashionActivity extends RxAppCompatActivity {
    */
   @Nullable @OnClick(R.id.bottom_bar_home_rl) void onHomeClick() {
 
-    HomeActivity.navigateToUserCenter(FashionActivity.this);
+    HomeActivity.navigateToHome(FashionActivity.this);
     FashionActivity.this.finish();
     overridePendingTransition(0, 0);
   }
@@ -199,6 +199,9 @@ public class FashionActivity extends RxAppCompatActivity {
 
     trolleyItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
+        TrolleyActivity.startFromLocation(FashionActivity.this,
+            DensityUtil.getActionBarSize(FashionActivity.this), TrolleyActivity.Type.UP);
+        overridePendingTransition(0, 0);
       }
     });
     return true;

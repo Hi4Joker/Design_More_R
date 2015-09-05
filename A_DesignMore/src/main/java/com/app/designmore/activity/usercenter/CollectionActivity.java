@@ -14,7 +14,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -26,14 +25,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.app.designmore.R;
 import com.app.designmore.activity.MineActivity;
-import com.app.designmore.adapter.AddressAdapter;
 import com.app.designmore.adapter.CollectionAdapter;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
-import com.app.designmore.manager.EventBusInstance;
-import com.app.designmore.retrofit.AddressRetrofit;
 import com.app.designmore.retrofit.CollectionRetrofit;
-import com.app.designmore.retrofit.entity.Address;
 import com.app.designmore.retrofit.entity.CollectionEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.utils.DensityUtil;
@@ -175,7 +170,7 @@ public class CollectionActivity extends RxAppCompatActivity implements Collectio
     params.put("uid", "1");
 
     CollectionRetrofit.getInstance()
-        .getHotSearchList(params)
+        .getCollectionList(params)
         .doOnSubscribe(new Action0() {
           @Override public void call() {
             /*加载数据，显示进度条*/
@@ -198,7 +193,7 @@ public class CollectionActivity extends RxAppCompatActivity implements Collectio
 
           @Override public void onError(Throwable error) {
             /*加载失败，显示错误界面*/
-            CollectionActivity.this.showError(error);
+            CollectionActivity.this.showErrorLayout(error);
           }
 
           @Override public void onNext(List<CollectionEntity> collectionEntities) {
@@ -209,7 +204,7 @@ public class CollectionActivity extends RxAppCompatActivity implements Collectio
         });
   }
 
-  private void showError(Throwable error) {
+  private void showErrorLayout(Throwable error) {
 
     if (error instanceof TimeoutException) {
       CollectionActivity.this.showError(getResources().getString(R.string.timeout_title),

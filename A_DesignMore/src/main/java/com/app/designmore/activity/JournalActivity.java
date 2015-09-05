@@ -2,7 +2,6 @@ package com.app.designmore.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,6 +24,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
+import com.app.designmore.activity.usercenter.TrolleyActivity;
 import com.app.designmore.event.FinishEvent;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
@@ -43,7 +43,7 @@ public class JournalActivity extends RxAppCompatActivity {
 
   @Nullable @Bind(R.id.journal_layout_root_view) RevealFrameLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
-  @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toobarTitleTv;
+  @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
 
   @Nullable @Bind(R.id.journal_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.bottom_bar_journal_iv) ImageView journalIv;
@@ -139,7 +139,7 @@ public class JournalActivity extends RxAppCompatActivity {
    */
   @Nullable @OnClick(R.id.bottom_bar_home_rl) void onFashionClick() {
 
-    HomeActivity.navigateToUserCenter(JournalActivity.this);
+    HomeActivity.navigateToHome(JournalActivity.this);
     JournalActivity.this.finish();
     overridePendingTransition(0, 0);
   }
@@ -170,11 +170,11 @@ public class JournalActivity extends RxAppCompatActivity {
         getResources().getColor(R.color.design_more_red));
     journalTv.setTextColor(getResources().getColor(R.color.design_more_red));
 
-    LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toobarTitleTv.getLayoutParams();
+    LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toolbarTitleTv.getLayoutParams();
     params.leftMargin = DensityUtil.getActionBarSize(JournalActivity.this) * 2;
 
-    toobarTitleTv.setVisibility(View.VISIBLE);
-    toobarTitleTv.setText("杂 志");
+    toolbarTitleTv.setVisibility(View.VISIBLE);
+    toolbarTitleTv.setText("杂 志");
 
     getMenuInflater().inflate(R.menu.menu_main, menu);
 
@@ -198,6 +198,9 @@ public class JournalActivity extends RxAppCompatActivity {
 
     trolleyItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
+        TrolleyActivity.startFromLocation(JournalActivity.this,
+            DensityUtil.getActionBarSize(JournalActivity.this), TrolleyActivity.Type.UP);
+        overridePendingTransition(0, 0);
       }
     });
     return true;

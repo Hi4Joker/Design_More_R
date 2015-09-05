@@ -3,7 +3,7 @@ package com.app.designmore.retrofit;
 import com.app.designmore.Constants;
 import com.app.designmore.event.EditorAddressEvent;
 import com.app.designmore.event.RefreshAddressEvent;
-import com.app.designmore.retrofit.entity.Address;
+import com.app.designmore.retrofit.entity.AddressEntity;
 import com.app.designmore.retrofit.response.AddressResponse;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.rxAndroid.SchedulersCompat;
@@ -87,9 +87,9 @@ public class AddressRetrofit {
   /**
    * 获取地址列表
    */
-  public Observable<List<Address>> getAddressList(final Map<String, String> params) {
+  public Observable<List<AddressEntity>> getAddressList(final Map<String, String> params) {
 
-    Observable<List<Address>> observable =
+    Observable<List<AddressEntity>> observable =
         Observable.defer(new Func0<Observable<AddressResponse>>() {
           @Override public Observable<AddressResponse> call() {
 
@@ -109,15 +109,15 @@ public class AddressRetrofit {
           @Override public Observable<AddressResponse> call(AddressResponse addressManagerEntity) {
             return addressManagerEntity.filterWebServiceErrors();
           }
-        }).map(new Func1<AddressResponse, List<Address>>() {
-          @Override public List<Address> call(AddressResponse addressResponse) {
+        }).map(new Func1<AddressResponse, List<AddressEntity>>() {
+          @Override public List<AddressEntity> call(AddressResponse addressResponse) {
 
-            final ArrayList<Address> addressArrayList =
+            final ArrayList<AddressEntity> addressArrayList =
                 new ArrayList<>(addressResponse.getAddressList().size());
-            Address addressInstance = new Address();
+            AddressEntity addressInstance = new AddressEntity();
 
             for (AddressResponse.Address entity : addressResponse.getAddressList()) {
-              Address clone = addressInstance.newInstance();
+              AddressEntity clone = addressInstance.newInstance();
 
               clone.setAddressId(entity.addressId);
               clone.setUserName(entity.userName);
@@ -135,7 +135,7 @@ public class AddressRetrofit {
             }
             return addressArrayList;
           }
-        }).compose(SchedulersCompat.<List<Address>>applyExecutorSchedulers());
+        }).compose(SchedulersCompat.<List<AddressEntity>>applyExecutorSchedulers());
 
     return observable;
   }
@@ -143,7 +143,7 @@ public class AddressRetrofit {
   /**
    * 编辑地址
    */
-  public Observable<Address> requestEditorAddress(final Map<String, String> params) {
+  public Observable<AddressEntity> requestEditorAddress(final Map<String, String> params) {
 
     return Observable.defer(new Func0<Observable<AddressResponse>>() {
       @Override public Observable<AddressResponse> call() {
@@ -164,8 +164,8 @@ public class AddressRetrofit {
 
         return addressResponse.filterWebServiceErrors();
       }
-    }).map(new Func1<AddressResponse, Address>() {
-      @Override public Address call(AddressResponse addressResponse) {
+    }).map(new Func1<AddressResponse, AddressEntity>() {
+      @Override public AddressEntity call(AddressResponse addressResponse) {
 
         AddressResponse.Address address = addressResponse.getAddressList().get(0);
 
@@ -175,7 +175,7 @@ public class AddressRetrofit {
 
         return editorAddressEvent;
       }
-    }).compose(SchedulersCompat.<Address>applyExecutorSchedulers());
+    }).compose(SchedulersCompat.<AddressEntity>applyExecutorSchedulers());
   }
 
   /**

@@ -26,6 +26,7 @@ import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.usercenter.SettingActivity;
+import com.app.designmore.activity.usercenter.TrolleyActivity;
 import com.app.designmore.event.FinishEvent;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
@@ -53,7 +54,7 @@ public class HomeActivity extends RxAppCompatActivity {
   @Nullable @Bind(R.id.bottom_bar_mine_rl) RelativeLayout bottomBarMineRl;
   private SupportAnimator revealAnimator;
 
-  public static void navigateToUserCenter(AppCompatActivity startingActivity) {
+  public static void navigateToHome(AppCompatActivity startingActivity) {
 
     Intent intent = new Intent(startingActivity, HomeActivity.class);
     startingActivity.startActivity(intent);
@@ -172,7 +173,8 @@ public class HomeActivity extends RxAppCompatActivity {
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
 
-    DrawableCompat.setTint(DrawableCompat.wrap(homeIv.getDrawable().mutate()),getResources().getColor(R.color.design_more_red));
+    DrawableCompat.setTint(DrawableCompat.wrap(homeIv.getDrawable().mutate()),
+        getResources().getColor(R.color.design_more_red));
     homeTv.setTextColor(getResources().getColor(R.color.design_more_red));
 
     LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toolbarTitleIv.getLayoutParams();
@@ -201,6 +203,9 @@ public class HomeActivity extends RxAppCompatActivity {
 
     trolleyItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
+        TrolleyActivity.startFromLocation(HomeActivity.this,
+            DensityUtil.getActionBarSize(HomeActivity.this), TrolleyActivity.Type.UP);
+        overridePendingTransition(0, 0);
       }
     });
     return true;

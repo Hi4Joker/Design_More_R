@@ -91,7 +91,7 @@ public class SearchActivity extends RxAppCompatActivity implements SearchAdapter
     inputMethodManager =
         (InputMethodManager) SearchActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-     /*创建Adapter*/
+    /*创建Adapter*/
     SearchActivity.this.setupAdapter();
 
     if (savedInstanceState == null) {
@@ -220,13 +220,11 @@ public class SearchActivity extends RxAppCompatActivity implements SearchAdapter
   @Override public void onError(Throwable error) {
 
     if (error instanceof TimeoutException) {
-
       SearchActivity.this.showError(getResources().getString(R.string.timeout_title),
           getResources().getString(R.string.timeout_content));
     } else if (error instanceof RetrofitError) {
 
       Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
-
       SearchActivity.this.showError("网络连接异常", ((RetrofitError) error).getKind() + "");
     } else if (error instanceof WebServiceException) {
 

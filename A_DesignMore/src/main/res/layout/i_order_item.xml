@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/order_item_view_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/material_24dp"
+    android:orientation="vertical"
+    android:background="@color/white"
+    >
+
+  <!--购物车title-->
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/material_32dp"
+      android:padding="@dimen/material_8dp"
+      >
+
+    <TextView
+        android:id="@+id/order_item_order_id_none"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:textSize="@dimen/material_13sp"
+        android:textColor="@color/darker_gray"
+        android:text="订单编号: "
+        />
+
+    <TextView
+        android:id="@+id/order_item_order_id_tv"
+        android:layout_toRightOf="@id/order_item_order_id_none"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/material_4dp"
+        android:textSize="@dimen/material_13sp"
+        android:textColor="@color/black"
+        android:text="00000000000"
+        />
+
+    <TextView
+        android:id="@+id/order_item_status_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:textSize="@dimen/material_13sp"
+        android:textColor="@color/design_more_red"
+        android:text="等待买家付款"
+        />
+  </RelativeLayout>
+
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:padding="@dimen/material_8dp"
+      android:layout_marginTop="@dimen/material_1dp"
+      >
+
+    <ImageView
+        android:id="@+id/order_item_good_iv"
+        android:layout_width="@dimen/material_100dp"
+        android:layout_height="@dimen/material_100dp"
+        android:layout_alignParentLeft="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/test_background"
+        />
+
+    <RelativeLayout
+        android:layout_toRightOf="@id/order_item_good_iv"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/material_100dp"
+        android:layout_marginRight="@dimen/material_56dp"
+        >
+
+      <TextView
+          android:id="@+id/order_item_good_name_tv"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_alignParentTop="true"
+          android:layout_marginLeft="@dimen/material_16dp"
+          android:layout_marginRight="@dimen/material_16dp"
+          android:textColor="@color/black"
+          android:textSize="@dimen/material_12sp"
+          android:text="这是商品名称这是商品名称这是商品名称"
+          />
+
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="@dimen/material_24dp"
+          android:layout_alignParentBottom="true"
+          android:orientation="horizontal"
+          >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/material_16dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:textColor="@color/darker_gray"
+            android:textSize="@dimen/material_11sp"
+            android:text="颜色分类: "
+            />
+
+        <!--颜色-->
+        <TextView
+            android:id="@+id/order_item_good_color_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/material_4dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:textColor="@color/darker_gray"
+            android:textSize="@dimen/material_11sp"
+            android:text="黄色"
+            />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/material_24dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:textColor="@color/darker_gray"
+            android:textSize="@dimen/material_11sp"
+            android:text="数量: "
+            />
+        <TextView
+            android:id="@+id/order_item_good_count_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/material_4dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:textColor="@color/darker_gray"
+            android:textSize="@dimen/material_11sp"
+            android:text="x1"
+            />
+
+      </LinearLayout>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/order_item_price_tv"
+        android:layout_width="@dimen/material_56dp"
+        android:layout_height="@dimen/material_100dp"
+        android:layout_alignParentRight="true"
+        android:gravity="center"
+        android:textSize="@dimen/material_16sp"
+        android:textColor="@color/black"
+        android:text=" 168"
+        />
+  </RelativeLayout>
+
+
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/material_80dp"
+      android:paddingTop="@dimen/material_8dp"
+      android:paddingBottom="@dimen/material_8dp"
+      android:paddingLeft="@dimen/material_16dp"
+      android:paddingRight="@dimen/material_16dp"
+      android:layout_marginTop="@dimen/material_1dp"
+      android:orientation="vertical"
+      >
+
+    <TextView
+        android:id="@+id/order_item_good_price_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:gravity="end|center_vertical"
+        android:text="统计"
+        />
+
+    <!-- 付款-->
+    <com.app.designmore.view.MaterialRippleLayout
+        android:id="@+id/order_item_pay_btn_parent"
+        android:layout_width="@dimen/material_72dp"
+        android:layout_height="@dimen/material_32dp"
+        android:layout_marginTop="@dimen/material_8dp"
+        android:layout_marginLeft="@dimen/material_8dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        app:mrl_rippleDimension="4dip"
+        app:mrl_rippleFadeDuration="100"
+        app:mrl_rippleAlpha="0.4"
+        app:mrl_rippleDuration="600"
+        app:mrl_rippleHover="true"
+        app:mrl_rippleOverlay="true"
+        app:mrl_rippleDelayClick="true"
+        app:mrl_rippleColor="@color/darker_gray"
+        >
+      <Button
+          android:id="@+id/order_item_pay_btn"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_gravity="center"
+          android:gravity="center"
+          android:textColor="@color/design_more_red"
+          android:text="付款"
+          android:background="@drawable/pay_tv_background"
+          />
+    </com.app.designmore.view.MaterialRippleLayout>
+
+    <!-- 取消-->
+    <com.app.designmore.view.MaterialRippleLayout
+        android:layout_toLeftOf="@id/order_item_pay_btn_parent"
+        android:layout_width="@dimen/material_72dp"
+        android:layout_height="@dimen/material_32dp"
+        android:layout_alignParentBottom="true"
+        app:mrl_rippleDimension="4dip"
+        app:mrl_rippleFadeDuration="100"
+        app:mrl_rippleAlpha="0.4"
+        app:mrl_rippleDuration="600"
+        app:mrl_rippleHover="true"
+        app:mrl_rippleOverlay="true"
+        app:mrl_rippleDelayClick="true"
+        app:mrl_rippleColor="@color/darker_gray"
+        >
+      <Button
+          android:id="@+id/order_item_cancel_btn"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_gravity="center"
+          android:gravity="center"
+          android:text="取消"
+          android:background="@drawable/search_tv_background"
+          />
+    </com.app.designmore.view.MaterialRippleLayout>
+
+
+  </RelativeLayout>
+
+
+</LinearLayout>

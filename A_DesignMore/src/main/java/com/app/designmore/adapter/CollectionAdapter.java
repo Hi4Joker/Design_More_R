@@ -40,7 +40,7 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
     return new ViewHolder(
-        LayoutInflater.from(context).inflate(R.layout.collection_item, parent, false));
+        LayoutInflater.from(context).inflate(R.layout.i_collection_item, parent, false));
   }
 
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
@@ -76,7 +76,6 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
   }
 
   @Override public void onError(Throwable e) {
-
     if (callback != null) callback.onError(e);
   }
 
@@ -96,26 +95,25 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
 
   public class ViewHolder extends RecyclerView.ViewHolder {
 
-    @Nullable @Bind(R.id.collection_layout_item_root_view) RelativeLayout itemRootView;
-    @Nullable @Bind(R.id.collection_layout_good_iv) ImageView goodIv;
-    @Nullable @Bind(R.id.collection_layout_good_name_tv) TextView goodNameTv;
-    @Nullable @Bind(R.id.collection_layout_good_price_tv) TextView goodPriceTv;
-    @Nullable @Bind(R.id.collection_layout_good_more_btn) ImageButton goodMoreBtn;
+    @Nullable @Bind(R.id.collection_item_root_view) RelativeLayout itemRootView;
+    @Nullable @Bind(R.id.collection_item_good_iv) ImageView goodIv;
+    @Nullable @Bind(R.id.collection_item_good_name_tv) TextView goodNameTv;
+    @Nullable @Bind(R.id.collection_item_good_price_tv) TextView goodPriceTv;
+    @Nullable @Bind(R.id.collection_item_good_more_btn) ImageButton goodMoreBtn;
 
     public ViewHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(ViewHolder.this, itemView);
     }
 
-    @Nullable @OnClick(R.id.collection_layout_item_root_view) void onItemClick(
-        RelativeLayout rootView) {
+    @Nullable @OnClick(R.id.collection_item_root_view) void onItemClick(RelativeLayout rootView) {
       int pos = (int) rootView.getTag();
       if (callback != null) {
         callback.onItemClick(pos);
       }
     }
 
-    @Nullable @OnClick(R.id.collection_layout_good_more_btn) void onMoreClick(
+    @Nullable @OnClick(R.id.collection_item_good_more_btn) void onMoreClick(
         ImageButton imageButton) {
       int pos = (int) imageButton.getTag();
       if (callback != null) {

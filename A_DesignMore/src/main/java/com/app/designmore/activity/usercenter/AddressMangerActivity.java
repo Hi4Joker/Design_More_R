@@ -33,7 +33,7 @@ import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.retrofit.AddressRetrofit;
-import com.app.designmore.retrofit.entity.Address;
+import com.app.designmore.retrofit.entity.AddressEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
@@ -66,7 +66,7 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
 
   private ProgressDialog progressDialog;
   private AddressAdapter addressAdapter;
-  private List<Address> items;
+  private List<AddressEntity> items;
 
   /*默认地址*/
   private int defaultPosition = -1;
@@ -211,8 +211,8 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
             progressLayout.showLoading();
           }
         })
-        .compose(AddressMangerActivity.this.<List<Address>>bindUntilEvent(ActivityEvent.DESTROY))
-        .subscribe(new Subscriber<List<Address>>() {
+        .compose(AddressMangerActivity.this.<List<AddressEntity>>bindUntilEvent(ActivityEvent.DESTROY))
+        .subscribe(new Subscriber<List<AddressEntity>>() {
           @Override public void onCompleted() {
             /*加载完毕，显示内容界面*/
             if (items != null && items.size() != 0) {
@@ -225,10 +225,10 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
 
           @Override public void onError(Throwable error) {
             /*加载失败，显示错误界面*/
-            AddressMangerActivity.this.showError(error);
+            AddressMangerActivity.this.showErrorLayout(error);
           }
 
-          @Override public void onNext(List<Address> addresses) {
+          @Override public void onNext(List<AddressEntity> addresses) {
 
             AddressMangerActivity.this.items = addresses;
             addressAdapter.updateItems(items);
@@ -250,7 +250,7 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
   private DialogInterface.OnClickListener onConfirmClick = new DialogInterface.OnClickListener() {
     @Override public void onClick(DialogInterface dialog, int which) {
       // TODO: 2015/9/2 请求修改默认地址接口
-      Address currentAddress = items.get(defaultPosition);
+      AddressEntity currentAddress = items.get(defaultPosition);
     }
   };
 
@@ -260,7 +260,7 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
   /*点击删除按钮*/
   @Override public void onDeleteClick(final int position) {
 
-    final Address deleteAddress = items.get(position);
+    final AddressEntity deleteAddress = items.get(position);
 
     /* Action=DelUserByAddress&address_id=1&uid=2*/
     Map<String, String> params = new HashMap<>(3);
@@ -322,7 +322,7 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
         });
   }
 
-  private void showError(Throwable error) {
+  private void showErrorLayout(Throwable error) {
 
     if (error instanceof TimeoutException) {
       AddressMangerActivity.this.showError(getResources().getString(R.string.timeout_title),
@@ -357,7 +357,7 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
    */
   public void onEventMainThread(EditorAddressEvent event) {
 
-    Address address = items.get(editorPosition);
+    AddressEntity address = items.get(editorPosition);
 
     address.setAddressId(event.getAddressId());
     address.setUserName(event.getUserName());

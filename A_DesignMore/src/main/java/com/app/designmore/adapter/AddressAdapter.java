@@ -17,7 +17,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
-import com.app.designmore.retrofit.entity.Address;
+import com.app.designmore.retrofit.entity.AddressEntity;
 import java.util.List;
 import rx.Observer;
 
@@ -34,7 +34,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
   private int defaultPosition = -1;
 
   /*数据*/
-  private List<Address> items;
+  private List<AddressEntity> items;
 
   public AddressAdapter(Context context) {
     this.context = context;
@@ -43,7 +43,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
     return new ViewHolder(
-        LayoutInflater.from(context).inflate(R.layout.address_manager_item, parent, false));
+        LayoutInflater.from(context).inflate(R.layout.i_address_manager_item, parent, false));
   }
 
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
@@ -59,7 +59,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
     AddressAdapter.this.runEnterAnimation(holder.itemView, position);
   }
 
-  private void bindToValue(ViewHolder holder, Address address) {
+  private void bindToValue(ViewHolder holder, AddressEntity address) {
 
     holder.userName.setText(address.getUserName());
     holder.userMobile.setText(address.getMobile());
@@ -121,7 +121,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
   /**
    * 更新整张列表
    */
-  public void updateItems(List<Address> addresses) {
+  public void updateItems(List<AddressEntity> addresses) {
     // TODO: 2015/9/4  设置默认地址
     this.items = addresses;
 
@@ -134,7 +134,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
   /**
    * 更新单个条目数据
    */
-  public void updateItem(Address address, int editorPosition) {
+  public void updateItem(AddressEntity address, int editorPosition) {
 
     this.items.set(editorPosition, address);
     AddressAdapter.this.notifyItemChanged(editorPosition);

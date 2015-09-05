@@ -2,7 +2,6 @@ package com.app.designmore.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -217,7 +216,8 @@ public class MineActivity extends RxAppCompatActivity {
    */
   @Nullable @OnClick(R.id.mine_layout_trolley_ll) void onTrolleyClick(View view) {
 
-    TrolleyActivity.startFromLocation(MineActivity.this, DensityUtil.getLocationY(view));
+    TrolleyActivity.startFromLocation(MineActivity.this, DensityUtil.getLocationY(view),
+        TrolleyActivity.Type.EXTEND);
     overridePendingTransition(0, 0);
   }
 
@@ -225,8 +225,7 @@ public class MineActivity extends RxAppCompatActivity {
    * 我的订单
    */
   @Nullable @OnClick(R.id.mine_layout_order_ll) void onOrderClick(View view) {
-    TrolleyActivity.startFromLocation(MineActivity.this, DensityUtil.getLocationY(view));
-    overridePendingTransition(0, 0);
+
   }
 
   /**
@@ -265,7 +264,7 @@ public class MineActivity extends RxAppCompatActivity {
    */
   @Nullable @OnClick(R.id.bottom_bar_home_rl) void onMineClick() {
 
-    HomeActivity.navigateToUserCenter(MineActivity.this);
+    HomeActivity.navigateToHome(MineActivity.this);
     MineActivity.this.finish();
     overridePendingTransition(0, 0);
   }

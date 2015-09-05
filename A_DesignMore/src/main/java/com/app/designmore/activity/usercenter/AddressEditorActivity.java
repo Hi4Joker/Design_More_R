@@ -21,12 +21,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.app.designmore.R;
 import com.app.designmore.event.EditorAddressEvent;
-import com.app.designmore.event.RefreshAddressEvent;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.retrofit.AddressRetrofit;
-import com.app.designmore.retrofit.entity.Address;
+import com.app.designmore.retrofit.entity.AddressEntity;
 import com.trello.rxlifecycle.ActivityEvent;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import java.util.HashMap;
@@ -59,9 +58,9 @@ public class AddressEditorActivity extends RxAppCompatActivity {
 
   private Subscription subscription = Subscriptions.empty();
   private ProgressDialog progressDialog;
-  private Address address;
+  private AddressEntity address;
 
-  public static void navigateToAddressEditor(AppCompatActivity startingActivity, Address address) {
+  public static void navigateToAddressEditor(AppCompatActivity startingActivity, AddressEntity address) {
 
     Intent intent = new Intent(startingActivity, AddressEditorActivity.class);
     Bundle bundle = new Bundle();
@@ -88,7 +87,7 @@ public class AddressEditorActivity extends RxAppCompatActivity {
     toolbarTitleTv.setText("编辑地址");
 
     /*bind value*/
-    address = (Address) getIntent().getSerializableExtra(ADDRESS);
+    address = (AddressEntity) getIntent().getSerializableExtra(ADDRESS);
     usernameEt.setHint(address.getUserName());
     mobileEt.setHint(address.getMobile());
     zipcodeEt.setHint(address.getZipcode());
@@ -169,13 +168,13 @@ public class AddressEditorActivity extends RxAppCompatActivity {
                 if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
               }
             })
-            .filter(new Func1<Address, Boolean>() {
-              @Override public Boolean call(Address address) {
+            .filter(new Func1<AddressEntity, Boolean>() {
+              @Override public Boolean call(AddressEntity address) {
                 return !subscription.isUnsubscribed();
               }
             })
-            .compose(AddressEditorActivity.this.<Address>bindUntilEvent(ActivityEvent.DESTROY))
-            .subscribe(new Subscriber<Address>() {
+            .compose(AddressEditorActivity.this.<AddressEntity>bindUntilEvent(ActivityEvent.DESTROY))
+            .subscribe(new Subscriber<AddressEntity>() {
               @Override public void onCompleted() {
 
                 AddressEditorActivity.this.finish();
@@ -202,7 +201,7 @@ public class AddressEditorActivity extends RxAppCompatActivity {
                 }
               }
 
-              @Override public void onNext(Address address) {
+              @Override public void onNext(AddressEntity address) {
 
                 EventBusInstance.getDefault().post((EditorAddressEvent) address);
               }

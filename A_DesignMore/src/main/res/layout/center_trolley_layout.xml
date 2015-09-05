@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/trolley_layout_root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,5 +11,118 @@
 
   <include layout="@layout/include_white_toolbar_layout"/>
 
+
+  <com.app.designmore.view.ProgressLayout
+      android:id="@+id/trolley_layout_pl"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      app:progressEmptyStateBackgroundColor="@color/primary_background_color"
+      app:progressEmptyStateTitleTextColor="@color/black"
+      app:progressEmptyStateContentTextColor="@color/black"
+      app:progressErrorStateBackgroundColor="@color/primary_background_color"
+      app:progressErrorStateTitleTextColor="@color/black"
+      app:progressErrorStateContentTextColor="@color/black"
+      app:progressErrorStateButtonTextColor="@color/white"
+      android:background="@color/primary_background_color"
+      >
+
+    <LinearLayout
+        android:id="@+id/trolley_bottom_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/material_56dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        >
+
+      <!--全选按钮-->
+      <ImageButton
+          android:id="@+id/trolley_layout_radio_btn"
+          android:layout_width="@dimen/material_32dp"
+          android:layout_height="@dimen/material_32dp"
+          android:layout_gravity="left|center_vertical"
+          android:scaleType="center"
+          android:src="@drawable/ic_radio_normal"
+          android:background="@drawable/transparent_background"
+          />
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:gravity="center"
+          android:textSize="@dimen/material_16sp"
+          android:textColor="@color/black"
+          android:text="全选"
+          />
+
+
+      <LinearLayout
+          android:layout_width="0dip"
+          android:layout_weight="1"
+          android:layout_height="match_parent"
+          android:paddingRight="@dimen/material_16dp"
+          android:orientation="vertical"
+          >
+        <TextView
+            android:id="@+id/trolley_layout_total_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/material_8dp"
+            android:gravity="right|center"
+            android:textSize="@dimen/material_14sp"
+            android:text="合计"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/material_1dp"
+            android:gravity="right|center"
+            android:textSize="@dimen/material_11sp"
+            android:text="不含运费"
+            />
+      </LinearLayout>
+
+
+      <!--结算按钮-->
+      <com.app.designmore.view.MaterialRippleLayout
+          android:id="@+id/order_item_pay_btn_parent"
+          android:layout_width="@dimen/material_100dp"
+          android:layout_height="match_parent"
+          app:mrl_rippleDimension="4dip"
+          app:mrl_rippleFadeDuration="100"
+          app:mrl_rippleAlpha="0.4"
+          app:mrl_rippleDuration="600"
+          app:mrl_rippleHover="true"
+          app:mrl_rippleOverlay="true"
+          app:mrl_rippleDelayClick="true"
+          app:mrl_rippleColor="@color/darker_gray"
+          >
+        <Button
+            android:id="@+id/trolley_ayout_pay_btn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:text="结算"
+            android:background="@drawable/red_background"
+            />
+      </com.app.designmore.view.MaterialRippleLayout>
+
+
+    </LinearLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/trolley_layout_rv"
+        android:layout_above="@id/trolley_bottom_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/material_1dp"
+        android:visibility="visible"
+        android:background="@color/primary_background_color"
+        />
+  </com.app.designmore.view.ProgressLayout>
 
 </LinearLayout>

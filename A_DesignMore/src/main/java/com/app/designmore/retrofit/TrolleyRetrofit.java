@@ -1,9 +1,9 @@
 package com.app.designmore.retrofit;
 
 import com.app.designmore.Constants;
-import com.app.designmore.retrofit.entity.CollectionEntity;
+import com.app.designmore.retrofit.entity.TrolleyEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
-import com.app.designmore.retrofit.response.CollectionResponse;
+import com.app.designmore.retrofit.response.TrolleyResponse;
 import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -28,13 +28,13 @@ import rx.functions.Func2;
 /**
  * Created by Joker on 2015/9/4.
  */
-public class CollectionRetrofit {
+public class TrolleyRetrofit {
 
   interface CollectionService {
 
     //@Headers("Accept-Encoding: application/json")
     @FormUrlEncoded @POST("/mobile/api/client/interface.php")
-    Observable<CollectionResponse> getMyCollectionList(@FieldMap Map<String, String> params);
+    Observable<TrolleyResponse> getTrolleyList(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded @POST("/mobile/api/client/interface.php")
     Observable<BaseResponse> requestDeleteCollection(@FieldMap Map<String, String> params);
@@ -42,7 +42,7 @@ public class CollectionRetrofit {
 
   private final CollectionService collectionService;
 
-  private CollectionRetrofit() {
+  private TrolleyRetrofit() {
     RequestInterceptor requestInterceptor = new RequestInterceptor() {
       @Override public void intercept(RequestFacade request) {
         request.addHeader("Accept-Encoding", "application/json");
@@ -67,24 +67,24 @@ public class CollectionRetrofit {
   }
 
   private static class SingletonHolder {
-    private static CollectionRetrofit instance = new CollectionRetrofit();
+    private static TrolleyRetrofit instance = new TrolleyRetrofit();
   }
 
-  public static CollectionRetrofit getInstance() {
+  public static TrolleyRetrofit getInstance() {
     return SingletonHolder.instance;
   }
 
   /**
-   * 获取收藏列表
+   * 获取购物车列表
    */
-  public Observable<List<CollectionEntity>> getCollectionList(final Map<String, String> params) {
+  public Observable<List<TrolleyEntity>> getTrolleyList(final Map<String, String> params) {
 
-    Observable<List<CollectionEntity>> observable =
-        Observable.defer(new Func0<Observable<CollectionResponse>>() {
-          @Override public Observable<CollectionResponse> call() {
+    Observable<List<TrolleyEntity>> observable =
+        Observable.defer(new Func0<Observable<TrolleyResponse>>() {
+          @Override public Observable<TrolleyResponse> call() {
 
              /*获取热搜列表，超时8秒*/
-            return collectionService.getMyCollectionList(params)
+            return collectionService.getTrolleyList(params)
                 .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
           }
         }).retry(new Func2<Integer, Throwable, Boolean>() {
@@ -95,37 +95,36 @@ public class CollectionRetrofit {
             }
             return false;
           }
-        }).concatMap(new Func1<CollectionResponse, Observable<CollectionResponse>>() {
-          @Override
-          public Observable<CollectionResponse> call(CollectionResponse collectionResponse) {
-            return collectionResponse.filterWebServiceErrors();
+        }).concatMap(new Func1<TrolleyResponse, Observable<TrolleyResponse>>() {
+          @Override public Observable<TrolleyResponse> call(TrolleyResponse trolleyResponse) {
+            return trolleyResponse.filterWebServiceErrors();
           }
-        }).map(new Func1<CollectionResponse, List<CollectionEntity>>() {
-          @Override public List<CollectionEntity> call(CollectionResponse collectionResponse) {
+        }).map(new Func1<TrolleyResponse, List<TrolleyEntity>>() {
+          @Override public List<TrolleyEntity> call(TrolleyResponse trolleyResponse) {
 
-            final ArrayList<CollectionEntity> collectionEntities = new ArrayList<>();
-            CollectionEntity instance = new CollectionEntity();
+            final ArrayList<TrolleyEntity> trolleyEntities = new ArrayList<>();
+            TrolleyEntity instance = new TrolleyEntity();
 
-            for (CollectionResponse.Collect collect : collectionResponse.getCollections()) {
+            for (TrolleyResponse.Trolley trolley : trolleyResponse.getTrolleyList()) {
 
-              CollectionEntity clone = instance.newInstance();
+              TrolleyEntity clone = instance.newInstance();
 
-              clone.setGoodId(collect.goodInfo.goodId);
-              clone.setGoodName(collect.goodInfo.goodName);
-              clone.setGoodPrice(collect.goodInfo.goodPrice);
-              clone.setGoodThumb(collect.goodInfo.goodThumb);
+              clone.setGoodId(trolley.goodId);
+              clone.setGoodName(trolley.goodName);
+              clone.setGoodAttr(trolley.goodAttr);
+              clone.setGoodCount(trolley.goodCount);
+              clone.setGoodPrice(trolley.goodPrice);
 
-              collectionEntities.add(clone);
+              trolleyEntities.add(clone);
             }
-
-            return collectionEntities;
+            return trolleyEntities;
           }
-        }).compose(SchedulersCompat.<List<CollectionEntity>>applyExecutorSchedulers());
+        }).compose(SchedulersCompat.<List<TrolleyEntity>>applyExecutorSchedulers());
 
     return observable;
   }
 
-  public Observable<BaseResponse> requestDeleteCollection(final Map<String, String> params) {
+  public Observable<BaseResponse> requestDeleteTrolley(final Map<String, String> params) {
 
     return Observable.defer(new Func0<Observable<BaseResponse>>() {
       @Override public Observable<BaseResponse> call() {

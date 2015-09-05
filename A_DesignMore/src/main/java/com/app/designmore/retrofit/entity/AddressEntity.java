@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by Joker on 2015/9/1.
  */
-public class Address implements Serializable, Cloneable {
+public class AddressEntity implements Serializable, Cloneable {
 
   protected String addressId;
   protected String userName;
@@ -80,10 +80,10 @@ public class Address implements Serializable, Cloneable {
     this.isChecked = isChecked;
   }
 
-  public Address newInstance() {
+  public AddressEntity newInstance() {
 
     try {
-      return (Address) super.clone();
+      return (AddressEntity) super.clone();
     } catch (CloneNotSupportedException e) {
       e.printStackTrace();
     }
@@ -91,7 +91,7 @@ public class Address implements Serializable, Cloneable {
   }
 
   @Override protected Object clone() throws CloneNotSupportedException {
-    Address address = (Address) super.clone();
+    AddressEntity address = (AddressEntity) super.clone();
     return address;
   }
 

@@ -207,7 +207,7 @@
         android:text="重置密码"
         android:textSize="@dimen/material_16sp"
         android:textColor="@android:color/white"
-        android:background="@drawable/red_background"
+        android:background="@drawable/red_corner_background"
         />
   </com.app.designmore.view.MaterialRippleLayout>
 
