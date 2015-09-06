@@ -27,7 +27,6 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
     implements Observer<Integer> {
 
   private Context context;
-  private boolean animationsLocked;
   private Callback callback;
 
   /*数据*/
@@ -120,10 +119,6 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
         callback.onMoreClick(pos);
       }
     }
-  }
-
-  public void setAnimationsLocked(boolean animationsLocked) {
-    this.animationsLocked = animationsLocked;
   }
 
   public void setCallback(Callback callback) {

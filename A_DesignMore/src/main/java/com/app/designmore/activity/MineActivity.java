@@ -42,7 +42,6 @@ import com.app.designmore.view.ProgressLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import java.util.Arrays;
 import java.util.List;
 
@@ -106,7 +105,7 @@ public class MineActivity extends BaseActivity {
     revealAnimator =
         ViewAnimationUtils.createCircularReveal(rootView.getChildAt(0), bounds.left, bounds.top, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
-    revealAnimator.setDuration(Constants.REVEAL_DURATION);
+    revealAnimator.setDuration(Constants.ANIMATION_DURATION);
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
       @Override public void onAnimationEnd() {
@@ -304,10 +303,6 @@ public class MineActivity extends BaseActivity {
             }
           }
         });
-  }
-
-  public void onEventMainThread(FinishEvent event) {
-    MineActivity.this.finish();
   }
 
   @Override protected void onNewIntent(Intent intent) {

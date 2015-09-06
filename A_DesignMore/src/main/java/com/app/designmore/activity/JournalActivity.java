@@ -20,7 +20,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
@@ -35,7 +34,6 @@ import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.MaterialRippleLayout;
 import com.app.designmore.view.ProgressLayout;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
 public class JournalActivity extends BaseActivity {
 
@@ -127,7 +125,7 @@ public class JournalActivity extends BaseActivity {
     revealAnimator =
         ViewAnimationUtils.createCircularReveal(rootView.getChildAt(0), 0, bounds.left, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
-    revealAnimator.setDuration(Constants.REVEAL_DURATION);
+    revealAnimator.setDuration(Constants.ANIMATION_DURATION);
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.start();
   }

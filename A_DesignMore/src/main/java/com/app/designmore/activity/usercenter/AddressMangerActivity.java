@@ -24,7 +24,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import com.app.designmore.Constants;
 import com.app.designmore.R;
+import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.activity.MineActivity;
 import com.app.designmore.adapter.AddressAdapter;
 import com.app.designmore.event.EditorAddressEvent;
@@ -53,7 +55,7 @@ import rx.subscriptions.Subscriptions;
 /**
  * Created by Joker on 2015/8/25.
  */
-public class AddressMangerActivity extends RxAppCompatActivity implements AddressAdapter.Callback {
+public class AddressMangerActivity extends BaseActivity implements AddressAdapter.Callback {
 
   private static final String TAG = AddressMangerActivity.class.getSimpleName();
   private static final String START_LOCATION_Y = "START_LOCATION_Y";
@@ -97,13 +99,11 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.center_address_manager_layout);
-    ButterKnife.bind(AddressMangerActivity.this);
-    EventBusInstance.getDefault().register(AddressMangerActivity.this);
 
     AddressMangerActivity.this.initView(savedInstanceState);
   }
 
-  private void initView(Bundle savedInstanceState) {
+  @Override public void initView(Bundle savedInstanceState) {
 
     AddressMangerActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
@@ -159,7 +159,7 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
 
     ViewCompat.animate(rootView)
         .scaleY(1.0f)
-        .setDuration(200)
+        .setDuration(Constants.ANIMATION_DURATION / 2)
         .setInterpolator(new AccelerateInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
@@ -211,7 +211,8 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
             progressLayout.showLoading();
           }
         })
-        .compose(AddressMangerActivity.this.<List<AddressEntity>>bindUntilEvent(ActivityEvent.DESTROY))
+        .compose(
+            AddressMangerActivity.this.<List<AddressEntity>>bindUntilEvent(ActivityEvent.DESTROY))
         .subscribe(new Subscriber<List<AddressEntity>>() {
           @Override public void onCompleted() {
             /*加载完毕，显示内容界面*/
@@ -243,7 +244,8 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
 
   private void checkAddress() {
     if (this.defaultPosition != -1) {//更改默认地址
-      DialogManager.showAddressChangeDialog(AddressMangerActivity.this, onConfirmClick);
+      DialogManager.getInstance()
+          .showNormalDialog(AddressMangerActivity.this, "请确认修改默认地址", onConfirmClick);
     }
   }
 
@@ -286,7 +288,7 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
             })
             .doOnTerminate(new Action0() {
               @Override public void call() {
-            /*隐藏进度条*/
+                /*隐藏进度条*/
                 if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
               }
             })
@@ -313,7 +315,6 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
 
   /*发生错误回调*/
   @Override public void onError(Throwable error) {
-
     Snackbar.make(rootView, "删除失败，请稍后重试", Snackbar.LENGTH_LONG)
         .setAction("确定", new View.OnClickListener() {
           @Override public void onClick(View v) {
@@ -328,12 +329,9 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
       AddressMangerActivity.this.showError(getResources().getString(R.string.timeout_title),
           getResources().getString(R.string.timeout_content));
     } else if (error instanceof RetrofitError) {
-
       Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
-
       AddressMangerActivity.this.showError("网络连接异常", ((RetrofitError) error).getKind() + "");
     } else if (error instanceof WebServiceException) {
-
       AddressMangerActivity.this.showError(
           getResources().getString(R.string.service_exception_title),
           getResources().getString(R.string.service_exception_content));
@@ -384,22 +382,18 @@ public class AddressMangerActivity extends RxAppCompatActivity implements Addres
 
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(AddressMangerActivity.this))
-        .setDuration(400)
+        .setDuration(Constants.ANIMATION_DURATION / 2)
         .setInterpolator(new LinearInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
-            AddressMangerActivity.super.onBackPressed();
-            overridePendingTransition(0, 0);
+            AddressMangerActivity.this.finish();
           }
         });
   }
 
   @Override protected void onDestroy() {
     super.onDestroy();
-
     this.progressDialog = null;
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();
-    EventBusInstance.getDefault().unregister(AddressMangerActivity.this);
-    ButterKnife.unbind(AddressMangerActivity.this);
   }
 }

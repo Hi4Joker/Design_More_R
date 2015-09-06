@@ -24,6 +24,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
+import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.event.RefreshAddressEvent;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
@@ -35,7 +36,6 @@ import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.utils.Utils;
 import com.trello.rxlifecycle.ActivityEvent;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
@@ -49,7 +49,7 @@ import rx.subscriptions.Subscriptions;
 /**
  * Created by Joker on 2015/8/25.
  */
-public class AddressAddActivity extends RxAppCompatActivity {
+public class AddressAddActivity extends BaseActivity {
 
   private static final String TAG = AddressAddActivity.class.getSimpleName();
 
@@ -69,6 +69,12 @@ public class AddressAddActivity extends RxAppCompatActivity {
   private Subscription subscription = Subscriptions.empty();
   private ProgressDialog progressDialog;
 
+  private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
+    @Override public void onCancel(DialogInterface dialog) {
+      subscription.unsubscribe();
+    }
+  };
+
   public static void navigateToAddressEditor(AppCompatActivity startingActivity) {
 
     Intent intent = new Intent(startingActivity, AddressAddActivity.class);
@@ -78,12 +84,11 @@ public class AddressAddActivity extends RxAppCompatActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.center_address_add_layout);
-    ButterKnife.bind(AddressAddActivity.this);
 
     AddressAddActivity.this.initView(savedInstanceState);
   }
 
-  private void initView(Bundle savedInstanceState) {
+  @Override public void initView(Bundle savedInstanceState) {
 
     AddressAddActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
@@ -110,7 +115,7 @@ public class AddressAddActivity extends RxAppCompatActivity {
     revealAnimator =
         ViewAnimationUtils.createCircularReveal(revealFrameLayout.getChildAt(0), bounds.right, 0, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
-    revealAnimator.setDuration(Constants.REVEAL_DURATION);
+    revealAnimator.setDuration(Constants.ANIMATION_DURATION);
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.start();
   }
@@ -119,7 +124,7 @@ public class AddressAddActivity extends RxAppCompatActivity {
 
     if (revealAnimator != null && !revealAnimator.isRunning()) {
       revealAnimator = revealAnimator.reverse();
-      revealAnimator.setDuration(Constants.REVEAL_DURATION);
+      revealAnimator.setDuration(Constants.ANIMATION_DURATION);
       revealAnimator.setInterpolator(new AccelerateInterpolator());
       revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
         @Override public void onAnimationEnd() {
@@ -280,12 +285,6 @@ public class AddressAddActivity extends RxAppCompatActivity {
         .show();
   }
 
-  private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
-    @Override public void onCancel(DialogInterface dialog) {
-      subscription.unsubscribe();
-    }
-  };
-
   @Override public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case android.R.id.home:
@@ -304,9 +303,7 @@ public class AddressAddActivity extends RxAppCompatActivity {
 
   @Override protected void onDestroy() {
     super.onDestroy();
-
     this.progressDialog = null;
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();
-    ButterKnife.unbind(AddressAddActivity.this);
   }
 }

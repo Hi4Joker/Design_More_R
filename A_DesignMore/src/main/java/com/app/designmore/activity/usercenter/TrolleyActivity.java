@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -27,19 +26,16 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
+import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.activity.HomeActivity;
-import com.app.designmore.activity.SearchActivity;
 import com.app.designmore.adapter.TrolleyAdapter;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.retrofit.TrolleyRetrofit;
-import com.app.designmore.retrofit.entity.CollectionEntity;
 import com.app.designmore.retrofit.entity.TrolleyEntity;
-import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
 import com.trello.rxlifecycle.ActivityEvent;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,12 +47,11 @@ import rx.Subscriber;
 import rx.functions.Action0;
 import rx.functions.Func1;
 import rx.subscriptions.CompositeSubscription;
-import rx.subscriptions.Subscriptions;
 
 /**
  * Created by Joker on 2015/8/25.
  */
-public class TrolleyActivity extends RxAppCompatActivity /*implements TrolleyAdapter.Callback*/ {
+public class TrolleyActivity extends BaseActivity /*implements TrolleyAdapter.Callback*/ {
 
   private static final String TAG = TrolleyActivity.class.getSimpleName();
   private static final String START_LOCATION_Y = "START_LOCATION_Y";
@@ -102,12 +97,11 @@ public class TrolleyActivity extends RxAppCompatActivity /*implements TrolleyAda
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.center_trolley_layout);
-    ButterKnife.bind(TrolleyActivity.this);
 
     TrolleyActivity.this.initView(savedInstanceState);
   }
 
-  private void initView(Bundle savedInstanceState) {
+  @Override public void initView(Bundle savedInstanceState) {
 
     TrolleyActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
@@ -206,7 +200,7 @@ public class TrolleyActivity extends RxAppCompatActivity /*implements TrolleyAda
       rootView.setScaleY(0.0f);
       ViewCompat.animate(rootView)
           .scaleY(1.0f)
-          .setDuration(Constants.REVEAL_DURATION / 2)
+          .setDuration(Constants.ANIMATION_DURATION / 2)
           .setInterpolator(new AccelerateInterpolator())
           .setListener(new ViewPropertyAnimatorListenerAdapter() {
             @Override public void onAnimationEnd(View view) {
@@ -217,7 +211,7 @@ public class TrolleyActivity extends RxAppCompatActivity /*implements TrolleyAda
       ViewCompat.setTranslationY(rootView, rootView.getHeight());
       ViewCompat.animate(rootView)
           .translationY(0.0f)
-          .setDuration(Constants.REVEAL_DURATION)
+          .setDuration(Constants.ANIMATION_DURATION)
           .setInterpolator(new LinearInterpolator())
           .setListener(new ViewPropertyAnimatorListenerAdapter() {
             @Override public void onAnimationEnd(View view) {
@@ -349,7 +343,7 @@ public class TrolleyActivity extends RxAppCompatActivity /*implements TrolleyAda
   private void startExitAnim() {
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(TrolleyActivity.this))
-        .setDuration(Constants.REVEAL_DURATION)
+        .setDuration(Constants.ANIMATION_DURATION)
         .setInterpolator(new LinearInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
@@ -370,10 +364,5 @@ public class TrolleyActivity extends RxAppCompatActivity /*implements TrolleyAda
       TrolleyActivity.this.startExitAnim();
     }
     return false;
-  }
-
-  @Override protected void onDestroy() {
-    super.onDestroy();
-    ButterKnife.unbind(TrolleyActivity.this);
   }
 }

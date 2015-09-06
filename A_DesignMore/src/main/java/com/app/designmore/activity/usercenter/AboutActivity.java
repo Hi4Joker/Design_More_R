@@ -13,10 +13,10 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.webkit.WebView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
+import com.app.designmore.Constants;
 import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.R;
 import com.app.designmore.utils.DensityUtil;
@@ -48,7 +48,7 @@ public class AboutActivity extends BaseActivity {
     AboutActivity.this.initView(savedInstanceState);
   }
 
-  private void initView(Bundle savedInstanceState) {
+  @Override public void initView(Bundle savedInstanceState) {
 
     aboutWv.loadUrl(ABOUT_HTML);
 
@@ -73,14 +73,13 @@ public class AboutActivity extends BaseActivity {
 
   private void startEnterAnim(int startLocationY) {
 
+    ViewCompat.setLayerType(rootView, ViewCompat.LAYER_TYPE_HARDWARE, null);
     rootView.setPivotY(startLocationY);
-    rootView.setScaleY(0.0f);
-
-    rootView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+    ViewCompat.setScaleY(rootView, 0.0f);
 
     ViewCompat.animate(rootView)
         .scaleY(1.0f)
-        .setDuration(200)
+        .setDuration(Constants.ANIMATION_DURATION / 2)
         .setInterpolator(new AccelerateInterpolator());
   }
 
@@ -104,7 +103,7 @@ public class AboutActivity extends BaseActivity {
 
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(AboutActivity.this))
-        .setDuration(200)
+        .setDuration(Constants.ANIMATION_DURATION)
         .setInterpolator(new LinearInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {

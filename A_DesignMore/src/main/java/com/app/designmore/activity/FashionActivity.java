@@ -125,7 +125,7 @@ public class FashionActivity extends BaseActivity {
     revealAnimator =
         ViewAnimationUtils.createCircularReveal(rootView.getChildAt(0), 0, bounds.left, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
-    revealAnimator.setDuration(Constants.REVEAL_DURATION);
+    revealAnimator.setDuration(Constants.ANIMATION_DURATION);
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.start();
   }

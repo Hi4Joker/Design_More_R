@@ -37,7 +37,6 @@ import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.ProgressLayout;
 import com.trello.rxlifecycle.ActivityEvent;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -145,7 +144,7 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
 
     revealAnimator = ViewAnimationUtils.createCircularReveal(revealRootView.getChildAt(0),
         bounds.right - bounds.left, 0, 0, Utils.pythagorean(bounds.width(), bounds.height()));
-    revealAnimator.setDuration(Constants.REVEAL_DURATION);
+    revealAnimator.setDuration(Constants.ANIMATION_DURATION);
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
       @Override public void onAnimationStart() {
@@ -154,7 +153,7 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
           ViewCompat.animate(progressLayout)
               .alpha(1.0f)
               .translationY(0.0f)
-              .setDuration(Constants.REVEAL_DURATION);
+              .setDuration(Constants.ANIMATION_DURATION);
         }
       }
 

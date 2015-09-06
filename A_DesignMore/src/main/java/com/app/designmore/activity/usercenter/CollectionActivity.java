@@ -21,20 +21,24 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import com.app.designmore.Constants;
 import com.app.designmore.R;
+import com.app.designmore.activity.BaseActivity;
+import com.app.designmore.activity.HomeActivity;
 import com.app.designmore.activity.MineActivity;
 import com.app.designmore.adapter.CollectionAdapter;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.retrofit.CollectionRetrofit;
+import com.app.designmore.retrofit.entity.AddressEntity;
 import com.app.designmore.retrofit.entity.CollectionEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
 import com.trello.rxlifecycle.ActivityEvent;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +53,7 @@ import rx.subscriptions.Subscriptions;
 /**
  * Created by Joker on 2015/9/4.
  */
-public class CollectionActivity extends RxAppCompatActivity implements CollectionAdapter.Callback {
+public class CollectionActivity extends BaseActivity implements CollectionAdapter.Callback {
 
   private static final String TAG = CollectionActivity.class.getSimpleName();
   private static final String START_LOCATION_Y = "START_LOCATION_Y";
@@ -89,12 +93,11 @@ public class CollectionActivity extends RxAppCompatActivity implements Collectio
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.center_collection_layout);
-    ButterKnife.bind(CollectionActivity.this);
 
     CollectionActivity.this.initView(savedInstanceState);
   }
 
-  private void initView(Bundle savedInstanceState) {
+  @Override public void initView(Bundle savedInstanceState) {
 
     CollectionActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
@@ -134,25 +137,17 @@ public class CollectionActivity extends RxAppCompatActivity implements Collectio
     recyclerView.setAdapter(collectionAdapter);
     recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
     recyclerView.setItemAnimator(new DefaultItemAnimator());
-    recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-      @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-        if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-          collectionAdapter.setAnimationsLocked(false);
-        }
-      }
-    });
   }
 
   private void startEnterAnim(int startLocationY) {
 
+    ViewCompat.setLayerType(rootView, ViewCompat.LAYER_TYPE_HARDWARE, null);
     rootView.setPivotY(startLocationY);
-    rootView.setScaleY(0.0f);
-
-    rootView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+    ViewCompat.setScaleY(rootView, 0.0f);
 
     ViewCompat.animate(rootView)
         .scaleY(1.0f)
-        .setDuration(200)
+        .setDuration(Constants.ANIMATION_DURATION / 2)
         .setInterpolator(new AccelerateInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
@@ -164,7 +159,6 @@ public class CollectionActivity extends RxAppCompatActivity implements Collectio
   private void loadData() {
 
     /*Action=GetCollectByGoods&uid=1*/
-
     Map<String, String> params = new HashMap<>(2);
     params.put("Action", "GetCollectByGoods");
     params.put("uid", "1");
@@ -186,8 +180,13 @@ public class CollectionActivity extends RxAppCompatActivity implements Collectio
             if (items != null && items.size() != 0) {
               progressLayout.showContent();
             } else if (items != null && items.size() == 0) {
-              progressLayout.showEmpty(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
-                  "您还没有收货地址", null);
+              progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
+                  "您还没有收藏", null, "去首页看看", new View.OnClickListener() {
+                    @Override public void onClick(View v) {
+                      HomeActivity.navigateToHome(CollectionActivity.this);
+                      overridePendingTransition(0, 0);
+                    }
+                  });
             }
           }
 
@@ -210,11 +209,9 @@ public class CollectionActivity extends RxAppCompatActivity implements Collectio
       CollectionActivity.this.showError(getResources().getString(R.string.timeout_title),
           getResources().getString(R.string.timeout_content));
     } else if (error instanceof RetrofitError) {
-
       Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
       CollectionActivity.this.showError("网络连接异常", ((RetrofitError) error).getKind() + "");
     } else if (error instanceof WebServiceException) {
-
       CollectionActivity.this.showError(getResources().getString(R.string.service_exception_title),
           getResources().getString(R.string.service_exception_content));
     } else {
@@ -249,7 +246,7 @@ public class CollectionActivity extends RxAppCompatActivity implements Collectio
 
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(CollectionActivity.this))
-        .setDuration(400)
+        .setDuration(Constants.ANIMATION_DURATION)
         .setInterpolator(new LinearInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
@@ -268,14 +265,23 @@ public class CollectionActivity extends RxAppCompatActivity implements Collectio
   /*点击更多按钮，弹出列表对话框，删除操作*/
   @Override public void onMoreClick(final int position) {
 
-    if (true) return;
+    DialogManager.getInstance()
+        .showNormalDialog(CollectionActivity.this, "请确认删除收藏",
+            new DialogInterface.OnClickListener() {
+              @Override public void onClick(DialogInterface dialog, int which) {
+                CollectionActivity.this.requestDeleteCollection(position);
+              }
+            });
+  }
+
+  private void requestDeleteCollection(final int position) {
 
     CollectionEntity deleteCollection = items.get(position);
 
-    /* Action=DelUserByAddress&address_id=1&uid=2*/
+    /*Action=DelCollectByGoods&uid=1&rec_id=1*/
     Map<String, String> params = new HashMap<>(3);
-    params.put("Action", "");
-    params.put("good_id", deleteCollection.getGoodId());
+    params.put("Action", "DelCollectByGoods");
+    params.put("rec_id", deleteCollection.getCollectionId());
     params.put("uid", "1");
 
     subscription = CollectionRetrofit.getInstance()
@@ -289,6 +295,9 @@ public class CollectionActivity extends RxAppCompatActivity implements Collectio
         })
         .map(new Func1<BaseResponse, Integer>() {
           @Override public Integer call(BaseResponse baseResponse) {
+
+            /*卧槽，什么鬼啊，这里给提示*/
+            Toast.makeText(CollectionActivity.this, baseResponse.message, Toast.LENGTH_LONG).show();
             return position;
           }
         })
@@ -318,9 +327,7 @@ public class CollectionActivity extends RxAppCompatActivity implements Collectio
 
   @Override protected void onDestroy() {
     super.onDestroy();
-
     this.progressDialog = null;
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();
-    ButterKnife.unbind(CollectionActivity.this);
   }
 }

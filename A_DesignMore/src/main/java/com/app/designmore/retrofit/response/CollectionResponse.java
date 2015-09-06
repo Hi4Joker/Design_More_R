@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class CollectionResponse extends BaseResponse {
 
-  /* "rec_id": "1",
+  /*  "rec_id": "1",
       "user_id": "1", //用户id
       "goods_id": "1", //产品ID
       "add_time": "1440953101", //添加时间
@@ -59,6 +59,8 @@ public class CollectionResponse extends BaseResponse {
           "suppliers_id": null,
           "is_check": null
           }*/
+
+  @Expose @SerializedName("rec_id") public String collectionId;
 
   @Expose @SerializedName("result") public List<Collect> collections;
 

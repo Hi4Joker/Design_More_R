@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,20 +19,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.app.designmore.Constants;
 import com.app.designmore.R;
+import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.activity.MineActivity;
 import com.app.designmore.utils.DatePickDialog;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.manager.DialogManager;
-import com.app.designmore.view.dialogplus.DialogPlus;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
 /**
  * Created by Joker on 2015/8/25.
  */
-public class ProfileActivity extends RxAppCompatActivity {
+public class ProfileActivity extends BaseActivity {
 
   private static final String TAG = ProfileActivity.class.getSimpleName();
   private static final String START_LOCATION_Y = "START_LOCATION_Y";
@@ -48,7 +46,6 @@ public class ProfileActivity extends RxAppCompatActivity {
   @Nullable @Bind(R.id.profile_layout_nickname_et) EditText nicknameEt;
   @Nullable @Bind(R.id.profile_layout_sex_tv) TextView genderTv;
   @Nullable @Bind(R.id.profile_layout_birthday_tv) TextView birthdayTv;
-  private DialogPlus dialogPlus;
 
   public static void startFromLocation(MineActivity startingActivity, int startingLocationY) {
 
@@ -60,12 +57,11 @@ public class ProfileActivity extends RxAppCompatActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.center_profile_layout);
-    ButterKnife.bind(ProfileActivity.this);
 
     ProfileActivity.this.initView(savedInstanceState);
   }
 
-  private void initView(Bundle savedInstanceState) {
+  @Override public void initView(Bundle savedInstanceState) {
 
     ProfileActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
@@ -124,44 +120,9 @@ public class ProfileActivity extends RxAppCompatActivity {
 
   @Nullable @OnClick(R.id.profile_layout_birthday_rl) void onBirthdayClick() {
 
-    Log.e(TAG, "onBirthdayClick() returned: " + birthdayTv.getText().toString());
-
     DatePickDialog dateTimePicKDialog = DatePickDialog.getInstance();
     dateTimePicKDialog.showPickerDialog(ProfileActivity.this, birthdayTv,
         birthdayTv.getText().toString());
-
-
-    /*dialogPlus = DialogManager.getInstance()
-        .showSelectorDialog(ProfileActivity.this, Gravity.CENTER,
-            R.layout.dialog_profile_pick_birthday_layout, new OnClickListener() {
-              @Override public void onClick(DialogPlus dialog, View view) {
-
-                if (view.getId() == R.id.pick_birthday_confirm_tv) {
-                  String year =
-                      "".endsWith(yearEt.getText().toString()) ? yearEt.getHint().toString()
-                          : yearEt.getText().toString();
-                  String month =
-                      "".endsWith(monthEt.getText().toString()) ? monthEt.getHint().toString()
-                          : monthEt.getText().toString();
-                  String day = "".endsWith(dayEt.getText().toString()) ? dayEt.getHint().toString()
-                      : dayEt.getText().toString();
-
-                  birthdayTv.setText(year + "/" + month + "/" + day);
-                }
-                dialog.dismiss();
-              }
-            });
-
-    ViewGroup viewGroup = (ViewGroup) dialogPlus.getHolderView();
-    yearEt = (EditText) viewGroup.findViewById(R.id.pick_birthday_year_et);
-    monthEt = (EditText) viewGroup.findViewById(R.id.pick_birthday_month_et);
-    dayEt = (EditText) viewGroup.findViewById(R.id.pick_birthday_day_et);
-
-    String[] split = birthdayTv.getText().toString().split("/");
-
-    yearEt.setHint(split[0]);
-    monthEt.setHint(split[1]);
-    dayEt.setHint(split[2]);*/
   }
 
   @Nullable @OnClick(R.id.profile_layout_safety_rl) void onSafetyClick(View view) {
@@ -172,14 +133,13 @@ public class ProfileActivity extends RxAppCompatActivity {
 
   private void startEnterAnim(int startLocationY) {
 
+    ViewCompat.setLayerType(rootView, ViewCompat.LAYER_TYPE_HARDWARE, null);
     rootView.setPivotY(startLocationY);
-    rootView.setScaleY(0.0f);
-
-    rootView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+    ViewCompat.setScaleY(rootView, 0.0f);
 
     ViewCompat.animate(rootView)
         .scaleY(1.0f)
-        .setDuration(200)
+        .setDuration(Constants.ANIMATION_DURATION / 2)
         .setInterpolator(new AccelerateInterpolator());
   }
 
@@ -203,19 +163,12 @@ public class ProfileActivity extends RxAppCompatActivity {
 
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(ProfileActivity.this))
-        .setDuration(400)
+        .setDuration(Constants.ANIMATION_DURATION)
         .setInterpolator(new LinearInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
-            ProfileActivity.super.onBackPressed();
-            overridePendingTransition(0, 0);
+            ProfileActivity.this.finish();
           }
         });
-  }
-
-  @Override protected void onDestroy() {
-    super.onDestroy();
-    this.dialogPlus = null;
-    ButterKnife.unbind(ProfileActivity.this);
   }
 }

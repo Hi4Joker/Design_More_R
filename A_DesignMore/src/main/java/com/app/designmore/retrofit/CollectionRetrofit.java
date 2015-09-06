@@ -114,6 +114,7 @@ public class CollectionRetrofit {
               clone.setGoodName(collect.goodInfo.goodName);
               clone.setGoodPrice(collect.goodInfo.goodPrice);
               clone.setGoodThumb(collect.goodInfo.goodThumb);
+              clone.setCollectionId(collectionResponse.collectionId);
 
               collectionEntities.add(clone);
             }
@@ -129,7 +130,6 @@ public class CollectionRetrofit {
 
     return Observable.defer(new Func0<Observable<BaseResponse>>() {
       @Override public Observable<BaseResponse> call() {
-
         return collectionService.requestDeleteCollection(params)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
       }
@@ -143,7 +143,6 @@ public class CollectionRetrofit {
       }
     }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
       @Override public Observable<BaseResponse> call(BaseResponse addressResponse) {
-
         return addressResponse.filterWebServiceErrors();
       }
     }).map(new Func1<BaseResponse, BaseResponse>() {

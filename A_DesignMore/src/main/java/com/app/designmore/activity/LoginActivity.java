@@ -6,17 +6,16 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.LinearInterpolator;
-import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import butterknife.Bind;
 import butterknife.OnClick;
+import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.utils.DensityUtil;
 import rx.Subscription;
@@ -37,7 +36,6 @@ public class LoginActivity extends BaseActivity {
    Log.e(TAG, userInfoEntity.getPhone());*/
 
   private static final String TAG = LoginActivity.class.getSimpleName();
-  private static final long ANIM_DURATION = 600;
 
   @Nullable @Bind(R.id.login_layout_anim_root) RelativeLayout animRootView;
   @Nullable @Bind(R.id.login_layout_logo_iv) ImageView loginLogoIv;
@@ -89,7 +87,7 @@ public class LoginActivity extends BaseActivity {
     ViewCompat.animate(loginLogoIv)
         .alpha(255)
         .translationY(0.0f)
-        .setDuration(ANIM_DURATION)
+        .setDuration(Constants.ANIMATION_DURATION)
         .setInterpolator(new LinearInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {

@@ -2,7 +2,6 @@ package com.app.designmore.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,11 +20,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
-import com.app.designmore.activity.usercenter.SettingActivity;
 import com.app.designmore.activity.usercenter.TrolleyActivity;
 import com.app.designmore.event.FinishEvent;
 import com.app.designmore.manager.DialogManager;
@@ -37,8 +34,6 @@ import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.MaterialRippleLayout;
 import com.app.designmore.view.ProgressLayout;
-import com.trello.rxlifecycle.RxLifecycle;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
 public class HomeActivity extends BaseActivity {
 
@@ -138,7 +133,7 @@ public class HomeActivity extends BaseActivity {
     revealAnimator =
         ViewAnimationUtils.createCircularReveal(rootView.getChildAt(0), 0, bounds.left, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
-    revealAnimator.setDuration(Constants.REVEAL_DURATION);
+    revealAnimator.setDuration(Constants.ANIMATION_DURATION);
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.start();
   }
@@ -238,10 +233,6 @@ public class HomeActivity extends BaseActivity {
             }
           }
         });
-  }
-
-  public void onEventMainThread(FinishEvent event) {
-    HomeActivity.this.finish();
   }
 
   @Override protected void onNewIntent(Intent intent) {

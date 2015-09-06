@@ -90,7 +90,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
           .alpha(1.0f)
           .setStartDelay(position * 20)
           .setInterpolator(new DecelerateInterpolator(2.0f))
-          .setDuration(Constants.REVEAL_DURATION)
+          .setDuration(Constants.ANIMATION_DURATION)
           .setListener(new ViewPropertyAnimatorListenerAdapter() {
             @Override public void onAnimationEnd(View view) {
               AddressAdapter.this.animationsLocked = true;

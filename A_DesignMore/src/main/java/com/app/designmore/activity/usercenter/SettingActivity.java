@@ -10,11 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
@@ -49,18 +47,12 @@ public class SettingActivity extends BaseActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.center_setting_layout);
-    ButterKnife.bind(this);
 
     SettingActivity.this.initView(savedInstanceState);
     SettingActivity.this.getCache();
   }
 
-  private void getCache() {
-
-    cacheTv.setText(Utils.FormetFileSize(Glide.getPhotoCacheDir(SettingActivity.this).length()));
-  }
-
-  private void initView(final Bundle savedInstanceState) {
+  @Override public void initView(final Bundle savedInstanceState) {
 
     SettingActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
@@ -79,6 +71,11 @@ public class SettingActivity extends BaseActivity {
         }
       });
     }
+  }
+
+  private void getCache() {
+
+    cacheTv.setText(Utils.FormetFileSize(Glide.getPhotoCacheDir(SettingActivity.this).length()));
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {
@@ -122,7 +119,7 @@ public class SettingActivity extends BaseActivity {
     revealAnimator =
         ViewAnimationUtils.createCircularReveal(rootView.getChildAt(0), bounds.right, 0, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
-    revealAnimator.setDuration(Constants.REVEAL_DURATION);
+    revealAnimator.setDuration(Constants.ANIMATION_DURATION);
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.start();
   }
@@ -131,7 +128,7 @@ public class SettingActivity extends BaseActivity {
 
     if (revealAnimator != null && !revealAnimator.isRunning()) {
       revealAnimator = revealAnimator.reverse();
-      revealAnimator.setDuration(Constants.REVEAL_DURATION);
+      revealAnimator.setDuration(Constants.ANIMATION_DURATION);
       revealAnimator.setInterpolator(new AccelerateInterpolator());
       revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
         @Override public void onAnimationEnd() {
@@ -149,15 +146,5 @@ public class SettingActivity extends BaseActivity {
     } else if (revealAnimator == null) {
       SettingActivity.this.finish();
     }
-  }
-
-  @Override public void finish() {
-    super.finish();
-    overridePendingTransition(0, 0);
-  }
-
-  @Override protected void onDestroy() {
-    super.onDestroy();
-    ButterKnife.unbind(SettingActivity.this);
   }
 }

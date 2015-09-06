@@ -192,11 +192,11 @@ public class DialogManager {
         .show();
   }
 
-  public static void showAddressChangeDialog(Context context,
+  public void showNormalDialog(Context context, String content,
       final DialogInterface.OnClickListener onClickListener) {
 
     new AlertDialog.Builder(context).setTitle("提示")
-        .setMessage("默认地址已经更改")
+        .setMessage(content)
         .setCancelable(false)
         .setInverseBackgroundForced(false)
         .setPositiveButton("确认", new DialogInterface.OnClickListener() {

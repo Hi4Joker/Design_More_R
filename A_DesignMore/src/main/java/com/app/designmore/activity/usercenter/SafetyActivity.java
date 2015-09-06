@@ -20,7 +20,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import com.app.designmore.Constants;
 import com.app.designmore.R;
+import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.manager.DialogManager;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
@@ -28,7 +30,7 @@ import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 /**
  * Created by Joker on 2015/8/27.
  */
-public class SafetyActivity extends RxAppCompatActivity {
+public class SafetyActivity extends BaseActivity {
 
   private static final String TAG = SafetyActivity.class.getSimpleName();
   private static final String START_LOCATION_Y = "START_LOCATION_Y";
@@ -50,12 +52,11 @@ public class SafetyActivity extends RxAppCompatActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.center_profile_safety_layout);
-    ButterKnife.bind(SafetyActivity.this);
 
     SafetyActivity.this.initView(savedInstanceState);
   }
 
-  private void initView(Bundle savedInstanceState) {
+  @Override public void initView(Bundle savedInstanceState) {
 
     SafetyActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
@@ -64,7 +65,6 @@ public class SafetyActivity extends RxAppCompatActivity {
     toolbarTitleTv.setText(getText(R.string.action_submit));
 
     if (savedInstanceState == null) {
-
       rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
         @Override public boolean onPreDraw() {
           rootView.getViewTreeObserver().removeOnPreDrawListener(this);
@@ -77,29 +77,14 @@ public class SafetyActivity extends RxAppCompatActivity {
 
   private void startEnterAnim(int startLocationY) {
 
+    ViewCompat.setLayerType(rootView, ViewCompat.LAYER_TYPE_HARDWARE, null);
     rootView.setScaleY(0.0f);
-    rootView.setPivotY(startLocationY);
+    ViewCompat.setPivotY(rootView, startLocationY);
 
     ViewCompat.animate(rootView)
         .scaleY(1.0f)
-        .setDuration(200)
+        .setDuration(Constants.ANIMATION_DURATION / 2)
         .setInterpolator(new AccelerateInterpolator());
-  }
-
-  private void startExitAnim() {
-
-    rootView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-
-    ViewCompat.animate(rootView)
-        .translationY(DensityUtil.getScreenHeight(SafetyActivity.this))
-        .setDuration(400)
-        .setInterpolator(new LinearInterpolator())
-        .setListener(new ViewPropertyAnimatorListenerAdapter() {
-          @Override public void onAnimationEnd(View view) {
-            SafetyActivity.super.onBackPressed();
-            overridePendingTransition(0, 0);
-          }
-        });
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -166,8 +151,17 @@ public class SafetyActivity extends RxAppCompatActivity {
     return false;
   }
 
-  @Override protected void onDestroy() {
-    super.onDestroy();
-    ButterKnife.unbind(SafetyActivity.this);
+  private void startExitAnim() {
+
+    ViewCompat.animate(rootView)
+        .translationY(DensityUtil.getScreenHeight(SafetyActivity.this))
+        .setDuration(Constants.ANIMATION_DURATION)
+        .setInterpolator(new LinearInterpolator())
+        .setListener(new ViewPropertyAnimatorListenerAdapter() {
+          @Override public void onAnimationEnd(View view) {
+            SafetyActivity.super.onBackPressed();
+            overridePendingTransition(0, 0);
+          }
+        });
   }
 }

@@ -20,6 +20,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.app.designmore.R;
+import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.event.EditorAddressEvent;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
@@ -41,7 +42,7 @@ import rx.subscriptions.Subscriptions;
 /**
  * Created by Joker on 2015/8/25.
  */
-public class AddressEditorActivity extends RxAppCompatActivity {
+public class AddressEditorActivity extends BaseActivity {
 
   private static final String TAG = AddressEditorActivity.class.getSimpleName();
   private static final String ADDRESS = "ADDRESS";
@@ -58,9 +59,16 @@ public class AddressEditorActivity extends RxAppCompatActivity {
 
   private Subscription subscription = Subscriptions.empty();
   private ProgressDialog progressDialog;
-  private AddressEntity address;
+  private AddressEntity addressEntity;
 
-  public static void navigateToAddressEditor(AppCompatActivity startingActivity, AddressEntity address) {
+  private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
+    @Override public void onCancel(DialogInterface dialog) {
+      subscription.unsubscribe();
+    }
+  };
+
+  public static void navigateToAddressEditor(AppCompatActivity startingActivity,
+      AddressEntity address) {
 
     Intent intent = new Intent(startingActivity, AddressEditorActivity.class);
     Bundle bundle = new Bundle();
@@ -73,12 +81,11 @@ public class AddressEditorActivity extends RxAppCompatActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.center_address_editor_layout);
-    ButterKnife.bind(AddressEditorActivity.this);
 
-    AddressEditorActivity.this.initView();
+    AddressEditorActivity.this.initView(savedInstanceState);
   }
 
-  private void initView() {
+  @Override public void initView(Bundle savedInstanceState) {
 
     AddressEditorActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
@@ -87,14 +94,14 @@ public class AddressEditorActivity extends RxAppCompatActivity {
     toolbarTitleTv.setText("编辑地址");
 
     /*bind value*/
-    address = (AddressEntity) getIntent().getSerializableExtra(ADDRESS);
-    usernameEt.setHint(address.getUserName());
-    mobileEt.setHint(address.getMobile());
-    zipcodeEt.setHint(address.getZipcode());
+    addressEntity = (AddressEntity) getIntent().getSerializableExtra(ADDRESS);
+    usernameEt.setHint(addressEntity.getUserName());
+    mobileEt.setHint(addressEntity.getMobile());
+    zipcodeEt.setHint(addressEntity.getZipcode());
 
-    provinceTv.setText(address.getProvince());
-    cityTv.setText(address.getCity());
-    addressEt.setHint(address.getAddress());
+    provinceTv.setText(addressEntity.getProvince());
+    cityTv.setText(addressEntity.getCity());
+    addressEt.setHint(addressEntity.getAddress());
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -149,7 +156,7 @@ public class AddressEditorActivity extends RxAppCompatActivity {
     params.put("province", provinceTv.getText().toString());
     params.put("city", cityTv.getText().toString());
     params.put("address", addr);
-    params.put("address_id", address.getAddressId());
+    params.put("address_id", addressEntity.getAddressId());
 
     subscription =
         AddressRetrofit.getInstance()
@@ -173,7 +180,8 @@ public class AddressEditorActivity extends RxAppCompatActivity {
                 return !subscription.isUnsubscribed();
               }
             })
-            .compose(AddressEditorActivity.this.<AddressEntity>bindUntilEvent(ActivityEvent.DESTROY))
+            .compose(
+                AddressEditorActivity.this.<AddressEntity>bindUntilEvent(ActivityEvent.DESTROY))
             .subscribe(new Subscriber<AddressEntity>() {
               @Override public void onCompleted() {
 
@@ -187,7 +195,6 @@ public class AddressEditorActivity extends RxAppCompatActivity {
                   AddressEditorActivity.this.showSnackBar(
                       getResources().getString(R.string.timeout_title));
                 } else if (error instanceof RetrofitError) {
-
                   Log.e(TAG, "kind:  " + ((RetrofitError) error).getKind());
                   AddressEditorActivity.this.showSnackBar(
                       getResources().getString(R.string.six_word));
@@ -250,13 +257,6 @@ public class AddressEditorActivity extends RxAppCompatActivity {
     Snackbar.make(rootView, text, Snackbar.LENGTH_SHORT).setAction("确定", null).show();
   }
 
-  private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
-    @Override public void onCancel(DialogInterface dialog) {
-      subscription.unsubscribe();
-      AddressEditorActivity.this.showSnackBar("修改操作被终止");
-    }
-  };
-
   @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
     if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
       AddressEditorActivity.this.finish();
@@ -267,9 +267,7 @@ public class AddressEditorActivity extends RxAppCompatActivity {
 
   @Override protected void onDestroy() {
     super.onDestroy();
-
     this.progressDialog = null;
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();
-    ButterKnife.unbind(AddressEditorActivity.this);
   }
 }
