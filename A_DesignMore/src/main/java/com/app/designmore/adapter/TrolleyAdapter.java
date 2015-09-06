@@ -15,7 +15,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.R;
 import com.app.designmore.retrofit.entity.TrolleyEntity;
-import com.app.designmore.retrofit.response.TrolleyResponse;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.List;
@@ -115,7 +114,7 @@ public class TrolleyAdapter extends RecyclerView.Adapter<TrolleyAdapter.ViewHold
   public class ViewHolder extends RecyclerView.ViewHolder {
 
     @Nullable @Bind(R.id.trolley_item_root_view) RelativeLayout rootView;
-    @Nullable @Bind(R.id.trolley_item_radio_btn) ImageButton radioBtn;
+    @Nullable @Bind(R.id.trolley_item_radio_iv) ImageView radioBtn;
     @Nullable @Bind(R.id.trolley_item_good_iv) ImageView goodIv;
     @Nullable @Bind(R.id.trolley_item_good_name_tv) TextView goodNameTv;
     @Nullable @Bind(R.id.trolley_item_good_attr_tv) TextView goodAttrTv;

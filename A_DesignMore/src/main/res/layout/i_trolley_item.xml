@@ -9,8 +9,8 @@
     android:background="@color/white"
     >
 
-  <ImageButton
-      android:id="@+id/trolley_item_radio_btn"
+  <ImageView
+      android:id="@+id/trolley_item_radio_iv"
       android:layout_width="@dimen/material_32dp"
       android:layout_height="@dimen/material_32dp"
       android:layout_alignParentLeft="true"
@@ -21,7 +21,7 @@
       />
 
   <ImageView
-      android:layout_toRightOf="@id/trolley_item_radio_btn"
+      android:layout_toRightOf="@id/trolley_item_radio_iv"
       android:id="@+id/trolley_item_good_iv"
       android:layout_width="@dimen/material_100dp"
       android:layout_height="@dimen/material_100dp"

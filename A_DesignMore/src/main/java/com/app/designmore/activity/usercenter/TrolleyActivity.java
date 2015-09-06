@@ -19,6 +19,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
@@ -31,8 +32,6 @@ import com.app.designmore.adapter.TrolleyAdapter;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.retrofit.TrolleyRetrofit;
 import com.app.designmore.retrofit.entity.TrolleyEntity;
-import com.app.designmore.retrofit.response.TrolleyResponse;
-import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
 import com.trello.rxlifecycle.ActivityEvent;
@@ -45,7 +44,6 @@ import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action0;
-import rx.functions.Action1;
 import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -144,8 +142,9 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
 
   private void observableListenerWrapper(Observable<TrolleyEntity> observable) {
 
-    compositeSubscription.add(
-        observable.subscribeOn(Schedulers.immediate()).subscribe(new Subscriber<TrolleyEntity>() {
+    compositeSubscription.add(observable.subscribeOn(Schedulers.immediate())
+        .compose(TrolleyActivity.this.<TrolleyEntity>bindUntilEvent(ActivityEvent.DESTROY))
+        .subscribe(new Subscriber<TrolleyEntity>() {
           @Override public void onCompleted() {
             /*计算总价钱*/
             payBtn.setText(String.valueOf(trolleyEntities.size()));
@@ -165,16 +164,15 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
 
           @Override public void onNext(TrolleyEntity trolleyEntity) {
 
-            final ImageButton imageButton = (ImageButton) recyclerView.getLayoutManager()
+            final ImageView radioIv = (ImageView) recyclerView.getLayoutManager()
                 .findViewByPosition(items.indexOf(trolleyEntity))
-                .findViewById(R.id.trolley_item_radio_btn);
+                .findViewById(R.id.trolley_item_radio_iv);
 
             if (trolleyEntity.isChecked) {
-              imageButton.setImageDrawable(
-                  getResources().getDrawable(R.drawable.ic_radio_selected));
+              radioIv.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_selected));
               trolleyEntities.add(trolleyEntity);
             } else {
-              imageButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_normal));
+              radioIv.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_normal));
               trolleyEntities.remove(trolleyEntity);
             }
           }
@@ -372,5 +370,12 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
       TrolleyActivity.this.startExitAnim();
     }
     return false;
+  }
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
+    if (!compositeSubscription.isUnsubscribed() && compositeSubscription.hasSubscriptions()) {
+      compositeSubscription.unsubscribe();
+    }
   }
 }
