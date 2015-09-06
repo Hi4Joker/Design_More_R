@@ -67,6 +67,13 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:text="publish_operator"
+      android:visibility="gone"
+      />
+  <Button
+      android:id="@+id/do_operator"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="do_operator"
       />
 
 </LinearLayout>

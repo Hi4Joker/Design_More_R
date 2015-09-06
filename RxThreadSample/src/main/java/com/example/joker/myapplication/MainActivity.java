@@ -10,6 +10,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.example.joker.myapplication.schedulers.AndroidSchedulers;
 import java.util.concurrent.TimeUnit;
+import rx.Notification;
 import rx.Observable;
 import rx.Scheduler;
 import rx.Subscriber;
@@ -342,5 +343,64 @@ public class MainActivity extends AppCompatActivity {
   @OnClick(R.id.publish_operator) void onPublishClick() {
 
     Observable.just(1).publish().share();
+  }
+
+  @OnClick(R.id.do_operator) void onDoClick() {
+
+    Observable.just(1, 2).doOnNext(new Action1<Integer>() {
+      @Override public void call(Integer integer) {
+        Log.e(TAG, "doOnNext");
+      }
+    }).doOnEach(new Action1<Notification<? super Integer>>() {
+      @Override public void call(Notification<? super Integer> notification) {
+
+        /*发射任何一个时间都会触发，包括observable.onCompleted()也会触发*/
+        Log.e(TAG, "notification");
+      }
+    }).doOnTerminate(new Action0() {
+      @Override public void call() {
+        Log.e(TAG, "doOnTerminate");
+      }
+    }).doOnCompleted(new Action0() {
+      @Override public void call() {
+
+        Log.e(TAG, "doOnCompleted");
+      }
+    }).onErrorResumeNext(new Func1<Throwable, Observable<? extends Integer>>() {
+      @Override public Observable<? extends Integer> call(Throwable throwable) {
+
+        return Observable.empty();
+      }
+    }).onErrorReturn(new Func1<Throwable, Integer>() {
+      @Override public Integer call(Throwable throwable) {
+
+        return null;
+      }
+    }).debounce(new Func1<Integer, Observable<Integer>>() {
+      @Override public Observable<Integer> call(Integer integer) {
+
+        return null;
+      }
+    }).finallyDo(new Action0() {
+      @Override public void call() {
+
+        Log.e(TAG, "finallyDo");
+      }
+    }).subscribe(new Subscriber<Integer>() {
+      @Override public void onCompleted() {
+
+        Log.e(TAG, "onCompleted");
+      }
+
+      @Override public void onError(Throwable e) {
+
+        Log.e(TAG, "onError");
+      }
+
+      @Override public void onNext(Integer integer) {
+
+        Log.e(TAG, "onNext");
+      }
+    });
   }
 }
