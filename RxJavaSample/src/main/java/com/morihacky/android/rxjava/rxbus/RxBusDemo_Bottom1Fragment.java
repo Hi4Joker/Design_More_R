@@ -9,14 +9,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import com.morihacky.android.rxjava.BaseFragment;
 import com.morihacky.android.rxjava.MainActivity;
 import com.morihacky.android.rxjava.R;
+import com.morihacky.android.rxjava.fragments.BaseFragment;
 import rx.functions.Action1;
 import rx.subscriptions.CompositeSubscription;
-
-import static rx.android.app.AppObservable.bindFragment;
-import static rx.android.app.AppObservable.bindSupportFragment;
 
 public class RxBusDemo_Bottom1Fragment
       extends BaseFragment {
@@ -46,7 +43,7 @@ public class RxBusDemo_Bottom1Fragment
         _subscriptions = new CompositeSubscription();
 
         _subscriptions//
-              .add(bindSupportFragment(this, _rxBus.toObserverable())//
+              .add(_rxBus.toObserverable()//
                     .subscribe(new Action1<Object>() {
                         @Override
                         public void call(Object event) {

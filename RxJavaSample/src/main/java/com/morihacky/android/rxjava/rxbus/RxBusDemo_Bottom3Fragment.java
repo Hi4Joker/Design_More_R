@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import com.morihacky.android.rxjava.BaseFragment;
 import com.morihacky.android.rxjava.MainActivity;
 import com.morihacky.android.rxjava.R;
+import com.morihacky.android.rxjava.fragments.BaseFragment;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import rx.Observable;
@@ -20,9 +20,6 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.observables.ConnectableObservable;
 import rx.subscriptions.CompositeSubscription;
-
-import static rx.android.app.AppObservable.bindFragment;
-import static rx.android.app.AppObservable.bindSupportFragment;
 
 public class RxBusDemo_Bottom3Fragment
       extends BaseFragment {
@@ -55,15 +52,14 @@ public class RxBusDemo_Bottom3Fragment
         ConnectableObservable<Object> tapEventEmitter = _rxBus.toObserverable().publish();
 
         _subscriptions//
-              .add(bindSupportFragment(this, tapEventEmitter)//
-                    .subscribe(new Action1<Object>() {
-                        @Override
-                        public void call(Object event) {
-                            if (event instanceof RxBusDemoFragment.TapEvent) {
-                                _showTapText();
-                            }
-                        }
-                    }));
+              .add(tapEventEmitter.subscribe(new Action1<Object>() {
+                  @Override
+                  public void call(Object event) {
+                      if (event instanceof RxBusDemoFragment.TapEvent) {
+                          _showTapText();
+                      }
+                  }
+              }));
 
         _subscriptions//
               .add(tapEventEmitter.publish(new Func1<Observable<Object>, Observable<List<Object>>>() {
