@@ -43,9 +43,9 @@ public class TrolleyAdapter extends RecyclerView.Adapter<TrolleyAdapter.ViewHold
 
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
 
-    holder.radioBtn.setTag(position);
-    //holder.rootView.setTag(position);
+    holder.rootView.setTag(position);
 
+    /*绑定数据*/
     TrolleyAdapter.this.bindToValue(holder, items.get(position));
   }
 
@@ -79,7 +79,7 @@ public class TrolleyAdapter extends RecyclerView.Adapter<TrolleyAdapter.ViewHold
   }
 
   @Override public void onError(Throwable e) {
-    //if (callback != null) callback.onError(e);
+     /*never invoked*/
   }
 
   @Override public void onNext(List<TrolleyEntity> trolleyEntities) {
@@ -114,7 +114,7 @@ public class TrolleyAdapter extends RecyclerView.Adapter<TrolleyAdapter.ViewHold
 
   public class ViewHolder extends RecyclerView.ViewHolder {
 
-    //@Nullable @Bind(R.id.trolley_item_root_view) RelativeLayout rootView;
+    @Nullable @Bind(R.id.trolley_item_root_view) RelativeLayout rootView;
     @Nullable @Bind(R.id.trolley_item_radio_btn) ImageButton radioBtn;
     @Nullable @Bind(R.id.trolley_item_good_iv) ImageView goodIv;
     @Nullable @Bind(R.id.trolley_item_good_name_tv) TextView goodNameTv;
@@ -127,27 +127,15 @@ public class TrolleyAdapter extends RecyclerView.Adapter<TrolleyAdapter.ViewHold
       ButterKnife.bind(ViewHolder.this, itemView);
     }
 
-    @Nullable @OnClick(R.id.trolley_item_radio_btn) void onRadioClick(ImageButton imageButton) {
+    @Nullable @OnClick(R.id.trolley_item_root_view) void onItemClick(RelativeLayout imageButton) {
 
       int pos = (int) imageButton.getTag();
 
       TrolleyEntity entity = items.get(pos);
-
       entity.isChecked = !entity.isChecked;
-      //TrolleyAdapter.this.notifyItemChanged(pos);
 
       if (callback != null) callback.onRadioClick(entity);
     }
-
-    /*@Nullable @OnClick(R.id.trolley_item_root_view) void onItemClick(RelativeLayout rootView) {
-
-      int pos = (int) rootView.getTag();
-
-      *//*TrolleyAdapter.this.items.get(pos).isChecked = !items.get(pos).isChecked;
-      TrolleyAdapter.this.notifyItemChanged(pos);*//*
-
-      if (callback != null) callback.onRadioClick(pos);
-    }*/
   }
 
   public void setCallback(Callback callback) {
