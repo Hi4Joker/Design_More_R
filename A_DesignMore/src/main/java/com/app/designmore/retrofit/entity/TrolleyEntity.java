@@ -17,8 +17,15 @@ public class TrolleyEntity implements Cloneable {
 
   public boolean isChecked = false;
 
-  @Override public boolean equals(Object o) {
-    return this.goodId.equals(o);
+  @Override public boolean equals(Object obj) {
+
+    //if (this == obj) return true;
+    if (obj == null || this.getClass() != obj.getClass() || !this.getGoodId()
+        .equals(((TrolleyEntity) obj).getGoodId())) {
+      return false;
+    }
+
+    return true;
   }
 
   public String getGoodId() {

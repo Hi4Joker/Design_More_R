@@ -13,14 +13,14 @@ public class SchedulersCompat {
   private static final Observable.Transformer computationTransformer =
       new Observable.Transformer() {
         @Override public Object call(Object observable) {
-          return ((Observable) observable).subscribeOn(Schedulers.newThread())
+          return ((Observable) observable).subscribeOn(Schedulers.computation())
               .observeOn(AndroidSchedulers.mainThread());
         }
       };
 
   private static final Observable.Transformer ioTransformer = new Observable.Transformer() {
     @Override public Object call(Object observable) {
-      return ((Observable) observable).subscribeOn(Schedulers.newThread())
+      return ((Observable) observable).subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread());
     }
   };
@@ -32,7 +32,7 @@ public class SchedulersCompat {
   };
   private static final Observable.Transformer trampolineTransformer = new Observable.Transformer() {
     @Override public Object call(Object observable) {
-      return ((Observable) observable).subscribeOn(Schedulers.newThread())
+      return ((Observable) observable).subscribeOn(Schedulers.trampoline())
           .observeOn(AndroidSchedulers.mainThread());
     }
   };

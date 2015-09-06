@@ -22,7 +22,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
@@ -32,7 +31,8 @@ import com.app.designmore.adapter.TrolleyAdapter;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.retrofit.TrolleyRetrofit;
 import com.app.designmore.retrofit.entity.TrolleyEntity;
-import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
+import com.app.designmore.retrofit.response.TrolleyResponse;
+import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
 import com.trello.rxlifecycle.ActivityEvent;
@@ -45,13 +45,16 @@ import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action0;
+import rx.functions.Action1;
+import rx.functions.Func0;
 import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by Joker on 2015/8/25.
  */
-public class TrolleyActivity extends BaseActivity /*implements TrolleyAdapter.Callback*/ {
+public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Callback {
 
   private static final String TAG = TrolleyActivity.class.getSimpleName();
   private static final String START_LOCATION_Y = "START_LOCATION_Y";
@@ -132,18 +135,28 @@ public class TrolleyActivity extends BaseActivity /*implements TrolleyAdapter.Ca
     linearLayoutManager.setSmoothScrollbarEnabled(true);
 
     trolleyAdapter = new TrolleyAdapter(this);
-    //trolleyAdapter.setCallback(TrolleyActivity.this);
-    compositeSubscription.add(observableListenerWrapper().observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Subscriber<TrolleyEntity>() {
+    trolleyAdapter.setCallback(TrolleyActivity.this);
+
+    recyclerView.setLayoutManager(linearLayoutManager);
+    recyclerView.setHasFixedSize(true);
+    recyclerView.setAdapter(trolleyAdapter);
+  }
+
+  private void observableListenerWrapper(Observable<TrolleyEntity> observable) {
+
+    compositeSubscription.add(
+        observable.subscribeOn(Schedulers.immediate()).subscribe(new Subscriber<TrolleyEntity>() {
           @Override public void onCompleted() {
             /*计算总价钱*/
-            payBtn.setText(trolleyEntities.size());
+            payBtn.setText(String.valueOf(trolleyEntities.size()));
 
             if (trolleyEntities.size() == items.size()) {
               radioBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_selected));
             } else {
               radioBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_normal));
             }
+
+            compositeSubscription.remove(this);
           }
 
           @Override public void onError(Throwable e) {
@@ -152,73 +165,20 @@ public class TrolleyActivity extends BaseActivity /*implements TrolleyAdapter.Ca
 
           @Override public void onNext(TrolleyEntity trolleyEntity) {
 
-            /*ImageButton radioBtn = (ImageButton) recyclerView.getLayoutManager()
+            final ImageButton imageButton = (ImageButton) recyclerView.getLayoutManager()
                 .findViewByPosition(items.indexOf(trolleyEntity))
                 .findViewById(R.id.trolley_item_radio_btn);
-            Log.e(TAG, "id:  " + radioBtn.getId());*/
 
-            if (trolleyEntities.contains(trolleyEntity)) {
-              trolleyEntities.remove(trolleyEntity);
-              Log.e(TAG, "remove: " + trolleyEntities.size());
-            } else {
+            if (trolleyEntity.isChecked) {
+              imageButton.setImageDrawable(
+                  getResources().getDrawable(R.drawable.ic_radio_selected));
               trolleyEntities.add(trolleyEntity);
-              Log.e(TAG, "add: " + trolleyEntities.size());
+            } else {
+              imageButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_normal));
+              trolleyEntities.remove(trolleyEntity);
             }
           }
         }));
-
-    recyclerView.setLayoutManager(linearLayoutManager);
-    recyclerView.setHasFixedSize(true);
-    recyclerView.setAdapter(trolleyAdapter);
-  }
-
-  private Observable<TrolleyEntity> observableListenerWrapper() {
-
-    return Observable.create(new Observable.OnSubscribe<Integer>() {
-      @Override public void call(final Subscriber<? super Integer> subscriber) {
-        trolleyAdapter.setCallback(new TrolleyAdapter.Callback() {
-          @Override public void onRadioClick(int position) {
-
-            subscriber.onNext(position);
-            subscriber.onCompleted();
-          }
-        });
-      }
-    }).map(new Func1<Integer, TrolleyEntity>() {
-      @Override public TrolleyEntity call(Integer position) {
-        Log.e(TAG, "position:  " + position);
-        return TrolleyActivity.this.items.get(position);
-      }
-    });
-  }
-
-  private void startEnterAnim(int startLocationY) {
-
-    rootView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-    if (startLocationY != 0) {
-      rootView.setPivotY(startLocationY);
-      rootView.setScaleY(0.0f);
-      ViewCompat.animate(rootView)
-          .scaleY(1.0f)
-          .setDuration(Constants.ANIMATION_DURATION / 2)
-          .setInterpolator(new AccelerateInterpolator())
-          .setListener(new ViewPropertyAnimatorListenerAdapter() {
-            @Override public void onAnimationEnd(View view) {
-              TrolleyActivity.this.loadData();
-            }
-          });
-    } else {
-      ViewCompat.setTranslationY(rootView, rootView.getHeight());
-      ViewCompat.animate(rootView)
-          .translationY(0.0f)
-          .setDuration(Constants.ANIMATION_DURATION)
-          .setInterpolator(new LinearInterpolator())
-          .setListener(new ViewPropertyAnimatorListenerAdapter() {
-            @Override public void onAnimationEnd(View view) {
-              TrolleyActivity.this.loadData();
-            }
-          });
-    }
   }
 
   private void loadData() {
@@ -310,24 +270,65 @@ public class TrolleyActivity extends BaseActivity /*implements TrolleyAdapter.Ca
 
   @Nullable @OnClick(R.id.trolley_layout_radio_btn) void onRadioClick(ImageButton imageButton) {
 
-    if (trolleyEntities.size() == items.size()) {
-      TrolleyActivity.this.setAll(false);
-      trolleyAdapter.updateItems(items);
-      imageButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_normal));
-    } else {
-      TrolleyActivity.this.setAll(true);
-      trolleyAdapter.updateItems(items);
-      trolleyEntities.clear();
-      trolleyEntities.addAll(items);
-
-      imageButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_selected));
+    if (trolleyEntities.size() == items.size()) {/*全选 -> 清空*/
+      TrolleyActivity.this.observableListenerWrapper(
+          Observable.defer(new Func0<Observable<TrolleyEntity>>() {
+            @Override public Observable<TrolleyEntity> call() {
+              return Observable.from(items);
+            }
+          }).map(new Func1<TrolleyEntity, TrolleyEntity>() {
+            @Override public TrolleyEntity call(TrolleyEntity trolleyEntity) {
+              trolleyEntity.isChecked = false;
+              return trolleyEntity;
+            }
+          }));
+    } else {/*未全选 -> 全选*/
+      for (int pos = 0; pos < items.size(); pos++) {
+        TrolleyActivity.this.observableListenerWrapper(
+            Observable.defer(new Func0<Observable<TrolleyEntity>>() {
+              @Override public Observable<TrolleyEntity> call() {
+                return Observable.from(items);
+              }
+            }).filter(new Func1<TrolleyEntity, Boolean>() {
+              @Override public Boolean call(TrolleyEntity trolleyEntity) {
+                return !trolleyEntity.isChecked;
+              }
+            }).map(new Func1<TrolleyEntity, TrolleyEntity>() {
+              @Override public TrolleyEntity call(TrolleyEntity trolleyEntity) {
+                trolleyEntity.isChecked = true;
+                return trolleyEntity;
+              }
+            }));
+      }
     }
   }
 
-  private void setAll(boolean isChecked) {
+  private void startEnterAnim(int startLocationY) {
 
-    for (int pos = 0; pos < items.size(); pos++) {
-      items.get(pos).isChecked = isChecked;
+    rootView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+    if (startLocationY != 0) {
+      rootView.setPivotY(startLocationY);
+      rootView.setScaleY(0.0f);
+      ViewCompat.animate(rootView)
+          .scaleY(1.0f)
+          .setDuration(Constants.ANIMATION_DURATION / 2)
+          .setInterpolator(new AccelerateInterpolator())
+          .setListener(new ViewPropertyAnimatorListenerAdapter() {
+            @Override public void onAnimationEnd(View view) {
+              TrolleyActivity.this.loadData();
+            }
+          });
+    } else {
+      ViewCompat.setTranslationY(rootView, rootView.getHeight());
+      ViewCompat.animate(rootView)
+          .translationY(0.0f)
+          .setDuration(Constants.ANIMATION_DURATION)
+          .setInterpolator(new LinearInterpolator())
+          .setListener(new ViewPropertyAnimatorListenerAdapter() {
+            @Override public void onAnimationEnd(View view) {
+              TrolleyActivity.this.loadData();
+            }
+          });
     }
   }
 
@@ -356,9 +357,16 @@ public class TrolleyActivity extends BaseActivity /*implements TrolleyAdapter.Ca
   /**
    * ********************Adapter回调
    */
- /* @Override public void onRadioClick(int position) {
+  @Override public void onRadioClick(final TrolleyEntity trolleyEntity) {
 
-  }*/
+    TrolleyActivity.this.observableListenerWrapper(
+        Observable.defer(new Func0<Observable<TrolleyEntity>>() {
+          @Override public Observable<TrolleyEntity> call() {
+            return Observable.just(trolleyEntity);
+          }
+        }));
+  }
+
   @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
     if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
       TrolleyActivity.this.startExitAnim();

@@ -15,6 +15,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.R;
 import com.app.designmore.retrofit.entity.TrolleyEntity;
+import com.app.designmore.retrofit.response.TrolleyResponse;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.List;
@@ -105,7 +106,7 @@ public class TrolleyAdapter extends RecyclerView.Adapter<TrolleyAdapter.ViewHold
     TrolleyAdapter.this.removeItem(position);
   }
 
-  public void updataItem(TrolleyEntity trolleyEntity, int position) {
+  public void updateItem(int position, TrolleyEntity trolleyEntity) {
 
     this.items.set(position, trolleyEntity);
     TrolleyAdapter.this.notifyItemChanged(position);
@@ -130,10 +131,12 @@ public class TrolleyAdapter extends RecyclerView.Adapter<TrolleyAdapter.ViewHold
 
       int pos = (int) imageButton.getTag();
 
-      TrolleyAdapter.this.items.get(pos).isChecked = !items.get(pos).isChecked;
-      TrolleyAdapter.this.notifyItemChanged(pos);
+      TrolleyEntity entity = items.get(pos);
 
-      if (callback != null) callback.onRadioClick(pos);
+      entity.isChecked = !entity.isChecked;
+      //TrolleyAdapter.this.notifyItemChanged(pos);
+
+      if (callback != null) callback.onRadioClick(entity);
     }
 
     /*@Nullable @OnClick(R.id.trolley_item_root_view) void onItemClick(RelativeLayout rootView) {
@@ -154,7 +157,7 @@ public class TrolleyAdapter extends RecyclerView.Adapter<TrolleyAdapter.ViewHold
   public interface Callback {
 
     /*点击单个条目的radio*/
-    void onRadioClick(int position);
+    void onRadioClick(TrolleyEntity position);
 
     //void onError(Throwable error);
   }
