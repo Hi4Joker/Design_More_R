@@ -37,7 +37,7 @@ import com.app.designmore.view.MaterialRippleLayout;
 import com.app.designmore.view.ProgressLayout;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
-public class JournalActivity extends RxAppCompatActivity {
+public class JournalActivity extends BaseActivity {
 
   private static final String TAG = JournalActivity.class.getSimpleName();
 
@@ -62,14 +62,12 @@ public class JournalActivity extends RxAppCompatActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.journal_layout);
-    ButterKnife.bind(JournalActivity.this);
-    EventBusInstance.getDefault().register(JournalActivity.this);
 
     JournalActivity.this.initView(savedInstanceState);
     JournalActivity.this.setListener();
   }
 
-  private void initView(Bundle savedInstanceState) {
+  @Override public void initView(Bundle savedInstanceState) {
 
     JournalActivity.this.setSupportActionBar(toolbar);
     //toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
@@ -172,7 +170,6 @@ public class JournalActivity extends RxAppCompatActivity {
 
     LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toolbarTitleTv.getLayoutParams();
     params.leftMargin = DensityUtil.getActionBarSize(JournalActivity.this) * 2;
-
     toolbarTitleTv.setVisibility(View.VISIBLE);
     toolbarTitleTv.setText("杂 志");
 
@@ -235,18 +232,8 @@ public class JournalActivity extends RxAppCompatActivity {
         });
   }
 
-  public void onEventMainThread(FinishEvent event) {
-    JournalActivity.this.finish();
-  }
-
   @Override protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
     JournalActivity.this.setIntent(intent);
-  }
-
-  @Override protected void onDestroy() {
-    super.onDestroy();
-    EventBusInstance.getDefault().unregister(JournalActivity.this);
-    ButterKnife.unbind(JournalActivity.this);
   }
 }

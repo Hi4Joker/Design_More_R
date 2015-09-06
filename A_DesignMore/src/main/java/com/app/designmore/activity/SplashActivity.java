@@ -9,10 +9,6 @@ public class SplashActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     HomeActivity.navigateToHome(SplashActivity.this);
     SplashActivity.this.finish();
-  }
-
-  @Override public void finish() {
-    super.finish();
     overridePendingTransition(0, 0);
   }
 

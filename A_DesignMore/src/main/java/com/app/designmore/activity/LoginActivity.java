@@ -61,7 +61,7 @@ public class LoginActivity extends BaseActivity {
     LoginActivity.this.initView(savedInstanceState);
   }
 
-  private void initView(Bundle savedInstanceState) {
+  @Override public void initView(Bundle savedInstanceState) {
 
     if (savedInstanceState == null) {
       loginLogoIv.getViewTreeObserver()
@@ -82,6 +82,7 @@ public class LoginActivity extends BaseActivity {
     int startY = DensityUtil.getScreenHeight(LoginActivity.this) - DensityUtil.getStatusBarHeight(
         LoginActivity.this) - loginLogoIv.getHeight();
 
+    ViewCompat.setLayerType(loginLogoIv, ViewCompat.LAYER_TYPE_HARDWARE, null);
     ViewCompat.setY(loginLogoIv, startY / 2);
     ViewCompat.setAlpha(loginLogoIv, 0);
 

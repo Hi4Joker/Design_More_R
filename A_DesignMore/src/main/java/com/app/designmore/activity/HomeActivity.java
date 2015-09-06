@@ -37,9 +37,10 @@ import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.MaterialRippleLayout;
 import com.app.designmore.view.ProgressLayout;
+import com.trello.rxlifecycle.RxLifecycle;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
-public class HomeActivity extends RxAppCompatActivity {
+public class HomeActivity extends BaseActivity {
 
   private static final String TAG = HomeActivity.class.getSimpleName();
 
@@ -63,14 +64,12 @@ public class HomeActivity extends RxAppCompatActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.home_layout);
-    ButterKnife.bind(HomeActivity.this);
-    EventBusInstance.getDefault().register(HomeActivity.this);
 
     HomeActivity.this.initView(savedInstanceState);
     HomeActivity.this.setListener();
   }
 
-  private void initView(Bundle savedInstanceState) {
+  @Override public void initView(Bundle savedInstanceState) {
 
     HomeActivity.this.setSupportActionBar(toolbar);
     //toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
@@ -248,11 +247,5 @@ public class HomeActivity extends RxAppCompatActivity {
   @Override protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
     HomeActivity.this.setIntent(intent);
-  }
-
-  @Override protected void onDestroy() {
-    super.onDestroy();
-    EventBusInstance.getDefault().unregister(HomeActivity.this);
-    ButterKnife.unbind(HomeActivity.this);
   }
 }

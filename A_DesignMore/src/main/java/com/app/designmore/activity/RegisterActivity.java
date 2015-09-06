@@ -18,7 +18,7 @@ import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 /**
  * Created by Joker on 2015/8/25.
  */
-public class RegisterActivity extends RxAppCompatActivity {
+public class RegisterActivity extends BaseActivity {
 
   private static final String TAG = RegisterActivity.class.getSimpleName();
 
@@ -36,14 +36,15 @@ public class RegisterActivity extends RxAppCompatActivity {
     setContentView(R.layout.register_layout);
     ButterKnife.bind(RegisterActivity.this);
 
-    RegisterActivity.this.initView();
+    RegisterActivity.this.initView(savedInstanceState);
   }
 
-  private void initView() {
+  @Override public void initView(Bundle savedInstanceState) {
 
     RegisterActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
 
+    toolbarTitleTv.setVisibility(View.VISIBLE);
     toolbarTitleTv.setText("注 册");
   }
 
@@ -57,11 +58,5 @@ public class RegisterActivity extends RxAppCompatActivity {
   }
 
   @Nullable @OnClick(R.id.register_layout_register_btn) void onRegisterClick() {
-  }
-
-  @Override protected void onDestroy() {
-    super.onDestroy();
-
-    ButterKnife.unbind(RegisterActivity.this);
   }
 }

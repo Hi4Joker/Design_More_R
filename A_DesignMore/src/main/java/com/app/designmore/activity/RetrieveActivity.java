@@ -20,7 +20,7 @@ import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 /**
  * Created by Joker on 2015/8/25.
  */
-public class RetrieveActivity extends RxAppCompatActivity {
+public class RetrieveActivity extends BaseActivity {
 
   private static final String TAG = RetrieveActivity.class.getSimpleName();
 
@@ -38,10 +38,10 @@ public class RetrieveActivity extends RxAppCompatActivity {
     setContentView(R.layout.retrieve_layout);
     ButterKnife.bind(RetrieveActivity.this);
 
-    RetrieveActivity.this.initView();
+    RetrieveActivity.this.initView(savedInstanceState);
   }
 
-  private void initView() {
+  @Override public void initView(Bundle savedInstanceState) {
 
     RetrieveActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(R.drawable.ic_arrow_back);

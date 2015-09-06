@@ -49,7 +49,7 @@ import rx.functions.Action1;
 /**
  * Created by Joker on 2015/8/30.
  */
-public class SearchActivity extends RxAppCompatActivity implements SearchAdapter.Callback {
+public class SearchActivity extends BaseActivity implements SearchAdapter.Callback {
 
   private static final String TAG = SearchActivity.class.getSimpleName();
 
@@ -77,13 +77,12 @@ public class SearchActivity extends RxAppCompatActivity implements SearchAdapter
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.search_layout);
-    ButterKnife.bind(SearchActivity.this);
 
     SearchActivity.this.initView(savedInstanceState);
     SearchActivity.this.setListener();
   }
 
-  private void initView(Bundle savedInstanceState) {
+  @Override public void initView(Bundle savedInstanceState) {
 
     SearchActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
@@ -137,6 +136,7 @@ public class SearchActivity extends RxAppCompatActivity implements SearchAdapter
 
   private void startEnterAnim() {
 
+    ViewCompat.setLayerType(progressLayout, ViewCompat.LAYER_TYPE_HARDWARE, null);
     ViewCompat.setAlpha(progressLayout, 0.0f);
     ViewCompat.setTranslationY(progressLayout, progressLayout.getHeight());
 

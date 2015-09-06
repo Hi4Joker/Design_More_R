@@ -20,7 +20,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
@@ -35,9 +34,8 @@ import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.MaterialRippleLayout;
 import com.app.designmore.view.ProgressLayout;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
-public class FashionActivity extends RxAppCompatActivity {
+public class FashionActivity extends BaseActivity {
 
   private static final String TAG = FashionActivity.class.getSimpleName();
 
@@ -62,15 +60,12 @@ public class FashionActivity extends RxAppCompatActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.fashion_layout);
-    ButterKnife.bind(FashionActivity.this);
-    EventBusInstance.getDefault().register(FashionActivity.this);
 
     FashionActivity.this.initView(savedInstanceState);
-
     FashionActivity.this.setListener();
   }
 
-  private void initView(Bundle savedInstanceState) {
+  @Override public void initView(Bundle savedInstanceState) {
 
     FashionActivity.this.setSupportActionBar(toolbar);
     //toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
@@ -168,7 +163,7 @@ public class FashionActivity extends RxAppCompatActivity {
   @Override public boolean onCreateOptionsMenu(Menu menu) {
 
     DrawableCompat.setTint(DrawableCompat.wrap(fashionIv.getDrawable().mutate()),
-        getResources(). getColor(R.color.design_more_red));
+        getResources().getColor(R.color.design_more_red));
     fashionTv.setTextColor(getResources().getColor(R.color.design_more_red));
 
     LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toolbarTitleTv.getLayoutParams();
@@ -236,18 +231,8 @@ public class FashionActivity extends RxAppCompatActivity {
         });
   }
 
-  public void onEventMainThread(FinishEvent event) {
-    FashionActivity.this.finish();
-  }
-
   @Override protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
     FashionActivity.this.setIntent(intent);
-  }
-
-  @Override protected void onDestroy() {
-    super.onDestroy();
-    EventBusInstance.getDefault().unregister(FashionActivity.this);
-    ButterKnife.unbind(FashionActivity.this);
   }
 }

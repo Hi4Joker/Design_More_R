@@ -49,7 +49,7 @@ import java.util.List;
 /**
  * Created by Joker on 2015/8/25.
  */
-public class MineActivity extends RxAppCompatActivity {
+public class MineActivity extends BaseActivity {
 
   private static final String TAG = MineActivity.class.getSimpleName();
 
@@ -75,14 +75,12 @@ public class MineActivity extends RxAppCompatActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.mine_layout);
-    ButterKnife.bind(this);
-    EventBusInstance.getDefault().register(MineActivity.this);
 
     MineActivity.this.initView(savedInstanceState);
     MineActivity.this.setListener();
   }
 
-  private void initView(Bundle savedInstanceState) {
+  @Override public void initView(Bundle savedInstanceState) {
 
     MineActivity.this.setSupportActionBar(toolbar);
     MineActivity.this.getSupportActionBar().setTitle("");
