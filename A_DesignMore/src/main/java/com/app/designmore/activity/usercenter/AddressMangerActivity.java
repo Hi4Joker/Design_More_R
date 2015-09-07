@@ -38,6 +38,7 @@ import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
 import com.trello.rxlifecycle.ActivityEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,7 @@ import retrofit.RetrofitError;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
+import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.subscriptions.Subscriptions;
 
@@ -65,7 +67,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
 
   private ProgressDialog progressDialog;
   private AddressAdapter addressAdapter;
-  private List<AddressEntity> items;
+  private List<AddressEntity> items = new ArrayList<>();
 
   /*默认地址*/
   private int defaultPosition = -1;
@@ -141,7 +143,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
     recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
       @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
         if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-          addressAdapter.setAnimationsLocked(false);
+          addressAdapter.setAnimationsLocked(true);
         }
       }
     });
@@ -228,7 +230,8 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
 
           @Override public void onNext(List<AddressEntity> addresses) {
 
-            AddressMangerActivity.this.items = addresses;
+            AddressMangerActivity.this.items.clear();
+            AddressMangerActivity.this.items.addAll(addresses);
             addressAdapter.updateItems(items);
           }
         });
@@ -259,43 +262,65 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
   /*点击删除按钮*/
   @Override public void onDeleteClick(final int position) {
 
-    final AddressEntity deleteAddress = items.get(position);
+    DialogManager.getInstance()
+        .showNormalDialog(AddressMangerActivity.this, "确认删除地址",
+            new DialogInterface.OnClickListener() {
+              @Override public void onClick(DialogInterface dialog, int which) {
+                final AddressEntity deleteAddress = items.get(position);
 
-    /* Action=DelUserByAddress&address_id=1&uid=2*/
-    Map<String, String> params = new HashMap<>(3);
-    params.put("Action", "DelUserByAddress");
-    params.put("address_id", deleteAddress.getAddressId());
-    params.put("uid", "1");
+                /* Action=DelUserByAddress&address_id=1&uid=2*/
+                Map<String, String> params = new HashMap<>(3);
+                params.put("Action", "DelUserByAddress");
+                params.put("address_id", deleteAddress.getAddressId());
+                params.put("uid", "1");
 
-    subscription =
-        AddressRetrofit.getInstance()
-            .requestDeleteAddress(params)
-            .doOnSubscribe(new Action0() {
-              @Override public void call() {
-            /*加载数据，显示进度条*/
-                progressDialog = DialogManager.
-                    getInstance()
-                    .showProgressDialog(AddressMangerActivity.this, null, cancelListener);
+                subscription = AddressRetrofit.getInstance()
+                    .requestDeleteAddress(params)
+                    .doOnSubscribe(new Action0() {
+                      @Override public void call() {
+                        /*加载数据，显示进度条*/
+                        progressDialog = DialogManager.
+                            getInstance()
+                            .showProgressDialog(AddressMangerActivity.this, null, cancelListener);
+                      }
+                    })
+                    .map(new Func1<BaseResponse, Integer>() {
+                      @Override public Integer call(BaseResponse baseResponse) {
+                        return position;
+                      }
+                    })
+                    .doOnTerminate(new Action0() {
+                      @Override public void call() {
+                        /*隐藏进度条*/
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                          progressDialog.dismiss();
+                        }
+                      }
+                    })
+                    .filter(new Func1<Integer, Boolean>() {
+                      @Override public Boolean call(Integer position) {
+                        return !subscription.isUnsubscribed();
+                      }
+                    })
+                    .doOnNext(new Action1<Integer>() {
+                      @Override public void call(Integer integer) {
+
+                      }
+                    })
+                    .doOnCompleted(new Action0() {
+                      @Override public void call() {
+                        if (items.size() == 0) {
+                          progressLayout.showEmpty(
+                              getResources().getDrawable(R.drawable.ic_grey_logo_icon), "您还没有收货地址",
+                              null);
+                        }
+                      }
+                    })
+                    .compose(
+                        AddressMangerActivity.this.<Integer>bindUntilEvent(ActivityEvent.DESTROY))
+                    .subscribe(addressAdapter);
               }
-            })
-            .map(new Func1<BaseResponse, Integer>() {
-              @Override public Integer call(BaseResponse baseResponse) {
-                return position;
-              }
-            })
-            .doOnTerminate(new Action0() {
-              @Override public void call() {
-                /*隐藏进度条*/
-                if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
-              }
-            })
-            .filter(new Func1<Integer, Boolean>() {
-              @Override public Boolean call(Integer position) {
-                return !subscription.isUnsubscribed();
-              }
-            })
-            .compose(AddressMangerActivity.this.<Integer>bindUntilEvent(ActivityEvent.DESTROY))
-            .subscribe(addressAdapter);
+            });
   }
 
   /*点击编辑按钮*/

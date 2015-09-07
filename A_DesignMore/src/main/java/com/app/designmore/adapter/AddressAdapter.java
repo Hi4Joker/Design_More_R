@@ -18,6 +18,7 @@ import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.retrofit.entity.AddressEntity;
+import java.util.ArrayList;
 import java.util.List;
 import rx.Observer;
 
@@ -34,7 +35,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
   private int defaultPosition = -1;
 
   /*数据*/
-  private List<AddressEntity> items;
+  private List<AddressEntity> items = new ArrayList<>();
 
   public AddressAdapter(Context context) {
     this.context = context;
@@ -50,7 +51,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
 
     holder.radioBtn.setTag(position);
     holder.editorBtn.setTag(position);
-    holder.deleteBtn.setTag(position);
+    holder.deleteBtn.setTag(items.get(position));
 
     /*绑定数据*/
     AddressAdapter.this.bindToValue(holder, items.get(position));
@@ -105,7 +106,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
   }
 
   @Override public void onCompleted() {
-    /*Never Invoked*/
+    /*never invoked*/
   }
 
   @Override public void onError(Throwable e) {
@@ -113,8 +114,6 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
   }
 
   @Override public void onNext(Integer deletePosition) {
-
-    this.items.remove(deletePosition);
     AddressAdapter.this.notifyItemRemoved(deletePosition);
   }
 
@@ -125,7 +124,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
     // TODO: 2015/9/4  设置默认地址
     this.items = addresses;
 
-    if (addresses.size() != 0) {
+    if (items.size() != 0) {
       this.items.get(0).setIsChecked(true);
     }
     AddressAdapter.this.notifyDataSetChanged();
@@ -157,8 +156,8 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
     @Nullable @OnClick(R.id.address_manager_item_delete_btn) void onDeleteClick(Button button) {
 
       if (callback != null) {
-        int pos = (int) button.getTag();
-        callback.onDeleteClick(pos);
+        AddressEntity pos = (AddressEntity) button.getTag();
+        callback.onDeleteClick(items.indexOf(pos));
       }
     }
 

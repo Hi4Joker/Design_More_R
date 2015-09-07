@@ -85,13 +85,14 @@ public class AddressAddActivity extends BaseActivity {
 
   private Boolean isCompleteInfo = false;
 
-  private TextView doneBtn;
-
   private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
     @Override public void onCancel(DialogInterface dialog) {
       subscription.unsubscribe();
     }
   };
+  /*private boolean userNameValid;
+  private boolean mobileValid;
+  private boolean zipCodeValid;*/
 
   public static void navigateToAddressEditor(AppCompatActivity startingActivity) {
 
@@ -134,24 +135,17 @@ public class AddressAddActivity extends BaseActivity {
   private void combineLatestEvents() {
 
     nameChangeObservable = RxTextView.textChangeEvents(usernameEt).skip(1);
-    mobileChangeObservable = RxTextView.textChangeEvents(mobileEt).skip(11);
-    zipCodeChangeObservable = RxTextView.textChangeEvents(zipcodeEt).skip(6);
+    mobileChangeObservable = RxTextView.textChangeEvents(mobileEt).skip(1);
+    zipCodeChangeObservable = RxTextView.textChangeEvents(zipcodeEt).skip(1);
 
     Observable.combineLatest(nameChangeObservable, mobileChangeObservable, zipCodeChangeObservable,
         new Func3<TextViewTextChangeEvent, TextViewTextChangeEvent, TextViewTextChangeEvent, Boolean>() {
           @Override public Boolean call(TextViewTextChangeEvent userNameEvent,
               TextViewTextChangeEvent mobileEvent, TextViewTextChangeEvent zipCodeEvent) {
 
-            boolean userNameValid = !TextUtils.isEmpty(userNameEvent.text());
-            if (!userNameValid) usernameEt.setError("请输入姓名");
-
-            boolean mobileValid = !TextUtils.isEmpty(mobileEvent.text()) && Utils.isMobile(
-                mobileEvent.text().toString());//不能为空，符合手机号正则
-            if (!mobileValid) mobileEt.setError("手机号格式不正确");
-
-            boolean zipCodeValid = !TextUtils.isEmpty(zipCodeEvent.text()) && Utils.isZipCode(
-                zipCodeEvent.text().toString());//不能为空，符合邮编规则
-            if (!zipCodeValid) zipcodeEt.setError("邮编格式不正确");
+            boolean userNameValid = !TextUtils.isEmpty(userNameEvent.text().toString());
+            boolean mobileValid = !TextUtils.isEmpty(mobileEvent.text().toString());
+            boolean zipCodeValid = !TextUtils.isEmpty(zipCodeEvent.text().toString());
 
             return userNameValid && mobileValid && zipCodeValid;
           }
@@ -163,11 +157,6 @@ public class AddressAddActivity extends BaseActivity {
           @Override public void call(Boolean aBoolean) {
 
             AddressAddActivity.this.isCompleteInfo = aBoolean;
-            if (aBoolean) {
-              doneBtn.setBackgroundColor(getResources().getColor(android.R.color.white));
-            } else {
-              doneBtn.setBackgroundColor(getResources().getColor(R.color.darker_gray));
-            }
           }
         });
   }
@@ -185,38 +174,13 @@ public class AddressAddActivity extends BaseActivity {
     revealAnimator.start();
   }
 
-  private void startExitAnim() {
-
-    if (revealAnimator != null && !revealAnimator.isRunning()) {
-      revealAnimator = revealAnimator.reverse();
-      revealAnimator.setDuration(Constants.MILLISECONDS_400);
-      revealAnimator.setInterpolator(new AccelerateInterpolator());
-      revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
-        @Override public void onAnimationEnd() {
-          rootView.setVisibility(View.GONE);
-          AddressAddActivity.this.finish();
-        }
-
-        @Override public void onAnimationCancel() {
-          AddressAddActivity.this.finish();
-        }
-      });
-      revealAnimator.start();
-    } else if (revealAnimator != null && revealAnimator.isRunning()) {
-      revealAnimator.cancel();
-    } else if (revealAnimator == null) {
-      AddressAddActivity.this.finish();
-    }
-  }
-
   @Override public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.menu_center, menu);
 
     MenuItem menuItem = menu.findItem(R.id.action_inbox);
     menuItem.setActionView(R.layout.menu_inbox_tv_item);
-    doneBtn = (TextView) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
-    doneBtn.setBackgroundColor(getResources().getColor(R.color.darker_gray));
-    doneBtn.setText(getText(R.string.action_done));
+    TextView textView = (TextView) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
+    textView.setText(getText(R.string.action_done));
     menuItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         AddressAddActivity.this.requestAddAddress();
@@ -230,14 +194,7 @@ public class AddressAddActivity extends BaseActivity {
    */
   private void requestAddAddress() {
 
-    if (!isCompleteInfo) {
-      Toast.makeText(AddressAddActivity.this, "请补全基本信息", Toast.LENGTH_LONG).show();
-      return;
-    } else if (AddressAddActivity.this.checkAddress()) {
-      Toast.makeText(AddressAddActivity.this, "请补全地址信息", Toast.LENGTH_LONG).show();
-      return;
-    }
-
+    //if (isCompleteInfo && AddressAddActivity.this.checkAddress()) {
     /*Action=AddUserByAddress
         &consignee=Eric //收货人
         &mobile=18622816323 //手机号码
@@ -247,7 +204,6 @@ public class AddressAddActivity extends BaseActivity {
         &address= //详细地址
         &uid= //用户id
         */
-
     Map<String, String> params = new HashMap<>(8);
 
     params.put("Action", "AddUserByAddress");
@@ -264,15 +220,17 @@ public class AddressAddActivity extends BaseActivity {
             .requestAddAddress(params)
             .doOnSubscribe(new Action0() {
               @Override public void call() {
-            /*加载数据，显示进度条*/
+                  /*加载数据，显示进度条*/
                 progressDialog = DialogManager.
                     getInstance().showProgressDialog(AddressAddActivity.this, null, cancelListener);
               }
             })
             .doOnTerminate(new Action0() {
               @Override public void call() {
-            /*隐藏进度条*/
-                if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
+                    /*隐藏进度条*/
+                if (progressDialog != null && progressDialog.isShowing()) {
+                  progressDialog.dismiss();
+                }
               }
             })
             .filter(new Func1<RefreshAddressEvent, Boolean>() {
@@ -284,34 +242,49 @@ public class AddressAddActivity extends BaseActivity {
                 AddressAddActivity.this.<RefreshAddressEvent>bindUntilEvent(ActivityEvent.DESTROY))
             .subscribe(new Subscriber<RefreshAddressEvent>() {
               @Override public void onCompleted() {
-            /*增加成功，返回，刷新*/
+                  /*增加成功，返回，刷新*/
                 AddressAddActivity.this.startExitAnim();
               }
 
               @Override public void onError(Throwable error) {
-
-                if (error instanceof TimeoutException) {
-                  AddressAddActivity.this.showSnackBar(
-                      getResources().getString(R.string.timeout_title));
-                } else if (error instanceof RetrofitError) {
-                  Log.e(TAG, "kind:  " + ((RetrofitError) error).getKind());
-                  AddressAddActivity.this.showSnackBar(getResources().getString(R.string.six_word));
-                } else if (error instanceof WebServiceException) {
-                  AddressAddActivity.this.showSnackBar(
-                      getResources().getString(R.string.service_exception_content));
-                } else {
-                  Log.e(TAG, error.getMessage());
-                  error.printStackTrace();
-                  throw new RuntimeException("See inner exception");
-                }
+                AddressAddActivity.this.showError(error);
               }
 
               @Override public void onNext(RefreshAddressEvent refreshAddressEvent) {
-
-                /*通过eventBus发送通知，刷新地址列表*/
+                  /*通过eventBus发送通知，刷新地址列表*/
                 EventBusInstance.getDefault().post(refreshAddressEvent);
               }
             });
+   /* } else {
+
+      DialogManager.getInstance().showConfirmDialog(AddressAddActivity.this, "您有未填写的信息");
+
+     *//* if (!userNameValid) {
+        DialogManager.getInstance().showConfirmDialog(AddressAddActivity.this, "请填写姓名");
+      } else if (!mobileValid) {
+        DialogManager.getInstance().showConfirmDialog(AddressAddActivity.this, "手机号格式不正确");
+      } else if (!zipCodeValid) {
+        DialogManager.getInstance().showConfirmDialog(AddressAddActivity.this, "邮编格式不正确");
+      } else {
+        DialogManager.getInstance().showConfirmDialog(AddressAddActivity.this, "您有未填写的信息");
+      }*//*
+    }*/
+  }
+
+  private void showError(Throwable error) {
+    if (error instanceof TimeoutException) {
+      AddressAddActivity.this.showSnackBar(getResources().getString(R.string.timeout_title));
+    } else if (error instanceof RetrofitError) {
+      Log.e(TAG, "kind:  " + ((RetrofitError) error).getKind());
+      AddressAddActivity.this.showSnackBar(getResources().getString(R.string.six_word));
+    } else if (error instanceof WebServiceException) {
+      AddressAddActivity.this.showSnackBar(
+          getResources().getString(R.string.service_exception_content));
+    } else {
+      Log.e(TAG, error.getMessage());
+      error.printStackTrace();
+      throw new RuntimeException("See inner exception");
+    }
   }
 
   /**
@@ -347,6 +320,30 @@ public class AddressAddActivity extends BaseActivity {
       AddressAddActivity.this.startExitAnim();
     }
     return false;
+  }
+
+  private void startExitAnim() {
+
+    if (revealAnimator != null && !revealAnimator.isRunning()) {
+      revealAnimator = revealAnimator.reverse();
+      revealAnimator.setDuration(Constants.MILLISECONDS_400);
+      revealAnimator.setInterpolator(new AccelerateInterpolator());
+      revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
+        @Override public void onAnimationEnd() {
+          rootView.setVisibility(View.GONE);
+          AddressAddActivity.this.finish();
+        }
+
+        @Override public void onAnimationCancel() {
+          AddressAddActivity.this.finish();
+        }
+      });
+      revealAnimator.start();
+    } else if (revealAnimator != null && revealAnimator.isRunning()) {
+      revealAnimator.cancel();
+    } else if (revealAnimator == null) {
+      AddressAddActivity.this.finish();
+    }
   }
 
   @Override protected void onDestroy() {

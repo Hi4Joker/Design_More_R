@@ -103,17 +103,6 @@ public class DialogManager {
       }
     });
 
-    /*progressDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
-      @Override public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0 && callback != null) {
-          callback.onBackPressListener(dialog);
-          return true;
-        }
-        return false;
-      }
-    });*/
-
     progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
       @Override public void onCancel(DialogInterface dialog) {
         if (onCancelListener != null) {
@@ -121,14 +110,6 @@ public class DialogManager {
         }
       }
     });
-
-   /* progressDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-      @Override public void onDismiss(DialogInterface dialog) {
-        if (onDismissListener != null) {
-          onDismissListener.onDismiss(dialog);
-        }
-      }
-    });*/
 
     progressDialog.show();
     progressDialog.setContentView(R.layout.dialog_progressing_layout);
@@ -208,6 +189,21 @@ public class DialogManager {
           }
         })
         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialog, int which) {
+            dialog.dismiss();
+          }
+        })
+        .create()
+        .show();
+  }
+
+  public void showConfirmDialog(Context context, String content) {
+
+    new AlertDialog.Builder(context).setTitle("提示")
+        .setMessage(content)
+        .setCancelable(false)
+        .setInverseBackgroundForced(false)
+        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {
             dialog.dismiss();
           }
