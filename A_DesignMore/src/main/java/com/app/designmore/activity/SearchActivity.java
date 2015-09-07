@@ -23,7 +23,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
@@ -144,7 +143,7 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
 
     revealAnimator = ViewAnimationUtils.createCircularReveal(revealRootView.getChildAt(0),
         bounds.right - bounds.left, 0, 0, Utils.pythagorean(bounds.width(), bounds.height()));
-    revealAnimator.setDuration(Constants.ANIMATION_DURATION);
+    revealAnimator.setDuration(Constants.MILLISECONDS_400);
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
       @Override public void onAnimationStart() {
@@ -153,7 +152,7 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
           ViewCompat.animate(progressLayout)
               .alpha(1.0f)
               .translationY(0.0f)
-              .setDuration(Constants.ANIMATION_DURATION);
+              .setDuration(Constants.MILLISECONDS_400);
         }
       }
 
@@ -222,11 +221,9 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
       SearchActivity.this.showError(getResources().getString(R.string.timeout_title),
           getResources().getString(R.string.timeout_content));
     } else if (error instanceof RetrofitError) {
-
       Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
       SearchActivity.this.showError("网络连接异常", ((RetrofitError) error).getKind() + "");
     } else if (error instanceof WebServiceException) {
-
       SearchActivity.this.showError(getResources().getString(R.string.service_exception_title),
           getResources().getString(R.string.service_exception_content));
     } else {
@@ -248,16 +245,10 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
     }
   };
 
-  @Override public void finish() {
-    super.finish();
-    overridePendingTransition(0, 0);
-  }
-
   @Override protected void onDestroy() {
     super.onDestroy();
 
     if (revealAnimator != null && revealAnimator.isRunning()) revealAnimator.cancel();
-    ButterKnife.unbind(SearchActivity.this);
   }
 
   @Override public void onItemClick(int position) {

@@ -120,6 +120,17 @@ public class AddressEditorActivity extends BaseActivity {
     return true;
   }
 
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+
+    switch (item.getItemId()) {
+      case android.R.id.home:
+        AddressEditorActivity.this.finish();
+        return true;
+    }
+
+    return super.onOptionsItemSelected(item);
+  }
+
   /**
    * 修改地址
    */
@@ -157,6 +168,7 @@ public class AddressEditorActivity extends BaseActivity {
     params.put("city", cityTv.getText().toString());
     params.put("address", addr);
     params.put("address_id", addressEntity.getAddressId());
+    params.put("uid", "1");
 
     subscription =
         AddressRetrofit.getInstance()

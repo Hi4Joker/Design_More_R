@@ -74,7 +74,7 @@ public class HelpActivity extends BaseActivity {
 
     ViewCompat.animate(rootView)
         .scaleY(1.0f)
-        .setDuration(Constants.ANIMATION_DURATION / 2)
+        .setDuration(Constants.MILLISECONDS_400 / 2)
         .setInterpolator(new AccelerateInterpolator());
   }
 
@@ -98,7 +98,7 @@ public class HelpActivity extends BaseActivity {
 
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(HelpActivity.this))
-        .setDuration(Constants.ANIMATION_DURATION)
+        .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {

@@ -12,7 +12,7 @@
     app:mrl_rippleHover="true"
     app:mrl_rippleOverlay="true"
     app:mrl_rippleDelayClick="true"
-    app:mrl_rippleColor="@android:color/darker_gray"
+    app:mrl_rippleColor="@color/darker_gray"
     >
 
   <TextView
@@ -20,7 +20,7 @@
       android:layout_width="?attr/actionBarSize"
       android:layout_height="?attr/actionBarSize"
       android:textSize="@dimen/material_16sp"
-      android:textColor="@android:color/black"
+      android:textColor="@color/black"
       android:gravity="center"
       android:clickable="true"
       />

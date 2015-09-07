@@ -48,6 +48,7 @@ dependencies {
   compile 'io.reactivex:rxjava:1.0.3'
   compile 'com.trello:rxlifecycle:0.3.0'
   compile 'com.trello:rxlifecycle-components:0.3.0'
+  compile 'com.jakewharton.rxbinding:rxbinding:0.2.0'
   /*Greenrobot Library*/
   compile 'de.greenrobot:eventbus:2.4.0'
   compile 'de.greenrobot:greendao:2.0.0'

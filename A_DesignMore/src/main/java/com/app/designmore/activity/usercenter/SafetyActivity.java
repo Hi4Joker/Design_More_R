@@ -19,13 +19,11 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.manager.DialogManager;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
 /**
  * Created by Joker on 2015/8/27.
@@ -83,7 +81,7 @@ public class SafetyActivity extends BaseActivity {
 
     ViewCompat.animate(rootView)
         .scaleY(1.0f)
-        .setDuration(Constants.ANIMATION_DURATION / 2)
+        .setDuration(Constants.MILLISECONDS_400 / 2)
         .setInterpolator(new AccelerateInterpolator());
   }
 
@@ -155,7 +153,7 @@ public class SafetyActivity extends BaseActivity {
 
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(SafetyActivity.this))
-        .setDuration(Constants.ANIMATION_DURATION)
+        .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {

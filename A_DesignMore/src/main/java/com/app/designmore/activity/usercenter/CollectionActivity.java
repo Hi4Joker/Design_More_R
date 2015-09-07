@@ -23,7 +23,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
@@ -33,7 +32,6 @@ import com.app.designmore.adapter.CollectionAdapter;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.retrofit.CollectionRetrofit;
-import com.app.designmore.retrofit.entity.AddressEntity;
 import com.app.designmore.retrofit.entity.CollectionEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.utils.DensityUtil;
@@ -147,7 +145,7 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
 
     ViewCompat.animate(rootView)
         .scaleY(1.0f)
-        .setDuration(Constants.ANIMATION_DURATION / 2)
+        .setDuration(Constants.MILLISECONDS_400 / 2)
         .setInterpolator(new AccelerateInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
@@ -246,7 +244,7 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
 
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(CollectionActivity.this))
-        .setDuration(Constants.ANIMATION_DURATION)
+        .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {

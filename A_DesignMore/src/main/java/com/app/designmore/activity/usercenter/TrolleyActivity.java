@@ -309,7 +309,7 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
       rootView.setScaleY(0.0f);
       ViewCompat.animate(rootView)
           .scaleY(1.0f)
-          .setDuration(Constants.ANIMATION_DURATION / 2)
+          .setDuration(Constants.MILLISECONDS_400 / 2)
           .setInterpolator(new AccelerateInterpolator())
           .setListener(new ViewPropertyAnimatorListenerAdapter() {
             @Override public void onAnimationEnd(View view) {
@@ -320,7 +320,7 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
       ViewCompat.setTranslationY(rootView, rootView.getHeight());
       ViewCompat.animate(rootView)
           .translationY(0.0f)
-          .setDuration(Constants.ANIMATION_DURATION)
+          .setDuration(Constants.MILLISECONDS_400)
           .setInterpolator(new LinearInterpolator())
           .setListener(new ViewPropertyAnimatorListenerAdapter() {
             @Override public void onAnimationEnd(View view) {
@@ -342,7 +342,7 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
   private void startExitAnim() {
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(TrolleyActivity.this))
-        .setDuration(Constants.ANIMATION_DURATION)
+        .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {

@@ -87,7 +87,7 @@ public class LoginActivity extends BaseActivity {
     ViewCompat.animate(loginLogoIv)
         .alpha(255)
         .translationY(0.0f)
-        .setDuration(Constants.ANIMATION_DURATION)
+        .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {

@@ -23,7 +23,6 @@ import android.view.animation.LinearInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
@@ -33,14 +32,12 @@ import com.app.designmore.event.EditorAddressEvent;
 import com.app.designmore.event.RefreshAddressEvent;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
-import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.retrofit.AddressRetrofit;
 import com.app.designmore.retrofit.entity.AddressEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
 import com.trello.rxlifecycle.ActivityEvent;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -159,7 +156,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
 
     ViewCompat.animate(rootView)
         .scaleY(1.0f)
-        .setDuration(Constants.ANIMATION_DURATION / 2)
+        .setDuration(Constants.MILLISECONDS_400 / 2)
         .setInterpolator(new AccelerateInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
@@ -382,7 +379,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
 
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(AddressMangerActivity.this))
-        .setDuration(Constants.ANIMATION_DURATION / 2)
+        .setDuration(Constants.MILLISECONDS_400 / 2)
         .setInterpolator(new LinearInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {

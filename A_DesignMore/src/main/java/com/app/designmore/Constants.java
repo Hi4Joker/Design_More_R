@@ -9,7 +9,8 @@ public class Constants {
   public static final String DB_NAME = "DESIGN_MORE_DATABASE_NAME";
   public static final String CURRENT_USER = "CURRENT_USER";
 
-  public static final int ANIMATION_DURATION = 400;
   public static final int RESULT_OK = 1;
   public static final long TIME_OUT = 8 * 1000;
+  public static final int MILLISECONDS_300 = 300;
+  public static final int MILLISECONDS_400 = 400;
 }

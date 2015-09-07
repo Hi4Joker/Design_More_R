@@ -20,8 +20,8 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
@@ -33,17 +33,24 @@ import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
+import com.app.designmore.rxAndroid.SchedulersCompat;
+import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.utils.Utils;
+import com.jakewharton.rxbinding.widget.RxTextView;
+import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
 import com.trello.rxlifecycle.ActivityEvent;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
+import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
+import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.functions.Func3;
 import rx.subscriptions.Subscriptions;
 
 /**
@@ -65,9 +72,20 @@ public class AddressAddActivity extends BaseActivity {
   @Nullable @Bind(R.id.address_add_layout_province_tv) TextView provinceTv;
   @Nullable @Bind(R.id.address_add_layout_city_tv) TextView cityTv;
 
+  private Observable<TextViewTextChangeEvent> nameChangeObservable;
+  private Observable<TextViewTextChangeEvent> mobileChangeObservable;
+  private Observable<TextViewTextChangeEvent> zipCodeChangeObservable;
+  //private Observable<TextViewTextChangeEvent> addressChangeObservable;
+  //private Observable<TextViewTextChangeEvent> nameChangeObservable;
+  //private Observable<TextViewTextChangeEvent> nameChangeObservable;
+
   private SupportAnimator revealAnimator;
   private Subscription subscription = Subscriptions.empty();
   private ProgressDialog progressDialog;
+
+  private Boolean isCompleteInfo = false;
+
+  private TextView doneBtn;
 
   private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
     @Override public void onCancel(DialogInterface dialog) {
@@ -96,6 +114,9 @@ public class AddressAddActivity extends BaseActivity {
     toolbarTitleTv.setVisibility(View.VISIBLE);
     toolbarTitleTv.setText("新增地址");
 
+    /*创建联合observable*/
+    AddressAddActivity.this.combineLatestEvents();
+
     if (savedInstanceState == null) {
       rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
         @Override public boolean onPreDraw() {
@@ -107,6 +128,50 @@ public class AddressAddActivity extends BaseActivity {
     }
   }
 
+  /**
+   * 合并observable
+   */
+  private void combineLatestEvents() {
+
+    nameChangeObservable = RxTextView.textChangeEvents(usernameEt).skip(1);
+    mobileChangeObservable = RxTextView.textChangeEvents(mobileEt).skip(11);
+    zipCodeChangeObservable = RxTextView.textChangeEvents(zipcodeEt).skip(6);
+
+    Observable.combineLatest(nameChangeObservable, mobileChangeObservable, zipCodeChangeObservable,
+        new Func3<TextViewTextChangeEvent, TextViewTextChangeEvent, TextViewTextChangeEvent, Boolean>() {
+          @Override public Boolean call(TextViewTextChangeEvent userNameEvent,
+              TextViewTextChangeEvent mobileEvent, TextViewTextChangeEvent zipCodeEvent) {
+
+            boolean userNameValid = !TextUtils.isEmpty(userNameEvent.text());
+            if (!userNameValid) usernameEt.setError("请输入姓名");
+
+            boolean mobileValid = !TextUtils.isEmpty(mobileEvent.text()) && Utils.isMobile(
+                mobileEvent.text().toString());//不能为空，符合手机号正则
+            if (!mobileValid) mobileEt.setError("手机号格式不正确");
+
+            boolean zipCodeValid = !TextUtils.isEmpty(zipCodeEvent.text()) && Utils.isZipCode(
+                zipCodeEvent.text().toString());//不能为空，符合邮编规则
+            if (!zipCodeValid) zipcodeEt.setError("邮编格式不正确");
+
+            return userNameValid && mobileValid && zipCodeValid;
+          }
+        })
+        .debounce(Constants.MILLISECONDS_300, TimeUnit.MILLISECONDS)
+        .compose(AddressAddActivity.this.<Boolean>bindUntilEvent(ActivityEvent.DESTROY))
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Action1<Boolean>() {
+          @Override public void call(Boolean aBoolean) {
+
+            AddressAddActivity.this.isCompleteInfo = aBoolean;
+            if (aBoolean) {
+              doneBtn.setBackgroundColor(getResources().getColor(android.R.color.white));
+            } else {
+              doneBtn.setBackgroundColor(getResources().getColor(R.color.darker_gray));
+            }
+          }
+        });
+  }
+
   private void startEnterAnim() {
 
     final Rect bounds = new Rect();
@@ -115,7 +180,7 @@ public class AddressAddActivity extends BaseActivity {
     revealAnimator =
         ViewAnimationUtils.createCircularReveal(revealFrameLayout.getChildAt(0), bounds.right, 0, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
-    revealAnimator.setDuration(Constants.ANIMATION_DURATION);
+    revealAnimator.setDuration(Constants.MILLISECONDS_400);
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.start();
   }
@@ -124,7 +189,7 @@ public class AddressAddActivity extends BaseActivity {
 
     if (revealAnimator != null && !revealAnimator.isRunning()) {
       revealAnimator = revealAnimator.reverse();
-      revealAnimator.setDuration(Constants.ANIMATION_DURATION);
+      revealAnimator.setDuration(Constants.MILLISECONDS_400);
       revealAnimator.setInterpolator(new AccelerateInterpolator());
       revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
         @Override public void onAnimationEnd() {
@@ -149,8 +214,9 @@ public class AddressAddActivity extends BaseActivity {
 
     MenuItem menuItem = menu.findItem(R.id.action_inbox);
     menuItem.setActionView(R.layout.menu_inbox_tv_item);
-    TextView textView = (TextView) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
-    textView.setText(getText(R.string.action_done));
+    doneBtn = (TextView) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
+    doneBtn.setBackgroundColor(getResources().getColor(R.color.darker_gray));
+    doneBtn.setText(getText(R.string.action_done));
     menuItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         AddressAddActivity.this.requestAddAddress();
@@ -164,7 +230,13 @@ public class AddressAddActivity extends BaseActivity {
    */
   private void requestAddAddress() {
 
-    if (!AddressAddActivity.this.checkParams()) return;
+    if (!isCompleteInfo) {
+      Toast.makeText(AddressAddActivity.this, "请补全基本信息", Toast.LENGTH_LONG).show();
+      return;
+    } else if (AddressAddActivity.this.checkAddress()) {
+      Toast.makeText(AddressAddActivity.this, "请补全地址信息", Toast.LENGTH_LONG).show();
+      return;
+    }
 
     /*Action=AddUserByAddress
         &consignee=Eric //收货人
@@ -236,7 +308,7 @@ public class AddressAddActivity extends BaseActivity {
 
               @Override public void onNext(RefreshAddressEvent refreshAddressEvent) {
 
-            /*通过eventBus发送通知，刷新地址列表*/
+                /*通过eventBus发送通知，刷新地址列表*/
                 EventBusInstance.getDefault().post(refreshAddressEvent);
               }
             });
@@ -245,34 +317,10 @@ public class AddressAddActivity extends BaseActivity {
   /**
    * 校验参数
    */
-  private boolean checkParams() {
+  private boolean checkAddress() {
 
-    if (TextUtils.isEmpty(usernameEt.getText().toString())) {
-      AddressAddActivity.this.showSnackBar("请填写收货人");
-      return false;
-    }
-    if (TextUtils.isEmpty(mobileEt.getText().toString())) {
-      AddressAddActivity.this.showSnackBar("请填写手机号码");
-      return false;
-    }
-    if (TextUtils.isEmpty(zipcodeEt.getText().toString())) {
-      AddressAddActivity.this.showSnackBar("请填写邮编");
-      return false;
-    }
-    if (TextUtils.isEmpty(provinceTv.getText().toString())) {
-      AddressAddActivity.this.showSnackBar("请选择省份");
-      return false;
-    }
-    if (TextUtils.isEmpty(cityTv.getText().toString())) {
-      AddressAddActivity.this.showSnackBar("请选择城市");
-      return false;
-    }
-    if (TextUtils.isEmpty(addressEt.getText().toString())) {
-      AddressAddActivity.this.showSnackBar("请填写地址");
-      return false;
-    }
-
-    return true;
+    return TextUtils.isEmpty(provinceTv.getText().toString()) || TextUtils.isEmpty(
+        cityTv.getText().toString()) || TextUtils.isEmpty(addressEt.getText().toString());
   }
 
   private void showSnackBar(String text) {

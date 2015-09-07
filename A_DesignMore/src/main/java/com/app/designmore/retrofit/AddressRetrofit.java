@@ -143,7 +143,7 @@ public class AddressRetrofit {
   /**
    * 编辑地址
    */
-  public Observable<AddressEntity> requestEditorAddress(final Map<String, String> params) {
+  public Observable<EditorAddressEvent> requestEditorAddress(final Map<String, String> params) {
 
     return Observable.defer(new Func0<Observable<AddressResponse>>() {
       @Override public Observable<AddressResponse> call() {
@@ -164,8 +164,8 @@ public class AddressRetrofit {
 
         return addressResponse.filterWebServiceErrors();
       }
-    }).map(new Func1<AddressResponse, AddressEntity>() {
-      @Override public AddressEntity call(AddressResponse addressResponse) {
+    }).map(new Func1<AddressResponse, EditorAddressEvent>() {
+      @Override public EditorAddressEvent call(AddressResponse addressResponse) {
 
         AddressResponse.Address address = addressResponse.getAddressList().get(0);
 
@@ -175,7 +175,7 @@ public class AddressRetrofit {
 
         return editorAddressEvent;
       }
-    }).compose(SchedulersCompat.<AddressEntity>applyExecutorSchedulers());
+    }).compose(SchedulersCompat.<EditorAddressEvent>applyExecutorSchedulers());
   }
 
   /**
