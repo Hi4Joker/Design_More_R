@@ -403,4 +403,31 @@ public class MainActivity extends AppCompatActivity {
       }
     });
   }
+
+  @OnClick(R.id.sub_operator) void onSubClick() {
+
+    subscription = Observable.interval(1, 1, TimeUnit.SECONDS).doOnUnsubscribe(new Action0() {
+      @Override public void call() {
+        Log.e(TAG, "doOnUnsubscribe");
+      }
+    }).subscribe(new Subscriber<Long>() {
+      @Override public void onCompleted() {
+
+      }
+
+      @Override public void onError(Throwable e) {
+
+      }
+
+      @Override public void onNext(Long aLong) {
+
+        Log.e(TAG, aLong + "");
+      }
+    });
+  }
+
+  @OnClick(R.id.unsub_operator) void onUnSubClick() {
+
+    if (!subscription.isUnsubscribed()) subscription.unsubscribe();
+  }
 }

@@ -75,5 +75,18 @@
       android:layout_height="wrap_content"
       android:text="do_operator"
       />
+  <Button
+      android:id="@+id/sub_operator"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="sub_operator"
+      />
+    
+  <Button
+      android:id="@+id/unsub_operator"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="unsub_operator"
+      />
 
 </LinearLayout>
