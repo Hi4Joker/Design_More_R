@@ -114,6 +114,8 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
   }
 
   @Override public void onNext(Integer deletePosition) {
+
+    this.items.remove((int) deletePosition);
     AddressAdapter.this.notifyItemRemoved(deletePosition);
   }
 
@@ -156,8 +158,8 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
     @Nullable @OnClick(R.id.address_manager_item_delete_btn) void onDeleteClick(Button button) {
 
       if (callback != null) {
-        AddressEntity pos = (AddressEntity) button.getTag();
-        callback.onDeleteClick(items.indexOf(pos));
+        AddressEntity entity = (AddressEntity) button.getTag();
+        callback.onDeleteClick(entity);
       }
     }
 
@@ -203,7 +205,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
   public interface Callback {
 
     /*点击删除按钮*/
-    void onDeleteClick(int position);
+    void onDeleteClick(AddressEntity addressEntity);
 
     /*点击编辑按钮*/
     void onEditorClick(int position);

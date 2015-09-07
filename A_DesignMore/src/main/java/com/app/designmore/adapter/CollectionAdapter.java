@@ -80,7 +80,7 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
 
   @Override public void onNext(Integer deletePosition) {
 
-    this.items.remove(deletePosition);
+    this.items.remove((int) deletePosition);
     CollectionAdapter.this.notifyItemRemoved(deletePosition);
   }
 

@@ -47,7 +47,6 @@ import retrofit.RetrofitError;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
-import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.subscriptions.Subscriptions;
 
@@ -260,18 +259,18 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
    * ************************************** AddressAdapter回调
    */
   /*点击删除按钮*/
-  @Override public void onDeleteClick(final int position) {
+  @Override public void onDeleteClick(final AddressEntity addressEntity) {
 
     DialogManager.getInstance()
         .showNormalDialog(AddressMangerActivity.this, "确认删除地址",
             new DialogInterface.OnClickListener() {
               @Override public void onClick(DialogInterface dialog, int which) {
-                final AddressEntity deleteAddress = items.get(position);
+                //final AddressEntity deleteAddress = items.get(addressEntity);
 
                 /* Action=DelUserByAddress&address_id=1&uid=2*/
                 Map<String, String> params = new HashMap<>(3);
                 params.put("Action", "DelUserByAddress");
-                params.put("address_id", deleteAddress.getAddressId());
+                params.put("address_id", addressEntity.getAddressId());
                 params.put("uid", "1");
 
                 subscription = AddressRetrofit.getInstance()
@@ -286,7 +285,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
                     })
                     .map(new Func1<BaseResponse, Integer>() {
                       @Override public Integer call(BaseResponse baseResponse) {
-                        return position;
+                        return items.indexOf(addressEntity);
                       }
                     })
                     .doOnTerminate(new Action0() {
@@ -300,11 +299,6 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
                     .filter(new Func1<Integer, Boolean>() {
                       @Override public Boolean call(Integer position) {
                         return !subscription.isUnsubscribed();
-                      }
-                    })
-                    .doOnNext(new Action1<Integer>() {
-                      @Override public void call(Integer integer) {
-
                       }
                     })
                     .doOnCompleted(new Action0() {
