@@ -354,7 +354,7 @@ public class MainActivity extends AppCompatActivity {
     }).doOnEach(new Action1<Notification<? super Integer>>() {
       @Override public void call(Notification<? super Integer> notification) {
 
-        /*发射任何一个时间都会触发，包括observable.onCompleted()也会触发*/
+        /*发射任何一个事件都会触发，包括observable.onCompleted()也会触发*/
         Log.e(TAG, "notification");
       }
     }).doOnTerminate(new Action0() {
@@ -373,11 +373,6 @@ public class MainActivity extends AppCompatActivity {
       }
     }).onErrorReturn(new Func1<Throwable, Integer>() {
       @Override public Integer call(Throwable throwable) {
-
-        return null;
-      }
-    }).debounce(new Func1<Integer, Observable<Integer>>() {
-      @Override public Observable<Integer> call(Integer integer) {
 
         return null;
       }
