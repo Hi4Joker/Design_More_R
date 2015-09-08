@@ -1,7 +1,9 @@
 package com.app.designmore.retrofit;
 
+import android.content.RestrictionEntry;
 import com.app.designmore.Constants;
 import com.app.designmore.retrofit.entity.LoginCodeEntity;
+import com.app.designmore.retrofit.entity.RegisterEntity;
 import com.app.designmore.retrofit.entity.SearchItemEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.retrofit.response.LoginCodeResponse;
@@ -38,6 +40,9 @@ public class LoginRetrofit {
     //@Headers("Accept-Encoding: application/json")
     @FormUrlEncoded @POST("/mobile/api/client/interface.php")
     Observable<LoginCodeResponse> getLoginCode(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded @POST("/mobile/api/client/interface.php")
+    Observable<BaseResponse> requestRegister(@FieldMap Map<String, String> params);
   }
 
   private final LoginService loginService;
@@ -75,7 +80,7 @@ public class LoginRetrofit {
   }
 
   /**
-   * 获取热搜列表
+   * 获取验证码
    */
   public Observable<LoginCodeEntity> getLoginCode(final Map<String, String> params) {
 
@@ -103,5 +108,34 @@ public class LoginRetrofit {
         return loginCodeEntity;
       }
     }).compose(SchedulersCompat.<LoginCodeEntity>applyExecutorSchedulers());
+  }
+
+  /**
+   * 注册
+   */
+  public Observable<RegisterEntity> requestRegister(final Map<String, String> params) {
+
+    return Observable.defer(new Func0<Observable<BaseResponse>>() {
+      @Override public Observable<BaseResponse> call() {
+        return loginService.requestRegister(params).retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            if (throwable instanceof TimeoutException && integer < 1) {//连接超时，重试一次
+              return true;
+            }
+            return false;
+          }
+        });
+      }
+    }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
+      @Override public Observable<BaseResponse> call(BaseResponse baseResponse) {
+        return baseResponse.filterWebServiceErrors();
+      }
+    }).map(new Func1<BaseResponse, RegisterEntity>() {
+      @Override public RegisterEntity call(BaseResponse baseResponse) {
+        RegisterEntity registerEntity = new RegisterEntity(baseResponse.message);
+
+        return registerEntity;
+      }
+    }).compose(SchedulersCompat.<RegisterEntity>applyExecutorSchedulers());
   }
 }

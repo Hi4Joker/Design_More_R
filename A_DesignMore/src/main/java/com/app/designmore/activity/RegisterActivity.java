@@ -1,7 +1,10 @@
 package com.app.designmore.activity;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -16,9 +19,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
+import com.app.designmore.event.RefreshAddressEvent;
+import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
+import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.retrofit.LoginRetrofit;
 import com.app.designmore.retrofit.entity.LoginCodeEntity;
+import com.app.designmore.retrofit.entity.RegisterEntity;
 import com.app.designmore.retrofit.entity.SearchItemEntity;
 import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
@@ -31,6 +38,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -39,6 +48,7 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.functions.Func4;
 import rx.subscriptions.CompositeSubscription;
+import rx.subscriptions.Subscriptions;
 
 /**
  * Created by Joker on 2015/8/25.
@@ -65,9 +75,15 @@ public class RegisterActivity extends BaseActivity {
   private String mobile;
   private String code;
 
-  //private int redColor = getResources().getColor(R.color.design_more_red);
-
   private CompositeSubscription compositeSubscription = new CompositeSubscription();
+  private ProgressDialog progressDialog;
+  private Subscription subscription = Subscriptions.empty();
+
+  private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
+    @Override public void onCancel(DialogInterface dialog) {
+      subscription.unsubscribe();
+    }
+  };
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -101,11 +117,14 @@ public class RegisterActivity extends BaseActivity {
       @Override public void call() {
         codeBtn.setEnabled(false);
       }
-    }).subscribe(new Action1<TextViewTextChangeEvent>() {
-      @Override public void call(TextViewTextChangeEvent textEvent) {
-        codeBtn.setEnabled(!TextUtils.isEmpty(textEvent.text().toString()));
-      }
-    }));
+    })
+        .debounce(Constants.MILLISECONDS_300, TimeUnit.MILLISECONDS)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Action1<TextViewTextChangeEvent>() {
+          @Override public void call(TextViewTextChangeEvent textEvent) {
+            codeBtn.setEnabled(!TextUtils.isEmpty(textEvent.text().toString()));
+          }
+        }));
 
     compositeSubscription.add(
         Observable.combineLatest(userNameChangeObservable, passwordChangeObservable,
@@ -120,9 +139,14 @@ public class RegisterActivity extends BaseActivity {
                 mobile = mobileEvent.text().toString();
                 code = codeEvent.text().toString();
 
+             /*   Log.e(TAG, "userName: " + userName);
+                Log.e(TAG, "password: " + password);
+                Log.e(TAG, "mobile: " + mobile);
+                Log.e(TAG, "code: " + code);*/
+
                 boolean userNameValid = !TextUtils.isEmpty(userName);
                 boolean passwordValid = !TextUtils.isEmpty(password);
-                boolean mobileValid = !TextUtils.isEmpty(mobile) && Utils.isMobile(mobile);
+                boolean mobileValid = !TextUtils.isEmpty(mobile) /*&& Utils.isMobile(mobile)*/;
                 boolean codeValid = !TextUtils.isEmpty(code);
 
                 return userNameValid && passwordValid && mobileValid && codeValid;
@@ -134,7 +158,7 @@ public class RegisterActivity extends BaseActivity {
             .subscribe(new Action1<Boolean>() {
               @Override public void call(Boolean aBoolean) {
 
-                Log.e(TAG, "call() called with: " + "aBoolean = [" + aBoolean + "]");
+                //Log.e(TAG, "call() called with: " + "aBoolean = [" + aBoolean + "]");
                 registerBtn.setEnabled(aBoolean);
               }
             }));
@@ -222,10 +246,69 @@ public class RegisterActivity extends BaseActivity {
     &email=adsfasdf%40aaa.com*/
 
     Map<String, String> params = new HashMap<>();
-    params.put("Action", "");
+    params.put("Action", "RegisterUser");
     params.put("username", userName);
     params.put("mobile_phone", mobile);
-    params.put("email", code);
+    params.put("email", "1170859911@qq.com");
+
+    subscription = LoginRetrofit.getInstance()
+        .requestRegister(params)
+        .doOnSubscribe(new Action0() {
+          @Override public void call() {
+            /*加载数据，显示进度条*/
+            progressDialog = DialogManager.
+                getInstance().showProgressDialog(RegisterActivity.this, null, cancelListener);
+          }
+        })
+        .doOnTerminate(new Action0() {
+          @Override public void call() {
+        /*隐藏进度条*/
+            if (progressDialog != null && progressDialog.isShowing()) {
+              progressDialog.dismiss();
+            }
+          }
+        })
+        .filter(new Func1<RegisterEntity, Boolean>() {
+          @Override public Boolean call(RegisterEntity registerEntity) {
+            return !subscription.isUnsubscribed();
+          }
+        })
+        .compose(RegisterActivity.this.<RegisterEntity>bindUntilEvent(ActivityEvent.DESTROY))
+        .subscribe(new Subscriber<RegisterEntity>() {
+          @Override public void onCompleted() {
+          }
+
+          @Override public void onError(Throwable error) {
+            RegisterActivity.this.showError(error);
+          }
+
+          @Override public void onNext(RegisterEntity registerEntity) {
+          }
+        });
+  }
+
+  private void showError(Throwable error) {
+    if (error instanceof TimeoutException) {
+      RegisterActivity.this.showSnackBar(getResources().getString(R.string.timeout_title));
+    } else if (error instanceof RetrofitError) {
+      Log.e(TAG, "kind:  " + ((RetrofitError) error).getKind());
+      RegisterActivity.this.showSnackBar(getResources().getString(R.string.six_word));
+    } else if (error instanceof WebServiceException) {
+      RegisterActivity.this.showSnackBar(
+          getResources().getString(R.string.service_exception_content));
+    } else {
+      Log.e(TAG, error.getMessage());
+      error.printStackTrace();
+      throw new RuntimeException("See inner exception");
+    }
+  }
+
+  private void showSnackBar(String text) {
+    Snackbar.make(toolbar, text, Snackbar.LENGTH_SHORT).setAction("确定", new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        /*do nothing*/
+      }
+    }).show();
   }
 
   @Override protected void onDestroy() {
