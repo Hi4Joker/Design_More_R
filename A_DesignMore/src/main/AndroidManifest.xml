@@ -32,7 +32,7 @@
         android:name=".activity.LoginActivity"
         android:screenOrientation="portrait"
         android:launchMode="singleTop"
-        android:theme="@style/AppTheme.WhiteActivity"
+        android:theme="@style/AppTheme.TransparentActivity"
         >
     </activity>
 

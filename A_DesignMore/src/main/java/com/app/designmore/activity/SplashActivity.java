@@ -12,8 +12,4 @@ public class SplashActivity extends AppCompatActivity {
     SplashActivity.this.finish();
     overridePendingTransition(0, 0);
   }
-
-  @Override protected void onDestroy() {
-    super.onDestroy();
-  }
 }

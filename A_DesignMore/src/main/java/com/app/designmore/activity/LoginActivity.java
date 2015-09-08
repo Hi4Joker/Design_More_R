@@ -6,9 +6,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -18,8 +21,6 @@ import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.utils.DensityUtil;
-import rx.Subscription;
-import rx.subscriptions.Subscriptions;
 
 public class LoginActivity extends BaseActivity {
 
@@ -75,7 +76,7 @@ public class LoginActivity extends BaseActivity {
 
   private void startEnterAnim() {
 
-    int startY = DensityUtil.getScreenHeight(LoginActivity.this) - DensityUtil.getStatusBarHeight(
+    int startY = DensityUtil.getScreenHeight(LoginActivity.this) + DensityUtil.getStatusBarHeight(
         LoginActivity.this) - loginLogoIv.getHeight();
 
     ViewCompat.setLayerType(loginLogoIv, ViewCompat.LAYER_TYPE_HARDWARE, null);
@@ -85,6 +86,7 @@ public class LoginActivity extends BaseActivity {
     ViewCompat.animate(loginLogoIv)
         .alpha(255)
         .translationY(0.0f)
+        .setStartDelay(Constants.MILLISECONDS_300)
         .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
@@ -96,9 +98,11 @@ public class LoginActivity extends BaseActivity {
 
   @Nullable @OnClick(R.id.login_layout_register_tv) void onRegisterClick() {
     LoginActivity.this.startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+    overridePendingTransition(0, 0);
   }
 
   @Nullable @OnClick(R.id.login_layout_retrieve_password_tv) void onRetrieveClick() {
     LoginActivity.this.startActivity(new Intent(LoginActivity.this, RetrieveActivity.class));
+    overridePendingTransition(0, 0);
   }
 }
