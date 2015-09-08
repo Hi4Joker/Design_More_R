@@ -20,7 +20,6 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import butterknife.Bind;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
@@ -33,7 +32,6 @@ import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
-import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.utils.Utils;
 import com.jakewharton.rxbinding.widget.RxTextView;
@@ -72,12 +70,12 @@ public class AddressAddActivity extends BaseActivity {
   @Nullable @Bind(R.id.address_add_layout_province_tv) TextView provinceTv;
   @Nullable @Bind(R.id.address_add_layout_city_tv) TextView cityTv;
 
-  private Observable<TextViewTextChangeEvent> nameChangeObservable;
+  private Observable<TextViewTextChangeEvent> userNameChangeObservable;
   private Observable<TextViewTextChangeEvent> mobileChangeObservable;
   private Observable<TextViewTextChangeEvent> zipCodeChangeObservable;
   //private Observable<TextViewTextChangeEvent> addressChangeObservable;
-  //private Observable<TextViewTextChangeEvent> nameChangeObservable;
-  //private Observable<TextViewTextChangeEvent> nameChangeObservable;
+  //private Observable<TextViewTextChangeEvent> userNameChangeObservable;
+  //private Observable<TextViewTextChangeEvent> userNameChangeObservable;
 
   private SupportAnimator revealAnimator;
   private Subscription subscription = Subscriptions.empty();
@@ -134,11 +132,11 @@ public class AddressAddActivity extends BaseActivity {
    */
   private void combineLatestEvents() {
 
-    nameChangeObservable = RxTextView.textChangeEvents(usernameEt).skip(1);
+    userNameChangeObservable = RxTextView.textChangeEvents(usernameEt).skip(1);
     mobileChangeObservable = RxTextView.textChangeEvents(mobileEt).skip(1);
     zipCodeChangeObservable = RxTextView.textChangeEvents(zipcodeEt).skip(1);
 
-    Observable.combineLatest(nameChangeObservable, mobileChangeObservable, zipCodeChangeObservable,
+    Observable.combineLatest(userNameChangeObservable, mobileChangeObservable, zipCodeChangeObservable,
         new Func3<TextViewTextChangeEvent, TextViewTextChangeEvent, TextViewTextChangeEvent, Boolean>() {
           @Override public Boolean call(TextViewTextChangeEvent userNameEvent,
               TextViewTextChangeEvent mobileEvent, TextViewTextChangeEvent zipCodeEvent) {

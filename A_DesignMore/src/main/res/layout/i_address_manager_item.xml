@@ -119,7 +119,7 @@
           android:layout_gravity="center"
           android:gravity="center"
           android:text="删除"
-          android:background="@drawable/search_tv_background"
+          android:background="@drawable/white_corner_background"
           />
     </com.app.designmore.view.MaterialRippleLayout>
 
@@ -145,8 +145,9 @@
           android:layout_gravity="center"
           android:gravity="center"
           android:text="编辑"
-          android:background="@drawable/search_tv_background"
+          android:background="@drawable/white_corner_background"
           />
+        <!--android:background="@drawable/search_tv_background"-->
     </com.app.designmore.view.MaterialRippleLayout>
   </RelativeLayout>
 

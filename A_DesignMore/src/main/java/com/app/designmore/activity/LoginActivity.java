@@ -44,8 +44,6 @@ public class LoginActivity extends BaseActivity {
   @Nullable @Bind(R.id.login_layout_password_et) EditText passwordEt;
   @Nullable @Bind(R.id.login_layout_login_btn) Button loginBtn;
 
-  private Subscription subscription = Subscriptions.empty();
-
   public static void navigateToLogin(AppCompatActivity startingActivity) {
 
     Intent intent = new Intent(startingActivity, LoginActivity.class);

@@ -168,7 +168,7 @@
             android:layout_height="match_parent"
             android:text="点击获取"
             android:textSize="@dimen/material_12sp"
-            android:textColor="@color/darker_gray"
+            android:textColor="@color/black"
             android:background="@drawable/white_corner_background"
             />
       </com.app.designmore.view.MaterialRippleLayout>
@@ -206,7 +206,7 @@
         android:text="立即注册"
         android:textSize="@dimen/material_16sp"
         android:textColor="@color/white"
-        android:background="@drawable/red_corner_background"
+        android:background="@drawable/corner_button_background"
         />
   </com.app.designmore.view.MaterialRippleLayout>
 
