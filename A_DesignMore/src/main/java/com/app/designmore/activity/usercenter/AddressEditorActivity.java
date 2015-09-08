@@ -71,10 +71,7 @@ public class AddressEditorActivity extends BaseActivity {
       AddressEntity address) {
 
     Intent intent = new Intent(startingActivity, AddressEditorActivity.class);
-    Bundle bundle = new Bundle();
-    bundle.putSerializable(ADDRESS, address);
-    intent.putExtras(bundle);
-
+    intent.putExtra(ADDRESS, address);
     startingActivity.startActivity(intent);
   }
 
@@ -136,7 +133,7 @@ public class AddressEditorActivity extends BaseActivity {
    */
   private void requestEditorAddress() {
 
-    if (!AddressEditorActivity.this.checkParams()) return;
+    //if (!AddressEditorActivity.this.checkParams()) return;
 
     /*Action=AddUserByAddress
         &consignee=Eric //收货人
@@ -175,7 +172,7 @@ public class AddressEditorActivity extends BaseActivity {
             .requestEditorAddress(params)
             .doOnSubscribe(new Action0() {
               @Override public void call() {
-            /*加载数据，显示进度条*/
+                /*加载数据，显示进度条*/
                 progressDialog = DialogManager.
                     getInstance()
                     .showProgressDialog(AddressEditorActivity.this, null, cancelListener);
@@ -183,7 +180,7 @@ public class AddressEditorActivity extends BaseActivity {
             })
             .doOnTerminate(new Action0() {
               @Override public void call() {
-            /*修改成功，隐藏进度条*/
+                /*修改成功，隐藏进度条*/
                 if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
               }
             })
@@ -196,35 +193,33 @@ public class AddressEditorActivity extends BaseActivity {
                 AddressEditorActivity.this.<AddressEntity>bindUntilEvent(ActivityEvent.DESTROY))
             .subscribe(new Subscriber<AddressEntity>() {
               @Override public void onCompleted() {
-
                 AddressEditorActivity.this.finish();
-                overridePendingTransition(0, 0);
               }
 
               @Override public void onError(Throwable error) {
-
-                if (error instanceof TimeoutException) {
-                  AddressEditorActivity.this.showSnackBar(
-                      getResources().getString(R.string.timeout_title));
-                } else if (error instanceof RetrofitError) {
-                  Log.e(TAG, "kind:  " + ((RetrofitError) error).getKind());
-                  AddressEditorActivity.this.showSnackBar(
-                      getResources().getString(R.string.six_word));
-                } else if (error instanceof WebServiceException) {
-                  AddressEditorActivity.this.showSnackBar(
-                      getResources().getString(R.string.service_exception_content));
-                } else {
-                  Log.e(TAG, error.getMessage());
-                  error.printStackTrace();
-                  throw new RuntimeException("See inner exception");
-                }
+                AddressEditorActivity.this.showError(error);
               }
 
               @Override public void onNext(AddressEntity address) {
-
                 EventBusInstance.getDefault().post((EditorAddressEvent) address);
               }
             });
+  }
+
+  private void showError(Throwable error) {
+    if (error instanceof TimeoutException) {
+      AddressEditorActivity.this.showSnackBar(getResources().getString(R.string.timeout_title));
+    } else if (error instanceof RetrofitError) {
+      Log.e(TAG, "kind:  " + ((RetrofitError) error).getKind());
+      AddressEditorActivity.this.showSnackBar(getResources().getString(R.string.six_word));
+    } else if (error instanceof WebServiceException) {
+      AddressEditorActivity.this.showSnackBar(
+          getResources().getString(R.string.service_exception_content));
+    } else {
+      Log.e(TAG, error.getMessage());
+      error.printStackTrace();
+      throw new RuntimeException("See inner exception");
+    }
   }
 
   /**

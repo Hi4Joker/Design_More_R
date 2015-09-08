@@ -8,7 +8,7 @@ import com.app.designmore.retrofit.entity.AddressEntity;
 public class EditorAddressEvent extends AddressEntity {
 
   public EditorAddressEvent(String addressId, String userName, String province, String city,
-      String address, String mobile, String zipcode, boolean isChecked) {
+      String address, String mobile, String zipcode, String isDefault) {
     this.addressId = addressId;
     this.userName = userName;
     this.province = province;
@@ -16,6 +16,6 @@ public class EditorAddressEvent extends AddressEntity {
     this.address = address;
     this.mobile = mobile;
     this.zipcode = zipcode;
-    this.isChecked = isChecked;
+    this.isDefault = isDefault;
   }
 }

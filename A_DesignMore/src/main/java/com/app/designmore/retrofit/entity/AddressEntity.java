@@ -14,7 +14,17 @@ public class AddressEntity implements Serializable, Cloneable {
   protected String address;
   protected String mobile;
   protected String zipcode;
-  protected boolean isChecked;
+  protected String isDefault;
+
+  @Override public boolean equals(Object obj) {
+
+    if (obj == null || this.getClass() != obj.getClass() || !this.getAddressId()
+        .equals(((AddressEntity) obj).getAddressId())) {
+      return false;
+    }
+
+    return true;
+  }
 
   public String getAddressId() {
     return addressId;
@@ -72,12 +82,12 @@ public class AddressEntity implements Serializable, Cloneable {
     this.zipcode = zipcode;
   }
 
-  public boolean isChecked() {
-    return isChecked;
+  public String isDefault() {
+    return isDefault;
   }
 
-  public void setIsChecked(boolean isChecked) {
-    this.isChecked = isChecked;
+  public void setDefault(String isDefault) {
+    this.isDefault = isDefault;
   }
 
   public AddressEntity newInstance() {
@@ -96,7 +106,7 @@ public class AddressEntity implements Serializable, Cloneable {
   }
 
   @Override public String toString() {
-    return "Address{" +
+    return "AddressEntity{" +
         "addressId='" + addressId + '\'' +
         ", userName='" + userName + '\'' +
         ", province='" + province + '\'' +
@@ -104,7 +114,7 @@ public class AddressEntity implements Serializable, Cloneable {
         ", address='" + address + '\'' +
         ", mobile='" + mobile + '\'' +
         ", zipcode='" + zipcode + '\'' +
-        ", isChecked=" + isChecked +
+        ", isDefault=" + isDefault +
         '}';
   }
 }

@@ -3,11 +3,13 @@ package com.app.designmore.activity.usercenter;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,7 +38,9 @@ import com.app.designmore.retrofit.entity.CollectionEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
+import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.trello.rxlifecycle.ActivityEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,11 +64,11 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
   @Nullable @Bind(R.id.collection_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
+  @Nullable @Bind(R.id.collection_layout_srl) SwipeRefreshLayout swipeRefreshLayout;
   @Nullable @Bind(R.id.collection_layout_rv) RecyclerView recyclerView;
 
   private CollectionAdapter collectionAdapter;
-  private List<CollectionEntity> items;
-
+  private List<CollectionEntity> items = new ArrayList<>();
   private Subscription subscription = Subscriptions.empty();
 
   private ProgressDialog progressDialog;
@@ -123,6 +127,18 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
 
   private void setupAdapter() {
 
+    int[] colors = new int[] {
+        R.color.design_more_red, R.color.accent_material_light, R.color.design_more_red,
+        R.color.accent_material_light
+    };
+
+    swipeRefreshLayout.setColorSchemeResources(colors);
+    swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+      @Override public void onRefresh() {
+        CollectionActivity.this.loadData();
+      }
+    });
+
     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(CollectionActivity.this);
     linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
     linearLayoutManager.setSmoothScrollbarEnabled(true);
@@ -166,17 +182,20 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
         .doOnSubscribe(new Action0() {
           @Override public void call() {
             /*加载数据，显示进度条*/
-            progressLayout.showLoading();
+            if (!swipeRefreshLayout.isRefreshing()) progressLayout.showLoading();
           }
         })
         .compose(
             CollectionActivity.this.<List<CollectionEntity>>bindUntilEvent(ActivityEvent.DESTROY))
         .subscribe(new Subscriber<List<CollectionEntity>>() {
           @Override public void onCompleted() {
-
             /*加载完毕，显示内容界面*/
             if (items != null && items.size() != 0) {
-              progressLayout.showContent();
+              if (swipeRefreshLayout.isRefreshing()) {
+                swipeRefreshLayout.setRefreshing(false);
+              } else {
+                progressLayout.showContent();
+              }
             } else if (items != null && items.size() == 0) {
               progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
                   "您还没有收藏", null, "去首页看看", new View.OnClickListener() {
@@ -195,7 +214,8 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
 
           @Override public void onNext(List<CollectionEntity> collectionEntities) {
 
-            CollectionActivity.this.items = collectionEntities;
+            CollectionActivity.this.items.clear();
+            CollectionActivity.this.items.addAll(collectionEntities);
             collectionAdapter.updateItems(items);
           }
         });
@@ -261,20 +281,19 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
   }
 
   /*点击更多按钮，弹出列表对话框，删除操作*/
-  @Override public void onMoreClick(final int position) {
-
+  @Override public void onMoreClick(final CollectionEntity entity) {
     DialogManager.getInstance()
-        .showNormalDialog(CollectionActivity.this, "请确认删除收藏",
-            new DialogInterface.OnClickListener() {
-              @Override public void onClick(DialogInterface dialog, int which) {
-                CollectionActivity.this.requestDeleteCollection(position);
-              }
-            });
+        .showNormalDialog(CollectionActivity.this, "删除收藏", new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialog, int which) {
+            CollectionActivity.this.requestDeleteCollection(entity);
+          }
+        });
   }
 
-  private void requestDeleteCollection(final int position) {
-
-    CollectionEntity deleteCollection = items.get(position);
+  /**
+   * 删除收藏
+   */
+  private void requestDeleteCollection(final CollectionEntity deleteCollection) {
 
     /*Action=DelCollectByGoods&uid=1&rec_id=1*/
     Map<String, String> params = new HashMap<>(3);
@@ -293,10 +312,7 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
         })
         .map(new Func1<BaseResponse, Integer>() {
           @Override public Integer call(BaseResponse baseResponse) {
-
-            /*卧槽，什么鬼啊，这里给提示*/
-            Toast.makeText(CollectionActivity.this, baseResponse.message, Toast.LENGTH_LONG).show();
-            return position;
+            return items.indexOf(deleteCollection);
           }
         })
         .doOnTerminate(new Action0() {
@@ -308,6 +324,19 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
         .filter(new Func1<Integer, Boolean>() {
           @Override public Boolean call(Integer position) {
             return !subscription.isUnsubscribed();
+          }
+        })
+        .doOnCompleted(new Action0() {
+          @Override public void call() {
+            if (items.size() == 0) {
+              progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
+                  "您还没有收藏", null, "去首页看看", new View.OnClickListener() {
+                    @Override public void onClick(View v) {
+                      HomeActivity.navigateToHome(CollectionActivity.this);
+                      overridePendingTransition(0, 0);
+                    }
+                  });
+            }
           }
         })
         .compose(CollectionActivity.this.<Integer>bindUntilEvent(ActivityEvent.DESTROY))
@@ -324,6 +353,7 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
   }
 
   @Override protected void onDestroy() {
+    swipeRefreshLayout.setOnRefreshListener(null);
     super.onDestroy();
     this.progressDialog = null;
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();

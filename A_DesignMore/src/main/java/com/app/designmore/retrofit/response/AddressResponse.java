@@ -25,6 +25,7 @@ public class AddressResponse extends BaseResponse {
       "mobile": "18622816323",//电话
       "sign_building": "NULL",//
       "best_time": "0"//
+      "default ": "0"//
 */
 
   @Expose @SerializedName("result") private List<Address> addressList = new ArrayList<>();
@@ -42,18 +43,18 @@ public class AddressResponse extends BaseResponse {
     @Expose public String address;
     @Expose public String mobile;
     @Expose public String zipcode;
-
-    public boolean isChecked;
+    @Expose @SerializedName("default") public String isDefault;
 
     @Override public String toString() {
       return "Address{" +
-          ", addressId='" + addressId + '\'' +
-          ", consignee='" + userName + '\'' +
+          "addressId='" + addressId + '\'' +
+          ", userName='" + userName + '\'' +
           ", province='" + province + '\'' +
           ", city='" + city + '\'' +
           ", address='" + address + '\'' +
           ", mobile='" + mobile + '\'' +
           ", zipcode='" + zipcode + '\'' +
+          ", isDefault=" + isDefault +
           '}';
     }
   }

@@ -45,7 +45,7 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
 
     holder.itemRootView.setTag(position);
-    holder.goodMoreBtn.setTag(position);
+    holder.goodMoreBtn.setTag(items.get(position));
 
     /*绑定数据*/
     CollectionAdapter.this.bindToValue(holder, items.get(position));
@@ -114,9 +114,9 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
 
     @Nullable @OnClick(R.id.collection_item_good_more_btn) void onMoreClick(
         ImageButton imageButton) {
-      int pos = (int) imageButton.getTag();
+      CollectionEntity entity = (CollectionEntity) imageButton.getTag();
       if (callback != null) {
-        callback.onMoreClick(pos);
+        callback.onMoreClick(entity);
       }
     }
   }
@@ -131,7 +131,7 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
     void onItemClick(int position);
 
     /*点击更多,删除*/
-    void onMoreClick(int position);
+    void onMoreClick(CollectionEntity entity);
 
     void onError(Throwable error);
   }

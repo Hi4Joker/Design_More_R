@@ -44,7 +44,7 @@ public class AddressRetrofit {
     Observable<AddressResponse> requestEditorAddress(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded @POST("/mobile/api/client/interface.php")
-    Observable<AddressResponse> requestAddAddress(@FieldMap Map<String, String> params);
+    Observable<BaseResponse> requestAddAddress(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded @POST("/mobile/api/client/interface.php")
     Observable<BaseResponse> requestDeleteAddress(@FieldMap Map<String, String> params);
@@ -129,7 +129,7 @@ public class AddressRetrofit {
               clone.setAddress(entity.address);
 
               /*默认选项*/
-              clone.setIsChecked(entity.isChecked);
+              clone.setDefault(entity.isDefault);
 
               addressArrayList.add(clone);
             }
@@ -171,7 +171,7 @@ public class AddressRetrofit {
 
         EditorAddressEvent editorAddressEvent =
             new EditorAddressEvent(address.addressId, address.userName, address.province,
-                address.city, address.address, address.mobile, address.zipcode, address.isChecked);
+                address.city, address.address, address.mobile, address.zipcode, address.isDefault);
 
         return editorAddressEvent;
       }
@@ -183,8 +183,8 @@ public class AddressRetrofit {
    */
   public Observable<RefreshAddressEvent> requestAddAddress(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<AddressResponse>>() {
-      @Override public Observable<AddressResponse> call() {
+    return Observable.defer(new Func0<Observable<BaseResponse>>() {
+      @Override public Observable<BaseResponse> call() {
 
         return addressService.requestAddAddress(params)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
@@ -197,12 +197,12 @@ public class AddressRetrofit {
         }
         return false;
       }
-    }).concatMap(new Func1<AddressResponse, Observable<AddressResponse>>() {
-      @Override public Observable<AddressResponse> call(AddressResponse addressResponse) {
-        return addressResponse.filterWebServiceErrors();
+    }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
+      @Override public Observable<BaseResponse> call(BaseResponse baseResponse) {
+        return baseResponse.filterWebServiceErrors();
       }
-    }).map(new Func1<AddressResponse, RefreshAddressEvent>() {
-      @Override public RefreshAddressEvent call(AddressResponse addressResponse) {
+    }).map(new Func1<BaseResponse, RefreshAddressEvent>() {
+      @Override public RefreshAddressEvent call(BaseResponse baseResponse) {
         /*添加成功*/
         return new RefreshAddressEvent();
       }

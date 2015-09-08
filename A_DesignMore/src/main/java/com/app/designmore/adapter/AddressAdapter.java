@@ -18,7 +18,6 @@ import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.retrofit.entity.AddressEntity;
-import java.util.ArrayList;
 import java.util.List;
 import rx.Observer;
 
@@ -32,10 +31,10 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
   private boolean animationsLocked = false;
   private Callback callback;
   private Context context;
-  private int defaultPosition = -1;
+  private AddressEntity defaultAddress;
 
   /*数据*/
-  private List<AddressEntity> items = new ArrayList<>();
+  private List<AddressEntity> items;
 
   public AddressAdapter(Context context) {
     this.context = context;
@@ -49,8 +48,8 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
 
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
 
-    holder.radioBtn.setTag(position);
-    holder.editorBtn.setTag(position);
+    holder.radioBtn.setTag(items.get(position));
+    holder.editorBtn.setTag(items.get(position));
     holder.deleteBtn.setTag(items.get(position));
 
     /*绑定数据*/
@@ -66,8 +65,9 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
     holder.userMobile.setText(address.getMobile());
     holder.userAddress.setText(address.getProvince() + address.getCity() + address.getAddress());
 
-    if (address.isChecked()) {
-      this.defaultPosition = items.indexOf(address);
+    if ("1".equals(address.isDefault())) {
+      /*当前默认地址*/
+      this.defaultAddress = address;
       holder.radioBtn.setImageDrawable(
           context.getResources().getDrawable(R.drawable.ic_radio_selected));
     } else {
@@ -123,12 +123,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
    * 更新整张列表
    */
   public void updateItems(List<AddressEntity> addresses) {
-    // TODO: 2015/9/4  设置默认地址
     this.items = addresses;
-
-    if (items.size() != 0) {
-      this.items.get(0).setIsChecked(true);
-    }
     AddressAdapter.this.notifyDataSetChanged();
   }
 
@@ -166,30 +161,31 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
     @Nullable @OnClick(R.id.address_manager_item_editor_btn) void onEditorClick(Button button) {
 
       if (callback != null) {
-        int pos = (int) button.getTag();
-        callback.onEditorClick(pos);
+        AddressEntity entity = (AddressEntity) button.getTag();
+        callback.onEditorClick(entity);
       }
     }
 
     @Nullable @OnClick(R.id.address_manager_item_radio_btn) void onRadionClick(ImageButton button) {
 
-      int pos = (int) button.getTag();
+      AddressEntity newDefaultEntity = (AddressEntity) button.getTag();
+      if (callback != null && newDefaultEntity != defaultAddress) {
 
-      if (pos != defaultPosition) {
+        int oldPos = items.indexOf(defaultAddress);
+        int newPos = items.indexOf(newDefaultEntity);
+        AddressAdapter.this.defaultAddress = newDefaultEntity;
 
-        items.get(defaultPosition).setIsChecked(false);
-        items.get(pos).setIsChecked(true);
-
-        /*true -> false*/
-        AddressAdapter.this.notifyItemChanged(defaultPosition);
-        /*false -> true*/
-        AddressAdapter.this.notifyItemChanged(pos);
-
-        //AddressAdapter.this.defaultPosition = position;
-
-        if (callback != null) {
-          callback.onCheckChange(pos);
+        if (oldPos != -1) {
+          defaultAddress.setDefault("0");
+          /*true -> false*/
+          AddressAdapter.this.notifyItemChanged(oldPos);
         }
+
+        newDefaultEntity.setDefault("1");
+        /*false -> true*/
+        AddressAdapter.this.notifyItemChanged(newPos);
+
+        callback.onDefaultChange(newDefaultEntity);
       }
     }
   }
@@ -208,10 +204,10 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
     void onDeleteClick(AddressEntity addressEntity);
 
     /*点击编辑按钮*/
-    void onEditorClick(int position);
+    void onEditorClick(AddressEntity entity);
 
     /*checkbox状态改变*/
-    void onCheckChange(int position);
+    void onDefaultChange(AddressEntity addressEntity);
 
     void onError(Throwable error);
   }
