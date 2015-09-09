@@ -106,9 +106,9 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
     }
 
     @Nullable @OnClick(R.id.collection_item_root_view) void onItemClick(RelativeLayout rootView) {
-      int pos = (int) rootView.getTag();
+      CollectionEntity entity = (CollectionEntity) rootView.getTag();
       if (callback != null) {
-        callback.onItemClick(pos);
+        callback.onItemClick(entity);
       }
     }
 
@@ -128,7 +128,7 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
   public interface Callback {
 
     /*点击条目*/
-    void onItemClick(int position);
+    void onItemClick(CollectionEntity entity);
 
     /*点击更多,删除*/
     void onMoreClick(CollectionEntity entity);

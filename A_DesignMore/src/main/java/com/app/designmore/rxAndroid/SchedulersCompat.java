@@ -69,6 +69,6 @@ public class SchedulersCompat {
 
   public static <T> Observable.Transformer<T, T> applyExecutorSchedulers() {
 
-    return (Observable.Transformer<T, T>) trampolineTransformer;
+    return (Observable.Transformer<T, T>) executorTransformer;
   }
 }

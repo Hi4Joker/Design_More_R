@@ -26,6 +26,7 @@ import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
+import com.app.designmore.event.ProvinceEvent;
 import com.app.designmore.event.RefreshAddressEvent;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
@@ -46,6 +47,7 @@ import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -173,6 +175,7 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
    */
   private void combineLatestEvents() {
 
+    /*全部skip(0)，也能达到效果，但是会闪顿*/
     userNameChangeObservable = RxTextView.textChangeEvents(usernameEt).skip(1);
     mobileChangeObservable = RxTextView.textChangeEvents(mobileEt).skip(1);
     zipCodeChangeObservable = RxTextView.textChangeEvents(zipcodeEt).skip(1);
@@ -395,6 +398,7 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
   @Nullable @OnClick(R.id.address_add_layout_province_ll) void onProvinceClick() {
     addressPresenter.showPicker();
   }
+
   @Nullable @OnClick(R.id.address_add_layout_city_ll) void onCityClick() {
     addressPresenter.showPicker();
   }
@@ -414,7 +418,7 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
     }
   }
 
-  @Override public void onInflateFinish(ArrayList<Province> provinces) {
+  @Override public void onInflateFinish(List<Province> provinces) {
 
     if (customWheelPicker == null) {
       customWheelPicker = new CustomWheelPicker(AddressAddActivity.this, provinces, callback);

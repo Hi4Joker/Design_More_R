@@ -21,6 +21,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.event.EditorAddressEvent;
@@ -33,18 +34,26 @@ import com.app.designmore.mvp.viewinterface.AddressView;
 import com.app.designmore.retrofit.AddressRetrofit;
 import com.app.designmore.retrofit.entity.AddressEntity;
 import com.app.designmore.retrofit.entity.Province;
+import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.view.CustomWheelPicker;
+import com.jakewharton.rxbinding.widget.RxTextView;
+import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
 import com.trello.rxlifecycle.ActivityEvent;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
+import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
+import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.functions.Func6;
 import rx.subscriptions.Subscriptions;
 
 /**
@@ -71,11 +80,25 @@ public class AddressEditorActivity extends BaseActivity implements AddressView {
   private ProgressDialog progressDialog;
   private ProgressDialog simpleProgressDialog;
   private CustomWheelPicker customWheelPicker;
-
   private AddressPresenter addressPresenter;
 
   private Province defaultProvince;
   private Province.City defaultCity;
+
+  private Observable<TextViewTextChangeEvent> userNameChangeObservable;
+  private Observable<TextViewTextChangeEvent> mobileChangeObservable;
+  private Observable<TextViewTextChangeEvent> zipCodeChangeObservable;
+  private Observable<TextViewTextChangeEvent> provinceChangeObservable;
+  private Observable<TextViewTextChangeEvent> cityChangeObservable;
+  private Observable<TextViewTextChangeEvent> addressChangeObservable;
+
+  private Button actionButton;
+  private String userName;
+  private String mobile;
+  private String zipCode;
+  private String province;
+  private String city;
+  private String address;
 
   private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
     @Override public void onCancel(DialogInterface dialog) {
@@ -120,12 +143,17 @@ public class AddressEditorActivity extends BaseActivity implements AddressView {
 
     /*bind value*/
     addressEntity = (AddressEntity) getIntent().getSerializableExtra(ADDRESS);
+    usernameEt.setText(addressEntity.getUserName());
     usernameEt.setHint(addressEntity.getUserName());
+    mobileEt.setText(addressEntity.getMobile());
     mobileEt.setHint(addressEntity.getMobile());
+    zipcodeEt.setText(addressEntity.getZipcode());
     zipcodeEt.setHint(addressEntity.getZipcode());
-
     provinceTv.setText(addressEntity.getProvince());
+    provinceTv.setHint(addressEntity.getProvince());
     cityTv.setText(addressEntity.getCity());
+    cityTv.setHint(addressEntity.getCity());
+    addressEt.setText(addressEntity.getAddress());
     addressEt.setHint(addressEntity.getAddress());
   }
 
@@ -134,33 +162,83 @@ public class AddressEditorActivity extends BaseActivity implements AddressView {
 
     MenuItem menuItem = menu.findItem(R.id.action_inbox);
     menuItem.setActionView(R.layout.menu_inbox_tv_item);
-    Button actionButton = (Button) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
+    actionButton = (Button) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
     actionButton.setText(getText(R.string.action_done));
     actionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         AddressEditorActivity.this.requestEditorAddress();
       }
     });
+
+     /*创建联合observable*/
+    AddressEditorActivity.this.combineLatestEvents();
+
     return true;
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
+  private void combineLatestEvents() {
 
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        AddressEditorActivity.this.finish();
-        return true;
-    }
+    userNameChangeObservable = RxTextView.textChangeEvents(usernameEt);
+    mobileChangeObservable = RxTextView.textChangeEvents(mobileEt);
+    zipCodeChangeObservable = RxTextView.textChangeEvents(zipcodeEt);
+    provinceChangeObservable = RxTextView.textChangeEvents(provinceTv);
+    cityChangeObservable = RxTextView.textChangeEvents(cityTv);
+    addressChangeObservable = RxTextView.textChangeEvents(addressEt);
 
-    return super.onOptionsItemSelected(item);
+    Observable.combineLatest(userNameChangeObservable, mobileChangeObservable,
+        zipCodeChangeObservable, provinceChangeObservable, cityChangeObservable,
+        addressChangeObservable,
+        new Func6<TextViewTextChangeEvent, TextViewTextChangeEvent, TextViewTextChangeEvent, TextViewTextChangeEvent, TextViewTextChangeEvent, TextViewTextChangeEvent, Boolean>() {
+          @Override public Boolean call(TextViewTextChangeEvent userNameEvent,
+              TextViewTextChangeEvent mobileEvent, TextViewTextChangeEvent zipCodeEvent,
+              TextViewTextChangeEvent provinceEvent, TextViewTextChangeEvent cityEvent,
+              TextViewTextChangeEvent addressEvent) {
+
+            userName = userNameEvent.text().toString();
+            mobile = mobileEvent.text().toString();
+            zipCode = zipCodeEvent.text().toString();
+            province = provinceEvent.text().toString();
+            city = cityEvent.text().toString();
+            address = addressEvent.text().toString();
+
+            /*Log.e(TAG, "userName: " + userName);
+            Log.e(TAG, "mobile: " + mobile);
+            Log.e(TAG, "zipCode: " + zipCode);
+            Log.e(TAG, "province: " + province);
+            Log.e(TAG, "city: " + city);
+            Log.e(TAG, "address: " + address);*/
+
+            boolean userNameValid = !TextUtils.isEmpty(userName);
+            boolean mobileValid = !TextUtils.isEmpty(mobile);
+            boolean zipCodeValid = !TextUtils.isEmpty(zipCode);
+            boolean provinceValid = !TextUtils.isEmpty(province);
+            boolean cityValid = !TextUtils.isEmpty(city);
+            boolean addressValid = !TextUtils.isEmpty(address);
+
+            return userNameValid
+                && mobileValid
+                && zipCodeValid
+                && provinceValid
+                && cityValid
+                && addressValid;
+          }
+        })
+        .debounce(Constants.MILLISECONDS_300, TimeUnit.MILLISECONDS)
+        .compose(AddressEditorActivity.this.<Boolean>bindUntilEvent(ActivityEvent.DESTROY))
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Action1<Boolean>() {
+          @Override public void call(Boolean aBoolean) {
+
+            //Log.e(TAG, "call() called with: " + "aBoolean = [" + aBoolean + "]");
+            actionButton.setEnabled(aBoolean);
+          }
+        });
   }
 
   /**
    * 修改地址
    */
   private void requestEditorAddress() {
-
-    //if (!AddressEditorActivity.this.checkParams()) return;
 
     /*Action=AddUserByAddress
         &consignee=Eric //收货人
@@ -173,24 +251,20 @@ public class AddressEditorActivity extends BaseActivity implements AddressView {
 
     Map<String, String> params = new HashMap<>(8);
 
-    String userName =
-        TextUtils.isEmpty(usernameEt.getText().toString()) ? usernameEt.getHint().toString()
-            : usernameEt.getText().toString();
-    String mobile = TextUtils.isEmpty(mobileEt.getText().toString()) ? mobileEt.getHint().toString()
-        : mobileEt.getText().toString();
-    String zipcode =
-        TextUtils.isEmpty(zipcodeEt.getText().toString()) ? zipcodeEt.getHint().toString()
-            : zipcodeEt.getText().toString();
-    String addr = TextUtils.isEmpty(addressEt.getText().toString()) ? addressEt.getHint().toString()
-        : addressEt.getText().toString();
+    userName = TextUtils.isEmpty(userName) ? usernameEt.getText().toString() : userName;
+    mobile = TextUtils.isEmpty(mobile) ? mobileEt.getText().toString() : mobile;
+    zipCode = TextUtils.isEmpty(zipCode) ? zipcodeEt.getText().toString() : zipCode;
+    province = TextUtils.isEmpty(province) ? addressEt.getText().toString() : province;
+    city = TextUtils.isEmpty(city) ? addressEt.getText().toString() : city;
+    address = TextUtils.isEmpty(address) ? addressEt.getText().toString() : address;
 
     params.put("Action", "AddUserByAddress");
     params.put("consignee", userName);
     params.put("mobile", mobile);
-    params.put("zipcode", zipcode);
-    params.put("province", provinceTv.getText().toString());
-    params.put("city", cityTv.getText().toString());
-    params.put("address", addr);
+    params.put("zipcode", zipCode);
+    params.put("province", province);
+    params.put("city", city);
+    params.put("address", address);
     params.put("address_id", addressEntity.getAddressId());
     params.put("uid", "1");
 
@@ -249,46 +323,17 @@ public class AddressEditorActivity extends BaseActivity implements AddressView {
     }
   }
 
-  /**
-   * 校验参数
-   */
-  private boolean checkParams() {
-
-    if (TextUtils.isEmpty(usernameEt.getText().toString()) && TextUtils.isEmpty(
-        usernameEt.getHint().toString())) {
-      AddressEditorActivity.this.showSnackBar("请填写收货人");
-      return false;
-    }
-    if (TextUtils.isEmpty(mobileEt.getText().toString()) && TextUtils.isEmpty(
-        mobileEt.getHint().toString())) {
-
-      AddressEditorActivity.this.showSnackBar("请填写手机号码");
-      return false;
-    }
-    if (TextUtils.isEmpty(zipcodeEt.getText().toString()) && TextUtils.isEmpty(
-        zipcodeEt.getHint().toString())) {
-      AddressEditorActivity.this.showSnackBar("请填写邮编");
-      return false;
-    }
-    if (TextUtils.isEmpty(provinceTv.getText().toString())) {
-      AddressEditorActivity.this.showSnackBar("请选择省份");
-      return false;
-    }
-    if (TextUtils.isEmpty(cityTv.getText().toString())) {
-      AddressEditorActivity.this.showSnackBar("请选择城市");
-      return false;
-    }
-    if (TextUtils.isEmpty(addressEt.getText().toString()) && TextUtils.isEmpty(
-        addressEt.getHint().toString())) {
-      AddressEditorActivity.this.showSnackBar("请填写地址");
-      return false;
-    }
-
-    return true;
-  }
-
   private void showSnackBar(String text) {
     Snackbar.make(rootView, text, Snackbar.LENGTH_SHORT).setAction("确定", null).show();
+  }
+
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case android.R.id.home:
+        AddressEditorActivity.this.finish();
+        return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 
   @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -331,7 +376,7 @@ public class AddressEditorActivity extends BaseActivity implements AddressView {
     }
   }
 
-  @Override public void onInflateFinish(ArrayList<Province> provinces) {
+  @Override public void onInflateFinish(List<Province> provinces) {
 
     if (customWheelPicker == null) {
       customWheelPicker = new CustomWheelPicker(AddressEditorActivity.this, provinces, callback);

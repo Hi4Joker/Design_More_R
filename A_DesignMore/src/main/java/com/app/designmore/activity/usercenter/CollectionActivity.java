@@ -3,7 +3,6 @@ package com.app.designmore.activity.usercenter;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -23,7 +22,6 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import butterknife.Bind;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
@@ -38,7 +36,6 @@ import com.app.designmore.retrofit.entity.CollectionEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
-import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -222,7 +219,6 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
   }
 
   private void showErrorLayout(Throwable error) {
-
     if (error instanceof TimeoutException) {
       CollectionActivity.this.showError(getResources().getString(R.string.timeout_title),
           getResources().getString(R.string.timeout_content));
@@ -276,7 +272,7 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
 
   //CollectionAdapter回调
   /*点击条目，跳转商品详情*/
-  @Override public void onItemClick(int position) {
+  @Override public void onItemClick(CollectionEntity entity) {
 
   }
 
