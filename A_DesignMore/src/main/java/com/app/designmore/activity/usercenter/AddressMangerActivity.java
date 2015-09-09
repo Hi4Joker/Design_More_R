@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -252,7 +253,6 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
   private void checkAddress() {
 
     if (items != null && items.size() == 0) {
-      Toast.makeText(AddressMangerActivity.this, "木有地址", Toast.LENGTH_LONG).show();
       AddressMangerActivity.this.startExitAnim();
     } else {
 
@@ -406,9 +406,9 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
 
     MenuItem menuItem = menu.findItem(R.id.action_inbox);
     menuItem.setActionView(R.layout.menu_inbox_tv_item);
-    TextView textView = (TextView) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
-    textView.setText(getText(R.string.action_add));
-    menuItem.getActionView().setOnClickListener(new View.OnClickListener() {
+    Button actionButton = (Button) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
+    actionButton.setText(getText(R.string.action_add));
+    actionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         AddressAddActivity.navigateToAddressEditor(AddressMangerActivity.this);
         overridePendingTransition(0, 0);

@@ -15,7 +15,7 @@
     app:mrl_rippleColor="@color/darker_gray"
     >
 
-  <TextView
+  <Button
       android:id="@+id/action_inbox_tv"
       android:layout_width="?attr/actionBarSize"
       android:layout_height="?attr/actionBarSize"
@@ -23,5 +23,6 @@
       android:textColor="@color/black"
       android:gravity="center"
       android:clickable="true"
+      android:background="@drawable/white_background"
       />
 </com.app.designmore.view.MaterialRippleLayout>

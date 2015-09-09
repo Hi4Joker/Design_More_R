@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -85,10 +86,9 @@ public class ProfileActivity extends BaseActivity {
 
     MenuItem menuItem = menu.findItem(R.id.action_inbox);
     menuItem.setActionView(R.layout.menu_inbox_tv_item);
-    TextView textView = (TextView) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
-    textView.setText(getText(R.string.action_submit));
-
-    menuItem.getActionView().setOnClickListener(new View.OnClickListener() {
+    Button actionButton = (Button) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
+    actionButton.setText(getText(R.string.action_submit));
+    actionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
 
       }

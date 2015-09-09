@@ -153,12 +153,12 @@ public class RegisterActivity extends BaseActivity {
               }
             })
             .debounce(Constants.MILLISECONDS_300, TimeUnit.MILLISECONDS)
-            .startWith(false)
             .observeOn(AndroidSchedulers.mainThread())
+            .startWith(false)
             .subscribe(new Action1<Boolean>() {
               @Override public void call(Boolean aBoolean) {
 
-                //Log.e(TAG, "call() called with: " + "aBoolean = [" + aBoolean + "]");
+                Log.e(TAG, "call() called with: " + "aBoolean = [" + aBoolean + "]");
                 registerBtn.setEnabled(aBoolean);
               }
             }));

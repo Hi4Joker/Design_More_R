@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -90,31 +91,10 @@ public class SafetyActivity extends BaseActivity {
 
     MenuItem menuItem = menu.findItem(R.id.action_inbox);
     menuItem.setActionView(R.layout.menu_inbox_tv_item);
-    TextView textView = (TextView) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
-    textView.setText(getText(R.string.action_submit));
-
-  /*  Observable.range(0, 60, Schedulers.computation()).first().filter(new Func1<Integer, Boolean>() {
-      @Override public Boolean call(Integer integer) {
-        return null;
-      }
-    }).timeout(new Func1<Integer, Observable<Integer>>() {
-      @Override public Observable<Integer> call(Integer integer) {
-
-        return null;
-      }
-    }, Observable.create(new Observable.OnSubscribe<Integer>() {
-      @Override public void call(Subscriber<? super Integer> subscriber) {
-
-      }
-    })).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
-      @Override public void call(Integer integer) {
-        Log.e(TAG, "call:" + integer);
-      }
-    });*/
-
-    menuItem.getActionView().setOnClickListener(new View.OnClickListener() {
+    Button actionButton = (Button) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
+    actionButton.setText(getText(R.string.action_submit));
+    actionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-
         DialogManager.getInstance()
             .showProgressDialog(SafetyActivity.this, new DialogInterface.OnShowListener() {
               @Override public void onShow(DialogInterface dialog) {

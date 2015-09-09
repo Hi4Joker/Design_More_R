@@ -12,7 +12,7 @@
     app:mrl_rippleHover="true"
     app:mrl_rippleOverlay="true"
     app:mrl_rippleDelayClick="true"
-    app:mrl_rippleColor="@android:color/darker_gray"
+    app:mrl_rippleColor="@color/darker_gray"
     >
 
   <ImageButton

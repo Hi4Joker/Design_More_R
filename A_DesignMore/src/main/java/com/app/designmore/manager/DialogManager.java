@@ -3,19 +3,9 @@ package com.app.designmore.manager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.drm.ProcessedData;
-import android.os.Message;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import com.app.designmore.R;
-import com.app.designmore.activity.MineActivity;
-import com.app.designmore.event.FinishEvent;
-import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.dialogplus.DialogPlus;
 import com.app.designmore.view.dialogplus.OnBackPressListener;
 import com.app.designmore.view.dialogplus.OnCancelListener;
@@ -38,20 +28,6 @@ public class DialogManager {
 
   public static DialogManager getInstance() {
     return SingletonHolder.instance;
-  }
-
-  public DialogPlus showSelectorDialog(Context context, int gravity, int layoutId,
-      final OnClickListener onClickListener) {
-
-    return DialogManager.this.showSelectorDialog(context, gravity, layoutId, false, onClickListener,
-        null, null, null);
-  }
-
-  public DialogPlus showSelectorDialog(Context context, int gravity, int layoutId,
-      final OnClickListener onClickListener, final OnBackPressListener onBackPressListener) {
-
-    return DialogManager.this.showSelectorDialog(context, gravity, layoutId, false, onClickListener,
-        onBackPressListener, null, null);
   }
 
   public DialogPlus showSelectorDialog(Context context, int gravity, int layoutId,
@@ -89,12 +65,23 @@ public class DialogManager {
     return dialog;
   }
 
+  public ProgressDialog showSimpleProgressDialog(Context context,
+      final DialogInterface.OnCancelListener onCancelListener) {
+    return showProgressDialog(context, null, onCancelListener);
+  }
+
   public ProgressDialog showProgressDialog(Context context,
       final DialogInterface.OnShowListener onShowListener,
       final DialogInterface.OnCancelListener onCancelListener) {
+    return showCancelableProgressDialog(context, onShowListener, onCancelListener, true);
+  }
+
+  public ProgressDialog showCancelableProgressDialog(Context context,
+      final DialogInterface.OnShowListener onShowListener,
+      final DialogInterface.OnCancelListener onCancelListener, boolean cancelable) {
 
     ProgressDialog progressDialog = new ProgressDialog(context);
-    progressDialog.setCancelable(true);
+    progressDialog.setCancelable(cancelable);
     progressDialog.setCanceledOnTouchOutside(false);
 
     progressDialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -105,6 +92,7 @@ public class DialogManager {
 
     progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
       @Override public void onCancel(DialogInterface dialog) {
+        dialog.dismiss();
         if (onCancelListener != null) {
           onCancelListener.onCancel(dialog);
         }

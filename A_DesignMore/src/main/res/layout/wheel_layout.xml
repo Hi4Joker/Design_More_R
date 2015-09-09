@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/white"
+    >
+
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/material_48dp">
+
+    <com.app.designmore.view.MaterialRippleLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:padding="@dimen/material_4dp"
+        app:mrl_rippleDimension="20dip"
+        app:mrl_rippleRoundedCorners="@dimen/material_corners"
+        app:mrl_rippleFadeDuration="100"
+        app:mrl_rippleAlpha="0.4"
+        app:mrl_rippleDuration="600"
+        app:mrl_rippleHover="true"
+        app:mrl_rippleOverlay="true"
+        app:mrl_rippleDelayClick="true"
+        app:mrl_rippleColor="@color/darker_gray"
+        >
+
+      <Button
+          android:id="@+id/wheel_layout_cancel_btn"
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:gravity="center"
+          android:text="取消"
+          android:textColor="@color/design_more_red"
+          android:textSize="@dimen/material_16sp"
+          android:background="@drawable/transparent_background"
+          />
+    </com.app.designmore.view.MaterialRippleLayout>
+
+
+    <com.app.designmore.view.MaterialRippleLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:padding="@dimen/material_4dp"
+        app:mrl_rippleDimension="20dip"
+        app:mrl_rippleRoundedCorners="@dimen/material_corners"
+        app:mrl_rippleFadeDuration="100"
+        app:mrl_rippleAlpha="0.4"
+        app:mrl_rippleDuration="600"
+        app:mrl_rippleHover="true"
+        app:mrl_rippleOverlay="true"
+        app:mrl_rippleDelayClick="true"
+        app:mrl_rippleColor="@color/darker_gray"
+        >
+      <Button
+          android:id="@+id/wheel_layout_done_btn"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="完成"
+          android:textColor="@color/design_more_red"
+          android:textSize="@dimen/material_16sp"
+          android:background="@drawable/transparent_background"
+          />
+    </com.app.designmore.view.MaterialRippleLayout>
+  </RelativeLayout>
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal">
+
+    <com.app.designmore.view.wheel.WheelView
+        android:id="@+id/wheel_layout_province_wheel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
+
+    <com.app.designmore.view.wheel.WheelView
+        android:id="@+id/wheel_layout_city_wheel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
+
+    <!--<com.yang.picker.wheel.WheelView
+        android:id="@+id/countiesWheel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>-->
+  </LinearLayout>
+
+</LinearLayout>

@@ -255,10 +255,9 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
 
     MenuItem menuItem = menu.findItem(R.id.action_inbox);
     menuItem.setActionView(R.layout.menu_inbox_tv_item);
-    TextView textView = (TextView) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
-    textView.setText(getText(R.string.action_editor));
-
-    menuItem.getActionView().setOnClickListener(new View.OnClickListener() {
+    Button actionButton = (Button) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
+    actionButton.setText(getText(R.string.action_editor));
+    actionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
 
       }

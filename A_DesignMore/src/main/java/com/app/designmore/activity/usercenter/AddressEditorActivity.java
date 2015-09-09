@@ -14,21 +14,29 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.event.EditorAddressEvent;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
+import com.app.designmore.mvp.presenter.AddressPresenter;
+import com.app.designmore.mvp.presenter.AddressPresenterImp;
+import com.app.designmore.mvp.viewinterface.AddressView;
 import com.app.designmore.retrofit.AddressRetrofit;
 import com.app.designmore.retrofit.entity.AddressEntity;
+import com.app.designmore.retrofit.entity.Province;
+import com.app.designmore.view.CustomWheelPicker;
 import com.trello.rxlifecycle.ActivityEvent;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
@@ -42,7 +50,7 @@ import rx.subscriptions.Subscriptions;
 /**
  * Created by Joker on 2015/8/25.
  */
-public class AddressEditorActivity extends BaseActivity {
+public class AddressEditorActivity extends BaseActivity implements AddressView {
 
   private static final String TAG = AddressEditorActivity.class.getSimpleName();
   private static final String ADDRESS = "ADDRESS";
@@ -58,8 +66,16 @@ public class AddressEditorActivity extends BaseActivity {
   @Nullable @Bind(R.id.address_editor_layout_address_et) EditText addressEt;
 
   private Subscription subscription = Subscriptions.empty();
-  private ProgressDialog progressDialog;
   private AddressEntity addressEntity;
+
+  private ProgressDialog progressDialog;
+  private ProgressDialog simpleProgressDialog;
+  private CustomWheelPicker customWheelPicker;
+
+  private AddressPresenter addressPresenter;
+
+  private Province defaultProvince;
+  private Province.City defaultCity;
 
   private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
     @Override public void onCancel(DialogInterface dialog) {
@@ -67,9 +83,19 @@ public class AddressEditorActivity extends BaseActivity {
     }
   };
 
+  private CustomWheelPicker.Callback callback = new CustomWheelPicker.Callback() {
+    @Override public void onPicked(Province selectProvince, Province.City selectCity) {
+
+      AddressEditorActivity.this.defaultProvince = selectProvince;
+      AddressEditorActivity.this.defaultCity = selectCity;
+
+      provinceTv.setText(defaultProvince.getProvinceName());
+      cityTv.setText(defaultCity.cityName);
+    }
+  };
+
   public static void navigateToAddressEditor(AppCompatActivity startingActivity,
       AddressEntity address) {
-
     Intent intent = new Intent(startingActivity, AddressEditorActivity.class);
     intent.putExtra(ADDRESS, address);
     startingActivity.startActivity(intent);
@@ -79,6 +105,8 @@ public class AddressEditorActivity extends BaseActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.center_address_editor_layout);
 
+    addressPresenter = new AddressPresenterImp();
+    addressPresenter.attach(AddressEditorActivity.this, this);
     AddressEditorActivity.this.initView(savedInstanceState);
   }
 
@@ -106,10 +134,9 @@ public class AddressEditorActivity extends BaseActivity {
 
     MenuItem menuItem = menu.findItem(R.id.action_inbox);
     menuItem.setActionView(R.layout.menu_inbox_tv_item);
-    TextView textView = (TextView) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
-    textView.setText(getText(R.string.action_done));
-
-    menuItem.getActionView().setOnClickListener(new View.OnClickListener() {
+    Button actionButton = (Button) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
+    actionButton.setText(getText(R.string.action_done));
+    actionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         AddressEditorActivity.this.requestEditorAddress();
       }
@@ -267,7 +294,6 @@ public class AddressEditorActivity extends BaseActivity {
   @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
     if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
       AddressEditorActivity.this.finish();
-      overridePendingTransition(0, 0);
     }
     return false;
   }
@@ -275,6 +301,47 @@ public class AddressEditorActivity extends BaseActivity {
   @Override protected void onDestroy() {
     super.onDestroy();
     this.progressDialog = null;
+    this.simpleProgressDialog = null;
+    this.addressPresenter.detach();
+    if (customWheelPicker != null && !customWheelPicker.isShowing()) customWheelPicker.destroy();
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();
+  }
+
+  @Nullable @OnClick(R.id.address_editor_layout_province_ll) void onProvinceClick() {
+    addressPresenter.showPicker();
+  }
+
+  @Nullable @OnClick(R.id.address_editor_layout_city_ll) void onCityClick() {
+    addressPresenter.showPicker();
+  }
+
+  @Override public void showProgress() {
+    simpleProgressDialog = DialogManager.getInstance()
+        .showSimpleProgressDialog(AddressEditorActivity.this,
+            new DialogInterface.OnCancelListener() {
+              @Override public void onCancel(DialogInterface dialog) {
+                addressPresenter.detach();
+              }
+            });
+  }
+
+  @Override public void hideProgress() {
+    if (simpleProgressDialog != null && simpleProgressDialog.isShowing()) {
+      simpleProgressDialog.dismiss();
+    }
+  }
+
+  @Override public void onInflateFinish(ArrayList<Province> provinces) {
+
+    if (customWheelPicker == null) {
+      customWheelPicker = new CustomWheelPicker(AddressEditorActivity.this, provinces, callback);
+    }
+
+    customWheelPicker.updateDefault(defaultProvince, defaultCity);
+    customWheelPicker.show();
+  }
+
+  @Override public void showError() {
+    AddressEditorActivity.this.showSnackBar("请重新获取省市");
   }
 }
