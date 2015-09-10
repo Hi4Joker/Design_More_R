@@ -111,25 +111,7 @@ public class SafetyActivity extends BaseActivity {
     return true;
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
-
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        SafetyActivity.this.startExitAnim();
-        return true;
-    }
-
-    return super.onOptionsItemSelected(item);
-  }
-
-  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
-    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-      SafetyActivity.this.startExitAnim();
-    }
-    return false;
-  }
-
-  private void startExitAnim() {
+  @Override public void exit() {
 
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(SafetyActivity.this))

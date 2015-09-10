@@ -327,20 +327,8 @@ public class AddressEditorActivity extends BaseActivity implements AddressView {
     Snackbar.make(rootView, text, Snackbar.LENGTH_SHORT).setAction("确定", null).show();
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        AddressEditorActivity.this.finish();
-        return true;
-    }
-    return super.onOptionsItemSelected(item);
-  }
-
-  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
-    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-      AddressEditorActivity.this.finish();
-    }
-    return false;
+  @Override public void exit() {
+    AddressEditorActivity.this.finish();
   }
 
   @Override protected void onDestroy() {

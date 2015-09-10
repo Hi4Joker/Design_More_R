@@ -17,11 +17,11 @@ public class BaseResponse {
     "message": ""
   */
 
-  @Expose @SerializedName("code") private int resultCode;
+  @Expose @SerializedName("code") public int resultCode;
   @Expose public String message;
 
   public Observable filterWebServiceErrors() {
-    if (resultCode == Constants.RESULT_OK) {
+    if (resultCode == Constants.RESULT_OK || resultCode == Constants.RESULT_100) {
       return Observable.just(this);
     } else {
       return Observable.error(new WebServiceException(BaseResponse.this.message));

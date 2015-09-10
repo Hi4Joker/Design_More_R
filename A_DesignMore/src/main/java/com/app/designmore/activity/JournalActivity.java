@@ -201,25 +201,7 @@ public class JournalActivity extends BaseActivity {
     return true;
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
-
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        JournalActivity.this.showExitDialog();
-        return true;
-    }
-    return super.onOptionsItemSelected(item);
-  }
-
-  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
-    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-      JournalActivity.this.showExitDialog();
-    }
-    return false;
-  }
-
-  protected void showExitDialog() {
-
+  @Override public void exit() {
     DialogManager.getInstance()
         .showExitDialog(JournalActivity.this, new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {

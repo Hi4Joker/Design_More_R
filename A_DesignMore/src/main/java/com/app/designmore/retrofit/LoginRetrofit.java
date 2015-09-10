@@ -2,6 +2,7 @@ package com.app.designmore.retrofit;
 
 import android.content.RestrictionEntry;
 import com.app.designmore.Constants;
+import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.retrofit.entity.LoginCodeEntity;
 import com.app.designmore.retrofit.entity.RegisterEntity;
 import com.app.designmore.retrofit.entity.SearchItemEntity;
@@ -25,6 +26,7 @@ import retrofit.http.FieldMap;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.POST;
 import rx.Observable;
+import rx.Subscriber;
 import rx.functions.Action1;
 import rx.functions.Func0;
 import rx.functions.Func1;
@@ -127,13 +129,23 @@ public class LoginRetrofit {
         });
       }
     }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call(BaseResponse baseResponse) {
-        return baseResponse.filterWebServiceErrors();
+      @Override public Observable<BaseResponse> call(final BaseResponse baseResponse) {
+        return baseResponse.filterWebServiceErrors()
+            .onErrorResumeNext(new Func1<Throwable, Observable>() {
+              @Override public Observable call(Throwable throwable) {
+
+                if (throwable instanceof WebServiceException && baseResponse.message.contains(
+                    "存在")) {
+                  return Observable.just(baseResponse);
+                }
+                return Observable.error(throwable);
+              }
+            });
       }
     }).map(new Func1<BaseResponse, RegisterEntity>() {
       @Override public RegisterEntity call(BaseResponse baseResponse) {
-        RegisterEntity registerEntity = new RegisterEntity(baseResponse.message);
-
+        RegisterEntity registerEntity =
+            new RegisterEntity(baseResponse.resultCode, baseResponse.message);
         return registerEntity;
       }
     }).compose(SchedulersCompat.<RegisterEntity>applyExecutorSchedulers());

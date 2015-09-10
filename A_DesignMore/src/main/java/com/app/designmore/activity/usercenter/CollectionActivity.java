@@ -240,23 +240,7 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
         errorContent, getResources().getString(R.string.retry_button_text), retryClickListener);
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        CollectionActivity.this.startExitAnim();
-        return true;
-    }
-    return super.onOptionsItemSelected(item);
-  }
-
-  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
-    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-      CollectionActivity.this.startExitAnim();
-    }
-    return false;
-  }
-
-  private void startExitAnim() {
+  @Override public void exit() {
 
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(CollectionActivity.this))

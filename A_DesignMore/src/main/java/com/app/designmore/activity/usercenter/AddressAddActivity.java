@@ -26,7 +26,6 @@ import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
-import com.app.designmore.event.ProvinceEvent;
 import com.app.designmore.event.RefreshAddressEvent;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
@@ -45,7 +44,6 @@ import com.app.designmore.view.CustomWheelPicker;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
 import com.trello.rxlifecycle.ActivityEvent;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -306,7 +304,7 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
             .subscribe(new Subscriber<RefreshAddressEvent>() {
               @Override public void onCompleted() {
                   /*增加成功，返回，刷新*/
-                AddressAddActivity.this.startExitAnim();
+                AddressAddActivity.this.exit();
               }
 
               @Override public void onError(Throwable error) {
@@ -346,23 +344,7 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
         .show();
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        AddressAddActivity.this.startExitAnim();
-        return true;
-    }
-    return super.onOptionsItemSelected(item);
-  }
-
-  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
-    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-      AddressAddActivity.this.startExitAnim();
-    }
-    return false;
-  }
-
-  private void startExitAnim() {
+  @Override public void exit() {
 
     if (revealAnimator != null && !revealAnimator.isRunning()) {
       revealAnimator = revealAnimator.reverse();

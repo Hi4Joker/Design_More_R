@@ -39,7 +39,6 @@ import com.app.designmore.retrofit.entity.AddressEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
-import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollStateChangeEvent;
 import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
 import com.trello.rxlifecycle.ActivityEvent;
@@ -181,7 +180,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
 
   private void startEnterAnim(int startLocationY) {
 
-    ViewCompat.setLayerType(rootView, View.LAYER_TYPE_HARDWARE, null);
+    ViewCompat.setLayerType(rootView, ViewCompat.LAYER_TYPE_HARDWARE, null);
     rootView.setPivotY(startLocationY);
     ViewCompat.setScaleY(rootView, 0.0f);
 
@@ -253,12 +252,12 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
   private void checkAddress() {
 
     if (items != null && items.size() == 0) {
-      AddressMangerActivity.this.startExitAnim();
+      AddressMangerActivity.this.exit();
     } else {
 
       if (defaultAddress == null) {
         Toast.makeText(AddressMangerActivity.this, "木有更改默认底子", Toast.LENGTH_LONG).show();
-        AddressMangerActivity.this.startExitAnim();
+        AddressMangerActivity.this.exit();
       } else if (items.contains(defaultAddress)) {
         Toast.makeText(AddressMangerActivity.this, "默认地址已经修改", Toast.LENGTH_LONG).show();
         DialogManager.getInstance()
@@ -417,23 +416,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
     return true;
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        AddressMangerActivity.this.checkAddress();
-        return true;
-    }
-    return super.onOptionsItemSelected(item);
-  }
-
-  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
-    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-      AddressMangerActivity.this.checkAddress();
-    }
-    return false;
-  }
-
-  private void startExitAnim() {
+  @Override public void exit() {
 
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(AddressMangerActivity.this))

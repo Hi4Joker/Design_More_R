@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -211,7 +212,6 @@ public class RegisterActivity extends BaseActivity {
             /*60秒倒计时结束，回复按钮状态*/
             codeBtn.setEnabled(true);
             codeBtn.setText("点击获取");
-            compositeSubscription.remove(this);
           }
 
           @Override public void onError(Throwable e) {
@@ -222,15 +222,6 @@ public class RegisterActivity extends BaseActivity {
             codeBtn.setText(aLong + "");
           }
         });
-  }
-
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        RegisterActivity.this.finish();
-        return true;
-    }
-    return super.onOptionsItemSelected(item);
   }
 
   @Nullable @OnClick(R.id.register_layout_name_clear_btn) void onClearClick() {
@@ -247,42 +238,39 @@ public class RegisterActivity extends BaseActivity {
 
     Map<String, String> params = new HashMap<>();
     params.put("Action", "RegisterUser");
-    params.put("username", userName);
+    params.put("Username", userName);
     params.put("mobile_phone", mobile);
-    params.put("email", "1170859911@qq.com");
 
-    subscription = LoginRetrofit.getInstance()
-        .requestRegister(params)
-        .doOnSubscribe(new Action0() {
-          @Override public void call() {
+    subscription = LoginRetrofit.getInstance().requestRegister(params).doOnSubscribe(new Action0() {
+      @Override public void call() {
             /*加载数据，显示进度条*/
-            progressDialog = DialogManager.
-                getInstance().showProgressDialog(RegisterActivity.this, null, cancelListener);
-          }
-        })
-        .doOnTerminate(new Action0() {
-          @Override public void call() {
-        /*隐藏进度条*/
-            if (progressDialog != null && progressDialog.isShowing()) {
-              progressDialog.dismiss();
+        progressDialog = DialogManager.
+            getInstance().showProgressDialog(RegisterActivity.this, null, cancelListener);
+      }
+    }).doOnTerminate(new Action0() {
+      @Override public void call() {
+            /*隐藏进度条*/
+        if (progressDialog != null && progressDialog.isShowing()) {
+          progressDialog.dismiss();
+        }
+      }
+    }).filter(new Func1<RegisterEntity, Boolean>() {
+      @Override public Boolean call(RegisterEntity registerEntity) {
+        return !subscription.isUnsubscribed();
+      }
+    }).compose(RegisterActivity.this.<RegisterEntity>bindUntilEvent(ActivityEvent.DESTROY))
+
+        .subscribe(new Action1<RegisterEntity>() {
+          @Override public void call(RegisterEntity registerEntity) {
+            String message = registerEntity.getRegisterMessage();
+            Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_LONG).show();
+            if (registerEntity.getRegisterMessage().contains("存在")) {
+              RegisterActivity.this.finish();
             }
           }
-        })
-        .filter(new Func1<RegisterEntity, Boolean>() {
-          @Override public Boolean call(RegisterEntity registerEntity) {
-            return !subscription.isUnsubscribed();
-          }
-        })
-        .compose(RegisterActivity.this.<RegisterEntity>bindUntilEvent(ActivityEvent.DESTROY))
-        .subscribe(new Subscriber<RegisterEntity>() {
-          @Override public void onCompleted() {
-          }
-
-          @Override public void onError(Throwable error) {
+        }, new Action1<Throwable>() {
+          @Override public void call(Throwable error) {
             RegisterActivity.this.showError(error);
-          }
-
-          @Override public void onNext(RegisterEntity registerEntity) {
           }
         });
   }
@@ -309,6 +297,10 @@ public class RegisterActivity extends BaseActivity {
         /*do nothing*/
       }
     }).show();
+  }
+
+  @Override public void exit() {
+    RegisterActivity.this.finish();
   }
 
   @Override protected void onDestroy() {

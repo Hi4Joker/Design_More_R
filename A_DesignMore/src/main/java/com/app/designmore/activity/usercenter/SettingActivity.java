@@ -74,17 +74,7 @@ public class SettingActivity extends BaseActivity {
   }
 
   private void getCache() {
-
     cacheTv.setText(Utils.FormetFileSize(Glide.getPhotoCacheDir(SettingActivity.this).length()));
-  }
-
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        SettingActivity.this.startExitAnim();
-        return true;
-    }
-    return super.onOptionsItemSelected(item);
   }
 
   @Nullable @OnClick(R.id.setting_layout_about_ll) void onAboutClick(View view) {
@@ -105,13 +95,6 @@ public class SettingActivity extends BaseActivity {
     cacheTv.setText("0KB");
   }
 
-  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
-    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-      SettingActivity.this.startExitAnim();
-    }
-    return false;
-  }
-
   private void startEnterAnim() {
     final Rect bounds = new Rect();
     rootView.getHitRect(bounds);
@@ -124,7 +107,7 @@ public class SettingActivity extends BaseActivity {
     revealAnimator.start();
   }
 
-  private void startExitAnim() {
+  @Override public void exit() {
 
     if (revealAnimator != null && !revealAnimator.isRunning()) {
       revealAnimator = revealAnimator.reverse();
@@ -135,7 +118,6 @@ public class SettingActivity extends BaseActivity {
           rootView.setVisibility(View.GONE);
           SettingActivity.this.finish();
         }
-
         @Override public void onAnimationCancel() {
           SettingActivity.this.finish();
         }

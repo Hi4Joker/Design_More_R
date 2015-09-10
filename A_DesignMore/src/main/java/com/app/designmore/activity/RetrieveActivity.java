@@ -36,7 +36,6 @@ public class RetrieveActivity extends BaseActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.retrieve_layout);
-    ButterKnife.bind(RetrieveActivity.this);
 
     RetrieveActivity.this.initView(savedInstanceState);
   }
@@ -52,22 +51,10 @@ public class RetrieveActivity extends BaseActivity {
     toolbarTitleTv.setText("找回密码");
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
-
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        RetrieveActivity.this.finish();
-        return true;
-    }
-
-    return super.onOptionsItemSelected(item);
-  }
-
   @Nullable @OnClick(R.id.retrieve_layout_retrieve_btn) void onRetrieveClick() {
   }
 
-  @Override protected void onDestroy() {
-    super.onDestroy();
-    ButterKnife.unbind(RetrieveActivity.this);
+  @Override public void exit() {
+    RetrieveActivity.this.finish();
   }
 }

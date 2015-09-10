@@ -66,6 +66,12 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
   private SearchAdapter searchAdapter;
   private List<SearchItemEntity> items;
 
+  private View.OnClickListener retryClickListener = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      SearchActivity.this.loadData();
+    }
+  };
+
   public static void navigateToSearch(AppCompatActivity startingActivity) {
 
     Intent intent = new Intent(startingActivity, SearchActivity.class);
@@ -204,17 +210,6 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
     inputMethodManager.hideSoftInputFromWindow(revealRootView.getApplicationWindowToken(), 0);
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
-
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        SearchActivity.this.finish();
-        return true;
-    }
-
-    return super.onOptionsItemSelected(item);
-  }
-
   @Override public void onError(Throwable error) {
 
     if (error instanceof TimeoutException) {
@@ -239,20 +234,16 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
         errorContent, getResources().getString(R.string.retry_button_text), retryClickListener);
   }
 
-  private View.OnClickListener retryClickListener = new View.OnClickListener() {
-    @Override public void onClick(View v) {
-      SearchActivity.this.loadData();
-    }
-  };
+  @Override public void exit() {
+    SearchActivity.this.finish();
+  }
 
   @Override protected void onDestroy() {
     super.onDestroy();
-
     if (revealAnimator != null && revealAnimator.isRunning()) revealAnimator.cancel();
   }
 
   @Override public void onItemClick(int position) {
-
     // TODO: 2015/9/4 跳转搜索
 
   }

@@ -329,28 +329,6 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
     }
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        TrolleyActivity.this.startExitAnim();
-        return true;
-    }
-    return super.onOptionsItemSelected(item);
-  }
-
-  private void startExitAnim() {
-    ViewCompat.animate(rootView)
-        .translationY(DensityUtil.getScreenHeight(TrolleyActivity.this))
-        .setDuration(Constants.MILLISECONDS_400)
-        .setInterpolator(new LinearInterpolator())
-        .setListener(new ViewPropertyAnimatorListenerAdapter() {
-          @Override public void onAnimationEnd(View view) {
-            TrolleyActivity.super.onBackPressed();
-            overridePendingTransition(0, 0);
-          }
-        });
-  }
-
   /**
    * ********************Adapter回调
    */
@@ -366,9 +344,22 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
 
   @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
     if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-      TrolleyActivity.this.startExitAnim();
+      TrolleyActivity.this.exit();
     }
     return false;
+  }
+
+  @Override public void exit() {
+    ViewCompat.animate(rootView)
+        .translationY(DensityUtil.getScreenHeight(TrolleyActivity.this))
+        .setDuration(Constants.MILLISECONDS_400)
+        .setInterpolator(new LinearInterpolator())
+        .setListener(new ViewPropertyAnimatorListenerAdapter() {
+          @Override public void onAnimationEnd(View view) {
+            TrolleyActivity.super.onBackPressed();
+            overridePendingTransition(0, 0);
+          }
+        });
   }
 
   @Override protected void onDestroy() {

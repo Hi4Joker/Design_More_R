@@ -1,7 +1,8 @@
 package com.app.designmore.activity;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 import butterknife.ButterKnife;
 import com.app.designmore.event.FinishEvent;
 import com.app.designmore.manager.EventBusInstance;
@@ -29,10 +30,28 @@ public abstract class BaseActivity extends RxAppCompatActivity {
     EventBusInstance.getDefault().unregister(BaseActivity.this);
   }
 
+  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+      BaseActivity.this.exit();
+    }
+    return false;
+  }
+
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case android.R.id.home:
+        BaseActivity.this.exit();
+        return true;
+    }
+    return super.onOptionsItemSelected(item);
+  }
+
   @Override public void finish() {
     super.finish();
     overridePendingTransition(0, 0);
   }
+
+  public abstract void exit();
 
   /*退出*/
   public void onEventMainThread(FinishEvent event) {
