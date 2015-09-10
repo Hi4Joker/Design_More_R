@@ -1,11 +1,14 @@
 package com.app.designmore.mvp.presenter;
 
 import android.content.Context;
+import android.util.Log;
+import android.widget.AnalogClock;
 import com.app.designmore.event.ProvinceEvent;
 import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.mvp.viewinterface.AddressView;
 import com.app.designmore.retrofit.entity.Province;
 import com.app.designmore.rxAndroid.SchedulersCompat;
+import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.view.CustomWheelPicker;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,6 +22,7 @@ import rx.Scheduler;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
+import rx.functions.Action1;
 import rx.functions.Func0;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -29,6 +33,7 @@ import rx.subscriptions.Subscriptions;
  */
 public class AddressPresenterImp implements AddressPresenter {
 
+  private static final String TAG = AddressPresenterImp.class.getSimpleName();
   private Context context;
   private AddressView addressView;
   private List<Province> provinces = new ArrayList<>();
@@ -44,12 +49,10 @@ public class AddressPresenterImp implements AddressPresenter {
     this.addressView = addressView;
   }
 
-  @Override public void showPicker() {
-
+  public void show() {
     if (provinces.size() > 0) {
       addressView.onInflateFinish(provinces);
     } else {
-
       subscribe = Observable.defer(new Func0<Observable<List<Province>>>() {
         @Override public Observable<List<Province>> call() {
 
@@ -100,44 +103,69 @@ public class AddressPresenterImp implements AddressPresenter {
               addressView.onInflateFinish(provinces);
             }
           });
+    }
+  }
 
+  @Override public void showPicker() {
 
-      /*if (worker == null) {
-        worker = Schedulers.io().createWorker();
-      }*/
+    if (provinces.size() > 0) {
+      addressView.onInflateFinish(provinces);
+    } else {
 
-       /*worker.schedule(new Action0() {
-        @Override public void call() {
+      subscribe = Observable.create(new Observable.OnSubscribe<List<Province>>() {
+        @Override public void call(final Subscriber<? super List<Province>> subscriber) {
 
-          InputStream in = null;
-
-          try {
-            in = context.getResources().getAssets().open("address.txt");
-            byte[] arrayOfByte = new byte[in.available()];
-            in.read(arrayOfByte);
-            JSONArray jsonList = new JSONArray(new String(arrayOfByte, "UTF-8"));
-            Gson gson =
-                new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
-            for (int i = 0; i < jsonList.length(); i++) {
-              provinces.add(gson.fromJson(jsonList.getString(i), Province.class));
-            }
-          } catch (Exception ignored) {
-          } finally {
-            if (in != null) {
+          Schedulers.io().createWorker().schedule(new Action0() {
+            @Override public void call() {
+              InputStream in = null;
               try {
-                in.close();
-              } catch (IOException ignored) {
+                in = context.getResources().getAssets().open("address.txt");
+                byte[] arrayOfByte = new byte[in.available()];
+                in.read(arrayOfByte);
+                JSONArray jsonList = new JSONArray(new String(arrayOfByte, "UTF-8"));
+                Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
+                    .serializeNulls()
+                    .create();
+                for (int i = 0; i < jsonList.length(); i++) {
+                  provinces.add(gson.fromJson(jsonList.getString(i), Province.class));
+                }
+              } catch (Exception e) {
+                subscriber.onError(e);
+              } finally {
+                if (in != null) {
+                  try {
+                    in.close();
+                  } catch (IOException e) {
+                    subscriber.onError(e);
+                  }
+                }
+                subscriber.onNext(provinces);
+                subscriber.onCompleted();
               }
             }
-            if (provinces.size() > 0) {
-              addressView.hideProgress();
-              addressView.onInflateFinish(provinces);
-            } else {
-              addressView.showError();
-            }
-          }
+          });
         }
-      });*/
+      }).doOnSubscribe(new Action0() {
+        @Override public void call() {
+
+          Log.e(TAG, "showProgress");
+          addressView.showProgress();
+        }
+      }).finallyDo(new Action0() {
+        @Override public void call() {
+
+          Log.e(TAG, "hideProgress");
+          addressView.hideProgress();
+        }
+      }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<Province>>() {
+        @Override public void call(List<Province> provinces) {
+          addressView.onInflateFinish(provinces);
+        }
+      }, new Action1<Throwable>() {
+        @Override public void call(Throwable throwable) {
+          addressView.showError();
+        }
+      });
     }
   }
 
