@@ -265,7 +265,10 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
     DialogManager.getInstance()
         .showNormalDialog(CollectionActivity.this, "删除收藏", new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {
-            CollectionActivity.this.requestDeleteCollection(entity);
+
+            if (which == DialogInterface.BUTTON_POSITIVE) {
+              CollectionActivity.this.requestDeleteCollection(entity);
+            }
           }
         });
   }

@@ -67,7 +67,7 @@ public class DialogManager {
 
   public ProgressDialog showSimpleProgressDialog(Context context,
       final DialogInterface.OnCancelListener onCancelListener) {
-    return showCancelableProgressDialog(context, null, onCancelListener,true);
+    return showCancelableProgressDialog(context, null, onCancelListener, true);
   }
 
   public ProgressDialog showProgressDialog(Context context,
@@ -179,6 +179,9 @@ public class DialogManager {
         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {
             dialog.dismiss();
+            if (onClickListener != null) {
+              onClickListener.onClick(dialog, DialogInterface.BUTTON_NEGATIVE);
+            }
           }
         })
         .create()

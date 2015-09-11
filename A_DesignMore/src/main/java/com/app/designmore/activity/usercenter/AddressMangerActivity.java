@@ -13,7 +13,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -252,26 +251,72 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
   private void checkAddress() {
 
     if (items != null && items.size() == 0) {
-      AddressMangerActivity.this.exit();
+      AddressMangerActivity.this.exitWithoutDialog();
     } else {
-
       if (defaultAddress == null) {
-        Toast.makeText(AddressMangerActivity.this, "木有更改默认底子", Toast.LENGTH_LONG).show();
-        AddressMangerActivity.this.exit();
+        DialogManager.getInstance().showConfirmDialog(AddressMangerActivity.this, "请选择默认地址");
       } else if (items.contains(defaultAddress)) {
-        Toast.makeText(AddressMangerActivity.this, "默认地址已经修改", Toast.LENGTH_LONG).show();
         DialogManager.getInstance()
             .showNormalDialog(AddressMangerActivity.this, "修改默认地址",
                 new DialogInterface.OnClickListener() {
                   @Override public void onClick(DialogInterface dialog, int which) {
-                    // TODO: 2015/9/8  修改默认地址
+                    AddressMangerActivity.this.requestSetDefaultAddress();
                   }
                 });
-      } else {
-        Toast.makeText(AddressMangerActivity.this, "请选择默认地址", Toast.LENGTH_LONG).show();
-        DialogManager.getInstance().showConfirmDialog(AddressMangerActivity.this, "请选择默认地址");
       }
     }
+  }
+
+  /**
+   * 设置默认地址
+   */
+  private void requestSetDefaultAddress() {
+
+    /* Action=SetDefaultAddress&uid=2&address_id=113*/
+    Map<String, String> params = new HashMap<>(3);
+    params.put("Action", "SetDefaultAddress");
+    params.put("address_id", defaultAddress.getAddressId());
+    params.put("uid", "1");
+
+    subscription =
+        AddressRetrofit.getInstance()
+            .requestSetDefaultAddress(params)
+            .doOnSubscribe(new Action0() {
+              @Override public void call() {
+                /*加载数据，显示进度条*/
+                progressDialog = DialogManager.
+                    getInstance()
+                    .showSimpleProgressDialog(AddressMangerActivity.this, cancelListener);
+              }
+            })
+            .doOnTerminate(new Action0() {
+              @Override public void call() {
+                        /*隐藏进度条*/
+                if (progressDialog != null && progressDialog.isShowing()) {
+                  progressDialog.dismiss();
+                }
+              }
+            })
+            .filter(new Func1<BaseResponse, Boolean>() {
+              @Override public Boolean call(BaseResponse baseResponse) {
+                return !subscription.isUnsubscribed();
+              }
+            })
+            .compose(AddressMangerActivity.this.<BaseResponse>bindUntilEvent(ActivityEvent.DESTROY))
+            .subscribe(new Subscriber<BaseResponse>() {
+              @Override public void onCompleted() {
+                AddressMangerActivity.this.exitWithoutDialog();
+              }
+
+              @Override public void onError(Throwable e) {
+                DialogManager.getInstance()
+                    .showConfirmDialog(AddressMangerActivity.this, "设置失败，请重试");
+              }
+
+              @Override public void onNext(BaseResponse baseResponse) {
+                Toast.makeText(AddressMangerActivity.this, "设置成功", Toast.LENGTH_LONG).show();
+              }
+            });
   }
 
   /**
@@ -284,53 +329,54 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
         .showNormalDialog(AddressMangerActivity.this, "确认删除地址",
             new DialogInterface.OnClickListener() {
               @Override public void onClick(DialogInterface dialog, int which) {
+                if (which == DialogInterface.BUTTON_POSITIVE) {
                 /* Action=DelUserByAddress&address_id=1&uid=2*/
-                Map<String, String> params = new HashMap<>(3);
-                params.put("Action", "DelUserByAddress");
-                params.put("address_id", addressEntity.getAddressId());
-                params.put("uid", "1");
+                  Map<String, String> params = new HashMap<>(3);
+                  params.put("Action", "DelUserByAddress");
+                  params.put("address_id", addressEntity.getAddressId());
+                  params.put("uid", "1");
 
-                subscription = AddressRetrofit.getInstance()
-                    .requestDeleteAddress(params)
-                    .doOnSubscribe(new Action0() {
-                      @Override public void call() {
+                  subscription = AddressRetrofit.getInstance()
+                      .requestDeleteAddress(params)
+                      .doOnSubscribe(new Action0() {
+                        @Override public void call() {
                         /*加载数据，显示进度条*/
-
-                        progressDialog = DialogManager.
-                            getInstance()
-                            .showSimpleProgressDialog(AddressMangerActivity.this, cancelListener);
-                      }
-                    })
-                    .map(new Func1<BaseResponse, Integer>() {
-                      @Override public Integer call(BaseResponse baseResponse) {
-                        return items.indexOf(addressEntity);
-                      }
-                    })
-                    .doOnTerminate(new Action0() {
-                      @Override public void call() {
-                        /*隐藏进度条*/
-                        if (progressDialog != null && progressDialog.isShowing()) {
-                          progressDialog.dismiss();
+                          progressDialog = DialogManager.
+                              getInstance()
+                              .showSimpleProgressDialog(AddressMangerActivity.this, cancelListener);
                         }
-                      }
-                    })
-                    .doOnCompleted(new Action0() {
-                      @Override public void call() {
-                        if (items.size() == 0) {
-                          progressLayout.showEmpty(
-                              getResources().getDrawable(R.drawable.ic_grey_logo_icon), "您还没有收货地址",
-                              null);
+                      })
+                      .map(new Func1<BaseResponse, Integer>() {
+                        @Override public Integer call(BaseResponse baseResponse) {
+                          return items.indexOf(addressEntity);
                         }
-                      }
-                    })
-                    .filter(new Func1<Integer, Boolean>() {
-                      @Override public Boolean call(Integer position) {
-                        return !subscription.isUnsubscribed();
-                      }
-                    })
-                    .compose(
-                        AddressMangerActivity.this.<Integer>bindUntilEvent(ActivityEvent.DESTROY))
-                    .subscribe(addressAdapter);
+                      })
+                      .doOnTerminate(new Action0() {
+                        @Override public void call() {
+                          /*隐藏进度条*/
+                          if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                          }
+                        }
+                      })
+                      .doOnCompleted(new Action0() {
+                        @Override public void call() {
+                          if (items.size() == 0) {
+                            progressLayout.showEmpty(
+                                getResources().getDrawable(R.drawable.ic_grey_logo_icon),
+                                "您还没有收货地址", null);
+                          }
+                        }
+                      })
+                      .filter(new Func1<Integer, Boolean>() {
+                        @Override public Boolean call(Integer position) {
+                          return !subscription.isUnsubscribed();
+                        }
+                      })
+                      .compose(
+                          AddressMangerActivity.this.<Integer>bindUntilEvent(ActivityEvent.DESTROY))
+                      .subscribe(addressAdapter);
+                }
               }
             });
   }
@@ -417,6 +463,10 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
   }
 
   @Override public void exit() {
+    AddressMangerActivity.this.checkAddress();
+  }
+
+  private void exitWithoutDialog() {
 
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(AddressMangerActivity.this))
