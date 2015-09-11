@@ -89,11 +89,7 @@ public class CollectionRetrofit {
           }
         }).retry(new Func2<Integer, Throwable, Boolean>() {
           @Override public Boolean call(Integer integer, Throwable throwable) {
-
-            if (throwable instanceof TimeoutException && integer < 1) {//连接超时，重试一次
-              return true;
-            }
-            return false;
+            return throwable instanceof TimeoutException && integer < 1;
           }
         }).concatMap(new Func1<CollectionResponse, Observable<CollectionResponse>>() {
           @Override
@@ -135,11 +131,7 @@ public class CollectionRetrofit {
       }
     }).retry(new Func2<Integer, Throwable, Boolean>() {
       @Override public Boolean call(Integer integer, Throwable throwable) {
-
-        if (throwable instanceof TimeoutException && integer < 1) {//连接超时，重试一次
-          return true;
-        }
-        return false;
+        return throwable instanceof TimeoutException && integer < 1;
       }
     }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
       @Override public Observable<BaseResponse> call(BaseResponse addressResponse) {

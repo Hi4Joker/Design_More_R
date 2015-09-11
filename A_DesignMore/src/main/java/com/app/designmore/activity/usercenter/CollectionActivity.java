@@ -287,7 +287,7 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
           @Override public void call() {
             /*加载数据，显示进度条*/
             progressDialog = DialogManager.
-                getInstance().showProgressDialog(CollectionActivity.this, null, cancelListener);
+                getInstance().showSimpleProgressDialog(CollectionActivity.this, cancelListener);
           }
         })
         .map(new Func1<BaseResponse, Integer>() {

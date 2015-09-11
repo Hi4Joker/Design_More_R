@@ -298,7 +298,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
 
                         progressDialog = DialogManager.
                             getInstance()
-                            .showProgressDialog(AddressMangerActivity.this, null, cancelListener);
+                            .showSimpleProgressDialog(AddressMangerActivity.this, cancelListener);
                       }
                     })
                     .map(new Func1<BaseResponse, Integer>() {

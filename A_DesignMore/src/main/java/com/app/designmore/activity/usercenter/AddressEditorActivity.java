@@ -276,7 +276,7 @@ public class AddressEditorActivity extends BaseActivity implements AddressView {
                 /*加载数据，显示进度条*/
                 progressDialog = DialogManager.
                     getInstance()
-                    .showProgressDialog(AddressEditorActivity.this, null, cancelListener);
+                    .showSimpleProgressDialog(AddressEditorActivity.this, cancelListener);
               }
             })
             .doOnTerminate(new Action0() {

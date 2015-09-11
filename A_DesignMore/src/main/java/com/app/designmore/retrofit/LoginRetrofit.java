@@ -92,11 +92,7 @@ public class LoginRetrofit {
       }
     }).retry(new Func2<Integer, Throwable, Boolean>() {
       @Override public Boolean call(Integer integer, Throwable throwable) {
-
-        if (throwable instanceof TimeoutException && integer < 1) {//连接超时，重试一次
-          return true;
-        }
-        return false;
+        return throwable instanceof TimeoutException && integer < 1;
       }
     }).concatMap(new Func1<LoginCodeResponse, Observable<LoginCodeResponse>>() {
       @Override public Observable<LoginCodeResponse> call(LoginCodeResponse loginCodeResponse) {
@@ -121,10 +117,7 @@ public class LoginRetrofit {
       @Override public Observable<BaseResponse> call() {
         return loginService.requestRegister(params).retry(new Func2<Integer, Throwable, Boolean>() {
           @Override public Boolean call(Integer integer, Throwable throwable) {
-            if (throwable instanceof TimeoutException && integer < 1) {//连接超时，重试一次
-              return true;
-            }
-            return false;
+            return throwable instanceof TimeoutException && integer < 1;
           }
         });
       }
@@ -133,7 +126,6 @@ public class LoginRetrofit {
         return baseResponse.filterWebServiceErrors()
             .onErrorResumeNext(new Func1<Throwable, Observable>() {
               @Override public Observable call(Throwable throwable) {
-
                 if (throwable instanceof WebServiceException && baseResponse.message.contains(
                     "存在")) {
                   return Observable.just(baseResponse);

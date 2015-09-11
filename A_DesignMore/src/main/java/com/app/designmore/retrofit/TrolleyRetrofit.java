@@ -82,18 +82,13 @@ public class TrolleyRetrofit {
     Observable<List<TrolleyEntity>> observable =
         Observable.defer(new Func0<Observable<TrolleyResponse>>() {
           @Override public Observable<TrolleyResponse> call() {
-
              /*获取热搜列表，超时8秒*/
             return collectionService.getTrolleyList(params)
                 .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
           }
         }).retry(new Func2<Integer, Throwable, Boolean>() {
           @Override public Boolean call(Integer integer, Throwable throwable) {
-
-            if (throwable instanceof TimeoutException && integer < 1) {//连接超时，重试一次
-              return true;
-            }
-            return false;
+            return throwable instanceof TimeoutException && integer < 1;
           }
         }).concatMap(new Func1<TrolleyResponse, Observable<TrolleyResponse>>() {
           @Override public Observable<TrolleyResponse> call(TrolleyResponse trolleyResponse) {
@@ -134,11 +129,7 @@ public class TrolleyRetrofit {
       }
     }).retry(new Func2<Integer, Throwable, Boolean>() {
       @Override public Boolean call(Integer integer, Throwable throwable) {
-
-        if (throwable instanceof TimeoutException && integer < 1) {//连接超时，重试一次
-          return true;
-        }
-        return false;
+        return throwable instanceof TimeoutException && integer < 1;
       }
     }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
       @Override public Observable<BaseResponse> call(BaseResponse addressResponse) {
@@ -147,7 +138,6 @@ public class TrolleyRetrofit {
       }
     }).map(new Func1<BaseResponse, BaseResponse>() {
       @Override public BaseResponse call(BaseResponse baseResponse) {
-
         /*删除成功*/
         return baseResponse;
       }

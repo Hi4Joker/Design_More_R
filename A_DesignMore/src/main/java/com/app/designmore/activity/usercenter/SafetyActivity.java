@@ -95,16 +95,7 @@ public class SafetyActivity extends BaseActivity {
     actionButton.setText(getText(R.string.action_submit));
     actionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        DialogManager.getInstance()
-            .showProgressDialog(SafetyActivity.this, new DialogInterface.OnShowListener() {
-              @Override public void onShow(DialogInterface dialog) {
-                Log.e(TAG, "onShow");
-              }
-            }, new DialogInterface.OnCancelListener() {
-              @Override public void onCancel(DialogInterface dialog) {
-                Log.e(TAG, "onCancel");
-              }
-            });
+
       }
     });
 

@@ -245,7 +245,7 @@ public class RegisterActivity extends BaseActivity {
       @Override public void call() {
             /*加载数据，显示进度条*/
         progressDialog = DialogManager.
-            getInstance().showProgressDialog(RegisterActivity.this, null, cancelListener);
+            getInstance().showSimpleProgressDialog(RegisterActivity.this, cancelListener);
       }
     }).doOnTerminate(new Action0() {
       @Override public void call() {

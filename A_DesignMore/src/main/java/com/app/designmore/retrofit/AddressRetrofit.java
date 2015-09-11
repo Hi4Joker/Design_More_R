@@ -23,6 +23,7 @@ import retrofit.http.FieldMap;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.POST;
 import rx.Observable;
+import rx.functions.Action1;
 import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.functions.Func2;
@@ -33,6 +34,8 @@ import rx.functions.Func2;
 public class AddressRetrofit {
 
   private static final String TAG = AddressRetrofit.class.getSimpleName();
+
+  private AddressEntity addressInstance = new AddressEntity();
 
   interface AddressService {
 
@@ -92,24 +95,19 @@ public class AddressRetrofit {
     Observable<List<AddressEntity>> observable =
         Observable.defer(new Func0<Observable<AddressResponse>>() {
           @Override public Observable<AddressResponse> call() {
-
              /*获取地址列表，超时8秒*/
             return addressService.getAddressList(params)
                 .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
           }
         }).retry(new Func2<Integer, Throwable, Boolean>() {
           @Override public Boolean call(Integer integer, Throwable throwable) {
-
-            if (throwable instanceof TimeoutException && integer < 1) {//连接超时，重试一次
-              return true;
-            }
-            return false;
+            return throwable instanceof TimeoutException && integer < 1;
           }
         }).concatMap(new Func1<AddressResponse, Observable<AddressResponse>>() {
           @Override public Observable<AddressResponse> call(AddressResponse addressManagerEntity) {
             return addressManagerEntity.filterWebServiceErrors();
           }
-        }).map(new Func1<AddressResponse, List<AddressEntity>>() {
+        })/*.map(new Func1<AddressResponse, List<AddressEntity>>() {
           @Override public List<AddressEntity> call(AddressResponse addressResponse) {
 
             final ArrayList<AddressEntity> addressArrayList =
@@ -128,14 +126,37 @@ public class AddressRetrofit {
               clone.setCity(entity.city);
               clone.setAddress(entity.address);
 
-              /*默认选项*/
+              *//*默认选项*//*
               clone.setDefault(entity.isDefault);
 
               addressArrayList.add(clone);
             }
             return addressArrayList;
           }
-        }).compose(SchedulersCompat.<List<AddressEntity>>applyExecutorSchedulers());
+        })*/.flatMap(new Func1<AddressResponse, Observable<AddressResponse.Address>>() {
+          @Override
+          public Observable<AddressResponse.Address> call(AddressResponse addressResponse) {
+            return Observable.from(addressResponse.getAddressList());
+          }
+        }).map(new Func1<AddressResponse.Address, AddressEntity>() {
+          @Override public AddressEntity call(AddressResponse.Address address) {
+
+            AddressEntity addressEntity = addressInstance.newInstance();
+            addressEntity.setAddressId(address.addressId);
+            addressEntity.setUserName(address.userName);
+            addressEntity.setMobile(address.mobile);
+            addressEntity.setZipcode(address.zipcode);
+
+            addressEntity.setProvince(address.province);
+            addressEntity.setCity(address.city);
+            addressEntity.setAddress(address.address);
+
+            /*默认选项*/
+            addressEntity.setDefault(address.isDefault);
+
+            return addressEntity;
+          }
+        }).toList().compose(SchedulersCompat.<List<AddressEntity>>applyExecutorSchedulers());
 
     return observable;
   }
@@ -147,21 +168,15 @@ public class AddressRetrofit {
 
     return Observable.defer(new Func0<Observable<AddressResponse>>() {
       @Override public Observable<AddressResponse> call() {
-
         return addressService.requestEditorAddress(params)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
       }
     }).retry(new Func2<Integer, Throwable, Boolean>() {
       @Override public Boolean call(Integer integer, Throwable throwable) {
-
-        if (throwable instanceof TimeoutException && integer < 1) {//连接超时，重试一次
-          return true;
-        }
-        return false;
+        return throwable instanceof TimeoutException && integer < 1;
       }
     }).concatMap(new Func1<AddressResponse, Observable<AddressResponse>>() {
       @Override public Observable<AddressResponse> call(AddressResponse addressResponse) {
-
         return addressResponse.filterWebServiceErrors();
       }
     }).map(new Func1<AddressResponse, EditorAddressEvent>() {
@@ -185,17 +200,12 @@ public class AddressRetrofit {
 
     return Observable.defer(new Func0<Observable<BaseResponse>>() {
       @Override public Observable<BaseResponse> call() {
-
         return addressService.requestAddAddress(params)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
       }
     }).retry(new Func2<Integer, Throwable, Boolean>() {
       @Override public Boolean call(Integer integer, Throwable throwable) {
-
-        if (throwable instanceof TimeoutException && integer < 1) {//连接超时，重试一次
-          return true;
-        }
-        return false;
+        return throwable instanceof TimeoutException && integer < 1;
       }
     }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
       @Override public Observable<BaseResponse> call(BaseResponse baseResponse) {
@@ -222,11 +232,7 @@ public class AddressRetrofit {
       }
     }).retry(new Func2<Integer, Throwable, Boolean>() {
       @Override public Boolean call(Integer integer, Throwable throwable) {
-
-        if (throwable instanceof TimeoutException && integer < 1) {//连接超时，重试一次
-          return true;
-        }
-        return false;
+        return throwable instanceof TimeoutException && integer < 1;
       }
     }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
       @Override public Observable<BaseResponse> call(BaseResponse addressResponse) {
