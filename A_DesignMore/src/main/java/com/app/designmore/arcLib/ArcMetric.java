@@ -160,7 +160,6 @@ class ArcMetric {
    */
   public static ArcMetric evaluate(float startX, float startY, float endX, float endY, float degree,
       Side side) {
-    //TODO return ready to use object with have done computations
     ArcMetric arcMetric = new ArcMetric();
     arcMetric.mStartPoint.set(startX, startY);
     arcMetric.mEndPoint.set(endX, endY);

@@ -21,7 +21,7 @@ public class BaseResponse {
   @Expose public String message;
 
   public Observable filterWebServiceErrors() {
-    if (resultCode == Constants.RESULT_OK || resultCode == Constants.RESULT_100) {
+    if (resultCode == Constants.RESULT_OK) {
       return Observable.just(this);
     } else {
       return Observable.error(new WebServiceException(BaseResponse.this.message));

@@ -183,7 +183,6 @@ public class AddressRetrofit {
       @Override public EditorAddressEvent call(AddressResponse addressResponse) {
 
         AddressResponse.Address address = addressResponse.getAddressList().get(0);
-
         EditorAddressEvent editorAddressEvent =
             new EditorAddressEvent(address.addressId, address.userName, address.province,
                 address.city, address.address, address.mobile, address.zipcode, address.isDefault);
