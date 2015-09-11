@@ -49,13 +49,43 @@ public class AddressPresenterImp implements AddressPresenter {
     this.addressView = addressView;
   }
 
-  public void show() {
+  public void showPicke() {
     if (provinces.size() > 0) {
       addressView.onInflateFinish(provinces);
     } else {
-      subscribe = Observable.defer(new Func0<Observable<List<Province>>>() {
-        @Override public Observable<List<Province>> call() {
 
+      provinces = Observable.create(new Observable.OnSubscribe<List<Province>>() {
+        @Override public void call(final Subscriber<? super List<Province>> subscriber) {
+
+          InputStream inputStream = null;
+          try {
+            inputStream = context.getResources().getAssets().open("address.txt");
+            byte[] arrayOfByte = new byte[inputStream.available()];
+            inputStream.read(arrayOfByte);
+            JSONArray jsonList = new JSONArray(new String(arrayOfByte, "UTF-8"));
+            Gson gson =
+                new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
+            for (int i = 0; i < jsonList.length(); i++) {
+              provinces.add(gson.fromJson(jsonList.getString(i), Province.class));
+            }
+          } catch (Exception e) {
+            subscriber.onError(e);
+          } finally {
+            if (inputStream != null) {
+              try {
+                inputStream.close();
+              } catch (IOException e) {
+                Observable.error(e);
+              }
+            }
+          }
+          subscriber.onNext(provinces);
+          subscriber.onCompleted();
+        }
+      }).compose(SchedulersCompat.<List<Province>>applyExecutorSchedulers()).toBlocking().first();
+
+     /* provinces = Observable.defer(new Func0<Observable<List<Province>>>() {
+        @Override public Observable<List<Province>> call() {
           InputStream inputStream = null;
           try {
             inputStream = context.getResources().getAssets().open("address.txt");
@@ -80,29 +110,19 @@ public class AddressPresenterImp implements AddressPresenter {
           }
           return Observable.just(provinces);
         }
-      })
-          .compose(SchedulersCompat.<List<Province>>applyExecutorSchedulers())
-          .doOnSubscribe(new Action0() {
-            @Override public void call() {
-              /*显示进度条*/
-              addressView.showProgress();
-            }
-          })
-          .subscribe(new Subscriber<List<Province>>() {
-            @Override public void onCompleted() {
-              /*隐藏进度条*/
-              addressView.hideProgress();
-            }
+      }).doOnSubscribe(new Action0() {
+        @Override public void call() {
+          *//*显示进度条*//*
+          addressView.showProgress();
+        }
+      }).compose(SchedulersCompat.<List<Province>>applyExecutorSchedulers()).toBlocking().first();*/
 
-            @Override public void onError(Throwable e) {
-              e.printStackTrace();
-              addressView.showError();
-            }
-
-            @Override public void onNext(List<Province> provinces) {
-              addressView.onInflateFinish(provinces);
-            }
-          });
+      addressView.hideProgress();
+      if (provinces != null && provinces.size() > 0) {
+        addressView.onInflateFinish(provinces);
+      } else {
+        addressView.showError();
+      }
     }
   }
 
