@@ -1,4 +1,5 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,83 +11,109 @@
     android:orientation="vertical"
     >
 
-  <Button
-      android:id="@+id/defer"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="defer"
-      />
-  <Button
-      android:id="@+id/another_defer"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="another defer way"
-      />
-  <Button
-      android:id="@+id/scheduler_defer"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="Scheduler"
-      />
+  <ScrollView
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
 
-  <Button
-      android:id="@+id/scan_operator"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="scan_operator"
-      />
 
-  <Button
-      android:id="@+id/distinct_operator"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="distinct_operator"
-      />
+      <Button
+          android:id="@+id/defer"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="defer"
+          />
+      <Button
+          android:id="@+id/another_defer"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="another defer way"
+          />
+      <Button
+          android:id="@+id/scheduler_defer"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Scheduler"
+          />
 
-  <Button
-      android:id="@+id/first_operator"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="first_operator"
-      />
+      <Button
+          android:id="@+id/scan_operator"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="scan_operator"
+          />
 
-  <Button
-      android:id="@+id/take_operator"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="take_operator"
-      />
-  <Button
-      android:id="@+id/single_operator"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="single_operator"
-      />
-  <Button
-      android:id="@+id/publish_operator"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="publish_operator"
-      android:visibility="gone"
-      />
-  <Button
-      android:id="@+id/do_operator"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="do_operator"
-      />
-  <Button
-      android:id="@+id/sub_operator"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="sub_operator"
-      />
-    
-  <Button
-      android:id="@+id/unsub_operator"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="unsub_operator"
-      />
+      <Button
+          android:id="@+id/distinct_operator"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="distinct_operator"
+          />
+
+      <Button
+          android:id="@+id/first_operator"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="first_operator"
+          />
+
+      <Button
+          android:id="@+id/take_operator"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="take_operator"
+          />
+      <Button
+          android:id="@+id/single_operator"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="single_operator"
+          />
+      <Button
+          android:id="@+id/publish_operator"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="publish_operator"
+          android:visibility="gone"
+          />
+      <Button
+          android:id="@+id/do_operator"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="do_operator"
+          />
+
+      <Button
+          android:id="@+id/sub_operator"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="sub_operator"
+          />
+
+      <Button
+          android:id="@+id/unsub_operator"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="unsub_operator"
+          />
+
+      <Button
+          android:id="@+id/to_operator"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="to_operator"
+          />
+      <Button
+          android:id="@+id/blocking_operator"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="blocking_operator"
+          />
+    </LinearLayout>
+  </ScrollView>
 
 </LinearLayout>

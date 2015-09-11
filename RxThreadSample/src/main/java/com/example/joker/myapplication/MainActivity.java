@@ -9,6 +9,7 @@ import android.util.Log;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.example.joker.myapplication.schedulers.AndroidSchedulers;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import rx.Notification;
 import rx.Observable;
@@ -381,6 +382,10 @@ public class MainActivity extends AppCompatActivity {
 
         Log.e(TAG, "finallyDo");
       }
+    }).doOnUnsubscribe(new Action0() {
+      @Override public void call() {
+        Log.e(TAG, "doOnUnsubscribe");
+      }
     }).subscribe(new Subscriber<Integer>() {
       @Override public void onCompleted() {
 
@@ -424,5 +429,45 @@ public class MainActivity extends AppCompatActivity {
   @OnClick(R.id.unsub_operator) void onUnSubClick() {
 
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();
+  }
+
+  @OnClick(R.id.to_operator) void onToClick() {
+
+    Integer[] items = new Integer[] { 1, 2, 3, 4, 5, 6 };
+
+   /* Observable.from(items).subscribe(new Action1<Integer>() {
+      @Override public void call(Integer integer) {
+        Log.e(TAG, "integer: " + integer);
+      }
+    });*/
+
+    Observable.from(items)
+        .toList()
+        .reduce(new Func2<List<Integer>, List<Integer>, List<Integer>>() {
+          @Override public List<Integer> call(List<Integer> integers, List<Integer> integers2) {
+            return integers;
+          }
+        })
+        .subscribe(new Action1<List<Integer>>() {
+          @Override public void call(List<Integer> integers) {
+
+            Log.e(TAG, "size: " + integers.size());
+            for (Integer integer : integers) {
+              Log.e(TAG, "integer: " + integer);
+            }
+          }
+        });
+  }
+
+  @OnClick(R.id.blocking_operator) void onBlockingClick() {
+
+    Integer[] items = new Integer[] { 1, 2, 3, 4, 5, 6 };
+
+    int i = Observable.from(items).map(new Func1<Integer, Integer>() {
+      @Override public Integer call(Integer integer) {
+        Log.e(TAG, "integer: " + integer);
+        return integer;
+      }
+    }).subscribeOn(Schedulers.io()).toBlocking().first();
   }
 }
