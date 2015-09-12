@@ -35,6 +35,7 @@ import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.retrofit.AddressRetrofit;
 import com.app.designmore.retrofit.entity.AddressEntity;
+import com.app.designmore.retrofit.response.AddressResponse;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
@@ -202,7 +203,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
     /* Action=GetUserByAddress&uid=1*/
     Map<String, String> params = new HashMap<>(2);
     params.put("Action", "GetUserByAddress");
-    params.put("uid", "1");
+    params.put("uid", "10");
 
     AddressRetrofit.getInstance()
         .getAddressList(params)
@@ -210,6 +211,15 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
           @Override public void call() {
             /*加载数据，显示进度条*/
             if (!swipeRefreshLayout.isRefreshing()) progressLayout.showLoading();
+          }
+        })
+        .doOnCompleted(new Action0() {
+          @Override public void call() {
+            for (AddressEntity addressEntity : items) {
+              if ("1".equals(addressEntity.isDefault())) {
+                AddressMangerActivity.this.defaultAddress = addressEntity;
+              }
+            }
           }
         })
         .compose(
@@ -249,20 +259,23 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
   }
 
   private void checkAddress() {
-
     if (items != null && items.size() == 0) {
       AddressMangerActivity.this.exitWithoutDialog();
     } else {
-      if (defaultAddress == null) {
-        DialogManager.getInstance().showConfirmDialog(AddressMangerActivity.this, "请选择默认地址");
-      } else if (items.contains(defaultAddress)) {
+      if (items.contains(defaultAddress)) {
         DialogManager.getInstance()
-            .showNormalDialog(AddressMangerActivity.this, "修改默认地址",
+            .showNormalDialog(AddressMangerActivity.this, "请确认当前默认地址",
                 new DialogInterface.OnClickListener() {
                   @Override public void onClick(DialogInterface dialog, int which) {
-                    AddressMangerActivity.this.requestSetDefaultAddress();
+                    if (which == DialogInterface.BUTTON_POSITIVE) {
+                      AddressMangerActivity.this.requestSetDefaultAddress();
+                    } else {
+                      AddressMangerActivity.this.exitWithoutDialog();
+                    }
                   }
                 });
+      } else {
+        DialogManager.getInstance().showConfirmDialog(AddressMangerActivity.this, "请选择默认地址");
       }
     }
   }
@@ -276,7 +289,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
     Map<String, String> params = new HashMap<>(3);
     params.put("Action", "SetDefaultAddress");
     params.put("address_id", defaultAddress.getAddressId());
-    params.put("uid", "1");
+    params.put("uid", "10");
 
     subscription =
         AddressRetrofit.getInstance()
@@ -291,7 +304,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
             })
             .doOnTerminate(new Action0() {
               @Override public void call() {
-                        /*隐藏进度条*/
+                /*隐藏进度条*/
                 if (progressDialog != null && progressDialog.isShowing()) {
                   progressDialog.dismiss();
                 }
@@ -334,7 +347,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
                   Map<String, String> params = new HashMap<>(3);
                   params.put("Action", "DelUserByAddress");
                   params.put("address_id", addressEntity.getAddressId());
-                  params.put("uid", "1");
+                  params.put("uid", "10");
 
                   subscription = AddressRetrofit.getInstance()
                       .requestDeleteAddress(params)

@@ -173,19 +173,19 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
 
         int oldPos = items.indexOf(defaultAddress);
         int newPos = items.indexOf(newDefaultEntity);
-        AddressAdapter.this.defaultAddress = newDefaultEntity;
 
         if (oldPos != -1) {
+          /*default -> unDefault*/
           defaultAddress.setDefault("0");
-          /*true -> false*/
           AddressAdapter.this.notifyItemChanged(oldPos);
         }
 
+        /*unDefault -> default*/
         newDefaultEntity.setDefault("1");
-        /*false -> true*/
         AddressAdapter.this.notifyItemChanged(newPos);
 
-        callback.onDefaultChange(newDefaultEntity);
+        AddressAdapter.this.defaultAddress = newDefaultEntity;
+        callback.onDefaultChange(AddressAdapter.this.defaultAddress);
       }
     }
   }

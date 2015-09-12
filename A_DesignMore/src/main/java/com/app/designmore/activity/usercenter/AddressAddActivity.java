@@ -274,7 +274,7 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
     params.put("province", provinceTv.getText().toString());
     params.put("city", cityTv.getText().toString());
     params.put("address", addressEt.getText().toString());
-    params.put("uid", "1");
+    params.put("uid", "10");
 
     subscription =
         AddressRetrofit.getInstance()
