@@ -28,7 +28,6 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
 
   private Context context;
   private Callback callback;
-
   /*数据*/
   private List<CollectionEntity> items;
 

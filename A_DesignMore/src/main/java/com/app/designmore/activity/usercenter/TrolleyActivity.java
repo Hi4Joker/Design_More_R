@@ -154,7 +154,6 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
             } else {
               radioBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_normal));
             }
-
             compositeSubscription.remove(this);
           }
 
@@ -365,7 +364,7 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
   @Override protected void onDestroy() {
     super.onDestroy();
     if (!compositeSubscription.isUnsubscribed() && compositeSubscription.hasSubscriptions()) {
-      compositeSubscription.unsubscribe();
+      compositeSubscription.clear();
     }
   }
 }

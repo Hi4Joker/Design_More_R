@@ -71,6 +71,13 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
   @Nullable @Bind(R.id.address_manager_layout_rv) RecyclerView recyclerView;
 
   private ProgressDialog progressDialog;
+
+  private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
+    @Override public void onCancel(DialogInterface dialog) {
+      subscription.unsubscribe();
+    }
+  };
+
   private AddressAdapter addressAdapter;
   private List<AddressEntity> items = new ArrayList<>();
 
@@ -92,12 +99,6 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
     @Override public void onClick(DialogInterface dialog, int which) {
       // TODO: 2015/9/2 请求修改默认地址接口
 
-    }
-  };
-
-  private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
-    @Override public void onCancel(DialogInterface dialog) {
-      subscription.unsubscribe();
     }
   };
 
@@ -297,9 +298,13 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
             .doOnSubscribe(new Action0() {
               @Override public void call() {
                 /*加载数据，显示进度条*/
-                progressDialog = DialogManager.
-                    getInstance()
-                    .showSimpleProgressDialog(AddressMangerActivity.this, cancelListener);
+                if (progressDialog == null) {
+                  progressDialog = DialogManager.
+                      getInstance()
+                      .showSimpleProgressDialog(AddressMangerActivity.this, cancelListener);
+                } else {
+                  progressDialog.show();
+                }
               }
             })
             .doOnTerminate(new Action0() {
@@ -354,9 +359,14 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
                       .doOnSubscribe(new Action0() {
                         @Override public void call() {
                         /*加载数据，显示进度条*/
-                          progressDialog = DialogManager.
-                              getInstance()
-                              .showSimpleProgressDialog(AddressMangerActivity.this, cancelListener);
+                          if (progressDialog == null) {
+                            progressDialog = DialogManager.
+                                getInstance()
+                                .showSimpleProgressDialog(AddressMangerActivity.this,
+                                    cancelListener);
+                          } else {
+                            progressDialog.show();
+                          }
                         }
                       })
                       .map(new Func1<BaseResponse, Integer>() {

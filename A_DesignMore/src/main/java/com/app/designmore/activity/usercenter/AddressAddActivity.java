@@ -281,8 +281,13 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
             .doOnSubscribe(new Action0() {
               @Override public void call() {
                 /*加载数据，显示进度条*/
-                progressDialog = DialogManager.
-                    getInstance().showSimpleProgressDialog(AddressAddActivity.this, cancelListener);
+                if (progressDialog == null) {
+                  progressDialog = DialogManager.
+                      getInstance()
+                      .showSimpleProgressDialog(AddressAddActivity.this, cancelListener);
+                } else {
+                  progressDialog.show();
+                }
               }
             })
             .doOnTerminate(new Action0() {

@@ -3,11 +3,15 @@ package com.app.designmore.retrofit;
 import android.content.RestrictionEntry;
 import com.app.designmore.Constants;
 import com.app.designmore.exception.WebServiceException;
+import com.app.designmore.retrofit.entity.AddressEntity;
+import com.app.designmore.retrofit.entity.HelpEntity;
 import com.app.designmore.retrofit.entity.LoginCodeEntity;
 import com.app.designmore.retrofit.entity.RegisterEntity;
 import com.app.designmore.retrofit.entity.RetrieveEntity;
 import com.app.designmore.retrofit.entity.SearchItemEntity;
+import com.app.designmore.retrofit.response.AddressResponse;
 import com.app.designmore.retrofit.response.BaseResponse;
+import com.app.designmore.retrofit.response.HelpResponse;
 import com.app.designmore.retrofit.response.LoginCodeResponse;
 import com.app.designmore.retrofit.response.SearchListResponse;
 import com.app.designmore.rxAndroid.SchedulersCompat;
@@ -38,6 +42,8 @@ import rx.functions.Func2;
  */
 public class LoginRetrofit {
 
+  private HelpEntity helpInstance = new HelpEntity();
+
   interface LoginService {
 
     //@Headers("Accept-Encoding: application/json")
@@ -49,6 +55,9 @@ public class LoginRetrofit {
 
     @FormUrlEncoded @POST("/mobile/api/client/interface.php")
     Observable<BaseResponse> requestRetrieve(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded @POST("/mobile/api/client/interface.php") Observable<HelpResponse> getHelpList(
+        @FieldMap Map<String, String> params);
   }
 
   private final LoginService loginService;
@@ -178,5 +187,39 @@ public class LoginRetrofit {
         return new RetrieveEntity(baseResponse.resultCode, baseResponse.message);
       }
     }).compose(SchedulersCompat.<RetrieveEntity>applyExecutorSchedulers());
+  }
+
+  /**
+   * 获取帮助中心列表
+   */
+  public Observable<List<HelpEntity>> getHelpList(final Map<String, String> params) {
+
+    return Observable.defer(new Func0<Observable<HelpResponse>>() {
+      @Override public Observable<HelpResponse> call() {
+        /*获取帮助列表，超时8秒*/
+        return loginService.getHelpList(params).timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
+      }
+    }).retry(new Func2<Integer, Throwable, Boolean>() {
+      @Override public Boolean call(Integer integer, Throwable throwable) {
+        return throwable instanceof TimeoutException && integer < 1;
+      }
+    }).concatMap(new Func1<HelpResponse, Observable<HelpResponse>>() {
+      @Override public Observable<HelpResponse> call(HelpResponse helpResponse) {
+        return helpResponse.filterWebServiceErrors();
+      }
+    }).flatMap(new Func1<HelpResponse, Observable<HelpResponse.Help>>() {
+      @Override public Observable<HelpResponse.Help> call(HelpResponse helpResponse) {
+        return Observable.from(helpResponse.getHelpList());
+      }
+    }).map(new Func1<HelpResponse.Help, HelpEntity>() {
+      @Override public HelpEntity call(HelpResponse.Help help) {
+
+        HelpEntity helpEntity = helpInstance.newInstance();
+        helpEntity.setTitle(help.title);
+        helpEntity.setContent(help.content);
+
+        return helpEntity;
+      }
+    }).toList().compose(SchedulersCompat.<List<HelpEntity>>applyExecutorSchedulers());
   }
 }

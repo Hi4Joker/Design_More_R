@@ -229,7 +229,6 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
   }
 
   private void showError(String errorTitle, String errorContent) {
-
     progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon), errorTitle,
         errorContent, getResources().getString(R.string.retry_button_text), retryClickListener);
   }

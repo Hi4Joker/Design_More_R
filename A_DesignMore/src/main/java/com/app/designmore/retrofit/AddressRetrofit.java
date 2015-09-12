@@ -104,8 +104,8 @@ public class AddressRetrofit {
             return throwable instanceof TimeoutException && integer < 1;
           }
         }).concatMap(new Func1<AddressResponse, Observable<AddressResponse>>() {
-          @Override public Observable<AddressResponse> call(AddressResponse addressManagerEntity) {
-            return addressManagerEntity.filterWebServiceErrors();
+          @Override public Observable<AddressResponse> call(AddressResponse addressResponse) {
+            return addressResponse.filterWebServiceErrors();
           }
         })/*.map(new Func1<AddressResponse, List<AddressEntity>>() {
           @Override public List<AddressEntity> call(AddressResponse addressResponse) {
@@ -181,7 +181,6 @@ public class AddressRetrofit {
       }
     }).map(new Func1<AddressResponse, EditorAddressEvent>() {
       @Override public EditorAddressEvent call(AddressResponse addressResponse) {
-
         AddressResponse.Address address = addressResponse.getAddressList().get(0);
         EditorAddressEvent editorAddressEvent =
             new EditorAddressEvent(address.addressId, address.userName, address.province,
@@ -221,7 +220,6 @@ public class AddressRetrofit {
    * 删除地址
    */
   public Observable<BaseResponse> requestDeleteAddress(final Map<String, String> params) {
-
     return Observable.defer(new Func0<Observable<BaseResponse>>() {
       @Override public Observable<BaseResponse> call() {
         return addressService.requestDeleteAddress(params)
@@ -248,7 +246,6 @@ public class AddressRetrofit {
    * 设置默认地址
    */
   public Observable<BaseResponse> requestSetDefaultAddress(final Map<String, String> params) {
-
     return Observable.defer(new Func0<Observable<BaseResponse>>() {
       @Override public Observable<BaseResponse> call() {
         return addressService.requestDeleteAddress(params)

@@ -7,12 +7,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/primary_background_color"
+    android:background="@color/transparent"
     >
 
   <include layout="@layout/include_white_toolbar_layout"/>
 
-  <android.support.v4.widget.NestedScrollView
+  <com.app.designmore.view.ProgressLayout
+      android:id="@+id/help_layout_pl"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      app:progressEmptyStateBackgroundColor="@color/primary_background_color"
+      app:progressEmptyStateTitleTextColor="@color/black"
+      app:progressEmptyStateContentTextColor="@color/black"
+      app:progressErrorStateBackgroundColor="@color/primary_background_color"
+      app:progressErrorStateTitleTextColor="@color/black"
+      app:progressErrorStateContentTextColor="@color/black"
+      app:progressErrorStateButtonTextColor="@color/white"
+      android:background="@color/primary_background_color"
+      >
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/help_layout_srl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/primary_background_color"
+        >
+      <android.support.v7.widget.RecyclerView
+          android:id="@+id/help_layout_rv"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:paddingTop="@dimen/material_24dp"
+          />
+    </android.support.v4.widget.SwipeRefreshLayout>
+  </com.app.designmore.view.ProgressLayout>
+
+
+  <!--<android.support.v4.widget.NestedScrollView
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:layout_marginBottom="@dimen/material_2dp"
@@ -177,7 +207,7 @@
         </LinearLayout>
       </android.support.v7.widget.CardView>
     </LinearLayout>
-  </android.support.v4.widget.NestedScrollView>
+  </android.support.v4.widget.NestedScrollView>-->
 
 
 </LinearLayout>

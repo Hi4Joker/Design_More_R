@@ -59,8 +59,8 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
 
   @Nullable @Bind(R.id.collection_layout_root_view) LinearLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
-  @Nullable @Bind(R.id.collection_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
+  @Nullable @Bind(R.id.collection_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.collection_layout_srl) SwipeRefreshLayout swipeRefreshLayout;
   @Nullable @Bind(R.id.collection_layout_rv) RecyclerView recyclerView;
 
@@ -73,6 +73,13 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
       CollectionActivity.this.loadData();
+    }
+  };
+
+  private View.OnClickListener goHomeClickListener = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      HomeActivity.navigateToHome(CollectionActivity.this);
+      overridePendingTransition(0, 0);
     }
   };
 
@@ -195,12 +202,7 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
               }
             } else if (items != null && items.size() == 0) {
               progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
-                  "您还没有收藏", null, "去首页看看", new View.OnClickListener() {
-                    @Override public void onClick(View v) {
-                      HomeActivity.navigateToHome(CollectionActivity.this);
-                      overridePendingTransition(0, 0);
-                    }
-                  });
+                  "您还没有收藏", null, "去首页看看", goHomeClickListener);
             }
           }
 
@@ -240,20 +242,6 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
         errorContent, getResources().getString(R.string.retry_button_text), retryClickListener);
   }
 
-  @Override public void exit() {
-
-    ViewCompat.animate(rootView)
-        .translationY(DensityUtil.getScreenHeight(CollectionActivity.this))
-        .setDuration(Constants.MILLISECONDS_400)
-        .setInterpolator(new LinearInterpolator())
-        .setListener(new ViewPropertyAnimatorListenerAdapter() {
-          @Override public void onAnimationEnd(View view) {
-            CollectionActivity.super.onBackPressed();
-            overridePendingTransition(0, 0);
-          }
-        });
-  }
-
   //CollectionAdapter回调
   /*点击条目，跳转商品详情*/
   @Override public void onItemClick(CollectionEntity entity) {
@@ -289,8 +277,12 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
         .doOnSubscribe(new Action0() {
           @Override public void call() {
             /*加载数据，显示进度条*/
-            progressDialog = DialogManager.
-                getInstance().showSimpleProgressDialog(CollectionActivity.this, cancelListener);
+            if (progressDialog == null) {
+              progressDialog = DialogManager.
+                  getInstance().showSimpleProgressDialog(CollectionActivity.this, cancelListener);
+            } else {
+              progressDialog.show();
+            }
           }
         })
         .map(new Func1<BaseResponse, Integer>() {
@@ -331,6 +323,20 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
         .setAction("确定", new View.OnClickListener() {
           @Override public void onClick(View v) {
             /*do nothing*/
+          }
+        });
+  }
+
+  @Override public void exit() {
+
+    ViewCompat.animate(rootView)
+        .translationY(DensityUtil.getScreenHeight(CollectionActivity.this))
+        .setDuration(Constants.MILLISECONDS_400)
+        .setInterpolator(new LinearInterpolator())
+        .setListener(new ViewPropertyAnimatorListenerAdapter() {
+          @Override public void onAnimationEnd(View view) {
+            CollectionActivity.super.onBackPressed();
+            overridePendingTransition(0, 0);
           }
         });
   }
