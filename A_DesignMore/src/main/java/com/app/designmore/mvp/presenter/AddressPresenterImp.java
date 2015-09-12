@@ -2,14 +2,10 @@ package com.app.designmore.mvp.presenter;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.AnalogClock;
-import com.app.designmore.event.ProvinceEvent;
-import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.mvp.viewinterface.AddressView;
 import com.app.designmore.retrofit.entity.Province;
 import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
-import com.app.designmore.view.CustomWheelPicker;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
@@ -23,10 +19,7 @@ import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Action1;
-import rx.functions.Func0;
 import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
-import rx.subscriptions.Subscriptions;
 
 /**
  * Created by Joker on 2015/9/9.

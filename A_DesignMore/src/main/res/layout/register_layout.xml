@@ -123,7 +123,7 @@
           />
 
       <EditText
-          android:id="@+id/register_layout_phone_et"
+          android:id="@+id/register_layout_mobile_et"
           android:hint="请输入手机号"
           android:inputType="phone"
           android:maxLength="11"

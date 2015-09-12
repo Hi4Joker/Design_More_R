@@ -74,7 +74,7 @@
           />
 
       <EditText
-          android:id="@+id/retrieve_layout_phone_et"
+          android:id="@+id/retrieve_layout_mobile_et"
           android:layout_toLeftOf="@id/retrieve_layout_name_clear_btn"
           android:hint="请输入已经验证的手机号"
           android:inputType="phone"
@@ -125,7 +125,7 @@
             android:layout_height="match_parent"
             android:text="点击获取"
             android:textSize="@dimen/material_12sp"
-            android:textColor="@android:color/darker_gray"
+            android:textColor="@android:color/black"
             android:background="@drawable/white_corner_background"
             />
       </com.app.designmore.view.MaterialRippleLayout>
@@ -175,7 +175,7 @@
           />
 
       <EditText
-          android:id="@+id/retrieve_layout_confirm_et"
+          android:id="@+id/retrieve_layout_confirm_password_et"
           android:hint="请确认新密码"
           android:inputType="textPassword"
           style="@style/login_layout_et_style"/>
@@ -207,7 +207,7 @@
         android:text="重置密码"
         android:textSize="@dimen/material_16sp"
         android:textColor="@android:color/white"
-        android:background="@drawable/red_corner_background"
+        android:background="@drawable/red_corner_button_background"
         />
   </com.app.designmore.view.MaterialRippleLayout>
 

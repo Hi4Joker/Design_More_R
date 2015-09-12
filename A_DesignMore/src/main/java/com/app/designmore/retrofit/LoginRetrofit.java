@@ -5,6 +5,7 @@ import com.app.designmore.Constants;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.retrofit.entity.LoginCodeEntity;
 import com.app.designmore.retrofit.entity.RegisterEntity;
+import com.app.designmore.retrofit.entity.RetrieveEntity;
 import com.app.designmore.retrofit.entity.SearchItemEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.retrofit.response.LoginCodeResponse;
@@ -45,6 +46,9 @@ public class LoginRetrofit {
 
     @FormUrlEncoded @POST("/mobile/api/client/interface.php")
     Observable<BaseResponse> requestRegister(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded @POST("/mobile/api/client/interface.php")
+    Observable<BaseResponse> requestRetrieve(@FieldMap Map<String, String> params);
   }
 
   private final LoginService loginService;
@@ -84,7 +88,7 @@ public class LoginRetrofit {
   /**
    * 获取验证码
    */
-  public Observable<LoginCodeEntity> getLoginCode(final Map<String, String> params) {
+  public Observable<LoginCodeEntity> getAuthCode(final Map<String, String> params) {
 
     return Observable.defer(new Func0<Observable<LoginCodeResponse>>() {
       @Override public Observable<LoginCodeResponse> call() {
@@ -115,19 +119,20 @@ public class LoginRetrofit {
 
     return Observable.defer(new Func0<Observable<BaseResponse>>() {
       @Override public Observable<BaseResponse> call() {
-        return loginService.requestRegister(params).retry(new Func2<Integer, Throwable, Boolean>() {
-          @Override public Boolean call(Integer integer, Throwable throwable) {
-            return throwable instanceof TimeoutException && integer < 1;
-          }
-        });
+        return loginService.requestRegister(params)
+            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
+      }
+    }).retry(new Func2<Integer, Throwable, Boolean>() {
+      @Override public Boolean call(Integer integer, Throwable throwable) {
+        return throwable instanceof TimeoutException && integer < 1;
       }
     }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
       @Override public Observable<BaseResponse> call(final BaseResponse baseResponse) {
         return baseResponse.filterWebServiceErrors()
             .onErrorResumeNext(new Func1<Throwable, Observable>() {
               @Override public Observable call(Throwable throwable) {
-                if (throwable instanceof WebServiceException && baseResponse.message.contains(
-                    "存在")) {
+                if (throwable instanceof WebServiceException
+                    && baseResponse.resultCode == Constants.RESULT_FAIL) {
                   return Observable.just(baseResponse);
                 }
                 return Observable.error(throwable);
@@ -136,10 +141,42 @@ public class LoginRetrofit {
       }
     }).map(new Func1<BaseResponse, RegisterEntity>() {
       @Override public RegisterEntity call(BaseResponse baseResponse) {
-        RegisterEntity registerEntity =
-            new RegisterEntity(baseResponse.resultCode, baseResponse.message);
-        return registerEntity;
+        return new RegisterEntity(baseResponse.resultCode, baseResponse.message);
       }
     }).compose(SchedulersCompat.<RegisterEntity>applyExecutorSchedulers());
+  }
+
+  /**
+   * 找回密码
+   */
+  public Observable<RetrieveEntity> requestRetrieve(final Map<String, String> params) {
+
+    return Observable.defer(new Func0<Observable<BaseResponse>>() {
+      @Override public Observable<BaseResponse> call() {
+        return loginService.requestRetrieve(params)
+            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
+      }
+    }).retry(new Func2<Integer, Throwable, Boolean>() {
+      @Override public Boolean call(Integer integer, Throwable throwable) {
+        return throwable instanceof TimeoutException && integer < 1;
+      }
+    }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
+      @Override public Observable<BaseResponse> call(final BaseResponse baseResponse) {
+        return baseResponse.filterWebServiceErrors()
+            .onErrorResumeNext(new Func1<Throwable, Observable>() {
+              @Override public Observable call(Throwable throwable) {
+                if (throwable instanceof WebServiceException
+                    && baseResponse.resultCode == Constants.RESULT_FAIL) {
+                  return Observable.just(baseResponse);
+                }
+                return Observable.error(throwable);
+              }
+            });
+      }
+    }).map(new Func1<BaseResponse, RetrieveEntity>() {
+      @Override public RetrieveEntity call(BaseResponse baseResponse) {
+        return new RetrieveEntity(baseResponse.resultCode, baseResponse.message);
+      }
+    }).compose(SchedulersCompat.<RetrieveEntity>applyExecutorSchedulers());
   }
 }

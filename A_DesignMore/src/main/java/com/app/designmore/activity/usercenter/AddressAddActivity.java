@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,7 +39,7 @@ import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.utils.Utils;
-import com.app.designmore.view.CustomWheelPicker;
+import com.app.designmore.view.CustomWheelDialog;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
 import com.trello.rxlifecycle.ActivityEvent;
@@ -89,7 +88,7 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
   private Subscription subscription = Subscriptions.empty();
   private ProgressDialog progressDialog;
   private ProgressDialog simpleProgressDialog;
-  private CustomWheelPicker customWheelPicker;
+  private CustomWheelDialog customWheelDialog;
 
   private AddressPresenter addressPresenter;
 
@@ -110,7 +109,7 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
     }
   };
 
-  private CustomWheelPicker.Callback callback = new CustomWheelPicker.Callback() {
+  private CustomWheelDialog.Callback callback = new CustomWheelDialog.Callback() {
     @Override public void onPicked(Province selectProvince, Province.City selectCity) {
 
       AddressAddActivity.this.defaultProvince = selectProvince;
@@ -373,7 +372,6 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
     this.progressDialog = null;
     this.simpleProgressDialog = null;
     this.addressPresenter.detach();
-    if (customWheelPicker != null && !customWheelPicker.isShowing()) customWheelPicker.destroy();
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();
   }
 
@@ -401,13 +399,12 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
   }
 
   @Override public void onInflateFinish(List<Province> provinces) {
-
-    if (customWheelPicker == null) {
-      customWheelPicker = new CustomWheelPicker(AddressAddActivity.this, provinces, callback);
+    if (customWheelDialog == null) {
+      customWheelDialog = new CustomWheelDialog(AddressAddActivity.this, provinces, callback);
     }
 
-    customWheelPicker.updateDefault(defaultProvince, defaultCity);
-    customWheelPicker.show();
+    customWheelDialog.updateDefault(defaultProvince, defaultCity);
+    customWheelDialog.show();
   }
 
   @Override public void showError() {

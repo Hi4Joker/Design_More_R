@@ -4,10 +4,16 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
+import android.widget.Button;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.retrofit.entity.Province;
@@ -19,18 +25,19 @@ import com.app.designmore.view.wheel.adapter.AbstractWheelTextAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomWheelPicker extends Dialog {
+public class CustomWheelDialog extends Dialog {
 
+  private static final String TAG = CustomWheelDialog.class.getSimpleName();
   private final static int DEFAULT_VISIBLE_ITEMS = 5;
 
   private Activity context;
-
   private ArrayList<Province> provinces = new ArrayList<>();
   private ArrayList<Province.City> cities = new ArrayList<>();
   private AbstractWheelTextAdapter provinceAdapter;
   private AbstractWheelTextAdapter cityAdapter;
   private WheelView provinceWheel;
   private WheelView citiesWheel;
+  private Callback callback;
 
   private OnWheelClickedListener wheelClickedListener = new OnWheelClickedListener() {
     @Override public void onItemClicked(WheelView wheel, int itemIndex) {
@@ -49,24 +56,24 @@ public class CustomWheelPicker extends Dialog {
     }
   };
 
-  public CustomWheelPicker(Activity context, List<Province> provinces, final Callback listener) {
+  public CustomWheelDialog(Activity context, List<Province> provinces, final Callback callback) {
     super(context);
     getWindow().requestFeature(Window.FEATURE_NO_TITLE);
     getWindow().setGravity(Gravity.BOTTOM);
     getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
     getWindow().setWindowAnimations(R.style.AnimBottom);
     View rootView = getLayoutInflater().inflate(R.layout.wheel_layout, null);
-    int screenWidth = DensityUtil.getScreenWidth(context);
-    LayoutParams params = new LayoutParams(screenWidth, LayoutParams.MATCH_PARENT);
+    LayoutParams params =
+        new LayoutParams(DensityUtil.getScreenWidth(context), LayoutParams.MATCH_PARENT);
     super.setContentView(rootView, params);
 
     this.context = context;
     /*设置dialog不能取消*/
-    CustomWheelPicker.this.setCancelable(false);
-
-    CustomWheelPicker.this.initView();
-    CustomWheelPicker.this.setListener(listener);
+    CustomWheelDialog.this.setCancelable(false);
     this.provinces.addAll(provinces);
+    this.callback = callback;
+
+    CustomWheelDialog.this.initView();
   }
 
   private void initView() {
@@ -74,7 +81,7 @@ public class CustomWheelPicker extends Dialog {
     provinceWheel = (WheelView) findViewById(R.id.wheel_layout_province_wheel);
     citiesWheel = (WheelView) findViewById(R.id.wheel_layout_city_wheel);
 
-    CustomWheelPicker.this.setupAdapter();
+    CustomWheelDialog.this.setupAdapter();
   }
 
   private void setupAdapter() {
@@ -106,31 +113,6 @@ public class CustomWheelPicker extends Dialog {
     citiesWheel.setViewAdapter(cityAdapter);
     citiesWheel.setCyclic(false);
     citiesWheel.setVisibleItems(DEFAULT_VISIBLE_ITEMS);
-  }
-
-  private void setListener(final Callback callback) {
-    findViewById(R.id.wheel_layout_done_btn).setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        if (callback != null) {
-          Province province =
-              CustomWheelPicker.this.provinces.size() > 0 ? CustomWheelPicker.this.provinces.get(
-                  provinceWheel.getCurrentItem()) : null;
-          Province.City city = cities.size() > 0 ? cities.get(citiesWheel.getCurrentItem()) : null;
-          callback.onPicked(province, city);
-        }
-        CustomWheelPicker.this.dismiss();
-      }
-    });
-
-    findViewById(R.id.wheel_layout_cancel_btn).setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        CustomWheelPicker.this.dismiss();
-      }
-    });
-
-    provinceWheel.addClickingListener(wheelClickedListener);
-    citiesWheel.addClickingListener(wheelClickedListener);
-    provinceWheel.addChangingListener(wheelChangedListener);
   }
 
   public void updateDefault(Province defaultProvince, Province.City defaultCity) {
@@ -165,17 +147,38 @@ public class CustomWheelPicker extends Dialog {
     citiesWheel.setCurrentItem(cityItem, false);
   }
 
+  @Nullable @OnClick(R.id.wheel_layout_done_btn) void onDoneClick() {
+    if (callback != null) {
+      Province province =
+          CustomWheelDialog.this.provinces.size() > 0 ? CustomWheelDialog.this.provinces.get(
+              provinceWheel.getCurrentItem()) : null;
+      Province.City city = cities.size() > 0 ? cities.get(citiesWheel.getCurrentItem()) : null;
+      callback.onPicked(province, city);
+    }
+    CustomWheelDialog.this.dismiss();
+  }
+
+  @Nullable @OnClick(R.id.wheel_layout_cancel_btn) void onCancelClick() {
+    CustomWheelDialog.this.dismiss();
+  }
+
   public interface Callback {
     void onPicked(Province selectProvince, Province.City selectCity);
   }
 
-  @Override public void onDetachedFromWindow() {
-    super.onDetachedFromWindow();
+  @Override public void onAttachedToWindow() {
+    super.onAttachedToWindow();
+    ButterKnife.bind(CustomWheelDialog.this);
+    provinceWheel.addClickingListener(wheelClickedListener);
+    citiesWheel.addClickingListener(wheelClickedListener);
+    provinceWheel.addChangingListener(wheelChangedListener);
   }
 
-  public void destroy() {
+  @Override public void onDetachedFromWindow() {
+    super.onDetachedFromWindow();
     provinceWheel.removeClickingListener(wheelClickedListener);
     citiesWheel.removeClickingListener(wheelClickedListener);
     provinceWheel.removeChangingListener(wheelChangedListener);
+    ButterKnife.unbind(CustomWheelDialog.this);
   }
 }

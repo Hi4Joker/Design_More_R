@@ -8,8 +8,8 @@ public class SplashActivity extends AppCompatActivity {
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    //LoginActivity.navigateToLogin(SplashActivity.this);
-    HomeActivity.navigateToHome(SplashActivity.this);
+    LoginActivity.navigateToLogin(SplashActivity.this);
+    //HomeActivity.navigateToHome(SplashActivity.this);
     SplashActivity.this.finish();
     overridePendingTransition(0, 0);
   }

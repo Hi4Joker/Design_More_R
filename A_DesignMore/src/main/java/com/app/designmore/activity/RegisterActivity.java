@@ -8,7 +8,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,29 +19,23 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
-import com.app.designmore.event.RefreshAddressEvent;
-import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
-import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.retrofit.LoginRetrofit;
 import com.app.designmore.retrofit.entity.LoginCodeEntity;
 import com.app.designmore.retrofit.entity.RegisterEntity;
-import com.app.designmore.retrofit.entity.SearchItemEntity;
 import com.app.designmore.rxAndroid.SchedulersCompat;
+import com.app.designmore.rxAndroid.SimpleObserver;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.utils.DensityUtil;
-import com.app.designmore.utils.Utils;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
 import rx.Observable;
-import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Action1;
@@ -62,7 +55,7 @@ public class RegisterActivity extends BaseActivity {
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
   @Nullable @Bind(R.id.register_layout_name_et) EditText userNameEt;
   @Nullable @Bind(R.id.register_layout_password_et) EditText passwordEt;
-  @Nullable @Bind(R.id.register_layout_phone_et) EditText mobileEt;
+  @Nullable @Bind(R.id.register_layout_mobile_et) EditText mobileEt;
   @Nullable @Bind(R.id.register_layout_code_et) EditText codeEt;
   @Nullable @Bind(R.id.register_layout_code_btn) Button codeBtn;
   @Nullable @Bind(R.id.register_layout_register_btn) Button registerBtn;
@@ -71,14 +64,15 @@ public class RegisterActivity extends BaseActivity {
   private Observable<TextViewTextChangeEvent> codeChangeObservable;
   private Observable<TextViewTextChangeEvent> passwordChangeObservable;
   private Observable<TextViewTextChangeEvent> mobileChangeObservable;
+
+  private Subscription subscription = Subscriptions.empty();
+  private CompositeSubscription compositeSubscription = new CompositeSubscription();
+
   private String userName;
   private String password;
   private String mobile;
   private String code;
-
-  private CompositeSubscription compositeSubscription = new CompositeSubscription();
   private ProgressDialog progressDialog;
-  private Subscription subscription = Subscriptions.empty();
 
   private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
     @Override public void onCancel(DialogInterface dialog) {
@@ -165,13 +159,13 @@ public class RegisterActivity extends BaseActivity {
             }));
   }
 
-  @Nullable @OnClick(R.id.register_layout_code_btn) void onButtonClick(final Button button) {
+  @Nullable @OnClick(R.id.register_layout_code_btn) void onCodeClick(final Button button) {
 
     RegisterActivity.this.startCountDown();
-    RegisterActivity.this.getLoginCode();
+    RegisterActivity.this.getRegisterCode();
   }
 
-  private void getLoginCode() {
+  private void getRegisterCode() {
 
     /*Action=SendCheckMessage&mobile=18622816323&message=欢迎您注册设计猫，*/
     Map<String, String> params = new HashMap<>();
@@ -180,7 +174,7 @@ public class RegisterActivity extends BaseActivity {
     params.put("message", "欢迎您注册设计猫,");
 
     LoginRetrofit.getInstance()
-        .getLoginCode(params)
+        .getAuthCode(params)
         .compose(RegisterActivity.this.<LoginCodeEntity>bindUntilEvent(ActivityEvent.DESTROY))
         .subscribe(new Action1<LoginCodeEntity>() {
           @Override public void call(LoginCodeEntity loginCodeEntity) {
@@ -206,16 +200,11 @@ public class RegisterActivity extends BaseActivity {
         })
         .compose(SchedulersCompat.<Long>applyComputationSchedulers())
         .compose(RegisterActivity.this.<Long>bindUntilEvent(ActivityEvent.DESTROY))
-        .subscribe(new Subscriber<Long>() {
+        .subscribe(new SimpleObserver<Long>() {
           @Override public void onCompleted() {
-
             /*60秒倒计时结束，回复按钮状态*/
             codeBtn.setEnabled(true);
             codeBtn.setText("点击获取");
-          }
-
-          @Override public void onError(Throwable e) {
-
           }
 
           @Override public void onNext(Long aLong) {
@@ -241,30 +230,35 @@ public class RegisterActivity extends BaseActivity {
     params.put("Username", userName);
     params.put("mobile_phone", mobile);
 
-    subscription = LoginRetrofit.getInstance().requestRegister(params).doOnSubscribe(new Action0() {
-      @Override public void call() {
+    subscription = LoginRetrofit.getInstance()
+        .requestRegister(params)
+        .doOnSubscribe(new Action0() {
+          @Override public void call() {
             /*加载数据，显示进度条*/
-        progressDialog = DialogManager.
-            getInstance().showSimpleProgressDialog(RegisterActivity.this, cancelListener);
-      }
-    }).doOnTerminate(new Action0() {
-      @Override public void call() {
+            progressDialog = DialogManager.
+                getInstance().showSimpleProgressDialog(RegisterActivity.this, cancelListener);
+          }
+        })
+        .doOnTerminate(new Action0() {
+          @Override public void call() {
             /*隐藏进度条*/
-        if (progressDialog != null && progressDialog.isShowing()) {
-          progressDialog.dismiss();
-        }
-      }
-    }).filter(new Func1<RegisterEntity, Boolean>() {
-      @Override public Boolean call(RegisterEntity registerEntity) {
-        return !subscription.isUnsubscribed();
-      }
-    }).compose(RegisterActivity.this.<RegisterEntity>bindUntilEvent(ActivityEvent.DESTROY))
-
+            if (progressDialog != null && progressDialog.isShowing()) {
+              progressDialog.dismiss();
+            }
+          }
+        })
+        .filter(new Func1<RegisterEntity, Boolean>() {
+          @Override public Boolean call(RegisterEntity registerEntity) {
+            return !subscription.isUnsubscribed();
+          }
+        })
+        .compose(RegisterActivity.this.<RegisterEntity>bindUntilEvent(ActivityEvent.DESTROY))
         .subscribe(new Action1<RegisterEntity>() {
           @Override public void call(RegisterEntity registerEntity) {
-            String message = registerEntity.getRegisterMessage();
-            Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_LONG).show();
-            if (registerEntity.getRegisterMessage().contains("存在")) {
+
+            Toast.makeText(RegisterActivity.this, registerEntity.getRegisterMessage(),
+                Toast.LENGTH_LONG).show();
+            if (registerEntity.getRegisterCode() == Constants.RESULT_OK) {
               RegisterActivity.this.finish();
             }
           }
@@ -281,9 +275,6 @@ public class RegisterActivity extends BaseActivity {
     } else if (error instanceof RetrofitError) {
       Log.e(TAG, "kind:  " + ((RetrofitError) error).getKind());
       RegisterActivity.this.showSnackBar(getResources().getString(R.string.six_word));
-    } else if (error instanceof WebServiceException) {
-      RegisterActivity.this.showSnackBar(
-          getResources().getString(R.string.service_exception_content));
     } else {
       Log.e(TAG, error.getMessage());
       error.printStackTrace();
@@ -305,6 +296,8 @@ public class RegisterActivity extends BaseActivity {
 
   @Override protected void onDestroy() {
     super.onDestroy();
+    progressDialog = null;
+    if (!subscription.isUnsubscribed()) subscription.unsubscribe();
     if (compositeSubscription.hasSubscriptions()) compositeSubscription.clear();
   }
 }

@@ -9,14 +9,14 @@
 
   <RelativeLayout
       android:layout_width="match_parent"
-      android:layout_height="@dimen/material_48dp">
+      android:layout_height="@dimen/material_48dp"
+      >
 
     <com.app.designmore.view.MaterialRippleLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:padding="@dimen/material_4dp"
         app:mrl_rippleDimension="20dip"
         app:mrl_rippleRoundedCorners="@dimen/material_corners"
         app:mrl_rippleFadeDuration="100"
@@ -46,7 +46,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:padding="@dimen/material_4dp"
         app:mrl_rippleDimension="20dip"
         app:mrl_rippleRoundedCorners="@dimen/material_corners"
         app:mrl_rippleFadeDuration="100"
@@ -76,21 +75,15 @@
 
     <com.app.designmore.view.wheel.WheelView
         android:id="@+id/wheel_layout_province_wheel"
-        android:layout_width="match_parent"
+        android:layout_width="0dip"
         android:layout_height="wrap_content"
         android:layout_weight="1"/>
 
     <com.app.designmore.view.wheel.WheelView
         android:id="@+id/wheel_layout_city_wheel"
-        android:layout_width="match_parent"
+        android:layout_width="0dip"
         android:layout_height="wrap_content"
         android:layout_weight="1"/>
-
-    <!--<com.yang.picker.wheel.WheelView
-        android:id="@+id/countiesWheel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"/>-->
   </LinearLayout>
 
 </LinearLayout>
