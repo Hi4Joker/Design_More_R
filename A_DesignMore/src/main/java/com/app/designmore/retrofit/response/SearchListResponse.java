@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class SearchListResponse extends BaseResponse {
 
-  @Expose List<String> result;
+  @Expose private List<String> result;
 
   public List<String> getResult() {
     return result;

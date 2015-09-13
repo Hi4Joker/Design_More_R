@@ -92,73 +92,43 @@ public class AddressRetrofit {
    */
   public Observable<List<AddressEntity>> getAddressList(final Map<String, String> params) {
 
-    Observable<List<AddressEntity>> observable =
-        Observable.defer(new Func0<Observable<AddressResponse>>() {
-          @Override public Observable<AddressResponse> call() {
+    return Observable.defer(new Func0<Observable<AddressResponse>>() {
+      @Override public Observable<AddressResponse> call() {
              /*获取地址列表，超时8秒*/
-            return addressService.getAddressList(params)
-                .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-          }
-        }).retry(new Func2<Integer, Throwable, Boolean>() {
-          @Override public Boolean call(Integer integer, Throwable throwable) {
-            return throwable instanceof TimeoutException && integer < 1;
-          }
-        }).concatMap(new Func1<AddressResponse, Observable<AddressResponse>>() {
-          @Override public Observable<AddressResponse> call(AddressResponse addressResponse) {
-            return addressResponse.filterWebServiceErrors();
-          }
-        })/*.map(new Func1<AddressResponse, List<AddressEntity>>() {
-          @Override public List<AddressEntity> call(AddressResponse addressResponse) {
+        return addressService.getAddressList(params)
+            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
+      }
+    }).retry(new Func2<Integer, Throwable, Boolean>() {
+      @Override public Boolean call(Integer integer, Throwable throwable) {
+        return throwable instanceof TimeoutException && integer < 1;
+      }
+    }).concatMap(new Func1<AddressResponse, Observable<AddressResponse>>() {
+      @Override public Observable<AddressResponse> call(AddressResponse addressResponse) {
+        return addressResponse.filterWebServiceErrors();
+      }
+    }).flatMap(new Func1<AddressResponse, Observable<AddressResponse.Address>>() {
+      @Override public Observable<AddressResponse.Address> call(AddressResponse addressResponse) {
+        return Observable.from(addressResponse.getAddressList());
+      }
+    }).map(new Func1<AddressResponse.Address, AddressEntity>() {
+      @Override public AddressEntity call(AddressResponse.Address address) {
 
-            final ArrayList<AddressEntity> addressArrayList =
-                new ArrayList<>(addressResponse.getAddressList().size());
-            AddressEntity addressInstance = new AddressEntity();
+        AddressEntity addressEntity = addressInstance.newInstance();
+        addressEntity.setAddressId(address.addressId);
+        addressEntity.setUserName(address.userName);
+        addressEntity.setMobile(address.mobile);
+        addressEntity.setZipcode(address.zipcode);
 
-            for (AddressResponse.Address entity : addressResponse.getAddressList()) {
-              AddressEntity clone = addressInstance.newInstance();
+        addressEntity.setProvince(address.province);
+        addressEntity.setCity(address.city);
+        addressEntity.setAddress(address.address);
 
-              clone.setAddressId(entity.addressId);
-              clone.setUserName(entity.userName);
-              clone.setMobile(entity.mobile);
-              clone.setZipcode(entity.zipcode);
+        /*默认选项*/
+        addressEntity.setDefault(address.isDefault);
 
-              clone.setProvince(entity.province);
-              clone.setCity(entity.city);
-              clone.setAddress(entity.address);
-
-              *//*默认选项*//*
-              clone.setDefault(entity.isDefault);
-
-              addressArrayList.add(clone);
-            }
-            return addressArrayList;
-          }
-        })*/.flatMap(new Func1<AddressResponse, Observable<AddressResponse.Address>>() {
-          @Override
-          public Observable<AddressResponse.Address> call(AddressResponse addressResponse) {
-            return Observable.from(addressResponse.getAddressList());
-          }
-        }).map(new Func1<AddressResponse.Address, AddressEntity>() {
-          @Override public AddressEntity call(AddressResponse.Address address) {
-
-            AddressEntity addressEntity = addressInstance.newInstance();
-            addressEntity.setAddressId(address.addressId);
-            addressEntity.setUserName(address.userName);
-            addressEntity.setMobile(address.mobile);
-            addressEntity.setZipcode(address.zipcode);
-
-            addressEntity.setProvince(address.province);
-            addressEntity.setCity(address.city);
-            addressEntity.setAddress(address.address);
-
-            /*默认选项*/
-            addressEntity.setDefault(address.isDefault);
-
-            return addressEntity;
-          }
-        }).toList().compose(SchedulersCompat.<List<AddressEntity>>applyExecutorSchedulers());
-
-    return observable;
+        return addressEntity;
+      }
+    }).toList().compose(SchedulersCompat.<List<AddressEntity>>applyExecutorSchedulers());
   }
 
   /**
@@ -185,7 +155,6 @@ public class AddressRetrofit {
         EditorAddressEvent editorAddressEvent =
             new EditorAddressEvent(address.addressId, address.userName, address.province,
                 address.city, address.address, address.mobile, address.zipcode, address.isDefault);
-
         return editorAddressEvent;
       }
     }).compose(SchedulersCompat.<EditorAddressEvent>applyExecutorSchedulers());
@@ -231,7 +200,6 @@ public class AddressRetrofit {
       }
     }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
       @Override public Observable<BaseResponse> call(BaseResponse addressResponse) {
-
         return addressResponse.filterWebServiceErrors();
       }
     }).map(new Func1<BaseResponse, BaseResponse>() {

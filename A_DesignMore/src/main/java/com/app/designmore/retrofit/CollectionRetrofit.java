@@ -30,6 +30,8 @@ import rx.functions.Func2;
  */
 public class CollectionRetrofit {
 
+  private CollectionEntity instance = new CollectionEntity();
+
   interface CollectionService {
 
     //@Headers("Accept-Encoding: application/json")
@@ -96,28 +98,24 @@ public class CollectionRetrofit {
           public Observable<CollectionResponse> call(CollectionResponse collectionResponse) {
             return collectionResponse.filterWebServiceErrors();
           }
-        }).map(new Func1<CollectionResponse, List<CollectionEntity>>() {
-          @Override public List<CollectionEntity> call(CollectionResponse collectionResponse) {
-
-            final ArrayList<CollectionEntity> collectionEntities = new ArrayList<>();
-            CollectionEntity instance = new CollectionEntity();
-
-            for (CollectionResponse.Collect collect : collectionResponse.getCollections()) {
-
-              CollectionEntity clone = instance.newInstance();
-
-              clone.setGoodId(collect.goodInfo.goodId);
-              clone.setGoodName(collect.goodInfo.goodName);
-              clone.setGoodPrice(collect.goodInfo.goodPrice);
-              clone.setGoodThumb(collect.goodInfo.goodThumb);
-              clone.setCollectionId(collectionResponse.collectionId);
-
-              collectionEntities.add(clone);
-            }
-
-            return collectionEntities;
+        }).flatMap(new Func1<CollectionResponse, Observable<CollectionResponse.Collect>>() {
+          @Override public Observable<CollectionResponse.Collect> call(
+              CollectionResponse collectionResponse) {
+            return Observable.from(collectionResponse.getCollections());
           }
-        }).compose(SchedulersCompat.<List<CollectionEntity>>applyExecutorSchedulers());
+        }).map(new Func1<CollectionResponse.Collect, CollectionEntity>() {
+          @Override public CollectionEntity call(CollectionResponse.Collect collect) {
+
+            CollectionEntity clone = instance.newInstance();
+            clone.setGoodId(collect.getGoodInfo().goodId);
+            clone.setGoodName(collect.getGoodInfo().goodName);
+            clone.setGoodPrice(collect.getGoodInfo().goodPrice);
+            clone.setGoodThumb(collect.getGoodInfo().goodThumb);
+            clone.setCollectionId(collect.getCollectionId());
+
+            return clone;
+          }
+        }).toList().compose(SchedulersCompat.<List<CollectionEntity>>applyExecutorSchedulers());
 
     return observable;
   }
@@ -139,7 +137,6 @@ public class CollectionRetrofit {
       }
     }).map(new Func1<BaseResponse, BaseResponse>() {
       @Override public BaseResponse call(BaseResponse baseResponse) {
-
         /*删除成功*/
         return baseResponse;
       }

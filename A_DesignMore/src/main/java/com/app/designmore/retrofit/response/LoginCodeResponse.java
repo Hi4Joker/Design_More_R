@@ -12,7 +12,7 @@ public class LoginCodeResponse extends BaseResponse {
 
   /*{"result":"09581","code":1,"message":"发送成功"}*/
 
-  @Expose @SerializedName("result") String code;
+  @Expose @SerializedName("result") private String code;
 
   public String getCode() {
     return code;

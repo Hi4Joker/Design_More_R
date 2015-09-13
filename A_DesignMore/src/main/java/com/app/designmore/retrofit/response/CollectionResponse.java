@@ -60,9 +60,7 @@ public class CollectionResponse extends BaseResponse {
           "is_check": null
           }*/
 
-  @Expose @SerializedName("rec_id") public String collectionId;
-
-  @Expose @SerializedName("result") public List<Collect> collections;
+  @Expose @SerializedName("result") private List<Collect> collections;
 
   public List<Collect> getCollections() {
     return collections;
@@ -70,8 +68,12 @@ public class CollectionResponse extends BaseResponse {
 
   public class Collect {
 
-    //@Expose @SerializedName("goods_id") public String goodId;
-    @Expose @SerializedName("goods_info") public GoodInfo goodInfo;
+    @Expose @SerializedName("rec_id") private String collectionId;
+    @Expose @SerializedName("goods_info") private GoodInfo goodInfo;
+
+    public String getCollectionId() {
+      return collectionId;
+    }
 
     public GoodInfo getGoodInfo() {
       return goodInfo;
@@ -98,7 +100,8 @@ public class CollectionResponse extends BaseResponse {
 
     @Override public String toString() {
       return "Collect{" +
-          "goodInfo=" + goodInfo +
+          "collectionId='" + collectionId + '\'' +
+          ", goodInfo=" + goodInfo +
           '}';
     }
   }

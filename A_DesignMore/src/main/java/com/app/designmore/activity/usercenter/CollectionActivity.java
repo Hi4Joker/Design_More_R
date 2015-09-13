@@ -179,7 +179,7 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
     /*Action=GetCollectByGoods&uid=1*/
     Map<String, String> params = new HashMap<>(2);
     params.put("Action", "GetCollectByGoods");
-    params.put("uid", "1");
+    params.put("uid", "10");
 
     CollectionRetrofit.getInstance()
         .getCollectionList(params)

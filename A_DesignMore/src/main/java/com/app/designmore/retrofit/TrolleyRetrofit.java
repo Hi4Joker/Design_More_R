@@ -30,6 +30,8 @@ import rx.functions.Func2;
  */
 public class TrolleyRetrofit {
 
+  private TrolleyEntity instance = new TrolleyEntity();
+
   interface CollectionService {
 
     //@Headers("Accept-Encoding: application/json")
@@ -79,51 +81,43 @@ public class TrolleyRetrofit {
    */
   public Observable<List<TrolleyEntity>> getTrolleyList(final Map<String, String> params) {
 
-    Observable<List<TrolleyEntity>> observable =
-        Observable.defer(new Func0<Observable<TrolleyResponse>>() {
-          @Override public Observable<TrolleyResponse> call() {
-             /*获取热搜列表，超时8秒*/
-            return collectionService.getTrolleyList(params)
-                .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-          }
-        }).retry(new Func2<Integer, Throwable, Boolean>() {
-          @Override public Boolean call(Integer integer, Throwable throwable) {
-            return throwable instanceof TimeoutException && integer < 1;
-          }
-        }).concatMap(new Func1<TrolleyResponse, Observable<TrolleyResponse>>() {
-          @Override public Observable<TrolleyResponse> call(TrolleyResponse trolleyResponse) {
-            return trolleyResponse.filterWebServiceErrors();
-          }
-        }).map(new Func1<TrolleyResponse, List<TrolleyEntity>>() {
-          @Override public List<TrolleyEntity> call(TrolleyResponse trolleyResponse) {
+    return Observable.defer(new Func0<Observable<TrolleyResponse>>() {
+      @Override public Observable<TrolleyResponse> call() {
+        /*获取热搜列表，超时8秒*/
+        return collectionService.getTrolleyList(params)
+            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
+      }
+    }).retry(new Func2<Integer, Throwable, Boolean>() {
+      @Override public Boolean call(Integer integer, Throwable throwable) {
+        return throwable instanceof TimeoutException && integer < 1;
+      }
+    }).concatMap(new Func1<TrolleyResponse, Observable<TrolleyResponse>>() {
+      @Override public Observable<TrolleyResponse> call(TrolleyResponse trolleyResponse) {
+        return trolleyResponse.filterWebServiceErrors();
+      }
+    }).flatMap(new Func1<TrolleyResponse, Observable<TrolleyResponse.Trolley>>() {
+      @Override public Observable<TrolleyResponse.Trolley> call(TrolleyResponse trolleyResponse) {
+        return Observable.from(trolleyResponse.getTrolleyList());
+      }
+    }).map(new Func1<TrolleyResponse.Trolley, TrolleyEntity>() {
+      @Override public TrolleyEntity call(TrolleyResponse.Trolley trolley) {
 
-            final ArrayList<TrolleyEntity> trolleyEntities = new ArrayList<>();
-            TrolleyEntity instance = new TrolleyEntity();
+        TrolleyEntity clone = instance.newInstance();
+        clone.setGoodId(trolley.goodId);
+        clone.setGoodName(trolley.goodName);
+        clone.setGoodAttr(trolley.goodAttr);
+        clone.setGoodCount(trolley.goodCount);
+        clone.setGoodPrice(trolley.goodPrice);
 
-            for (TrolleyResponse.Trolley trolley : trolleyResponse.getTrolleyList()) {
-
-              TrolleyEntity clone = instance.newInstance();
-
-              clone.setGoodId(trolley.goodId);
-              clone.setGoodName(trolley.goodName);
-              clone.setGoodAttr(trolley.goodAttr);
-              clone.setGoodCount(trolley.goodCount);
-              clone.setGoodPrice(trolley.goodPrice);
-
-              trolleyEntities.add(clone);
-            }
-            return trolleyEntities;
-          }
-        }).compose(SchedulersCompat.<List<TrolleyEntity>>applyExecutorSchedulers());
-
-    return observable;
+        return clone;
+      }
+    }).toList().compose(SchedulersCompat.<List<TrolleyEntity>>applyExecutorSchedulers());
   }
 
   public Observable<BaseResponse> requestDeleteTrolley(final Map<String, String> params) {
 
     return Observable.defer(new Func0<Observable<BaseResponse>>() {
       @Override public Observable<BaseResponse> call() {
-
         return collectionService.requestDeleteCollection(params)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
       }
