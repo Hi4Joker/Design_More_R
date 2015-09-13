@@ -270,7 +270,7 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
     Map<String, String> params = new HashMap<>(3);
     params.put("Action", "DelCollectByGoods");
     params.put("rec_id", deleteCollection.getCollectionId());
-    params.put("uid", "1");
+    params.put("uid", "10");
 
     subscription = CollectionRetrofit.getInstance()
         .requestDeleteCollection(params)

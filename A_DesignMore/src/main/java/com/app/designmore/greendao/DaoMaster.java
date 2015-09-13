@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import com.app.designmore.greendao.dao.UserInfoDao;
+import com.app.designmore.greendao.dao.LoginInfoDao;
 import de.greenrobot.dao.AbstractDaoMaster;
 import de.greenrobot.dao.identityscope.IdentityScopeType;
 
@@ -17,7 +17,7 @@ public class DaoMaster extends AbstractDaoMaster {
 
   public DaoMaster(SQLiteDatabase db) {
     super(db, SCHEMA_VERSION);
-    DaoMaster.this.registerDaoClass(UserInfoDao.class);
+    DaoMaster.this.registerDaoClass(LoginInfoDao.class);
   }
 
   public static abstract class OpenHelper extends SQLiteOpenHelper {
@@ -51,12 +51,12 @@ public class DaoMaster extends AbstractDaoMaster {
 
   /** Creates underlying database table using DAOs. */
   public static void createAllTables(SQLiteDatabase db, boolean ifNotExists) {
-    UserInfoDao.createTable(db, ifNotExists);
+    LoginInfoDao.createTable(db, ifNotExists);
   }
 
   /** Drops underlying database table using DAOs. */
   public static void dropAllTables(SQLiteDatabase db, boolean ifExists) {
-    UserInfoDao.dropTable(db, ifExists);
+    LoginInfoDao.dropTable(db, ifExists);
   }
 
   public DaoSession newSession() {

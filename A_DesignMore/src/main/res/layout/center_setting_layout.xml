@@ -136,7 +136,8 @@
           app:mrl_rippleColor="@android:color/darker_gray"
           >
 
-        <TextView
+        <Button
+            android:id="@+id/setting_layout_unregister_btn"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"

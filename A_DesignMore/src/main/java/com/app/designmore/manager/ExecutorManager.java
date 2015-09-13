@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ExecutorManager {
 
-  public static final int DEVICEINFO_UNKNOWN = -1;
+  public static final int DEVICE_INFO_UNKNOWN = 0;
   public static ExecutorService eventExecutor;
   //private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
   private static final int CPU_COUNT = ExecutorManager.getCountOfCPU();
@@ -56,7 +56,7 @@ public class ExecutorManager {
     try {
       count = new File("/sys/devices/system/cpu/").listFiles(CPU_FILTER).length;
     } catch (SecurityException | NullPointerException e) {
-      count = DEVICEINFO_UNKNOWN;
+      count = DEVICE_INFO_UNKNOWN;
     }
     return count;
   }

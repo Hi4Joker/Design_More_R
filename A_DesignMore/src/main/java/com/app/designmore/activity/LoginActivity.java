@@ -1,5 +1,7 @@
 package com.app.designmore.activity;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,29 +9,39 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
-import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
+import com.app.designmore.greendao.entity.Dao_LoginInfo;
+import com.app.designmore.helper.DBHelper;
+import com.app.designmore.manager.DialogManager;
+import com.app.designmore.retrofit.LoginRetrofit;
+import com.app.designmore.retrofit.entity.LoginEntity;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.utils.DensityUtil;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
 import com.trello.rxlifecycle.ActivityEvent;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import rx.Observable;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.functions.Action0;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.functions.Func2;
+import rx.subscriptions.Subscriptions;
 
 public class LoginActivity extends BaseActivity {
 
@@ -38,7 +50,7 @@ public class LoginActivity extends BaseActivity {
    DBHelper.getInstance(getApplicationContext())
        .saveLoginInfo(new UserInfoEntity(null, "2", "2", "2", "2", "2"));
 
-   PreferencesUtils.putString(LoginActivity.this, Constants.CURRENT_USER, "1");
+   PreferencesUtils.putString(LoginActivity.this, Constants.CURRENT_USER_ID, "1");
 
    UserInfoEntity userInfoEntity =
        DBHelper.getInstance(getApplicationContext()).getCurrentUser(LoginActivity.this);
@@ -58,9 +70,17 @@ public class LoginActivity extends BaseActivity {
   private Observable<TextViewTextChangeEvent> passwordChangeObservable;
   private String userName;
   private String password;
+  private ProgressDialog progressDialog;
+
+  private Subscription subscription = Subscriptions.empty();
+
+  private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
+    @Override public void onCancel(DialogInterface dialog) {
+      subscription.unsubscribe();
+    }
+  };
 
   public static void navigateToLogin(AppCompatActivity startingActivity) {
-
     Intent intent = new Intent(startingActivity, LoginActivity.class);
     startingActivity.startActivity(intent);
   }
@@ -104,8 +124,8 @@ public class LoginActivity extends BaseActivity {
             userName = userNameEvent.text().toString();
             password = passwordEvent.text().toString();
 
-            Log.e(TAG, "userName: " + userName);
-            Log.e(TAG, "password: " + password);
+           /* Log.e(TAG, "userName: " + userName);
+            Log.e(TAG, "password: " + password);*/
 
             boolean userNameValid = !TextUtils.isEmpty(userName);
             boolean passwordValid = !TextUtils.isEmpty(password);
@@ -120,7 +140,7 @@ public class LoginActivity extends BaseActivity {
         .subscribe(new Action1<Boolean>() {
           @Override public void call(Boolean aBoolean) {
 
-            Log.e(TAG, "call() called with: " + "aBoolean = [" + aBoolean + "]");
+            //Log.e(TAG, "call() called with: " + "aBoolean = [" + aBoolean + "]");
             loginBtn.setEnabled(aBoolean);
           }
         });
@@ -160,5 +180,67 @@ public class LoginActivity extends BaseActivity {
   @Nullable @OnClick(R.id.login_layout_retrieve_password_tv) void onRetrieveClick() {
     LoginActivity.this.startActivity(new Intent(LoginActivity.this, RetrieveActivity.class));
     overridePendingTransition(0, 0);
+  }
+
+  @Nullable @OnClick(R.id.login_layout_login_btn) void onLoginClick() {
+
+
+    /*UserId=linuxlan&Password=lanlan&Action=UserLogin*/
+    Map<String, String> params = new HashMap<>(3);
+    params.put("Action", "UserLogin");
+    params.put("UserId", userName);
+    params.put("Password", password);
+
+    subscription = LoginRetrofit.getInstance()
+        .requestLogin(params)
+        .doOnSubscribe(new Action0() {
+          @Override public void call() {
+            /*加载数据，显示进度条*/
+            if (progressDialog == null) {
+              progressDialog = DialogManager.
+                  getInstance().showSimpleProgressDialog(LoginActivity.this, cancelListener);
+            } else {
+              progressDialog.show();
+            }
+          }
+        })
+        .doOnTerminate(new Action0() {
+          @Override public void call() {
+            /*隐藏进度条*/
+            if (progressDialog != null && progressDialog.isShowing()) {
+              progressDialog.dismiss();
+            }
+          }
+        })
+        .filter(new Func1<LoginEntity, Boolean>() {
+          @Override public Boolean call(LoginEntity loginEntity) {
+            return !subscription.isUnsubscribed();
+          }
+        })
+        .compose(LoginActivity.this.<LoginEntity>bindUntilEvent(ActivityEvent.DESTROY))
+        .subscribe(new Subscriber<LoginEntity>() {
+          @Override public void onCompleted() {
+            HomeActivity.navigateToHome(LoginActivity.this);
+            overridePendingTransition(0, 0);
+          }
+
+          @Override public void onError(Throwable e) {
+            Toast.makeText(LoginActivity.this, "登陆失败，请重试", Toast.LENGTH_LONG).show();
+          }
+
+          @Override public void onNext(LoginEntity loginEntity) {
+
+            /*save数据库*/
+            DBHelper.getInstance(getApplicationContext())
+                .saveLoginInfo(LoginActivity.this,
+                    new Dao_LoginInfo(null, loginEntity.getUserId(), loginEntity.getAddressId()));
+          }
+        });
+  }
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
+    this.progressDialog = null;
+    if (!subscription.isUnsubscribed()) subscription.unsubscribe();
   }
 }

@@ -1,8 +1,8 @@
 package com.app.designmore.greendao;
 
 import android.database.sqlite.SQLiteDatabase;
-import com.app.designmore.greendao.dao.UserInfoDao;
-import com.app.designmore.greendao.entity.UserInfoEntity;
+import com.app.designmore.greendao.dao.LoginInfoDao;
+import com.app.designmore.greendao.entity.Dao_LoginInfo;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.AbstractDaoSession;
 import de.greenrobot.dao.identityscope.IdentityScopeType;
@@ -16,20 +16,22 @@ public class DaoSession extends AbstractDaoSession {
 
   private final DaoConfig loginDaoConfig;
 
-  private UserInfoDao loginDao;
+  /*登陆信息Dao*/
+  private LoginInfoDao loginDao;
 
   public DaoSession(SQLiteDatabase db, IdentityScopeType type,
       Map<Class<? extends AbstractDao<?, ?>>, DaoConfig> daoConfigMap) {
     super(db);
 
-    loginDaoConfig = daoConfigMap.get(UserInfoDao.class).clone();
+    /*Dao三部曲*/
+    loginDaoConfig = daoConfigMap.get(LoginInfoDao.class).clone();
     loginDaoConfig.initIdentityScope(type);
-    loginDao = new UserInfoDao(loginDaoConfig, DaoSession.this);
+    loginDao = new LoginInfoDao(loginDaoConfig, DaoSession.this);
 
-    DaoSession.this.registerDao(UserInfoEntity.class, loginDao);
+    DaoSession.this.registerDao(Dao_LoginInfo.class, loginDao);
   }
 
-  public UserInfoDao getLoginDao() {
+  public LoginInfoDao getLoginDao() {
     return loginDao;
   }
 

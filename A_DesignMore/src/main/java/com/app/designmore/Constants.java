@@ -7,7 +7,7 @@ public class Constants {
   public static final String BASE_URL = "http://api.dmore.com.cn";
 
   public static final String DB_NAME = "DESIGN_MORE_DATABASE_NAME";
-  public static final String CURRENT_USER = "CURRENT_USER";
+  public static final String CURRENT_USER_ID = "CURRENT_USER_ID";
 
   public static final int RESULT_FAIL = 0;
   public static final int RESULT_OK = 1;

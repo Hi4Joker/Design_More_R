@@ -219,16 +219,13 @@ public class RegisterActivity extends BaseActivity {
 
   @Nullable @OnClick(R.id.register_layout_register_btn) void onRegisterClick() {
 
-    /* username=linuxlan22221
-    &password=lanlan1111
-    &Action=RegisterUser
-    &mobile_phone=18622816322
-    &email=adsfasdf%40aaa.com*/
 
-    Map<String, String> params = new HashMap<>();
+    /* Username=linuxlan22221&Password=lanlan1111&Action=RegisterUser&Mobile_phone=18622816322&Email=adsfasdf%40aaa.com*/
+    Map<String, String> params = new HashMap<>(4);
     params.put("Action", "RegisterUser");
     params.put("Username", userName);
-    params.put("mobile_phone", mobile);
+    params.put("Mobile_phone", mobile);
+    params.put("Password", password);
 
     subscription = LoginRetrofit.getInstance()
         .requestRegister(params)

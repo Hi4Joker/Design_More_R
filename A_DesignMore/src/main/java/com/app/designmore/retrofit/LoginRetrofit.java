@@ -1,23 +1,19 @@
 package com.app.designmore.retrofit;
 
-import android.content.RestrictionEntry;
 import com.app.designmore.Constants;
 import com.app.designmore.exception.WebServiceException;
-import com.app.designmore.retrofit.entity.AddressEntity;
 import com.app.designmore.retrofit.entity.HelpEntity;
 import com.app.designmore.retrofit.entity.LoginCodeEntity;
+import com.app.designmore.retrofit.entity.LoginEntity;
 import com.app.designmore.retrofit.entity.RegisterEntity;
 import com.app.designmore.retrofit.entity.RetrieveEntity;
-import com.app.designmore.retrofit.entity.SearchItemEntity;
-import com.app.designmore.retrofit.response.AddressResponse;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.retrofit.response.HelpResponse;
 import com.app.designmore.retrofit.response.LoginCodeResponse;
-import com.app.designmore.retrofit.response.SearchListResponse;
+import com.app.designmore.retrofit.response.LoginResponse;
 import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -31,8 +27,6 @@ import retrofit.http.FieldMap;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.POST;
 import rx.Observable;
-import rx.Subscriber;
-import rx.functions.Action1;
 import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.functions.Func2;
@@ -46,7 +40,6 @@ public class LoginRetrofit {
 
   interface LoginService {
 
-    //@Headers("Accept-Encoding: application/json")
     @FormUrlEncoded @POST("/mobile/api/client/interface.php")
     Observable<LoginCodeResponse> getLoginCode(@FieldMap Map<String, String> params);
 
@@ -55,6 +48,9 @@ public class LoginRetrofit {
 
     @FormUrlEncoded @POST("/mobile/api/client/interface.php")
     Observable<BaseResponse> requestRetrieve(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded @POST("/mobile/api/client/interface.php")
+    Observable<LoginResponse> requestLogin(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded @POST("/mobile/api/client/interface.php") Observable<HelpResponse> getHelpList(
         @FieldMap Map<String, String> params);
@@ -66,7 +62,6 @@ public class LoginRetrofit {
     RequestInterceptor requestInterceptor = new RequestInterceptor() {
       @Override public void intercept(RequestFacade request) {
         request.addHeader("Accept-Encoding", "application/json");
-        //request.addHeader("Content-Type", "application/json");
       }
     };
 
@@ -187,6 +182,31 @@ public class LoginRetrofit {
         return new RetrieveEntity(baseResponse.resultCode, baseResponse.message);
       }
     }).compose(SchedulersCompat.<RetrieveEntity>applyExecutorSchedulers());
+  }
+
+  /**
+   * 登陆
+   */
+  public Observable<LoginEntity> requestLogin(final Map<String, String> params) {
+
+    return Observable.defer(new Func0<Observable<LoginResponse>>() {
+      @Override public Observable<LoginResponse> call() {
+        return loginService.requestLogin(params).timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
+      }
+    }).retry(new Func2<Integer, Throwable, Boolean>() {
+      @Override public Boolean call(Integer integer, Throwable throwable) {
+        return throwable instanceof TimeoutException && integer < 1;
+      }
+    }).concatMap(new Func1<LoginResponse, Observable<LoginResponse>>() {
+      @Override public Observable<LoginResponse> call(LoginResponse loginResponse) {
+        return loginResponse.filterWebServiceErrors();
+      }
+    }).map(new Func1<LoginResponse, LoginEntity>() {
+      @Override public LoginEntity call(LoginResponse loginResponse) {
+        return new LoginEntity(loginResponse.getLoginInfo().userId,
+            loginResponse.getLoginInfo().addressId);
+      }
+    }).compose(SchedulersCompat.<LoginEntity>applyExecutorSchedulers());
   }
 
   /**

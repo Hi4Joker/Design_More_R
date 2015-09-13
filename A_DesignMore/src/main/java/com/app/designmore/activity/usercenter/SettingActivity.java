@@ -1,12 +1,11 @@
 package com.app.designmore.activity.usercenter;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
@@ -17,7 +16,12 @@ import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
+import com.app.designmore.activity.LoginActivity;
 import com.app.designmore.activity.MineActivity;
+import com.app.designmore.activity.SplashActivity;
+import com.app.designmore.greendao.entity.Dao_LoginInfo;
+import com.app.designmore.helper.DBHelper;
+import com.app.designmore.manager.DialogManager;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
@@ -95,6 +99,21 @@ public class SettingActivity extends BaseActivity {
     cacheTv.setText("0KB");
   }
 
+  @Nullable @OnClick(R.id.setting_layout_unregister_btn) void onUnregisterClick() {
+
+    DialogManager.getInstance()
+        .showNormalDialog(SettingActivity.this, "请确认退出", new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialog, int which) {
+            if (which == DialogInterface.BUTTON_POSITIVE) {
+
+              DBHelper.getInstance(getApplicationContext()).deleteLoginInfo(SettingActivity.this);
+              LoginActivity.navigateToLogin(SettingActivity.this);
+              overridePendingTransition(0, 0);
+            }
+          }
+        });
+  }
+
   private void startEnterAnim() {
     final Rect bounds = new Rect();
     rootView.getHitRect(bounds);
@@ -118,6 +137,7 @@ public class SettingActivity extends BaseActivity {
           rootView.setVisibility(View.GONE);
           SettingActivity.this.finish();
         }
+
         @Override public void onAnimationCancel() {
           SettingActivity.this.finish();
         }
