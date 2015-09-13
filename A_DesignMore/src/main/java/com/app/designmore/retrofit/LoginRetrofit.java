@@ -52,6 +52,9 @@ public class LoginRetrofit {
     @FormUrlEncoded @POST("/mobile/api/client/interface.php")
     Observable<LoginResponse> requestLogin(@FieldMap Map<String, String> params);
 
+    @FormUrlEncoded @POST("/mobile/api/client/interface.php")
+    Observable<BaseResponse> requestChangePassword(@FieldMap Map<String, String> params);
+
     @FormUrlEncoded @POST("/mobile/api/client/interface.php") Observable<HelpResponse> getHelpList(
         @FieldMap Map<String, String> params);
   }
@@ -197,9 +200,9 @@ public class LoginRetrofit {
       @Override public Boolean call(Integer integer, Throwable throwable) {
         return throwable instanceof TimeoutException && integer < 1;
       }
-    }).concatMap(new Func1<LoginResponse, Observable<LoginResponse>>() {
-      @Override public Observable<LoginResponse> call(LoginResponse loginResponse) {
-        return loginResponse.filterWebServiceErrors();
+    }).concatMap(new Func1<BaseResponse, Observable<LoginResponse>>() {
+      @Override public Observable<LoginResponse> call(BaseResponse baseResponse) {
+        return baseResponse.filterWebServiceErrors();
       }
     }).map(new Func1<LoginResponse, LoginEntity>() {
       @Override public LoginEntity call(LoginResponse loginResponse) {
@@ -207,6 +210,27 @@ public class LoginRetrofit {
             loginResponse.getLoginInfo().addressId);
       }
     }).compose(SchedulersCompat.<LoginEntity>applyExecutorSchedulers());
+  }
+
+  /**
+   * 修改密码
+   */
+  public Observable<BaseResponse> requestChangePassword(final Map<String, String> params) {
+
+    return Observable.defer(new Func0<Observable<BaseResponse>>() {
+      @Override public Observable<BaseResponse> call() {
+        return loginService.requestChangePassword(params)
+            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
+      }
+    }).retry(new Func2<Integer, Throwable, Boolean>() {
+      @Override public Boolean call(Integer integer, Throwable throwable) {
+        return throwable instanceof TimeoutException && integer < 1;
+      }
+    }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
+      @Override public Observable<BaseResponse> call(final BaseResponse baseResponse) {
+        return baseResponse.filterWebServiceErrors();
+      }
+    }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
   }
 
   /**

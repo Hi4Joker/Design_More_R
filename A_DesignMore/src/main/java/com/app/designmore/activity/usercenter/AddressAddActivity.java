@@ -307,7 +307,7 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
                 AddressAddActivity.this.<RefreshAddressEvent>bindUntilEvent(ActivityEvent.DESTROY))
             .subscribe(new Subscriber<RefreshAddressEvent>() {
               @Override public void onCompleted() {
-                  /*增加成功，返回，刷新*/
+                /*增加成功，返回，刷新*/
                 AddressAddActivity.this.exit();
               }
 
@@ -316,7 +316,7 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
               }
 
               @Override public void onNext(RefreshAddressEvent refreshAddressEvent) {
-                  /*通过eventBus发送通知，刷新地址列表*/
+                /*通过eventBus发送通知，刷新地址列表*/
                 EventBusInstance.getDefault().post(refreshAddressEvent);
               }
             });

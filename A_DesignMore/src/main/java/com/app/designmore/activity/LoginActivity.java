@@ -21,6 +21,7 @@ import butterknife.Bind;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
+import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.greendao.entity.Dao_LoginInfo;
 import com.app.designmore.helper.DBHelper;
 import com.app.designmore.manager.DialogManager;
@@ -225,7 +226,11 @@ public class LoginActivity extends BaseActivity {
           }
 
           @Override public void onError(Throwable e) {
-            Toast.makeText(LoginActivity.this, "登陆失败，请重试", Toast.LENGTH_LONG).show();
+            if (e instanceof WebServiceException) {
+              Toast.makeText(LoginActivity.this, "密码错误，请重试", Toast.LENGTH_LONG).show();
+            } else {
+              Toast.makeText(LoginActivity.this, "登陆失败，请重试", Toast.LENGTH_LONG).show();
+            }
           }
 
           @Override public void onNext(LoginEntity loginEntity) {
