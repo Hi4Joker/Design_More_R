@@ -51,7 +51,6 @@ public class HomeActivity extends BaseActivity {
   private SupportAnimator revealAnimator;
 
   public static void navigateToHome(AppCompatActivity startingActivity) {
-
     Intent intent = new Intent(startingActivity, HomeActivity.class);
     startingActivity.startActivity(intent);
   }

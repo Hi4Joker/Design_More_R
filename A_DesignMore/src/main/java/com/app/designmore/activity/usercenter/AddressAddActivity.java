@@ -407,7 +407,6 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
     if (customWheelDialog == null) {
       customWheelDialog = new CustomWheelDialog(AddressAddActivity.this, provinces, callback);
     }
-
     customWheelDialog.updateDefault(defaultProvince, defaultCity);
     customWheelDialog.show();
   }

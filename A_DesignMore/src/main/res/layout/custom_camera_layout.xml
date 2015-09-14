@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/white"
+    >
+
+  <com.app.designmore.view.MaterialRippleLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:mrl_rippleDimension="20dip"
+      app:mrl_rippleRoundedCorners="@dimen/material_corners"
+      app:mrl_rippleFadeDuration="100"
+      app:mrl_rippleAlpha="0.4"
+      app:mrl_rippleDuration="600"
+      app:mrl_rippleHover="true"
+      app:mrl_rippleOverlay="true"
+      app:mrl_rippleDelayClick="true"
+      app:mrl_rippleColor="@color/darker_gray"
+      >
+    <Button
+        android:id="@+id/camera_layout_camera_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="拍照"
+        android:textColor="@color/accent_material_light"
+        android:textSize="@dimen/material_16sp"
+        android:background="@drawable/transparent_background"
+        />
+  </com.app.designmore.view.MaterialRippleLayout>
+
+  <!--分隔线-->
+  <ImageView
+      style="@style/divider_line_style"
+      />
+
+  <com.app.designmore.view.MaterialRippleLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      app:mrl_rippleDimension="20dip"
+      app:mrl_rippleRoundedCorners="@dimen/material_corners"
+      app:mrl_rippleFadeDuration="100"
+      app:mrl_rippleAlpha="0.4"
+      app:mrl_rippleDuration="600"
+      app:mrl_rippleHover="true"
+      app:mrl_rippleOverlay="true"
+      app:mrl_rippleDelayClick="true"
+      app:mrl_rippleColor="@color/darker_gray"
+      >
+
+    <Button
+        android:id="@+id/camera_layout_photo_btn"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="打开相册"
+        android:textColor="@color/accent_material_light"
+        android:textSize="@dimen/material_16sp"
+        android:background="@drawable/transparent_background"
+        />
+  </com.app.designmore.view.MaterialRippleLayout>
+
+</LinearLayout>

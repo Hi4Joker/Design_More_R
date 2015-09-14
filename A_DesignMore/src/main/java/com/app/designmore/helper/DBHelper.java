@@ -25,7 +25,7 @@ public class DBHelper {
           instance = new DBHelper();
         }
       }
-      instance.daoSession = MyApplication.getDaoSession(context);
+      instance.daoSession = MyApplication.get().getDaoSession(context);
     }
     return instance;
   }

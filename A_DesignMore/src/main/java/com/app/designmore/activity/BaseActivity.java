@@ -5,6 +5,7 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import butterknife.ButterKnife;
 import com.app.designmore.event.FinishEvent;
+import com.app.designmore.helper.MyApplication;
 import com.app.designmore.manager.EventBusInstance;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
@@ -28,6 +29,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
 
     ButterKnife.unbind(BaseActivity.this);
     EventBusInstance.getDefault().unregister(BaseActivity.this);
+    MyApplication.getRefWatcher().watch(this);
   }
 
   @Override public boolean onKeyDown(int keyCode, KeyEvent event) {

@@ -63,7 +63,6 @@ public class LoginActivity extends BaseActivity {
   @Nullable @Bind(R.id.login_layout_anim_root) RelativeLayout animRootView;
   @Nullable @Bind(R.id.login_layout_logo_iv) ImageView loginLogoIv;
   @Nullable @Bind(R.id.login_layout_name_et) EditText userNameEt;
-  @Nullable @Bind(R.id.login_layout_name_clear_btn) ImageView clearNameBtn;
   @Nullable @Bind(R.id.login_layout_password_et) EditText passwordEt;
   @Nullable @Bind(R.id.login_layout_login_btn) Button loginBtn;
 
@@ -171,6 +170,10 @@ public class LoginActivity extends BaseActivity {
 
   @Override public void exit() {
     LoginActivity.this.finish();
+  }
+
+  @Nullable @OnClick(R.id.login_layout_name_clear_btn) void onClearClick() {
+    userNameEt.setText(null);
   }
 
   @Nullable @OnClick(R.id.login_layout_register_tv) void onRegisterClick() {

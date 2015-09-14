@@ -6,6 +6,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
@@ -18,6 +19,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -29,9 +31,14 @@ import com.app.designmore.activity.usercenter.ProfileActivity;
 import com.app.designmore.activity.usercenter.SettingActivity;
 import com.app.designmore.activity.usercenter.TrolleyActivity;
 import com.app.designmore.event.FinishEvent;
+import com.app.designmore.helper.DBHelper;
 import com.app.designmore.manager.CropCircleTransformation;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
+import com.app.designmore.retrofit.CollectionRetrofit;
+import com.app.designmore.retrofit.LoginRetrofit;
+import com.app.designmore.retrofit.entity.CollectionEntity;
+import com.app.designmore.retrofit.response.UserInfoEntity;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
@@ -42,8 +49,15 @@ import com.app.designmore.view.ProgressLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
+import com.trello.rxlifecycle.ActivityEvent;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import rx.Subscriber;
+import rx.functions.Action0;
+import rx.functions.Action1;
 
 /**
  * Created by Joker on 2015/8/25.
@@ -51,10 +65,15 @@ import java.util.List;
 public class MineActivity extends BaseActivity {
 
   private static final String TAG = MineActivity.class.getSimpleName();
+  private int[] colors = new int[] {
+      R.color.design_more_red, R.color.accent_material_light, R.color.design_more_red,
+      R.color.accent_material_light
+  };
 
   @Nullable @Bind(R.id.mine_layout_root_view) RevealFrameLayout rootView;
-  @Nullable @Bind(R.id.mine_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.transparent_toolbar_root) Toolbar toolbar;
+  @Nullable @Bind(R.id.mine_layout_pl) ProgressLayout progressLayout;
+  @Nullable @Bind(R.id.mine_layout_srl) SwipeRefreshLayout swipeRefreshLayout;
   @Nullable @Bind(R.id.mine_layout_avatar_iv) ImageView avatarIv;
   @Nullable @Bind(R.id.bottom_bar_mine_iv) ImageView mineIv;
   @Nullable @Bind(R.id.bottom_bar_mine_tv) TextView mineTv;
@@ -64,9 +83,15 @@ public class MineActivity extends BaseActivity {
 
   private List<Integer> skipIds = Arrays.asList(R.id.mine_layout_bar_layout);
   private SupportAnimator revealAnimator;
+  private UserInfoEntity currentUserInfoEntity;
+
+  private View.OnClickListener retryClickListener = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      MineActivity.this.loadData();
+    }
+  };
 
   public static void navigateToUserCenter(AppCompatActivity startingActivity) {
-
     Intent intent = new Intent(startingActivity, MineActivity.class);
     startingActivity.startActivity(intent);
   }
@@ -83,6 +108,13 @@ public class MineActivity extends BaseActivity {
 
     MineActivity.this.setSupportActionBar(toolbar);
     MineActivity.this.getSupportActionBar().setTitle("");
+
+    swipeRefreshLayout.setColorSchemeResources(colors);
+    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
+      @Override public void call(Void aVoid) {
+        MineActivity.this.loadData();
+      }
+    });
 
     if (savedInstanceState == null) {
       rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -153,36 +185,57 @@ public class MineActivity extends BaseActivity {
 
   private void loadData() {
 
-    //progressLayout.showLoading(skipIds);
+    /*Action=GetUserInfo&uid=2*/
+    Map<String, String> params = new HashMap<>(2);
+    params.put("Action", "GetUserInfo");
+    params.put("uid", DBHelper.getInstance(getApplicationContext()).getUserID(MineActivity.this));
 
-    /*Drawable emptyDrawable =
-        new IconDrawable(this, Iconify.IconValue.zmdi_shopping_cart_plus).colorRes(
-            android.R.color.white);*/
-
-    /*Drawable errorDrawable = new IconDrawable(this, Iconify.IconValue.zmdi_wifi_off).colorRes(
-        android.R.color.white);*/
-
-    /*progressLayout.showEmpty(emptyDrawable, "Empty Shopping Cart",
-        "Please add things in the cart to continue.", skipIds);*/
-
-   /* progressLayout.showError(errorDrawable, "No Connection",
-        "We could not establish a connection with our servers. Please try again when you are connected to the internet.",
-        "Try Again", new View.OnClickListener() {
-          @Override public void onClick(View v) {
-
+    LoginRetrofit.getInstance()
+        .requestUserInfo(params)
+        .doOnSubscribe(new Action0() {
+          @Override public void call() {
+            /*加载数据，显示进度条*/
+            if (!swipeRefreshLayout.isRefreshing()) progressLayout.showLoading();
           }
-        }, skipIds);*/
+        })
+        .compose(MineActivity.this.<UserInfoEntity>bindUntilEvent(ActivityEvent.DESTROY))
+        .subscribe(new Subscriber<UserInfoEntity>() {
+          @Override public void onCompleted() {
+            if (swipeRefreshLayout.isRefreshing()) {
+              swipeRefreshLayout.setRefreshing(false);
+            } else {
+              progressLayout.showContent();
+            }
+          }
 
-    BitmapPool bitmapPool = Glide.get(MineActivity.this).getBitmapPool();
-    Glide.with(MineActivity.this)
-        .load(R.drawable.test_background)
-        .centerCrop()
-        .crossFade()
-        .bitmapTransform(new CropCircleTransformation(bitmapPool))
-        .placeholder(R.drawable.center_profile_default_icon)
-        .error(R.drawable.center_profile_default_icon)
-        .diskCacheStrategy(DiskCacheStrategy.NONE)
-        .into(avatarIv);
+          @Override public void onError(Throwable error) {
+            /*加载失败，显示错误界面*/
+           /* progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
+                "加载失败", "请点击重试", getResources().getString(R.string.retry_button_text),
+                retryClickListener);*/
+            if (swipeRefreshLayout.isRefreshing()) {
+              swipeRefreshLayout.setRefreshing(false);
+            } else {
+              progressLayout.showContent();
+            }
+          }
+
+          @Override public void onNext(UserInfoEntity userInfoEntity) {
+
+            MineActivity.this.currentUserInfoEntity = userInfoEntity;
+
+            BitmapPool bitmapPool = Glide.get(MineActivity.this).getBitmapPool();
+            Glide.with(MineActivity.this)
+                .load(userInfoEntity.getHeaderUrl())
+                .centerCrop()
+                .crossFade()
+                .bitmapTransform(new CropCircleTransformation(bitmapPool))
+                .placeholder(R.drawable.center_profile_default_icon)
+                .error(R.drawable.center_profile_default_icon)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(avatarIv);
+          }
+        });
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {

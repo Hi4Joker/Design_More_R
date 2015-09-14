@@ -5,12 +5,10 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
-import android.widget.Button;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -30,7 +28,7 @@ public class CustomWheelDialog extends Dialog {
   private static final String TAG = CustomWheelDialog.class.getSimpleName();
   private final static int DEFAULT_VISIBLE_ITEMS = 5;
 
-  private Activity context;
+  private Activity activity;
   private ArrayList<Province> provinces = new ArrayList<>();
   private ArrayList<Province.City> cities = new ArrayList<>();
   private AbstractWheelTextAdapter provinceAdapter;
@@ -56,23 +54,26 @@ public class CustomWheelDialog extends Dialog {
     }
   };
 
-  public CustomWheelDialog(Activity context, List<Province> provinces, final Callback callback) {
-    super(context);
+  public CustomWheelDialog(Activity activity, List<Province> provinces, final Callback callback) {
+    super(activity);
     getWindow().requestFeature(Window.FEATURE_NO_TITLE);
     getWindow().setGravity(Gravity.BOTTOM);
     getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
     getWindow().setWindowAnimations(R.style.AnimBottom);
-    View rootView = getLayoutInflater().inflate(R.layout.wheel_layout, null);
+    View rootView = getLayoutInflater().inflate(R.layout.custom_wheel_layout, null);
     LayoutParams params =
-        new LayoutParams(DensityUtil.getScreenWidth(context), LayoutParams.MATCH_PARENT);
+        new LayoutParams(DensityUtil.getScreenWidth(activity), LayoutParams.MATCH_PARENT);
     super.setContentView(rootView, params);
 
-    this.context = context;
+    this.activity = activity;
+    this.callback = callback;
+    this.provinces.addAll(provinces);
+
     /*设置dialog不能取消*/
     CustomWheelDialog.this.setCancelable(false);
-    this.provinces.addAll(provinces);
-    this.callback = callback;
+    CustomWheelDialog.this.setCanceledOnTouchOutside(false);
 
+    /*初始化View*/
     CustomWheelDialog.this.initView();
   }
 
@@ -86,7 +87,7 @@ public class CustomWheelDialog extends Dialog {
 
   private void setupAdapter() {
 
-    provinceAdapter = new AbstractWheelTextAdapter(context, R.layout.wheel_text_item) {
+    provinceAdapter = new AbstractWheelTextAdapter(activity, R.layout.wheel_text_item) {
       @Override public int getItemsCount() {
         return provinces.size();
       }
@@ -96,7 +97,7 @@ public class CustomWheelDialog extends Dialog {
       }
     };
 
-    cityAdapter = new AbstractWheelTextAdapter(context, R.layout.wheel_text_item) {
+    cityAdapter = new AbstractWheelTextAdapter(activity, R.layout.wheel_text_item) {
       @Override public int getItemsCount() {
         return cities.size();
       }

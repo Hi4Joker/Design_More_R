@@ -39,6 +39,7 @@ import com.app.designmore.retrofit.response.AddressResponse;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
+import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollStateChangeEvent;
 import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
 import com.trello.rxlifecycle.ActivityEvent;
@@ -72,12 +73,6 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
 
   private ProgressDialog progressDialog;
 
-  private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
-    @Override public void onCancel(DialogInterface dialog) {
-      subscription.unsubscribe();
-    }
-  };
-
   private AddressAdapter addressAdapter;
   private List<AddressEntity> items = new ArrayList<>();
 
@@ -92,6 +87,12 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
       AddressMangerActivity.this.loadData();
+    }
+  };
+
+  private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
+    @Override public void onCancel(DialogInterface dialog) {
+      subscription.unsubscribe();
     }
   };
 
@@ -148,8 +149,8 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
     };
 
     swipeRefreshLayout.setColorSchemeResources(colors);
-    swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-      @Override public void onRefresh() {
+    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
+      @Override public void call(Void aVoid) {
         AddressMangerActivity.this.loadData();
       }
     });
@@ -348,60 +349,63 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
             new DialogInterface.OnClickListener() {
               @Override public void onClick(DialogInterface dialog, int which) {
                 if (which == DialogInterface.BUTTON_POSITIVE) {
-                /* Action=DelUserByAddress&address_id=1&uid=2*/
-                  Map<String, String> params = new HashMap<>(3);
-                  params.put("Action", "DelUserByAddress");
-                  params.put("address_id", addressEntity.getAddressId());
-                  params.put("uid", "10");
-
-                  subscription = AddressRetrofit.getInstance()
-                      .requestDeleteAddress(params)
-                      .doOnSubscribe(new Action0() {
-                        @Override public void call() {
-                        /*加载数据，显示进度条*/
-                          if (progressDialog == null) {
-                            progressDialog = DialogManager.
-                                getInstance()
-                                .showSimpleProgressDialog(AddressMangerActivity.this,
-                                    cancelListener);
-                          } else {
-                            progressDialog.show();
-                          }
-                        }
-                      })
-                      .map(new Func1<BaseResponse, Integer>() {
-                        @Override public Integer call(BaseResponse baseResponse) {
-                          return items.indexOf(addressEntity);
-                        }
-                      })
-                      .doOnTerminate(new Action0() {
-                        @Override public void call() {
-                          /*隐藏进度条*/
-                          if (progressDialog != null && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                          }
-                        }
-                      })
-                      .doOnCompleted(new Action0() {
-                        @Override public void call() {
-                          if (items.size() == 0) {
-                            progressLayout.showEmpty(
-                                getResources().getDrawable(R.drawable.ic_grey_logo_icon),
-                                "您还没有收货地址", null);
-                          }
-                        }
-                      })
-                      .filter(new Func1<Integer, Boolean>() {
-                        @Override public Boolean call(Integer position) {
-                          return !subscription.isUnsubscribed();
-                        }
-                      })
-                      .compose(
-                          AddressMangerActivity.this.<Integer>bindUntilEvent(ActivityEvent.DESTROY))
-                      .subscribe(addressAdapter);
+                  AddressMangerActivity.this.requestDeleteAddress(addressEntity);
                 }
               }
             });
+  }
+
+  private void requestDeleteAddress(final AddressEntity addressEntity) {
+
+    /*Action=DelUserByAddress&address_id=1&uid=2*/
+    Map<String, String> params = new HashMap<>(3);
+    params.put("Action", "DelUserByAddress");
+    params.put("address_id", addressEntity.getAddressId());
+    params.put("uid", "10");
+
+    subscription =
+        AddressRetrofit.getInstance()
+            .requestDeleteAddress(params)
+            .doOnSubscribe(new Action0() {
+              @Override public void call() {
+                        /*加载数据，显示进度条*/
+                if (progressDialog == null) {
+                  progressDialog = DialogManager.
+                      getInstance()
+                      .showSimpleProgressDialog(AddressMangerActivity.this, cancelListener);
+                } else {
+                  progressDialog.show();
+                }
+              }
+            })
+            .map(new Func1<BaseResponse, Integer>() {
+              @Override public Integer call(BaseResponse baseResponse) {
+                return items.indexOf(addressEntity);
+              }
+            })
+            .doOnTerminate(new Action0() {
+              @Override public void call() {
+                          /*隐藏进度条*/
+                if (progressDialog != null && progressDialog.isShowing()) {
+                  progressDialog.dismiss();
+                }
+              }
+            })
+            .doOnCompleted(new Action0() {
+              @Override public void call() {
+                if (items.size() == 0) {
+                  progressLayout.showEmpty(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
+                      "您还没有收货地址", null);
+                }
+              }
+            })
+            .filter(new Func1<Integer, Boolean>() {
+              @Override public Boolean call(Integer position) {
+                return !subscription.isUnsubscribed();
+              }
+            })
+            .compose(AddressMangerActivity.this.<Integer>bindUntilEvent(ActivityEvent.DESTROY))
+            .subscribe(addressAdapter);
   }
 
   /*点击编辑按钮*/
@@ -503,7 +507,6 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
   }
 
   @Override protected void onDestroy() {
-    swipeRefreshLayout.setOnRefreshListener(null);
     super.onDestroy();
     this.progressDialog = null;
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();

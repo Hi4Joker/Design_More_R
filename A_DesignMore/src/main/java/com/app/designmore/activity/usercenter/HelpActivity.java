@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import rx.functions.Action0;
+import rx.functions.Action1;
 
 /**
  * Created by Joker on 2015/8/26.
@@ -109,8 +110,8 @@ public class HelpActivity extends BaseActivity implements HelpAdapter.Callback {
     };
 
     swipeRefreshLayout.setColorSchemeResources(colors);
-    swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-      @Override public void onRefresh() {
+    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
+      @Override public void call(Void aVoid) {
         HelpActivity.this.loadData();
       }
     });

@@ -117,6 +117,15 @@
     <item name="android:textSize">@dimen/material_12sp</item>
   </style>
 
+  <style name="AnimTop" parent="@android:style/Animation">
+    <item name="android:windowEnterAnimation">@anim/slide_in_top</item>
+    <item name="android:windowExitAnimation">@anim/slide_out_top</item>
+  </style>
+
+  <style name="AnimCenter" parent="@android:style/Animation">
+    <item name="android:windowEnterAnimation">@anim/fade_in_center</item>
+    <item name="android:windowExitAnimation">@anim/fade_out_center</item>
+  </style>
 
   <style name="AnimBottom" parent="@android:style/Animation">
     <item name="android:windowEnterAnimation">@anim/slide_in_bottom</item>

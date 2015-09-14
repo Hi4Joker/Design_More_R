@@ -109,10 +109,9 @@ public class DialogManager {
       final DialogInterface.OnClickListener onClickListener) {
 
     final String[] arrayGender = new String[] { "男", "女" };
-
     int which = "男".endsWith(initGender) ? 0 : 1;
 
-    new AlertDialog.Builder(context).setTitle("请选择性别")
+    AlertDialog genderDialog = new AlertDialog.Builder(context).setTitle("请选择性别")
         .setCancelable(false)
         .setInverseBackgroundForced(false)
         .setSingleChoiceItems(arrayGender, which, new DialogInterface.OnClickListener() {
@@ -132,14 +131,16 @@ public class DialogManager {
             dialog.dismiss();
           }
         })
-        .create()
-        .show();
+        .create();
+
+    genderDialog.getWindow().setWindowAnimations(R.style.AnimCenter);
+    genderDialog.show();
   }
 
   public void showExitDialog(Context context,
       final DialogInterface.OnClickListener onClickListener) {
 
-    new AlertDialog.Builder(context).setTitle("提示")
+    AlertDialog exitDialog = new AlertDialog.Builder(context).setTitle("提示")
         .setMessage("确认退出吗？")
         .setCancelable(false)
         .setInverseBackgroundForced(false)
@@ -157,14 +158,16 @@ public class DialogManager {
             dialog.dismiss();
           }
         })
-        .create()
-        .show();
+        .create();
+
+    exitDialog.getWindow().setWindowAnimations(R.style.AnimCenter);
+    exitDialog.show();
   }
 
   public void showNormalDialog(Context context, String content,
       final DialogInterface.OnClickListener onClickListener) {
 
-    new AlertDialog.Builder(context).setTitle("提示")
+    AlertDialog normalDialog = new AlertDialog.Builder(context).setTitle("提示")
         .setMessage(content)
         .setCancelable(false)
         .setInverseBackgroundForced(false)
@@ -184,13 +187,15 @@ public class DialogManager {
             }
           }
         })
-        .create()
-        .show();
+        .create();
+
+    normalDialog.getWindow().setWindowAnimations(R.style.AnimCenter);
+    normalDialog.show();
   }
 
   public void showConfirmDialog(Context context, String content) {
 
-    new AlertDialog.Builder(context).setTitle("提示")
+    AlertDialog confirmDialog = new AlertDialog.Builder(context).setTitle("提示")
         .setMessage(content)
         .setCancelable(false)
         .setInverseBackgroundForced(false)
@@ -199,7 +204,9 @@ public class DialogManager {
             dialog.dismiss();
           }
         })
-        .create()
-        .show();
+        .create();
+
+    confirmDialog.getWindow().setWindowAnimations(R.style.AnimCenter);
+    confirmDialog.show();
   }
 }

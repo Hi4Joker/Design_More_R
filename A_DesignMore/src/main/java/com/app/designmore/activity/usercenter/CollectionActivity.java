@@ -36,6 +36,7 @@ import com.app.designmore.retrofit.entity.CollectionEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
+import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +47,7 @@ import retrofit.RetrofitError;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
+import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.subscriptions.Subscriptions;
 
@@ -137,8 +139,8 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
     };
 
     swipeRefreshLayout.setColorSchemeResources(colors);
-    swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-      @Override public void onRefresh() {
+    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
+      @Override public void call(Void aVoid) {
         CollectionActivity.this.loadData();
       }
     });
@@ -335,8 +337,7 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
         .setInterpolator(new LinearInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
-            CollectionActivity.super.onBackPressed();
-            overridePendingTransition(0, 0);
+            CollectionActivity.this.finish();
           }
         });
   }

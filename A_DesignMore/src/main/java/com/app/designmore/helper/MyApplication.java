@@ -5,6 +5,8 @@ import android.content.Context;
 import com.app.designmore.Constants;
 import com.app.designmore.greendao.DaoMaster;
 import com.app.designmore.greendao.DaoSession;
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
 
 /**
  * Created by Joker on 2015/8/24.
@@ -14,10 +16,28 @@ public class MyApplication extends Application {
   private static DaoMaster daoMaster;
   private static DaoSession daoSession;
 
+  private static MyApplication instance;
+  private RefWatcher refWatcher;
+
+  public static MyApplication get() {
+    return instance;
+  }
+
+  public static RefWatcher getRefWatcher() {
+    return MyApplication.get().refWatcher;
+  }
+
+  @Override public void onCreate() {
+    super.onCreate();
+
+    instance = (MyApplication) getApplicationContext();
+    refWatcher = LeakCanary.install(this);
+  }
+
   /**
    * 取得DaoMaster
    */
-  private static DaoMaster getDaoMaster(Context context) {
+  private  DaoMaster getDaoMaster(Context context) {
     if (daoMaster == null) {
       synchronized (MyApplication.class) {
         if (daoMaster == null) {
@@ -33,7 +53,7 @@ public class MyApplication extends Application {
   /**
    * 取得DaoSession
    */
-  protected static DaoSession getDaoSession(Context context) {
+  protected  DaoSession getDaoSession(Context context) {
     if (daoSession == null) {
 
       synchronized (MyApplication.class) {

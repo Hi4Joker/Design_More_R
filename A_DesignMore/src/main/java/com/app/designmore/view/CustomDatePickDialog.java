@@ -1,4 +1,4 @@
-package com.app.designmore.utils;
+package com.app.designmore.view;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,21 +16,21 @@ import java.util.Calendar;
 
 import com.app.designmore.R;
 
-public class DatePickDialog implements OnDateChangedListener, OnTimeChangedListener {
+public class CustomDatePickDialog implements OnDateChangedListener, OnTimeChangedListener {
   private static final String TAG = "ProfileActivity";
   private DatePicker datePicker;
   private String dateTime;
   private String initDateTime;
   private AppCompatDialog alertDialog;
 
-  private DatePickDialog() {
+  private CustomDatePickDialog() {
   }
 
   private static class SingleTonHolder {
-    private static DatePickDialog instance = new DatePickDialog();
+    private static CustomDatePickDialog instance = new CustomDatePickDialog();
   }
 
-  public static DatePickDialog getInstance() {
+  public static CustomDatePickDialog getInstance() {
     return SingleTonHolder.instance;
   }
 
@@ -41,7 +41,7 @@ public class DatePickDialog implements OnDateChangedListener, OnTimeChangedListe
         (LinearLayout) View.inflate(context, R.layout.center_profile_data_dailaog_layout, null);
     datePicker = (DatePicker) dateTimeLayout.findViewById(R.id.profile_data_dialog_date_picker);
 
-    DatePickDialog.this.init(initDateTime, datePicker);
+    CustomDatePickDialog.this.init(initDateTime, datePicker);
 
     alertDialog = new AlertDialog.Builder(context).setTitle(initDateTime)
         .setView(dateTimeLayout)
@@ -57,9 +57,10 @@ public class DatePickDialog implements OnDateChangedListener, OnTimeChangedListe
           }
         })
         .create();
+    alertDialog.getWindow().setWindowAnimations(R.style.AnimCenter);
     alertDialog.show();
 
-    DatePickDialog.this.onDateChanged(null, 0, 0, 0);
+    CustomDatePickDialog.this.onDateChanged(null, 0, 0, 0);
   }
 
   public void init(String currentDate, DatePicker datePicker) {
@@ -82,13 +83,13 @@ public class DatePickDialog implements OnDateChangedListener, OnTimeChangedListe
   private Calendar getCalendarByInitData(String initDateTime) {
     Calendar calendar = Calendar.getInstance();
 
-    String date = DatePickDialog.this.splitDate(initDateTime, "日", "index", "front"); // ����
+    String date = CustomDatePickDialog.this.splitDate(initDateTime, "日", "index", "front"); // ����
 
-    String yearStr = DatePickDialog.this.splitDate(date, "年", "index", "front");
-    String monthAndDay = DatePickDialog.this.splitDate(date, "年", "index", "back");
+    String yearStr = CustomDatePickDialog.this.splitDate(date, "年", "index", "front");
+    String monthAndDay = CustomDatePickDialog.this.splitDate(date, "年", "index", "back");
 
-    String monthStr = DatePickDialog.this.splitDate(monthAndDay, "月", "index", "front");
-    String dayStr = DatePickDialog.this.splitDate(monthAndDay, "月", "index", "back");
+    String monthStr = CustomDatePickDialog.this.splitDate(monthAndDay, "月", "index", "front");
+    String dayStr = CustomDatePickDialog.this.splitDate(monthAndDay, "月", "index", "back");
 
     int currentYear = Integer.valueOf(yearStr.trim()).intValue();
     int currentMonth = Integer.valueOf(monthStr.trim()).intValue() - 1;

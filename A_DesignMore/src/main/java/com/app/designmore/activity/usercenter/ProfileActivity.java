@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,14 +24,16 @@ import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.activity.MineActivity;
-import com.app.designmore.utils.DatePickDialog;
+import com.app.designmore.view.CustomCameraDialog;
+import com.app.designmore.view.CustomDatePickDialog;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.manager.DialogManager;
+import com.app.designmore.view.CustomWheelDialog;
 
 /**
  * Created by Joker on 2015/8/25.
  */
-public class ProfileActivity extends BaseActivity {
+public class ProfileActivity extends BaseActivity implements CustomCameraDialog.Callback {
 
   private static final String TAG = ProfileActivity.class.getSimpleName();
   private static final String START_LOCATION_Y = "START_LOCATION_Y";
@@ -47,6 +48,7 @@ public class ProfileActivity extends BaseActivity {
   @Nullable @Bind(R.id.profile_layout_nickname_et) EditText nicknameEt;
   @Nullable @Bind(R.id.profile_layout_sex_tv) TextView genderTv;
   @Nullable @Bind(R.id.profile_layout_birthday_tv) TextView birthdayTv;
+  private CustomCameraDialog customCameraDialog;
 
   public static void startFromLocation(MineActivity startingActivity, int startingLocationY) {
 
@@ -97,7 +99,10 @@ public class ProfileActivity extends BaseActivity {
   }
 
   @Nullable @OnClick(R.id.profile_layout_avatar_rl) void onAvatarClick(View view) {
-
+    if (customCameraDialog == null) {
+      customCameraDialog = new CustomCameraDialog(ProfileActivity.this, this);
+    }
+    customCameraDialog.show();
   }
 
   @Nullable @OnClick(R.id.profile_layout_sex_rl) void onGenderClick() {
@@ -120,7 +125,7 @@ public class ProfileActivity extends BaseActivity {
 
   @Nullable @OnClick(R.id.profile_layout_birthday_rl) void onBirthdayClick() {
 
-    DatePickDialog dateTimePicKDialog = DatePickDialog.getInstance();
+    CustomDatePickDialog dateTimePicKDialog = CustomDatePickDialog.getInstance();
     dateTimePicKDialog.showPickerDialog(ProfileActivity.this, birthdayTv,
         birthdayTv.getText().toString());
   }
@@ -154,5 +159,14 @@ public class ProfileActivity extends BaseActivity {
             ProfileActivity.this.finish();
           }
         });
+  }
+
+  @Override public void onCameraClick() {
+    // TODO: 2015/9/14 打开相机
+  }
+
+  @Override public void onPhotoClick() {
+    // TODO: 2015/9/14 打开相册
+
   }
 }

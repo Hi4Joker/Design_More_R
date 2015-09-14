@@ -164,6 +164,7 @@ public class ProgressLayout extends RelativeLayout {
 
     if (child.getTag() == null || (!child.getTag().equals(TAG_LOADING) && !child.getTag()
         .equals(TAG_EMPTY) && !child.getTag().equals(TAG_ERROR))) {
+      child.setVisibility(GONE);
       contentViews.add(child);
     }
   }

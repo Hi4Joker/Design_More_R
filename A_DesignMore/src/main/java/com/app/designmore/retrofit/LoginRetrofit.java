@@ -11,6 +11,8 @@ import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.retrofit.response.HelpResponse;
 import com.app.designmore.retrofit.response.LoginCodeResponse;
 import com.app.designmore.retrofit.response.LoginResponse;
+import com.app.designmore.retrofit.response.UserInfoEntity;
+import com.app.designmore.retrofit.response.UserInfoResponse;
 import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -54,6 +56,9 @@ public class LoginRetrofit {
 
     @FormUrlEncoded @POST("/mobile/api/client/interface.php")
     Observable<BaseResponse> requestChangePassword(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded @POST("/mobile/api/client/interface.php")
+    Observable<UserInfoResponse> requestUserInfo(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded @POST("/mobile/api/client/interface.php") Observable<HelpResponse> getHelpList(
         @FieldMap Map<String, String> params);
@@ -210,6 +215,37 @@ public class LoginRetrofit {
             loginResponse.getLoginInfo().addressId);
       }
     }).compose(SchedulersCompat.<LoginEntity>applyExecutorSchedulers());
+  }
+
+  /**
+   * 获取用户信息   requestUserInfo
+   */
+  public Observable<UserInfoEntity> requestUserInfo(final Map<String, String> params) {
+
+    return Observable.defer(new Func0<Observable<UserInfoResponse>>() {
+      @Override public Observable<UserInfoResponse> call() {
+        return loginService.requestUserInfo(params)
+            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
+      }
+    }).retry(new Func2<Integer, Throwable, Boolean>() {
+      @Override public Boolean call(Integer integer, Throwable throwable) {
+        return throwable instanceof TimeoutException && integer < 1;
+      }
+    }).concatMap(new Func1<UserInfoResponse, Observable<UserInfoResponse>>() {
+      @Override public Observable<UserInfoResponse> call(final UserInfoResponse userInfoResponse) {
+        return userInfoResponse.filterWebServiceErrors();
+      }
+    }).map(new Func1<UserInfoResponse, UserInfoResponse.UserInfo>() {
+      @Override public UserInfoResponse.UserInfo call(UserInfoResponse userInfoResponse) {
+        return userInfoResponse.getUserInfo();
+      }
+    }).map(new Func1<UserInfoResponse.UserInfo, UserInfoEntity>() {
+      @Override public UserInfoEntity call(UserInfoResponse.UserInfo userInfo) {
+
+        return new UserInfoEntity(userInfo.userName, userInfo.nickname, userInfo.gender,
+            userInfo.birthday, userInfo.headerUrl);
+      }
+    }).compose(SchedulersCompat.<UserInfoEntity>applyExecutorSchedulers());
   }
 
   /**
