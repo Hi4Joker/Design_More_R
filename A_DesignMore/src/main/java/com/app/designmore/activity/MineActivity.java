@@ -9,6 +9,7 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,6 +32,7 @@ import com.app.designmore.activity.usercenter.ProfileActivity;
 import com.app.designmore.activity.usercenter.SettingActivity;
 import com.app.designmore.activity.usercenter.TrolleyActivity;
 import com.app.designmore.event.FinishEvent;
+import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.helper.DBHelper;
 import com.app.designmore.manager.CropCircleTransformation;
 import com.app.designmore.manager.DialogManager;
@@ -55,6 +57,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
+import retrofit.RetrofitError;
 import rx.Subscriber;
 import rx.functions.Action0;
 import rx.functions.Action1;
@@ -210,14 +214,16 @@ public class MineActivity extends BaseActivity {
 
           @Override public void onError(Throwable error) {
             /*加载失败，显示错误界面*/
-           /* progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
+            MineActivity.this.showErrorLayout(error);
+
+            progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
                 "加载失败", "请点击重试", getResources().getString(R.string.retry_button_text),
-                retryClickListener);*/
-            if (swipeRefreshLayout.isRefreshing()) {
+                retryClickListener);
+            /*if (swipeRefreshLayout.isRefreshing()) {
               swipeRefreshLayout.setRefreshing(false);
             } else {
               progressLayout.showContent();
-            }
+            }*/
           }
 
           @Override public void onNext(UserInfoEntity userInfoEntity) {
@@ -236,6 +242,28 @@ public class MineActivity extends BaseActivity {
                 .into(avatarIv);
           }
         });
+  }
+
+  private void showErrorLayout(Throwable error) {
+    if (error instanceof TimeoutException) {
+      MineActivity.this.showError(getResources().getString(R.string.timeout_title),
+          getResources().getString(R.string.timeout_content));
+    } else if (error instanceof RetrofitError) {
+      Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
+      MineActivity.this.showError("网络连接异常", ((RetrofitError) error).getKind() + "");
+    } else if (error instanceof WebServiceException) {
+      MineActivity.this.showError(getResources().getString(R.string.service_exception_title),
+          getResources().getString(R.string.service_exception_content));
+    } else {
+      Log.e(TAG, error.getMessage());
+      error.printStackTrace();
+      throw new RuntimeException("See inner exception");
+    }
+  }
+
+  private void showError(String errorTitle, String errorContent) {
+    progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon), errorTitle,
+        errorContent, getResources().getString(R.string.retry_button_text), retryClickListener);
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -290,7 +318,8 @@ public class MineActivity extends BaseActivity {
    * 个人资料
    */
   @Nullable @OnClick(R.id.mine_layout_information_ll) void onInfoClick(View view) {
-    ProfileActivity.startFromLocation(MineActivity.this, DensityUtil.getLocationY(view));
+    ProfileActivity.startFromLocation(MineActivity.this, DensityUtil.getLocationY(view),
+        currentUserInfoEntity);
     overridePendingTransition(0, 0);
   }
 

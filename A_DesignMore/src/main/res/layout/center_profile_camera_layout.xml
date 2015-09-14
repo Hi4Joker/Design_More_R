@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/profile_camera_layout_root_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+  <include
+      layout="@layout/include_white_toolbar_layout"/>
+
+  <com.commonsware.cwac.camera.CameraView
+      android:id="@+id/profile_camera_layout_camera_view"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_marginTop="?attr/actionBarSize"
+      />
+
+  <ImageView
+      android:id="@+id/profile_camera_layout_taken_view"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_marginTop="?attr/actionBarSize"
+      android:scaleType="centerCrop"
+      android:background="@android:color/transparent"
+      android:visibility="gone"/>
+
+  <View
+      android:id="@+id/profile_camera_layout_shutter_view"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_marginTop="?attr/actionBarSize"
+      android:background="@color/white"
+      android:visibility="gone"/>
+
+
+  <!--app:borderWidth="0dip"防止5.0以上无阴影 -->
+  <android.support.design.widget.FloatingActionButton
+      android:id="@+id/profile_camera_layout_camera_btn"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentRight="true"
+      android:layout_alignParentBottom="true"
+      android:layout_marginRight="@dimen/material_16dp"
+      android:layout_marginBottom="@dimen/material_16dp"
+      android:scaleType="centerCrop"
+      android:src="@drawable/ic_photo_camera"
+      app:borderWidth="0dip"
+      app:elevation="@dimen/material_elevation_6dp"
+      app:pressedTranslationZ="@dimen/material_elevation_6dp"
+      />
+
+
+</RelativeLayout>

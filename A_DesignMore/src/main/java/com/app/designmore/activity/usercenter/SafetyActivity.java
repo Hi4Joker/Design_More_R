@@ -9,7 +9,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,13 +24,11 @@ import butterknife.Bind;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
-import com.app.designmore.event.RefreshAddressEvent;
 import com.app.designmore.helper.DBHelper;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.retrofit.LoginRetrofit;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
-import com.app.designmore.rxAndroid.schedulers.HandlerScheduler;
 import com.app.designmore.utils.DensityUtil;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
@@ -129,7 +126,7 @@ public class SafetyActivity extends BaseActivity {
 
     MenuItem menuItem = menu.findItem(R.id.action_inbox);
     menuItem.setActionView(R.layout.menu_inbox_tv_item);
-    actionButton = (Button) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
+    actionButton = (Button) menuItem.getActionView().findViewById(R.id.action_inbox_btn);
     actionButton.setText(getText(R.string.action_submit));
     actionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {

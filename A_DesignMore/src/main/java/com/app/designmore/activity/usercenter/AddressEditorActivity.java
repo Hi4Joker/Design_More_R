@@ -158,7 +158,7 @@ public class AddressEditorActivity extends BaseActivity implements AddressView {
 
     MenuItem menuItem = menu.findItem(R.id.action_inbox);
     menuItem.setActionView(R.layout.menu_inbox_tv_item);
-    actionButton = (Button) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
+    actionButton = (Button) menuItem.getActionView().findViewById(R.id.action_inbox_btn);
     actionButton.setText(getText(R.string.action_done));
     actionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {

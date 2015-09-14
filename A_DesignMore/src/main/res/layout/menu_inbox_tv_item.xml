@@ -16,7 +16,7 @@
     >
 
   <Button
-      android:id="@+id/action_inbox_tv"
+      android:id="@+id/action_inbox_btn"
       android:layout_width="?attr/actionBarSize"
       android:layout_height="?attr/actionBarSize"
       android:textSize="@dimen/material_16sp"

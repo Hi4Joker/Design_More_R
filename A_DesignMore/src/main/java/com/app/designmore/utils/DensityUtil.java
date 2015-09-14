@@ -7,6 +7,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.view.Display;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 
 /**
@@ -128,5 +129,12 @@ public class DensityUtil {
             - DensityUtil.getStatusBarHeight(item.getContext()));
 
     return startingLocation[0] / 2;
+  }
+
+  public static int hideFromBottom(View view) {
+    int height = view.getHeight();
+    ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+    int margins = params.topMargin + params.bottomMargin;
+    return height + margins;
   }
 }

@@ -72,8 +72,8 @@ public class CustomDatePickDialog implements OnDateChangedListener, OnTimeChange
       calendar = this.getCalendarByInitData(initDateTime);
     } else {
       this.initDateTime =
-          calendar.get(Calendar.YEAR) + "年" + calendar.get(Calendar.MONTH) + "月" + calendar.get(
-              Calendar.DAY_OF_MONTH) + "日";
+          calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.MONTH) + "-" + calendar.get(
+              Calendar.DAY_OF_MONTH);
     }
 
     datePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
@@ -83,7 +83,7 @@ public class CustomDatePickDialog implements OnDateChangedListener, OnTimeChange
   private Calendar getCalendarByInitData(String initDateTime) {
     Calendar calendar = Calendar.getInstance();
 
-    String date = CustomDatePickDialog.this.splitDate(initDateTime, "日", "index", "front"); // ����
+    String date = CustomDatePickDialog.this.splitDate(initDateTime, "日", "index", "front");
 
     String yearStr = CustomDatePickDialog.this.splitDate(date, "年", "index", "front");
     String monthAndDay = CustomDatePickDialog.this.splitDate(date, "年", "index", "back");

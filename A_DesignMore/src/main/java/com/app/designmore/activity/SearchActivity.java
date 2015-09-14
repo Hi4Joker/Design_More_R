@@ -73,7 +73,6 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
   };
 
   public static void navigateToSearch(AppCompatActivity startingActivity) {
-
     Intent intent = new Intent(startingActivity, SearchActivity.class);
     startingActivity.startActivity(intent);
   }
@@ -217,7 +216,7 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
           getResources().getString(R.string.timeout_content));
     } else if (error instanceof RetrofitError) {
       Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
-      SearchActivity.this.showError("网络连接异常", ((RetrofitError) error).getKind() + "");
+      SearchActivity.this.showError("网络连接异常", "请点击重试");
     } else if (error instanceof WebServiceException) {
       SearchActivity.this.showError(getResources().getString(R.string.service_exception_title),
           getResources().getString(R.string.service_exception_content));

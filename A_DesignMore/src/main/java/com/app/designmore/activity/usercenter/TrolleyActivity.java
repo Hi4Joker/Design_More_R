@@ -254,7 +254,7 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
 
     MenuItem menuItem = menu.findItem(R.id.action_inbox);
     menuItem.setActionView(R.layout.menu_inbox_tv_item);
-    Button actionButton = (Button) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
+    Button actionButton = (Button) menuItem.getActionView().findViewById(R.id.action_inbox_btn);
     actionButton.setText(getText(R.string.action_editor));
     actionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
@@ -355,7 +355,7 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
         .setInterpolator(new LinearInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
-            TrolleyActivity.super.onBackPressed();
+            TrolleyActivity.this.finish();
             overridePendingTransition(0, 0);
           }
         });

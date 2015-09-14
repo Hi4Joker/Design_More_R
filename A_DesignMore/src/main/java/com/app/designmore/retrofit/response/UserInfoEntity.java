@@ -2,11 +2,12 @@ package com.app.designmore.retrofit.response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import java.io.Serializable;
 
 /**
  * Created by Joker on 2015/9/14.
  */
-public class UserInfoEntity extends BaseResponse {
+public class UserInfoEntity extends BaseResponse implements Serializable {
 
   private String userName;
   private String nickname;
@@ -14,13 +15,13 @@ public class UserInfoEntity extends BaseResponse {
   private String birthday;
   private String headerUrl;
 
-  public UserInfoEntity(String userName, String birthday, String gender, String headerUrl,
-      String nickname) {
+  public UserInfoEntity(String userName, String nickname, String gender, String birthday,
+      String headerUrl) {
     this.userName = userName;
-    this.birthday = birthday;
-    this.gender = gender;
-    this.headerUrl = headerUrl;
     this.nickname = nickname;
+    this.gender = gender;
+    this.birthday = birthday;
+    this.headerUrl = headerUrl;
   }
 
   public String getBirthday() {

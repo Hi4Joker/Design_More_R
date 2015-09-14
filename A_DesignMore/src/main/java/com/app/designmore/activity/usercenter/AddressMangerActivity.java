@@ -35,7 +35,6 @@ import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.retrofit.AddressRetrofit;
 import com.app.designmore.retrofit.entity.AddressEntity;
-import com.app.designmore.retrofit.response.AddressResponse;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
@@ -478,7 +477,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
 
     MenuItem menuItem = menu.findItem(R.id.action_inbox);
     menuItem.setActionView(R.layout.menu_inbox_tv_item);
-    Button actionButton = (Button) menuItem.getActionView().findViewById(R.id.action_inbox_tv);
+    Button actionButton = (Button) menuItem.getActionView().findViewById(R.id.action_inbox_btn);
     actionButton.setText(getText(R.string.action_add));
     actionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {

@@ -105,7 +105,7 @@ public class DialogManager {
     return progressDialog;
   }
 
-  public void showGenderPickerDialog(Context context, String initGender,
+  public AlertDialog showGenderPickerDialog(Context context, String initGender,
       final DialogInterface.OnClickListener onClickListener) {
 
     final String[] arrayGender = new String[] { "男", "女" };
@@ -135,6 +135,8 @@ public class DialogManager {
 
     genderDialog.getWindow().setWindowAnimations(R.style.AnimCenter);
     genderDialog.show();
+
+    return genderDialog;
   }
 
   public void showExitDialog(Context context,
