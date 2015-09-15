@@ -2,12 +2,13 @@ package com.app.designmore.retrofit;
 
 import com.app.designmore.Constants;
 import com.app.designmore.retrofit.entity.CollectionEntity;
+import com.app.designmore.retrofit.entity.JournalEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.retrofit.response.CollectionResponse;
+import com.app.designmore.retrofit.response.JournalResponse;
 import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -26,25 +27,25 @@ import rx.functions.Func1;
 import rx.functions.Func2;
 
 /**
- * Created by Joker on 2015/9/4.
+ * Created by Joker on 2015/9/15.
  */
-public class CollectionRetrofit {
+public class JournalRetrofit {
 
-  private CollectionEntity instance = new CollectionEntity();
+  private JournalEntity instance = new JournalEntity();
 
   interface CollectionService {
 
     //@Headers("Accept-Encoding: application/json")
     @FormUrlEncoded @POST("/mobile/api/client/interface.php")
-    Observable<CollectionResponse> getMyCollectionList(@FieldMap Map<String, String> params);
+    Observable<JournalResponse> getJournalList(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded @POST("/mobile/api/client/interface.php")
-    Observable<BaseResponse> requestDeleteCollection(@FieldMap Map<String, String> params);
+    Observable<JournalResponse> requestMoreJournalList(@FieldMap Map<String, String> params);
   }
 
   private final CollectionService collectionService;
 
-  private CollectionRetrofit() {
+  private JournalRetrofit() {
     RequestInterceptor requestInterceptor = new RequestInterceptor() {
       @Override public void intercept(RequestFacade request) {
         request.addHeader("Accept-Encoding", "application/json");
@@ -69,61 +70,60 @@ public class CollectionRetrofit {
   }
 
   private static class SingletonHolder {
-    private static CollectionRetrofit instance = new CollectionRetrofit();
+    private static JournalRetrofit instance = new JournalRetrofit();
   }
 
-  public static CollectionRetrofit getInstance() {
+  public static JournalRetrofit getInstance() {
     return SingletonHolder.instance;
   }
 
   /**
-   * 获取收藏列表
+   * 获取杂志列表
    */
-  public Observable<List<CollectionEntity>> getCollectionList(final Map<String, String> params) {
+  public Observable<List<JournalEntity>> getJournalList(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<CollectionResponse>>() {
-      @Override public Observable<CollectionResponse> call() {
-
+    return Observable.defer(new Func0<Observable<JournalResponse>>() {
+      @Override public Observable<JournalResponse> call() {
              /*获取热搜列表，超时8秒*/
-        return collectionService.getMyCollectionList(params)
+        return collectionService.getJournalList(params)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
       }
     }).retry(new Func2<Integer, Throwable, Boolean>() {
       @Override public Boolean call(Integer integer, Throwable throwable) {
         return throwable instanceof TimeoutException && integer < 1;
       }
-    }).concatMap(new Func1<CollectionResponse, Observable<CollectionResponse>>() {
-      @Override public Observable<CollectionResponse> call(CollectionResponse collectionResponse) {
-        return collectionResponse.filterWebServiceErrors();
+    }).concatMap(new Func1<JournalResponse, Observable<JournalResponse>>() {
+      @Override public Observable<JournalResponse> call(JournalResponse journalResponse) {
+        return journalResponse.filterWebServiceErrors();
       }
-    }).flatMap(new Func1<CollectionResponse, Observable<CollectionResponse.Collect>>() {
-      @Override
-      public Observable<CollectionResponse.Collect> call(CollectionResponse collectionResponse) {
-        return Observable.from(collectionResponse.getCollections());
+    }).flatMap(new Func1<JournalResponse, Observable<JournalResponse.Journal>>() {
+      @Override public Observable<JournalResponse.Journal> call(JournalResponse journalResponse) {
+        return Observable.from(journalResponse.getJournals());
       }
-    }).map(new Func1<CollectionResponse.Collect, CollectionEntity>() {
-      @Override public CollectionEntity call(CollectionResponse.Collect collect) {
+    }).map(new Func1<JournalResponse.Journal, JournalEntity>() {
+      @Override public JournalEntity call(JournalResponse.Journal journal) {
 
-        CollectionEntity clone = instance.newInstance();
-        clone.setGoodId(collect.getGoodInfo().goodId);
-        clone.setGoodName(collect.getGoodInfo().goodName);
-        clone.setGoodPrice(collect.getGoodInfo().goodPrice);
-        clone.setGoodThumb(collect.getGoodInfo().goodThumb);
-        clone.setCollectionId(collect.getCollectionId());
+        JournalEntity clone = instance.newInstance();
+
+        clone.setJournalId(journal.journalId);
+        clone.setThumbUrl(journal.journalThumb);
+        clone.setJournalTitle(journal.journalTitle);
+        clone.setJournalContent(journal.journalContent);
+        clone.setJournalUrl(journal.journalUrl);
 
         return clone;
       }
-    }).toList().compose(SchedulersCompat.<List<CollectionEntity>>applyExecutorSchedulers());
+    }).toList().compose(SchedulersCompat.<List<JournalEntity>>applyExecutorSchedulers());
   }
 
   /**
-   * 删除收藏
+   * 获取更多杂志列表
    */
   public Observable<BaseResponse> requestDeleteCollection(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<BaseResponse>>() {
+   /* return Observable.defer(new Func0<Observable<BaseResponse>>() {
       @Override public Observable<BaseResponse> call() {
-        return collectionService.requestDeleteCollection(params)
+        return collectionService.requestMoreJournalList(params)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
       }
     }).retry(new Func2<Integer, Throwable, Boolean>() {
@@ -136,9 +136,12 @@ public class CollectionRetrofit {
       }
     }).map(new Func1<BaseResponse, BaseResponse>() {
       @Override public BaseResponse call(BaseResponse baseResponse) {
-        /*删除成功*/
+        *//*删除成功*//*
         return baseResponse;
       }
     }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
+  }*/
+
+    return null;
   }
 }

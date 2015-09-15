@@ -93,6 +93,15 @@
         >
     </activity>
 
+    <!--杂志ACT -> 杂志详情-->
+    <activity
+        android:name=".activity.JournalDetailActivity"
+        android:screenOrientation="portrait"
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.TransparentActivity"
+        >
+    </activity>
+
     <!--用户中心ACT-->
     <activity
         android:name=".activity.MineActivity"

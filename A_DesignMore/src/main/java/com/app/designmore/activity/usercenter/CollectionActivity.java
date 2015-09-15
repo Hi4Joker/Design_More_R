@@ -96,7 +96,6 @@ public class CollectionActivity extends BaseActivity
   };
 
   public static void startFromLocation(MineActivity startingActivity, int startingLocationY) {
-
     Intent intent = new Intent(startingActivity, CollectionActivity.class);
     intent.putExtra(START_LOCATION_Y, startingLocationY);
     startingActivity.startActivity(intent);
@@ -232,7 +231,7 @@ public class CollectionActivity extends BaseActivity
           getResources().getString(R.string.timeout_content));
     } else if (error instanceof RetrofitError) {
       Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
-      CollectionActivity.this.showError("网络连接异常", ((RetrofitError) error).getKind() + "");
+      CollectionActivity.this.showError("网络连接异常", "请点击重试");
     } else if (error instanceof WebServiceException) {
       CollectionActivity.this.showError(getResources().getString(R.string.service_exception_title),
           getResources().getString(R.string.service_exception_content));
@@ -269,7 +268,6 @@ public class CollectionActivity extends BaseActivity
 
   /*弹出列表对话框，分享操作*/
   @Override public void onShareClick(final CollectionEntity entity) {
-
     if (customShareDialog == null) {
       customShareDialog = new CustomShareDialog(CollectionActivity.this, this);
     }

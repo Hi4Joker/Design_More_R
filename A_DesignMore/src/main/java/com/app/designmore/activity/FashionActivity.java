@@ -144,7 +144,7 @@ public class FashionActivity extends BaseActivity {
    */
   @Nullable @OnClick(R.id.bottom_bar_journal_rl) void onJournalClick() {
 
-    JournalActivity.navigateToUserCenter(FashionActivity.this);
+    JournalActivity.navigateToJournal(FashionActivity.this);
     FashionActivity.this.finish();
     overridePendingTransition(0, 0);
   }

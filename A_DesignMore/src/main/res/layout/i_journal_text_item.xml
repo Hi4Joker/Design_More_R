@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/material_8dp"
+    android:orientation="horizontal"
+    android:background="@color/holo_blue_light"
+    >
+
+  <ImageView
+      android:layout_width="@dimen/material_4dp"
+      android:layout_height="@dimen/material_32dp"
+      android:layout_marginTop="@dimen/material_2dp"
+      android:layout_marginBottom="@dimen/material_2dp"
+      android:layout_marginLeft="@dimen/material_24dp"
+      android:background="@color/design_more_red"/>
+
+  <TextView
+      android:layout_below="@id/journal_item_thumb_iv"
+      android:id="@+id/journal_item_title_tv"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_marginLeft="@dimen/material_8dp"
+      android:gravity="start|center_vertical"
+      android:text="往期回顾"
+      android:textSize="@dimen/material_13sp"
+      android:textColor="@color/darker_gray"
+      />
+
+
+</LinearLayout>

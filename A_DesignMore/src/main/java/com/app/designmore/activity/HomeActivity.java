@@ -150,7 +150,7 @@ public class HomeActivity extends BaseActivity {
    */
   @Nullable @OnClick(R.id.bottom_bar_journal_rl) void onJournalClick() {
 
-    JournalActivity.navigateToUserCenter(HomeActivity.this);
+    JournalActivity.navigateToJournal(HomeActivity.this);
     overridePendingTransition(0, 0);
   }
 

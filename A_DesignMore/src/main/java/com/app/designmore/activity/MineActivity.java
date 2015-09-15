@@ -363,7 +363,7 @@ public class MineActivity extends BaseActivity {
    */
   @Nullable @OnClick(R.id.bottom_bar_journal_rl) void onJournalClick() {
 
-    JournalActivity.navigateToUserCenter(MineActivity.this);
+    JournalActivity.navigateToJournal(MineActivity.this);
     MineActivity.this.finish();
     overridePendingTransition(0, 0);
   }
