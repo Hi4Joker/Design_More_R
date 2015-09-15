@@ -8,13 +8,13 @@
 
   <uses-feature
       android:name="android.hardware.camera"
-      android:required="true" />
+      android:required="true"/>
   <uses-feature
       android:name="android.hardware.camera.front"
-      android:required="false" />
+      android:required="false"/>
   <uses-feature
       android:name="android.hardware.camera.autofocus"
-      android:required="false" />
+      android:required="false"/>
 
   <application
       android:name=".helper.MyApplication"
@@ -145,9 +145,17 @@
         >
     </activity>
 
-    <!--用户中心ACT -> 拍照ACT-->
+    <!--用户中心ACT -> 后置拍照ACT-->
     <activity
-        android:name=".activity.usercenter.CameraActivity"
+        android:name=".activity.usercenter.CameraBackActivity"
+        android:screenOrientation="portrait"
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.TransparentActivity"
+        >
+    </activity>
+    <!--用户中心ACT -> 前置拍照ACT-->
+    <activity
+        android:name=".activity.usercenter.CameraFrontActivity"
         android:screenOrientation="portrait"
         android:launchMode="singleTop"
         android:theme="@style/AppTheme.TransparentActivity"

@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -173,7 +172,7 @@ public class JournalActivity extends BaseActivity {
 
     getMenuInflater().inflate(R.menu.menu_main, menu);
 
-    MenuItem searchItem = menu.findItem(R.id.action_search);
+    MenuItem searchItem = menu.findItem(R.id.action_inbox_1);
     searchItem.setActionView(R.layout.menu_inbox_btn_item);
     ImageButton searchButton =
         (ImageButton) searchItem.getActionView().findViewById(R.id.action_inbox_btn);
@@ -185,7 +184,7 @@ public class JournalActivity extends BaseActivity {
       }
     });
 
-    MenuItem trolleyItem = menu.findItem(R.id.action_trolley);
+    MenuItem trolleyItem = menu.findItem(R.id.action_inbox_2);
     trolleyItem.setActionView(R.layout.menu_inbox_btn_item);
     ImageButton trolleyButton =
         (ImageButton) trolleyItem.getActionView().findViewById(R.id.action_inbox_btn);

@@ -4,7 +4,16 @@
     android:id="@+id/profile_camera_layout_root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/primary_background_color"
     >
+
+  <ImageView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="?attr/actionBarSize"
+      android:layout_centerInParent="true"
+      android:scaleType="center"
+      android:src="@drawable/ic_grey_logo_icon"/>
 
   <include
       layout="@layout/include_white_toolbar_layout"/>
@@ -32,7 +41,6 @@
       android:layout_marginTop="?attr/actionBarSize"
       android:background="@color/white"
       android:visibility="gone"/>
-
 
   <!--app:borderWidth="0dip"防止5.0以上无阴影 -->
   <android.support.design.widget.FloatingActionButton

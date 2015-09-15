@@ -28,7 +28,6 @@ import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.activity.MineActivity;
 import com.app.designmore.event.AvatarRefreshEvent;
-import com.app.designmore.event.EditorAddressEvent;
 import com.app.designmore.manager.CropCircleTransformation;
 import com.app.designmore.retrofit.response.UserInfoEntity;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
@@ -261,7 +260,7 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
   }
 
   @Override public void onCameraClick() {
-    CameraActivity.navigateToCamera(ProfileActivity.this);
+    CameraBackActivity.navigateToCamera(ProfileActivity.this, true);
     overridePendingTransition(0, 0);
   }
 

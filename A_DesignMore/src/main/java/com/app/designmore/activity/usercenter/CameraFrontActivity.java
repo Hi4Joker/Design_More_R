@@ -25,6 +25,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import butterknife.Bind;
@@ -49,9 +50,9 @@ import rx.functions.Action1;
 /**
  * Created by Joker on 2015/9/14.
  */
-public class CameraActivity extends BaseActivity implements CameraHostProvider {
+public class CameraFrontActivity extends BaseActivity implements CameraHostProvider {
 
-  private static final String TAG = CameraActivity.class.getCanonicalName();
+  private static final String TAG = CameraFrontActivity.class.getCanonicalName();
 
   private static final Interpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
   private static final Interpolator DECELERATE_INTERPOLATOR = new DecelerateInterpolator();
@@ -62,7 +63,8 @@ public class CameraActivity extends BaseActivity implements CameraHostProvider {
   @Nullable @Bind(R.id.profile_camera_layout_shutter_view) View shutter;
   @Nullable @Bind(R.id.profile_camera_layout_camera_btn) FloatingActionButton floatingActionButton;
 
-  private Button actionButton;
+  private Button doneActionButton;
+  private ImageButton switchActionButton;
 
   private CameraState cameraState = CameraState.BACK;
   private State currentState = State.TAKE;
@@ -79,7 +81,7 @@ public class CameraActivity extends BaseActivity implements CameraHostProvider {
   }
 
   public static void navigateToCamera(AppCompatActivity startingActivity) {
-    Intent intent = new Intent(startingActivity, CameraActivity.class);
+    Intent intent = new Intent(startingActivity, CameraFrontActivity.class);
     startingActivity.startActivity(intent);
   }
 
@@ -87,7 +89,16 @@ public class CameraActivity extends BaseActivity implements CameraHostProvider {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.center_profile_camera_layout);
 
-    CameraActivity.this.initView(savedInstanceState);
+    CameraFrontActivity.this.initView(savedInstanceState);
+  }
+
+  @Override public void initView(Bundle savedInstanceState) {
+
+    CameraFrontActivity.this.setSupportActionBar(toolbar);
+    toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+
+    /*拍摄状态*/
+    CameraFrontActivity.this.updateState(State.TAKE);
 
     RxView.touches(cameraView).forEach(new Action1<MotionEvent>() {
       @Override public void call(MotionEvent motionEvent) {
@@ -96,40 +107,35 @@ public class CameraActivity extends BaseActivity implements CameraHostProvider {
     });
   }
 
-  @Override public void initView(Bundle savedInstanceState) {
-
-    CameraActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
-
-    /*拍摄状态*/
-    CameraActivity.this.updateState(State.TAKE);
-
-    if (savedInstanceState == null) {
-      toolbar.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-        @Override public boolean onPreDraw() {
-          toolbar.getViewTreeObserver().removeOnPreDrawListener(this);
-          CameraActivity.this.startEnterAnim();
-          return true;
-        }
-      });
-    }
-  }
-
   @Override public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.menu_center, menu);
+    getMenuInflater().inflate(R.menu.menu_main, menu);
 
-    MenuItem menuItem = menu.findItem(R.id.action_inbox);
-    menuItem.setActionView(R.layout.menu_inbox_tv_item);
-    actionButton = (Button) menuItem.getActionView().findViewById(R.id.action_inbox_btn);
-    actionButton.setText("完成");
-    this.actionButton.setEnabled(false);
-    actionButton.setOnClickListener(new View.OnClickListener() {
+    MenuItem doneMenuItem = menu.findItem(R.id.action_inbox_2);
+    doneMenuItem.setActionView(R.layout.menu_inbox_tv_item);
+    doneActionButton = (Button) doneMenuItem.getActionView().findViewById(R.id.action_inbox_btn);
+    doneActionButton.setText("完成");
+    this.doneActionButton.setEnabled(false);
+    doneActionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         if (EventBusInstance.getDefault().hasSubscriberForEvent(AvatarRefreshEvent.class)) {
           EventBusInstance.getDefault().post(new AvatarRefreshEvent(photoFile));
-
-          CameraActivity.this.exitWhitAnim();
+          CameraFrontActivity.this.exitWhitAnim();
         }
+      }
+    });
+
+    MenuItem switchMenuItem = menu.findItem(R.id.action_inbox_1);
+    switchMenuItem.setActionView(R.layout.menu_inbox_btn_item);
+    switchActionButton =
+        (ImageButton) switchMenuItem.getActionView().findViewById(R.id.action_inbox_btn);
+    switchActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_camera_black));
+    switchActionButton.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+
+        /*切换至后置摄像头*/
+        CameraBackActivity.navigateToCamera(CameraFrontActivity.this, false);
+        CameraFrontActivity.this.finish();
+        overridePendingTransition(0, 0);
       }
     });
 
@@ -137,7 +143,7 @@ public class CameraActivity extends BaseActivity implements CameraHostProvider {
   }
 
   @Override public CameraHost getCameraHost() {
-    return new MyCameraHost(CameraActivity.this, false);
+    return new MyCameraHost(CameraFrontActivity.this, true);
   }
 
   class MyCameraHost extends SimpleCameraHost implements Camera.FaceDetectionListener {
@@ -172,7 +178,7 @@ public class CameraActivity extends BaseActivity implements CameraHostProvider {
           AndroidSchedulers.mainThread().createWorker().schedule(new Action0() {
             @Override public void call() {
                /*显示照片*/
-              CameraActivity.this.showTakenPicture(bitmap);
+              CameraFrontActivity.this.showTakenPicture(bitmap);
             }
           });
         }
@@ -181,7 +187,7 @@ public class CameraActivity extends BaseActivity implements CameraHostProvider {
 
     @Override public void saveImage(PictureTransaction xact, byte[] image) {
       super.saveImage(xact, image);
-      CameraActivity.this.photoFile = this.getPhotoPath();
+      CameraFrontActivity.this.photoFile = this.getPhotoPath();
     }
 
     @Override public boolean useFrontFacingCamera() {
@@ -202,7 +208,7 @@ public class CameraActivity extends BaseActivity implements CameraHostProvider {
 
     this.photo.setImageBitmap(bitmap);
     /*拍摄 -> 展示*/
-    CameraActivity.this.updateState(State.DISPLAY);
+    CameraFrontActivity.this.updateState(State.DISPLAY);
   }
 
   private void updateState(State state) {
@@ -215,7 +221,8 @@ public class CameraActivity extends BaseActivity implements CameraHostProvider {
           .setDuration(Constants.MILLISECONDS_300);
 
       this.floatingActionButton.setEnabled(true);
-      if (actionButton != null) this.actionButton.setEnabled(false);
+      if (switchActionButton != null) this.switchActionButton.setEnabled(true);
+      if (doneActionButton != null) this.doneActionButton.setEnabled(false);
       this.photo.setVisibility(View.GONE);
     } else if (currentState == State.DISPLAY) {/*拍摄完毕状态*/
 
@@ -224,7 +231,8 @@ public class CameraActivity extends BaseActivity implements CameraHostProvider {
           .setDuration(Constants.MILLISECONDS_300);
 
       this.floatingActionButton.setEnabled(false);
-      this.actionButton.setEnabled(true);
+      this.switchActionButton.setEnabled(false);
+      this.doneActionButton.setEnabled(true);
       this.photo.setVisibility(View.VISIBLE);
     }
   }
@@ -234,13 +242,13 @@ public class CameraActivity extends BaseActivity implements CameraHostProvider {
     if (cameraState == CameraState.BACK) {
       // TODO: 2015/9/15 切换至前置摄像头
       cameraState = CameraState.FRONT;
-      actionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_camera_front));
+      doneActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_camera_front));
       cameraView.setHost(new MyCameraHost(CameraActivity.this, true));
       cameraView.restartPreview();
     } else {
       // TODO: 2015/9/15 切换至后置摄像头
       cameraState = CameraState.BACK;
-      actionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_camera_black));
+      doneActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_camera_black));
       cameraView.setHost(new MyCameraHost(CameraActivity.this, false));
       cameraView.restartPreview();
     }
@@ -275,31 +283,23 @@ public class CameraActivity extends BaseActivity implements CameraHostProvider {
     animatorSet.start();
   }
 
-  private void startEnterAnim() {
-    ViewCompat.setTranslationY(rootView, rootView.getHeight());
-    ViewCompat.animate(rootView)
-        .translationY(0.0f)
-        .setDuration(Constants.MILLISECONDS_400)
-        .setInterpolator(new LinearInterpolator());
-  }
-
   @Override public void exit() {
 
     if (currentState == State.DISPLAY) {
       this.updateState(State.TAKE);
     } else {
-      CameraActivity.this.exitWhitAnim();
+      CameraFrontActivity.this.exitWhitAnim();
     }
   }
 
   private void exitWhitAnim() {
     ViewCompat.animate(rootView)
-        .translationY(DensityUtil.getScreenHeight(CameraActivity.this))
+        .translationY(DensityUtil.getScreenHeight(CameraFrontActivity.this))
         .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
-            CameraActivity.this.finish();
+            CameraFrontActivity.this.finish();
             overridePendingTransition(0, 0);
           }
         });
