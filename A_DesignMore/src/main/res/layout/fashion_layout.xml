@@ -68,7 +68,7 @@
           android:layout_height="wrap_content"
           android:layout_centerInParent="true"
           android:scaleType="centerCrop"
-          android:src="@drawable/test_background"
+          android:src="@drawable/ic_default"
           />
 
     </com.app.designmore.view.ProgressLayout>

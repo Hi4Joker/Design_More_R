@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
@@ -32,6 +33,7 @@ import com.app.designmore.adapter.AddressAdapter;
 import com.app.designmore.event.EditorAddressEvent;
 import com.app.designmore.event.RefreshAddressEvent;
 import com.app.designmore.exception.WebServiceException;
+import com.app.designmore.helper.DBHelper;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.retrofit.AddressRetrofit;
 import com.app.designmore.retrofit.entity.AddressEntity;
@@ -127,6 +129,12 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
     /*创建Adapter*/
     AddressMangerActivity.this.setupAdapter();
 
+   /* ViewGroup.LayoutParams mParams = recyclerView.getLayoutParams();
+    mParams.height = (DensityUtil.getScreenWidth(this) * 480 / 720 + DensityUtil.dip2px(40)) * 5
+        + DensityUtil.dip2px(8);
+    mParams.width = DensityUtil.getScreenWidth(this);
+    recyclerView.setLayoutParams(mParams);*/
+
     if (savedInstanceState == null) {
       rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
         @Override public boolean onPreDraw() {
@@ -204,7 +212,8 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
     /* Action=GetUserByAddress&uid=1*/
     Map<String, String> params = new HashMap<>(2);
     params.put("Action", "GetUserByAddress");
-    params.put("uid", "10");
+    params.put("uid",
+        DBHelper.getInstance(getApplicationContext()).getUserID(AddressMangerActivity.this));
 
     AddressRetrofit.getInstance()
         .getAddressList(params)
@@ -290,7 +299,8 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
     Map<String, String> params = new HashMap<>(3);
     params.put("Action", "SetDefaultAddress");
     params.put("address_id", defaultAddress.getAddressId());
-    params.put("uid", "10");
+    params.put("uid",
+        DBHelper.getInstance(getApplicationContext()).getUserID(AddressMangerActivity.this));
 
     subscription =
         AddressRetrofit.getInstance()
@@ -360,7 +370,8 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
     Map<String, String> params = new HashMap<>(3);
     params.put("Action", "DelUserByAddress");
     params.put("address_id", addressEntity.getAddressId());
-    params.put("uid", "10");
+    params.put("uid",
+        DBHelper.getInstance(getApplicationContext()).getUserID(AddressMangerActivity.this));
 
     subscription =
         AddressRetrofit.getInstance()

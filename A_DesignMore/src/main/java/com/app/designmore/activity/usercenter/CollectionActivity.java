@@ -36,6 +36,8 @@ import com.app.designmore.retrofit.entity.CollectionEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
+import com.app.designmore.view.dialog.CustomCameraDialog;
+import com.app.designmore.view.dialog.CustomShareDialog;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.ArrayList;
@@ -54,7 +56,8 @@ import rx.subscriptions.Subscriptions;
 /**
  * Created by Joker on 2015/9/4.
  */
-public class CollectionActivity extends BaseActivity implements CollectionAdapter.Callback {
+public class CollectionActivity extends BaseActivity
+    implements CollectionAdapter.Callback, CustomShareDialog.Callback {
 
   private static final String TAG = CollectionActivity.class.getSimpleName();
   private static final String START_LOCATION_Y = "START_LOCATION_Y";
@@ -71,6 +74,7 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
   private Subscription subscription = Subscriptions.empty();
 
   private ProgressDialog progressDialog;
+  private CustomShareDialog customShareDialog;
 
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
@@ -251,7 +255,7 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
   }
 
   /*点击更多按钮，弹出列表对话框，删除操作*/
-  @Override public void onMoreClick(final CollectionEntity entity) {
+  @Override public void onDeleteClick(final CollectionEntity entity) {
     DialogManager.getInstance()
         .showNormalDialog(CollectionActivity.this, "删除收藏", new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {
@@ -261,6 +265,15 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
             }
           }
         });
+  }
+
+  /*弹出列表对话框，分享操作*/
+  @Override public void onShareClick(final CollectionEntity entity) {
+
+    if (customShareDialog == null) {
+      customShareDialog = new CustomShareDialog(CollectionActivity.this, this);
+    }
+    customShareDialog.show();
   }
 
   /**
@@ -347,5 +360,15 @@ public class CollectionActivity extends BaseActivity implements CollectionAdapte
     super.onDestroy();
     this.progressDialog = null;
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();
+  }
+
+  @Override public void onWeiboClick() {
+    // TODO: 2015/9/15 新浪分享
+
+  }
+
+  @Override public void onWechatClick() {
+    // TODO: 2015/9/15 微信分享
+
   }
 }

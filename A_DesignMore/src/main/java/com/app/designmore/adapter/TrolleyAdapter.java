@@ -54,8 +54,8 @@ public class TrolleyAdapter extends RecyclerView.Adapter<TrolleyAdapter.ViewHold
         .load(trolleyEntity.getGoodThumb())
         .centerCrop()
         .crossFade()
-        .placeholder(R.drawable.test_background)
-        .error(R.drawable.test_background)
+        .placeholder(R.drawable.ic_default)
+        .error(R.drawable.ic_default)
         .diskCacheStrategy(DiskCacheStrategy.RESULT)
         .into(holder.goodIv);
 

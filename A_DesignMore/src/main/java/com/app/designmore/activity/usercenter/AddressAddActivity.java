@@ -26,6 +26,7 @@ import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.event.RefreshAddressEvent;
+import com.app.designmore.helper.DBHelper;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.mvp.presenter.AddressPresenter;
@@ -39,7 +40,7 @@ import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.utils.Utils;
-import com.app.designmore.view.CustomWheelDialog;
+import com.app.designmore.view.dialog.CustomWheelDialog;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
 import com.trello.rxlifecycle.ActivityEvent;
@@ -273,7 +274,8 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
     params.put("province", provinceTv.getText().toString());
     params.put("city", cityTv.getText().toString());
     params.put("address", addressEt.getText().toString());
-    params.put("uid", "10");
+    params.put("uid",
+        DBHelper.getInstance(getApplicationContext()).getUserID(AddressAddActivity.this));
 
     subscription =
         AddressRetrofit.getInstance()

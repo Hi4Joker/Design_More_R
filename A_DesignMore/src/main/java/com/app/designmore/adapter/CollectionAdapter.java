@@ -43,7 +43,7 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
 
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
 
-    holder.itemRootView.setTag(position);
+    holder.itemRootView.setTag(items.get(position));
     holder.goodMoreBtn.setTag(items.get(position));
 
     /*绑定数据*/
@@ -56,8 +56,8 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
         .load(collectionEntity.getGoodThumb())
         .centerCrop()
         .crossFade()
-        .placeholder(R.drawable.test_background)
-        .error(R.drawable.test_background)
+        .placeholder(R.drawable.ic_default)
+        .error(R.drawable.ic_default)
         .diskCacheStrategy(DiskCacheStrategy.RESULT)
         .into(holder.goodIv);
 
@@ -111,11 +111,19 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
       }
     }
 
-    @Nullable @OnClick(R.id.collection_item_good_more_btn) void onMoreClick(
+    @Nullable @OnClick(R.id.collection_item_good_more_btn) void onDeleteClick(
         ImageButton imageButton) {
       CollectionEntity entity = (CollectionEntity) imageButton.getTag();
       if (callback != null) {
-        callback.onMoreClick(entity);
+        callback.onDeleteClick(entity);
+      }
+    }
+
+    @Nullable @OnClick(R.id.collection_item_good_share_btn) void onShareClick(
+        ImageButton imageButton) {
+      CollectionEntity entity = (CollectionEntity) imageButton.getTag();
+      if (callback != null) {
+        callback.onShareClick(entity);
       }
     }
   }
@@ -129,8 +137,11 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
     /*点击条目*/
     void onItemClick(CollectionEntity entity);
 
-    /*点击更多,删除*/
-    void onMoreClick(CollectionEntity entity);
+    /*点击删除*/
+    void onDeleteClick(CollectionEntity entity);
+
+    /*点击分享*/
+    void onShareClick(CollectionEntity entity);
 
     void onError(Throwable error);
   }

@@ -9,6 +9,7 @@
 
   <include layout="@layout/include_white_toolbar_layout"/>
 
+
   <com.app.designmore.view.ProgressLayout
       android:id="@+id/address_manager_layout_pl"
       android:layout_width="match_parent"
@@ -32,9 +33,12 @@
       <android.support.v7.widget.RecyclerView
           android:id="@+id/address_manager_layout_rv"
           android:layout_width="match_parent"
-          android:layout_height="match_parent"
+          android:layout_height="400dp"
+          android:layout_gravity="fill_vertical"
           />
     </android.support.v4.widget.SwipeRefreshLayout>
+
+
   </com.app.designmore.view.ProgressLayout>
 
 </LinearLayout>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary_background_color"
+    >
+
+  <LinearLayout
+      android:id="@+id/custom_share_layout_btn_ll"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:background="@color/white"
+      >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/material_8dp"
+        android:textSize="@dimen/material_14sp"
+        android:gravity="center"
+        android:textColor="@color/darker_gray"
+        android:text="分享给好好友"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/material_24dp"
+        android:orientation="horizontal"
+        >
+
+      <LinearLayout
+          android:layout_width="0dip"
+          android:layout_weight="1"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          >
+
+        <com.app.designmore.view.MaterialRippleLayout
+            android:layout_width="@dimen/material_48dp"
+            android:layout_height="@dimen/material_48dp"
+            android:layout_gravity="center"
+            app:mrl_rippleRoundedCorners="@dimen/material_48dp"
+            app:mrl_rippleDimension="10dip"
+            app:mrl_rippleFadeDuration="100"
+            app:mrl_rippleAlpha="0.4"
+            app:mrl_rippleDuration="600"
+            app:mrl_rippleHover="true"
+            app:mrl_rippleOverlay="true"
+            app:mrl_rippleDelayClick="true"
+            app:mrl_rippleColor="@color/darker_gray"
+            >
+
+          <ImageButton
+              android:id="@+id/custom_share_layout_weibo_btn"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_alignParentBottom="true"
+              android:scaleType="center"
+              android:src="@drawable/ic_delete_icon"
+              android:background="@drawable/transparent_background"
+              />
+        </com.app.designmore.view.MaterialRippleLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/material_8dp"
+            android:textSize="@dimen/material_11sp"
+            android:gravity="center"
+            android:textColor="@color/darker_gray"
+            android:text="新浪微博"
+            />
+
+      </LinearLayout>
+
+      <LinearLayout
+          android:layout_width="0dip"
+          android:layout_weight="1"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          >
+        <com.app.designmore.view.MaterialRippleLayout
+            android:layout_width="@dimen/material_48dp"
+            android:layout_height="@dimen/material_48dp"
+            android:layout_gravity="center"
+            app:mrl_rippleRoundedCorners="@dimen/material_48dp"
+            app:mrl_rippleDimension="10dip"
+            app:mrl_rippleFadeDuration="100"
+            app:mrl_rippleAlpha="0.4"
+            app:mrl_rippleDuration="600"
+            app:mrl_rippleHover="true"
+            app:mrl_rippleOverlay="true"
+            app:mrl_rippleDelayClick="true"
+            app:mrl_rippleColor="@color/darker_gray"
+            >
+
+          <ImageButton
+              android:id="@+id/custom_share_layout_wechat_btn"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_alignParentBottom="true"
+              android:scaleType="center"
+              android:src="@drawable/ic_delete_icon"
+              android:background="@drawable/transparent_background"
+              />
+        </com.app.designmore.view.MaterialRippleLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/material_8dp"
+            android:textSize="@dimen/material_11sp"
+            android:gravity="center"
+            android:textColor="@color/darker_gray"
+            android:text="微信好友"
+            />
+      </LinearLayout>
+    </LinearLayout>
+  </LinearLayout>
+
+  <com.app.designmore.view.MaterialRippleLayout
+      android:layout_below="@id/custom_share_layout_btn_ll"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/material_40dp"
+      android:layout_marginTop="@dimen/material_16dp"
+      app:mrl_rippleDimension="20dip"
+      app:mrl_rippleFadeDuration="100"
+      app:mrl_rippleAlpha="0.4"
+      app:mrl_rippleDuration="600"
+      app:mrl_rippleHover="true"
+      app:mrl_rippleOverlay="true"
+      app:mrl_rippleDelayClick="true"
+      app:mrl_rippleColor="@color/darker_gray"
+      >
+    <Button
+        android:id="@+id/custom_share_layout_cancle_btn"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/material_4dp"
+        android:scaleType="center"
+        android:text="取消"
+        android:textColor="@color/darker_gray"
+        android:textSize="@dimen/material_16sp"
+        android:background="@drawable/white_background"
+        />
+  </com.app.designmore.view.MaterialRippleLayout>
+
+</RelativeLayout>

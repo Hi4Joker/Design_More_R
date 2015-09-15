@@ -1,4 +1,4 @@
-package com.app.designmore.view;
+package com.app.designmore.view.dialog;
 
 import android.content.Context;
 import android.content.DialogInterface;

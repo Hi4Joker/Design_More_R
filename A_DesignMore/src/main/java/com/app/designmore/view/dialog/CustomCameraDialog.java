@@ -1,4 +1,4 @@
-package com.app.designmore.view;
+package com.app.designmore.view.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -9,8 +9,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
-import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.R;

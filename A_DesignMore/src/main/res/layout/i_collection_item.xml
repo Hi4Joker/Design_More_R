@@ -73,10 +73,38 @@
             />
 
         <com.app.designmore.view.MaterialRippleLayout
+            android:id="@+id/collection_item_good_share_mrl"
             android:layout_width="@dimen/material_48dp"
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
+            app:mrl_rippleDimension="20dip"
+            app:mrl_rippleFadeDuration="100"
+            app:mrl_rippleAlpha="0.4"
+            app:mrl_rippleDuration="600"
+            app:mrl_rippleHover="true"
+            app:mrl_rippleOverlay="true"
+            app:mrl_rippleDelayClick="true"
+            app:mrl_rippleColor="@color/darker_gray"
+            >
+
+          <ImageButton
+              android:id="@+id/collection_item_good_share_btn"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_alignParentBottom="true"
+              android:text="¥ 100"
+              android:scaleType="center"
+              android:src="@drawable/ic_share_icon"
+              android:background="@drawable/transparent_background"
+              />
+        </com.app.designmore.view.MaterialRippleLayout>
+
+        <com.app.designmore.view.MaterialRippleLayout
+            android:layout_toLeftOf="@id/collection_item_good_share_mrl"
+            android:layout_width="@dimen/material_48dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
             app:mrl_rippleDimension="20dip"
             app:mrl_rippleFadeDuration="100"
             app:mrl_rippleAlpha="0.4"
@@ -94,10 +122,12 @@
               android:layout_alignParentBottom="true"
               android:text="¥ 100"
               android:scaleType="center"
-              android:src="@drawable/ic_delete_black_icon"
+              android:src="@drawable/ic_delete_icon"
               android:background="@drawable/transparent_background"
               />
         </com.app.designmore.view.MaterialRippleLayout>
+
+
       </RelativeLayout>
     </RelativeLayout>
   </RelativeLayout>
