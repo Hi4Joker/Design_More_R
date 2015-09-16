@@ -110,6 +110,13 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
     }
   };
 
+  private DialogInterface.OnCancelListener cancelListener2 =
+      new DialogInterface.OnCancelListener() {
+        @Override public void onCancel(DialogInterface dialog) {
+          addressPresenter.detach();
+        }
+      };
+
   private CustomWheelDialog.Callback callback = new CustomWheelDialog.Callback() {
     @Override public void onPicked(Province selectProvince, Province.City selectCity) {
 
@@ -294,7 +301,7 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
             })
             .doOnTerminate(new Action0() {
               @Override public void call() {
-                    /*隐藏进度条*/
+                /*隐藏进度条*/
                 if (progressDialog != null && progressDialog.isShowing()) {
                   progressDialog.dismiss();
                 }
@@ -374,14 +381,6 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
     }
   }
 
-  @Override protected void onDestroy() {
-    super.onDestroy();
-    this.progressDialog = null;
-    this.simpleProgressDialog = null;
-    this.addressPresenter.detach();
-    if (!subscription.isUnsubscribed()) subscription.unsubscribe();
-  }
-
   @Nullable @OnClick(R.id.address_add_layout_province_ll) void onProvinceClick() {
     addressPresenter.showPicker();
   }
@@ -390,13 +389,14 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
     addressPresenter.showPicker();
   }
 
+  /*************************************************/
   @Override public void showProgress() {
-    simpleProgressDialog = DialogManager.getInstance()
-        .showSimpleProgressDialog(AddressAddActivity.this, new DialogInterface.OnCancelListener() {
-          @Override public void onCancel(DialogInterface dialog) {
-            addressPresenter.detach();
-          }
-        });
+    if (simpleProgressDialog == null) {
+      simpleProgressDialog = DialogManager.getInstance()
+          .showSimpleProgressDialog(AddressAddActivity.this, cancelListener2);
+    } else {
+      simpleProgressDialog.show();
+    }
   }
 
   @Override public void hideProgress() {
@@ -415,5 +415,15 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
 
   @Override public void showError() {
     AddressAddActivity.this.showSnackBar("请重新获取省市");
+  }
+
+  /*************************************************/
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
+    this.progressDialog = null;
+    this.simpleProgressDialog = null;
+    this.addressPresenter.detach();
+    if (!subscription.isUnsubscribed()) subscription.unsubscribe();
   }
 }

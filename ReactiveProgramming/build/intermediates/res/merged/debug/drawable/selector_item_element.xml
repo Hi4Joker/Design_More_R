@@ -4,4 +4,4 @@
   <item android:drawable="@android:color/holo_blue_light" android:state_pressed="true" />
   <item android:drawable="@android:color/holo_blue_light" android:state_selected="true" />
   <item android:drawable="@android:color/background_light" />
-</selector><!-- From: file:/E:/Joker_Rx/ReactiveProgramming/src/main/res/drawable/selector_item_element.xml -->
+</selector><!-- From: file:/E:/Joker_DesignMore/DesignMore_9_7/ReactiveProgramming/src/main/res/drawable/selector_item_element.xml -->

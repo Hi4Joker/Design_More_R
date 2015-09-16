@@ -230,11 +230,9 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
       TrolleyActivity.this.showError(getResources().getString(R.string.timeout_title),
           getResources().getString(R.string.timeout_content));
     } else if (error instanceof RetrofitError) {
-
       Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
-      TrolleyActivity.this.showError("网络连接异常", ((RetrofitError) error).getKind() + "");
+      TrolleyActivity.this.showError("网络连接异常", "请点击重试");
     } else if (error instanceof WebServiceException) {
-
       TrolleyActivity.this.showError(getResources().getString(R.string.service_exception_title),
           getResources().getString(R.string.service_exception_content));
     } else {
@@ -279,23 +277,24 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
             }
           }));
     } else {/*未全选 -> 全选*/
-      for (int pos = 0; pos < items.size(); pos++) {
-        TrolleyActivity.this.observableListenerWrapper(
-            Observable.defer(new Func0<Observable<TrolleyEntity>>() {
-              @Override public Observable<TrolleyEntity> call() {
-                return Observable.from(items);
-              }
-            }).filter(new Func1<TrolleyEntity, Boolean>() {
-              @Override public Boolean call(TrolleyEntity trolleyEntity) {
-                return !trolleyEntity.isChecked;
-              }
-            }).map(new Func1<TrolleyEntity, TrolleyEntity>() {
-              @Override public TrolleyEntity call(TrolleyEntity trolleyEntity) {
-                trolleyEntity.isChecked = true;
-                return trolleyEntity;
-              }
-            }));
-      }
+
+      //for (int pos = 0; pos < items.size(); pos++) {
+      TrolleyActivity.this.observableListenerWrapper(
+          Observable.defer(new Func0<Observable<TrolleyEntity>>() {
+            @Override public Observable<TrolleyEntity> call() {
+              return Observable.from(items);
+            }
+          }).filter(new Func1<TrolleyEntity, Boolean>() {
+            @Override public Boolean call(TrolleyEntity trolleyEntity) {
+              return !trolleyEntity.isChecked;
+            }
+          }).map(new Func1<TrolleyEntity, TrolleyEntity>() {
+            @Override public TrolleyEntity call(TrolleyEntity trolleyEntity) {
+              trolleyEntity.isChecked = true;
+              return trolleyEntity;
+            }
+          }));
+      //}
     }
   }
 

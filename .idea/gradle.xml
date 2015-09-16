@@ -9,13 +9,13 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/A_DesignMore" />
+            <option value="$PROJECT_DIR$/A_RecyclerviewSample" />
             <option value="$PROJECT_DIR$/Anton" />
             <option value="$PROJECT_DIR$/CircularProgressViewSample" />
             <option value="$PROJECT_DIR$/CircularprogressLib" />
             <option value="$PROJECT_DIR$/DaoExample" />
-            <option value="$PROJECT_DIR$/DesignMore" />
             <option value="$PROJECT_DIR$/DrawableSample" />
-            <option value="$PROJECT_DIR$/FlatBuffs" />
             <option value="$PROJECT_DIR$/ReactiveProgramming" />
             <option value="$PROJECT_DIR$/RetrofitWeather" />
             <option value="$PROJECT_DIR$/RxAndroidSample" />

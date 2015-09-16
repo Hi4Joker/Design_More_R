@@ -1,56 +1,56 @@
 -- Merging decision tree log ---
 manifest
-ADDED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml:2:1-25:12
+ADDED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml:2:1-25:12
 	package
-		ADDED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml:3:5-44
-		INJECTED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml
-		INJECTED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml:3:5-44
+		INJECTED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml
+		INJECTED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml
 	android:versionName
-		INJECTED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml
-		INJECTED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml
+		INJECTED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml
+		INJECTED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml
 	xmlns:android
-		ADDED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml:4:5-63
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml:4:5-63
 	android:versionCode
-		INJECTED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml
-		INJECTED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml
+		INJECTED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml
+		INJECTED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml
 application
-ADDED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml:7:5-23:19
-MERGED from [com.android.support:appcompat-v7:23.0.0] E:\Joker_Rx\RxLifecycleSample\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.0.0\AndroidManifest.xml:22:5-20
-MERGED from [com.android.support:support-v4:23.0.0] E:\Joker_Rx\RxLifecycleSample\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.0\AndroidManifest.xml:22:5-20
+ADDED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml:7:5-23:19
+MERGED from [com.android.support:appcompat-v7:23.0.0] E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.0.0\AndroidManifest.xml:22:5-20
+MERGED from [com.android.support:support-v4:23.0.0] E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.0\AndroidManifest.xml:22:5-20
 	android:label
-		ADDED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml:10:9-41
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml:10:9-41
 	android:allowBackup
-		ADDED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml:8:9-35
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml:8:9-35
 	android:icon
-		ADDED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml:9:9-43
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml:9:9-43
 	android:theme
-		ADDED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml:11:9-67
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml:11:9-67
 activity#com.trello.rxlifecycle.sample.MainActivity
-ADDED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml:13:9-22:20
+ADDED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml:13:9-22:20
 	android:label
-		ADDED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml:15:13-45
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml:15:13-45
 	android:name
-		ADDED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml:14:13-41
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml:14:13-41
 intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
-ADDED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml:17:13-21:29
+ADDED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml:17:13-21:29
 action#android.intent.action.MAIN
-ADDED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml:18:17-69
+ADDED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml:18:17-69
 	android:name
-		ADDED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml:18:25-66
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml:18:25-66
 category#android.intent.category.LAUNCHER
-ADDED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml:20:17-77
+ADDED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml:20:17-77
 	android:name
-		ADDED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml:20:27-74
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml:20:27-74
 uses-sdk
-INJECTED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml reason: use-sdk injection requested
-MERGED from [com.trello:rxlifecycle:0.2.0] E:\Joker_Rx\RxLifecycleSample\build\intermediates\exploded-aar\com.trello\rxlifecycle\0.2.0\AndroidManifest.xml:17:5-44
-MERGED from [com.trello:rxlifecycle-components:0.2.0] E:\Joker_Rx\RxLifecycleSample\build\intermediates\exploded-aar\com.trello\rxlifecycle-components\0.2.0\AndroidManifest.xml:17:5-44
-MERGED from [com.android.support:appcompat-v7:23.0.0] E:\Joker_Rx\RxLifecycleSample\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.0.0\AndroidManifest.xml:20:5-43
-MERGED from [com.android.support:support-v4:23.0.0] E:\Joker_Rx\RxLifecycleSample\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.0\AndroidManifest.xml:20:5-43
-MERGED from [com.trello:rxlifecycle:0.2.0] E:\Joker_Rx\RxLifecycleSample\build\intermediates\exploded-aar\com.trello\rxlifecycle\0.2.0\AndroidManifest.xml:17:5-44
+INJECTED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml reason: use-sdk injection requested
+MERGED from [com.trello:rxlifecycle:0.2.0] E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\build\intermediates\exploded-aar\com.trello\rxlifecycle\0.2.0\AndroidManifest.xml:17:5-44
+MERGED from [com.trello:rxlifecycle-components:0.2.0] E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\build\intermediates\exploded-aar\com.trello\rxlifecycle-components\0.2.0\AndroidManifest.xml:17:5-44
+MERGED from [com.android.support:appcompat-v7:23.0.0] E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.0.0\AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:support-v4:23.0.0] E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.0\AndroidManifest.xml:20:5-43
+MERGED from [com.trello:rxlifecycle:0.2.0] E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\build\intermediates\exploded-aar\com.trello\rxlifecycle\0.2.0\AndroidManifest.xml:17:5-44
 	android:targetSdkVersion
-		INJECTED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml
-		INJECTED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml
+		INJECTED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml
+		INJECTED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml
 	android:minSdkVersion
-		INJECTED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml
-		INJECTED from E:\Joker_Rx\RxLifecycleSample\src\main\AndroidManifest.xml
+		INJECTED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml
+		INJECTED from E:\Joker_DesignMore\DesignMore_9_7\RxLifecycleSample\src\main\AndroidManifest.xml

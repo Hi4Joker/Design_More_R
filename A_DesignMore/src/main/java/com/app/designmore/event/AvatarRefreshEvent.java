@@ -1,5 +1,6 @@
 package com.app.designmore.event;
 
+import android.graphics.Bitmap;
 import java.io.File;
 
 /**
@@ -8,9 +9,15 @@ import java.io.File;
 public class AvatarRefreshEvent {
 
   private File file;
+  private Bitmap bitmap;
 
-  public AvatarRefreshEvent(File file) {
+  public AvatarRefreshEvent(File file, Bitmap bitmap) {
     this.file = file;
+    this.bitmap = bitmap;
+  }
+
+  public Bitmap getBitmap() {
+    return bitmap;
   }
 
   public File getFile() {

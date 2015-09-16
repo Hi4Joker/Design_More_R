@@ -1,0 +1,11 @@
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/text"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    android:textColor="@color/light_blue_900"
+    android:background="@drawable/light_blue_background"
+    android:padding="8dp"
+    tools:text="0"/><!-- From: file:/E:/Joker_DesignMore/DesignMore_9_7/A_RecyclerviewSample/src/main/res/layout/item.xml -->

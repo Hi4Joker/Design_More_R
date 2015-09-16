@@ -1,6 +1,8 @@
 package com.app.designmore.utils;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -45,5 +47,11 @@ public class Utils {
   /*校验手机号*/
   public static boolean isZipCode(String zipcode) {
     return Pattern.matches(REGEX_ZIPCODE, zipcode);
+  }
+
+  public static String dateFormat(long time) {
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("", Locale.SIMPLIFIED_CHINESE);
+    simpleDateFormat.applyPattern("MMddHHmmss");
+    return simpleDateFormat.format(time);
   }
 }

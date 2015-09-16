@@ -263,7 +263,8 @@ public class AddressEditorActivity extends BaseActivity implements AddressView {
     params.put("city", city);
     params.put("address", address);
     params.put("address_id", addressEntity.getAddressId());
-    params.put("uid", DBHelper.getInstance(getApplicationContext()).getUserID(AddressEditorActivity.this));
+    params.put("uid",
+        DBHelper.getInstance(getApplicationContext()).getUserID(AddressEditorActivity.this));
 
     subscription =
         AddressRetrofit.getInstance()
@@ -332,14 +333,6 @@ public class AddressEditorActivity extends BaseActivity implements AddressView {
     AddressEditorActivity.this.finish();
   }
 
-  @Override protected void onDestroy() {
-    super.onDestroy();
-    this.progressDialog = null;
-    this.simpleProgressDialog = null;
-    this.addressPresenter.detach();
-    if (!subscription.isUnsubscribed()) subscription.unsubscribe();
-  }
-
   @Nullable @OnClick(R.id.address_editor_layout_province_ll) void onProvinceClick() {
     addressPresenter.showPicker();
   }
@@ -369,12 +362,19 @@ public class AddressEditorActivity extends BaseActivity implements AddressView {
     if (customWheelDialog == null) {
       customWheelDialog = new CustomWheelDialog(AddressEditorActivity.this, provinces, callback);
     }
-
     customWheelDialog.updateDefault(defaultProvince, defaultCity);
     customWheelDialog.show();
   }
 
   @Override public void showError() {
     AddressEditorActivity.this.showSnackBar("请重新获取省市");
+  }
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
+    this.progressDialog = null;
+    this.simpleProgressDialog = null;
+    this.addressPresenter.detach();
+    if (!subscription.isUnsubscribed()) subscription.unsubscribe();
   }
 }

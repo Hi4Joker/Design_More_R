@@ -1,0 +1,115 @@
+-- Merging decision tree log ---
+manifest
+ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:1:1-47:12
+	package
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:2:11-54
+		INJECTED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml
+		INJECTED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml
+	android:versionName
+		INJECTED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml
+		INJECTED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:1:11-69
+	android:versionCode
+		INJECTED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml
+		INJECTED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml
+application
+ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:4:3-45:17
+MERGED from [com.android.support:recyclerview-v7:21.0.3] E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\21.0.3\AndroidManifest.xml:17:5-19:19
+MERGED from [com.android.support:support-v4:21.0.3] E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.3\AndroidManifest.xml:16:5-19
+	android:label
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:7:7-39
+	android:allowBackup
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:5:7-33
+	android:icon
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:6:7-43
+	android:theme
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:8:7-38
+activity#com.sqisland.android.recyclerview.MainActivity
+ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:9:5-16:16
+	android:label
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:11:9-41
+	android:name
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:10:9-70
+intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
+ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:12:7-15:23
+action#android.intent.action.MAIN
+ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:13:9-61
+	android:name
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:13:17-58
+category#android.intent.category.LAUNCHER
+ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:14:9-69
+	android:name
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:14:19-66
+activity#com.sqisland.android.recyclerview.LinearLayoutActivity
+ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:17:5-20:54
+	android:label
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:19:9-46
+	android:parentActivityName
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:20:9-51
+	android:name
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:18:9-45
+activity#com.sqisland.android.recyclerview.GridLayoutActivity
+ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:21:5-24:54
+	android:label
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:23:9-44
+	android:parentActivityName
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:24:9-51
+	android:name
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:22:9-43
+activity#com.sqisland.android.recyclerview.GridLayoutVariableSpanSizeActivity
+ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:25:5-28:54
+	android:label
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:27:9-63
+	android:parentActivityName
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:28:9-51
+	android:name
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:26:9-59
+activity#com.sqisland.android.recyclerview.GridLayoutHeaderActivity
+ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:29:5-32:54
+	android:label
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:31:9-51
+	android:parentActivityName
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:32:9-51
+	android:name
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:30:9-49
+activity#com.sqisland.android.recyclerview.GridLayoutAutoFitActivity
+ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:33:5-36:54
+	android:label
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:35:9-53
+	android:parentActivityName
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:36:9-51
+	android:name
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:34:9-50
+activity#com.sqisland.android.recyclerview.GridLayoutAutoFitHeaderActivity
+ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:37:5-40:54
+	android:label
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:39:9-60
+	android:parentActivityName
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:40:9-51
+	android:name
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:38:9-56
+activity#com.sqisland.android.recyclerview.GridLayoutAddRemoveActivity
+ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:41:5-44:54
+	android:label
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:43:9-55
+	android:parentActivityName
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:44:9-51
+	android:name
+		ADDED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml:42:9-52
+uses-sdk
+INJECTED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml reason: use-sdk injection requested
+MERGED from [com.android.support:recyclerview-v7:21.0.3] E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\21.0.3\AndroidManifest.xml:15:5-42
+MERGED from [com.android.support:support-v4:21.0.3] E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.3\AndroidManifest.xml:15:5-42
+	android:targetSdkVersion
+		INJECTED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml
+		INJECTED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml
+		INJECTED from E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\src\main\AndroidManifest.xml
+activity#android.support.v7.widget.TestActivity
+ADDED from [com.android.support:recyclerview-v7:21.0.3] E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\21.0.3\AndroidManifest.xml:18:9-115
+	android:label
+		ADDED from [com.android.support:recyclerview-v7:21.0.3] E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\21.0.3\AndroidManifest.xml:18:19-59
+	android:name
+		ADDED from [com.android.support:recyclerview-v7:21.0.3] E:\Joker_DesignMore\DesignMore_9_7\A_RecyclerviewSample\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\21.0.3\AndroidManifest.xml:18:60-113

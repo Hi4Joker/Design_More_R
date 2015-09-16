@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- From: file:/E:/Joker_Rx/leakcanary-android/build/intermediates/bundles/debug/res/values-v14/values-v14.xml -->
+    <!-- From: file:/E:/Joker_DesignMore/DesignMore_9_7/leakcanary-android/build/intermediates/bundles/debug/res/values-v14/values-v14.xml -->
     <eat-comment/>
     <style name="__LeakCanary.Base" parent="android:Theme.Holo">
   </style>

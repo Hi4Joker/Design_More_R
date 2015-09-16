@@ -10,6 +10,7 @@ import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -274,13 +275,14 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
    */
   public void onEventMainThread(AvatarRefreshEvent event) {
 
-    File file = event.getFile();
+    Log.e(TAG, event.getFile().getName());
 
     BitmapPool bitmapPool = Glide.get(ProfileActivity.this).getBitmapPool();
     Glide.with(ProfileActivity.this)
-        .load(Uri.fromFile(file))
+        .load(Uri.fromFile(event.getFile()))
         .centerCrop()
         .crossFade()
+        .skipMemoryCache(true)
         .bitmapTransform(new CropCircleTransformation(bitmapPool))
         .placeholder(R.drawable.center_profile_default_icon)
         .error(R.drawable.center_profile_default_icon)

@@ -5,6 +5,7 @@
   <color name="primary_background_color">#F0F0F0</color>
   <color name="accent_material_light">#475898</color>
   <color name="design_more_red">#DA498C</color>
+  <color name="overlay_color">#66000000</color>
 
 
   <color name="white">#ffffffff</color>

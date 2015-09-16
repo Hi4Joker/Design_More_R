@@ -4,17 +4,21 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -26,17 +30,21 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.event.AvatarRefreshEvent;
+import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
+import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.utils.DensityUtil;
+import com.app.designmore.utils.Utils;
+import com.app.designmore.view.CropImageView;
 import com.commonsware.cwac.camera.CameraHost;
 import com.commonsware.cwac.camera.CameraHostProvider;
 import com.commonsware.cwac.camera.CameraView;
@@ -44,8 +52,17 @@ import com.commonsware.cwac.camera.PictureTransaction;
 import com.commonsware.cwac.camera.SimpleCameraHost;
 import com.jakewharton.rxbinding.view.RxView;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import rx.Observable;
+import rx.Subscriber;
+import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.functions.Func2;
+import rx.schedulers.Schedulers;
+import rx.subscriptions.Subscriptions;
 
 /**
  * Created by Joker on 2015/9/14.
@@ -59,8 +76,8 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
   private static final String IS_ANIM = "IS_ANIM";
   @Nullable @Bind(R.id.profile_camera_layout_root_view) RelativeLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
-  @Nullable @Bind(R.id.profile_camera_layout_taken_view) ImageView photo;
   @Nullable @Bind(R.id.profile_camera_layout_camera_view) CameraView cameraView;
+  @Nullable @Bind(R.id.profile_camera_layout_taken_view) CropImageView cropImageView;
   @Nullable @Bind(R.id.profile_camera_layout_shutter_view) View shutter;
   @Nullable @Bind(R.id.profile_camera_layout_camera_btn) FloatingActionButton floatingActionButton;
 
@@ -69,6 +86,18 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
 
   private State currentState = State.TAKE;
   private File photoFile;
+
+  private Subscription subscription = Subscriptions.empty();
+  private Subscription threadSubscription = Subscriptions.empty();
+  private ProgressDialog progressDialog;
+
+  private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
+    @Override public void onCancel(DialogInterface dialog) {
+
+      threadSubscription.unsubscribe();
+      subscription.unsubscribe();
+    }
+  };
 
   public enum State {
     TAKE,//拍照状态
@@ -138,13 +167,86 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
     doneActionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         if (EventBusInstance.getDefault().hasSubscriberForEvent(AvatarRefreshEvent.class)) {
-          EventBusInstance.getDefault().post(new AvatarRefreshEvent(photoFile));
-          CameraBackActivity.this.exitWhitAnim();
+          CameraBackActivity.this.saveBitmap();
         }
       }
     });
-
     return true;
+  }
+
+  public void saveBitmap() {
+
+    subscription = Observable.create(new Observable.OnSubscribe<File>() {
+      @Override public void call(final Subscriber<? super File> subscriber) {
+
+        threadSubscription = Schedulers.newThread().createWorker().schedule(new Action0() {
+          @Override public void call() {
+            FileOutputStream out = null;
+            File file = new File(Environment.getExternalStorageDirectory().getPath(),
+                "A_DM_profile_header" + Utils.dateFormat(System.currentTimeMillis()));
+            if (file.exists()) {
+              file.delete();
+            }
+            try {
+              out = new FileOutputStream(file);
+              cropImageView.getCroppedBitmap().compress(Bitmap.CompressFormat.PNG, 100, out);
+              out.flush();
+              out.close();
+            } catch (IOException e) {
+              subscriber.onError(e);
+            } finally {
+              try {
+                if (out != null) {
+                  out.close();
+                }
+              } catch (IOException e) {
+                subscriber.onError(e);
+              }
+            }
+            subscriber.onNext(file);
+            subscriber.onCompleted();
+          }
+        });
+      }
+    }).retry(new Func2<Integer, Throwable, Boolean>() {
+      @Override public Boolean call(Integer integer, Throwable throwable) {
+        return throwable instanceof IOException && integer < 1;
+      }
+    }).doOnTerminate(new Action0() {
+      @Override public void call() {
+        /*隐藏进度条*/
+        if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
+      }
+    }).doOnSubscribe(new Action0() {
+      @Override public void call() {
+         /*加载数据，显示进度条*/
+        if (progressDialog == null) {
+          progressDialog = DialogManager.
+              getInstance().showSimpleProgressDialog(CameraBackActivity.this, cancelListener);
+        } else {
+          progressDialog.show();
+        }
+      }
+    }).filter(new Func1<File, Boolean>() {
+      @Override public Boolean call(File file) {
+        return !subscription.isUnsubscribed();
+      }
+    }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<File>() {
+      @Override public void onCompleted() {
+        EventBusInstance.getDefault()
+            .post(new AvatarRefreshEvent(photoFile, cropImageView.getCroppedBitmap()));
+        CameraBackActivity.this.exitWhitAnim();
+      }
+
+      @Override public void onError(Throwable e) {
+        e.printStackTrace();
+        Toast.makeText(CameraBackActivity.this, "保存失败，请重试", Toast.LENGTH_LONG).show();
+      }
+
+      @Override public void onNext(File file) {
+        CameraBackActivity.this.photoFile = file;
+      }
+    });
   }
 
   @Override public CameraHost getCameraHost() {
@@ -211,7 +313,8 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
 
   private void showTakenPicture(Bitmap bitmap) {
 
-    this.photo.setImageBitmap(bitmap);
+    this.cropImageView.setImageBitmap(bitmap);
+
     /*拍摄 -> 展示*/
     CameraBackActivity.this.updateState(State.DISPLAY);
   }
@@ -228,7 +331,7 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
       this.floatingActionButton.setEnabled(true);
       if (switchActionButton != null) this.switchActionButton.setEnabled(true);
       if (doneActionButton != null) this.doneActionButton.setEnabled(false);
-      this.photo.setVisibility(View.GONE);
+      this.cropImageView.setVisibility(View.GONE);
     } else if (currentState == State.DISPLAY) {/*拍摄完毕状态*/
 
       ViewCompat.animate(floatingActionButton)
@@ -238,7 +341,7 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
       this.floatingActionButton.setEnabled(false);
       this.switchActionButton.setEnabled(false);
       this.doneActionButton.setEnabled(true);
-      this.photo.setVisibility(View.VISIBLE);
+      this.cropImageView.setVisibility(View.VISIBLE);
     }
   }
 
@@ -297,7 +400,6 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
   }
 
   @Override public void exit() {
-
     if (currentState == State.DISPLAY) {
       this.updateState(State.TAKE);
     } else {
@@ -330,5 +432,8 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
 
   @Override protected void onDestroy() {
     super.onDestroy();
+    this.progressDialog = null;
+    if (!threadSubscription.isUnsubscribed()) threadSubscription.unsubscribe();
+    if (!subscription.isUnsubscribed()) subscription.unsubscribe();
   }
 }

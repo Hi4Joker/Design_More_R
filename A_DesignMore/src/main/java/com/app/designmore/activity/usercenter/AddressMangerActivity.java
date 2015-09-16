@@ -364,6 +364,9 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
             });
   }
 
+  /**
+   * 删除地址
+   */
   private void requestDeleteAddress(final AddressEntity addressEntity) {
 
     /*Action=DelUserByAddress&address_id=1&uid=2*/
@@ -378,7 +381,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
             .requestDeleteAddress(params)
             .doOnSubscribe(new Action0() {
               @Override public void call() {
-                        /*加载数据，显示进度条*/
+                /*加载数据，显示进度条*/
                 if (progressDialog == null) {
                   progressDialog = DialogManager.
                       getInstance()
@@ -395,7 +398,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
             })
             .doOnTerminate(new Action0() {
               @Override public void call() {
-                          /*隐藏进度条*/
+                /*隐藏进度条*/
                 if (progressDialog != null && progressDialog.isShowing()) {
                   progressDialog.dismiss();
                 }
@@ -445,7 +448,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
           getResources().getString(R.string.timeout_content));
     } else if (error instanceof RetrofitError) {
       Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
-      AddressMangerActivity.this.showError("网络连接异常", ((RetrofitError) error).getKind() + "");
+      AddressMangerActivity.this.showError("网络连接异常", "请点击重试");
     } else if (error instanceof WebServiceException) {
       AddressMangerActivity.this.showError(
           getResources().getString(R.string.service_exception_title),

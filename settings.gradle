@@ -1,6 +1,7 @@
 include ':Anton', ':DrawableSample', ':ReactiveProgramming', ':RetrofitWeather', ':A_DesignMore',
     ':RxThreadSample',
-    ':RxJavaSample', ':RxMeetup', ':RxLifecycleSample', ':RxAndroidSample', ':FlatBuffs',
-    ':leakcanary-android', ':SupportDesignSample', ':leakcanary-analyzer', ':leakcanary-watcher'
+    ':RxJavaSample', ':RxMeetup', ':RxLifecycleSample', ':RxAndroidSample',
+    ':leakcanary-android', ':SupportDesignSample', ':leakcanary-analyzer', ':leakcanary-watcher',
+    ':A_RecyclerviewSample'
 
-include ':CircularprogressLib', ':CircularProgressViewSample', ':DaoExample',':RetrofitEasy'
+include ':CircularprogressLib', ':CircularProgressViewSample', ':DaoExample'

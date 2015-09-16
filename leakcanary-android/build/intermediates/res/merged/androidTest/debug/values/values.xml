@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- From: file:/E:/Joker_Rx/leakcanary-android/build/intermediates/bundles/debug/res/values/values.xml -->
+    <!-- From: file:/E:/Joker_DesignMore/DesignMore_9_7/leakcanary-android/build/intermediates/bundles/debug/res/values/values.xml -->
     <eat-comment/>
     <integer name="__leak_canary_max_stored_leaks">7</integer>
     <string name="__leak_canary_analysis_failed">Leak analysis failed</string>

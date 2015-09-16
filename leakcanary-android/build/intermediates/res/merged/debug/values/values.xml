@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- From: file:/E:/Joker_Rx/leakcanary-android/src/main/res/values/__leak_canary_int.xml -->
+    <!-- From: file:/E:/Joker_DesignMore/DesignMore_9_7/leakcanary-android/src/main/res/values/__leak_canary_int.xml -->
     <eat-comment/>
     <integer name="__leak_canary_max_stored_leaks">7</integer>
-    <!-- From: file:/E:/Joker_Rx/leakcanary-android/src/main/res/values/__leak_canary_strings.xml -->
+    <!-- From: file:/E:/Joker_DesignMore/DesignMore_9_7/leakcanary-android/src/main/res/values/__leak_canary_strings.xml -->
     <eat-comment/>
     <string name="__leak_canary_analysis_failed">Leak analysis failed</string>
     <string name="__leak_canary_class_has_leaked">%s has leaked</string>
@@ -17,7 +17,7 @@
     <string name="__leak_canary_share_leak">Share info</string>
     <string name="__leak_canary_share_with">Share with…</string>
     <string name="__leak_canary_toast_heap_dump">Dumping memory, app will freeze. Brrrr.</string>
-    <!-- From: file:/E:/Joker_Rx/leakcanary-android/src/main/res/values/__leak_canary_themes.xml -->
+    <!-- From: file:/E:/Joker_DesignMore/DesignMore_9_7/leakcanary-android/src/main/res/values/__leak_canary_themes.xml -->
     <eat-comment/>
     <style name="__LeakCanary.Base" parent="android:Theme">
   </style>

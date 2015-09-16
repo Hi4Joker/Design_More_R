@@ -19,6 +19,7 @@ import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Action1;
+import rx.functions.Func0;
 import rx.schedulers.Schedulers;
 
 /**
@@ -42,14 +43,13 @@ public class AddressPresenterImp implements AddressPresenter {
     this.addressView = addressView;
   }
 
-  public void showPicke() {
+  @Override public void showPicker() {
     if (provinces.size() > 0) {
       addressView.onInflateFinish(provinces);
     } else {
 
       provinces = Observable.create(new Observable.OnSubscribe<List<Province>>() {
         @Override public void call(final Subscriber<? super List<Province>> subscriber) {
-
           InputStream inputStream = null;
           try {
             inputStream = context.getResources().getAssets().open("address.txt");
@@ -75,42 +75,8 @@ public class AddressPresenterImp implements AddressPresenter {
           subscriber.onNext(provinces);
           subscriber.onCompleted();
         }
-      }).compose(SchedulersCompat.<List<Province>>applyExecutorSchedulers()).toBlocking().first();
+      }).subscribeOn(Schedulers.io()).toBlocking().single();
 
-     /* provinces = Observable.defer(new Func0<Observable<List<Province>>>() {
-        @Override public Observable<List<Province>> call() {
-          InputStream inputStream = null;
-          try {
-            inputStream = context.getResources().getAssets().open("address.txt");
-            byte[] arrayOfByte = new byte[inputStream.available()];
-            inputStream.read(arrayOfByte);
-            JSONArray jsonList = new JSONArray(new String(arrayOfByte, "UTF-8"));
-            Gson gson =
-                new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
-            for (int i = 0; i < jsonList.length(); i++) {
-              provinces.add(gson.fromJson(jsonList.getString(i), Province.class));
-            }
-          } catch (Exception e) {
-            return Observable.error(e);
-          } finally {
-            if (inputStream != null) {
-              try {
-                inputStream.close();
-              } catch (IOException e) {
-                return Observable.error(e);
-              }
-            }
-          }
-          return Observable.just(provinces);
-        }
-      }).doOnSubscribe(new Action0() {
-        @Override public void call() {
-          *//*显示进度条*//*
-          addressView.showProgress();
-        }
-      }).compose(SchedulersCompat.<List<Province>>applyExecutorSchedulers()).toBlocking().first();*/
-
-      addressView.hideProgress();
       if (provinces != null && provinces.size() > 0) {
         addressView.onInflateFinish(provinces);
       } else {
@@ -119,15 +85,13 @@ public class AddressPresenterImp implements AddressPresenter {
     }
   }
 
-  @Override public void showPicker() {
+  /*@Override public void showPicker() {
 
     if (provinces.size() > 0) {
       addressView.onInflateFinish(provinces);
     } else {
-
       subscribe = Observable.create(new Observable.OnSubscribe<List<Province>>() {
         @Override public void call(final Subscriber<? super List<Province>> subscriber) {
-
           Schedulers.io().createWorker().schedule(new Action0() {
             @Override public void call() {
               InputStream in = null;
@@ -160,14 +124,10 @@ public class AddressPresenterImp implements AddressPresenter {
         }
       }).doOnSubscribe(new Action0() {
         @Override public void call() {
-
-          Log.e(TAG, "showProgress");
           addressView.showProgress();
         }
       }).finallyDo(new Action0() {
         @Override public void call() {
-
-          Log.e(TAG, "hideProgress");
           addressView.hideProgress();
         }
       }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<Province>>() {
@@ -180,7 +140,7 @@ public class AddressPresenterImp implements AddressPresenter {
         }
       });
     }
-  }
+  }*/
 
   @Override public void detach() {
     //if (!worker.isUnsubscribed()) worker.unsubscribe();

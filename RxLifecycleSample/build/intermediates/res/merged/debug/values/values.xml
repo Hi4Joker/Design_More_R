@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- From: file:/E:/Joker_Rx/RxLifecycleSample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.0/res/values/values.xml -->
+    <!-- From: file:/E:/Joker_DesignMore/DesignMore_9_7/RxLifecycleSample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.0/res/values/values.xml -->
     <eat-comment/>
     <attr format="reference" name="drawerArrowStyle"/>
     <attr format="dimension" name="height"/>
@@ -158,11 +158,11 @@
     <dimen name="abc_text_size_subtitle_material_toolbar">16dp</dimen>
     <dimen name="abc_text_size_title_material">20sp</dimen>
     <dimen name="abc_text_size_title_material_toolbar">20dp</dimen>
-    <!-- From: file:/E:/Joker_Rx/RxLifecycleSample/src/main/res/values/dimens.xml -->
+    <!-- From: file:/E:/Joker_DesignMore/DesignMore_9_7/RxLifecycleSample/src/main/res/values/dimens.xml -->
     <eat-comment/>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <!-- From: file:/E:/Joker_Rx/RxLifecycleSample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.0/res/values/values.xml -->
+    <!-- From: file:/E:/Joker_DesignMore/DesignMore_9_7/RxLifecycleSample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.0/res/values/values.xml -->
     <eat-comment/>
     <item name="dialog_fixed_height_major" type="dimen">80%</item>
     <item name="dialog_fixed_height_minor" type="dimen">100%</item>
@@ -208,12 +208,12 @@
     <string name="abc_shareactionprovider_share_with">Share with</string>
     <string name="abc_shareactionprovider_share_with_application">Share with %s</string>
     <string name="abc_toolbar_collapse_description">Collapse</string>
-    <!-- From: file:/E:/Joker_Rx/RxLifecycleSample/src/main/res/values/strings.xml -->
+    <!-- From: file:/E:/Joker_DesignMore/DesignMore_9_7/RxLifecycleSample/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="app_name">RxLifecycle</string>
     <string name="message">Check logcat tag "RxLifecycle" to see this sample in action. You\'ll need to finish
         the Activity (or recreate it) to see the automatic unsubscription in action.</string>
-    <!-- From: file:/E:/Joker_Rx/RxLifecycleSample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.0/res/values/values.xml -->
+    <!-- From: file:/E:/Joker_DesignMore/DesignMore_9_7/RxLifecycleSample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.0/res/values/values.xml -->
     <eat-comment/>
     <string name="status_bar_notification_info_overflow">999+</string>
     <style name="AlertDialog.AppCompat" parent="Base.AlertDialog.AppCompat"/>

@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="E:\Joker_Rx\leakcanary-android\src\main\assets"/></dataSet><dataSet config="release"><source path="E:\Joker_Rx\leakcanary-android\src\release\assets"/></dataSet></merger>
+<merger version="3"><dataSet config="main"><source path="E:\Joker_DesignMore\DesignMore_9_7\leakcanary-android\src\main\assets"/></dataSet><dataSet config="release"><source path="E:\Joker_DesignMore\DesignMore_9_7\leakcanary-android\src\release\assets"/></dataSet></merger>

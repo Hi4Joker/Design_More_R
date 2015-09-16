@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="RecyclerView"><attr format="string" name="layoutManager"/><attr name="android:orientation"/><attr format="integer" name="spanCount"/><attr format="boolean" name="reverseLayout"/><attr format="boolean" name="stackFromEnd"/></declare-styleable>
-    <!-- From: file:/E:/Joker_Rx/ReactiveProgramming/src/main/res/values/dimens.xml -->
+    <!-- From: file:/E:/Joker_DesignMore/DesignMore_9_7/ReactiveProgramming/src/main/res/values/dimens.xml -->
     <eat-comment/>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="header_margin">5dp</dimen>
     <dimen name="header_text_size">26sp</dimen>
-    <!-- From: file:/E:/Joker_Rx/ReactiveProgramming/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/23.0.0/res/values/values.xml -->
+    <!-- From: file:/E:/Joker_DesignMore/DesignMore_9_7/ReactiveProgramming/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/23.0.0/res/values/values.xml -->
     <eat-comment/>
     <dimen name="item_touch_helper_max_drag_scroll_per_frame">20dp</dimen>
-    <!-- From: file:/E:/Joker_Rx/ReactiveProgramming/src/main/res/values/dimens.xml -->
+    <!-- From: file:/E:/Joker_DesignMore/DesignMore_9_7/ReactiveProgramming/src/main/res/values/dimens.xml -->
     <eat-comment/>
     <dimen name="iv_cover_height">140dp</dimen>
     <dimen name="lv_row_icon_padding">5dp</dimen>
     <dimen name="lv_row_icon_width">50dp</dimen>
     <dimen name="lv_row_padding">5dp</dimen>
     <dimen name="lv_row_text_size">20sp</dimen>
-    <!-- From: file:/E:/Joker_Rx/ReactiveProgramming/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/23.0.0/res/values/values.xml -->
+    <!-- From: file:/E:/Joker_DesignMore/DesignMore_9_7/ReactiveProgramming/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/23.0.0/res/values/values.xml -->
     <eat-comment/>
     <item name="item_touch_helper_previous_elevation" type="id"/>
-    <!-- From: file:/E:/Joker_Rx/ReactiveProgramming/src/main/res/values/strings.xml -->
+    <!-- From: file:/E:/Joker_DesignMore/DesignMore_9_7/ReactiveProgramming/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="app_name">Android-ReactivePrograming</string>
     <string name="app_sample_backpressure">Simple Backpressure Sample</string>
@@ -38,7 +38,7 @@
     <string name="tv_label_flatMap_result">flatMap() Result:</string>
     <string name="tv_label_original_order">Original stream order:</string>
     <string name="url">http://www.android10.org/</string>
-    <!-- From: file:/E:/Joker_Rx/ReactiveProgramming/src/main/res/values/styles.xml -->
+    <!-- From: file:/E:/Joker_DesignMore/DesignMore_9_7/ReactiveProgramming/src/main/res/values/styles.xml -->
     <eat-comment/>
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
   </style>
