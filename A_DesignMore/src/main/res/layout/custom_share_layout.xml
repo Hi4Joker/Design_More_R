@@ -41,7 +41,7 @@
             android:layout_width="@dimen/material_48dp"
             android:layout_height="@dimen/material_48dp"
             android:layout_gravity="center"
-            app:mrl_rippleRoundedCorners="@dimen/material_48dp"
+            app:mrl_rippleRoundedCorners="@dimen/material_56dp"
             app:mrl_rippleDimension="10dip"
             app:mrl_rippleFadeDuration="100"
             app:mrl_rippleAlpha="0.4"
@@ -58,8 +58,8 @@
               android:layout_height="match_parent"
               android:layout_alignParentBottom="true"
               android:scaleType="center"
-              android:src="@drawable/ic_delete_icon"
-              android:background="@drawable/transparent_background"
+              android:src="@drawable/ic_share_weibo_icon"
+              android:background="@drawable/share_weibo_48dp_corner_background"
               />
         </com.app.designmore.view.MaterialRippleLayout>
 
@@ -85,7 +85,7 @@
             android:layout_width="@dimen/material_48dp"
             android:layout_height="@dimen/material_48dp"
             android:layout_gravity="center"
-            app:mrl_rippleRoundedCorners="@dimen/material_48dp"
+            app:mrl_rippleRoundedCorners="@dimen/material_56dp"
             app:mrl_rippleDimension="10dip"
             app:mrl_rippleFadeDuration="100"
             app:mrl_rippleAlpha="0.4"
@@ -102,8 +102,8 @@
               android:layout_height="match_parent"
               android:layout_alignParentBottom="true"
               android:scaleType="center"
-              android:src="@drawable/ic_delete_icon"
-              android:background="@drawable/transparent_background"
+              android:src="@drawable/ic_share_wechat_icon"
+              android:background="@drawable/share_wechat_48dp_corner_background"
               />
         </com.app.designmore.view.MaterialRippleLayout>
 

@@ -309,11 +309,6 @@ public class CollectionActivity extends BaseActivity
             if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
           }
         })
-        .filter(new Func1<Integer, Boolean>() {
-          @Override public Boolean call(Integer position) {
-            return !subscription.isUnsubscribed();
-          }
-        })
         .doOnCompleted(new Action0() {
           @Override public void call() {
             if (items.size() == 0) {

@@ -215,15 +215,6 @@ public class MineActivity extends BaseActivity {
           @Override public void onError(Throwable error) {
             /*加载失败，显示错误界面*/
             MineActivity.this.showErrorLayout(error);
-
-            progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
-                "加载失败", "请点击重试", getResources().getString(R.string.retry_button_text),
-                retryClickListener);
-            /*if (swipeRefreshLayout.isRefreshing()) {
-              swipeRefreshLayout.setRefreshing(false);
-            } else {
-              progressLayout.showContent();
-            }*/
           }
 
           @Override public void onNext(UserInfoEntity userInfoEntity) {
@@ -250,7 +241,7 @@ public class MineActivity extends BaseActivity {
           getResources().getString(R.string.timeout_content));
     } else if (error instanceof RetrofitError) {
       Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
-      MineActivity.this.showError("网络连接异常", ((RetrofitError) error).getKind() + "");
+      MineActivity.this.showError("网络连接异常", "请点击重试");
     } else if (error instanceof WebServiceException) {
       MineActivity.this.showError(getResources().getString(R.string.service_exception_title),
           getResources().getString(R.string.service_exception_content));
@@ -318,8 +309,7 @@ public class MineActivity extends BaseActivity {
    * 个人资料
    */
   @Nullable @OnClick(R.id.mine_layout_information_ll) void onInfoClick(View view) {
-    ProfileActivity.startFromLocation(MineActivity.this, DensityUtil.getLocationY(view),
-        currentUserInfoEntity);
+    ProfileActivity.startFromLocation(MineActivity.this, DensityUtil.getLocationY(view));
     overridePendingTransition(0, 0);
   }
 

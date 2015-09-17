@@ -16,6 +16,8 @@ import com.app.designmore.retrofit.response.UserInfoResponse;
 import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -27,7 +29,12 @@ import retrofit.client.OkClient;
 import retrofit.converter.GsonConverter;
 import retrofit.http.FieldMap;
 import retrofit.http.FormUrlEncoded;
+import retrofit.http.Multipart;
 import retrofit.http.POST;
+import retrofit.http.Part;
+import retrofit.http.PartMap;
+import retrofit.mime.TypedFile;
+import retrofit.mime.TypedString;
 import rx.Observable;
 import rx.functions.Func0;
 import rx.functions.Func1;
@@ -59,6 +66,13 @@ public class LoginRetrofit {
 
     @FormUrlEncoded @POST("/mobile/api/client/interface.php")
     Observable<UserInfoResponse> requestUserInfo(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded @POST("/mobile/api/client/interface.php")
+    Observable<BaseResponse> requestChangeUserInfo(@FieldMap Map<String, String> params);
+
+    @Multipart @POST("/mobile/api/client/interface.php")
+    Observable<BaseResponse> uploadProfileHeader(@Part("Action") TypedString action,
+        @Part("uid") TypedString uid, @Part("header") TypedFile file);
 
     @FormUrlEncoded @POST("/mobile/api/client/interface.php") Observable<HelpResponse> getHelpList(
         @FieldMap Map<String, String> params);
@@ -256,6 +270,51 @@ public class LoginRetrofit {
     return Observable.defer(new Func0<Observable<BaseResponse>>() {
       @Override public Observable<BaseResponse> call() {
         return loginService.requestChangePassword(params)
+            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
+      }
+    }).retry(new Func2<Integer, Throwable, Boolean>() {
+      @Override public Boolean call(Integer integer, Throwable throwable) {
+        return throwable instanceof TimeoutException && integer < 1;
+      }
+    }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
+      @Override public Observable<BaseResponse> call(final BaseResponse baseResponse) {
+        return baseResponse.filterWebServiceErrors();
+      }
+    }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
+  }
+
+  /**
+   * 修改用户信息
+   */
+  public Observable<BaseResponse> requestChangeUserInfo(final Map<String, String> params) {
+
+    return Observable.defer(new Func0<Observable<BaseResponse>>() {
+      @Override public Observable<BaseResponse> call() {
+        return loginService.requestChangeUserInfo(params)
+            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
+      }
+    }).retry(new Func2<Integer, Throwable, Boolean>() {
+      @Override public Boolean call(Integer integer, Throwable throwable) {
+        return throwable instanceof TimeoutException && integer < 1;
+      }
+    }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
+      @Override public Observable<BaseResponse> call(final BaseResponse baseResponse) {
+        return baseResponse.filterWebServiceErrors();
+      }
+    }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
+  }
+
+  /**
+   * 上传头像
+   */
+  public Observable<BaseResponse> uploadProfileHeader(final Map<String, TypedString> params,
+      File avatarFile) {
+
+    final TypedFile file = new TypedFile("multipart/form-data", avatarFile);
+
+    return Observable.defer(new Func0<Observable<BaseResponse>>() {
+      @Override public Observable<BaseResponse> call() {
+        return loginService.uploadProfileHeader(params.get("Action"), params.get("uid"), file)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
       }
     }).retry(new Func2<Integer, Throwable, Boolean>() {

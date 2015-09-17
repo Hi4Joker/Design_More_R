@@ -307,11 +307,6 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
                 }
               }
             })
-            .filter(new Func1<RefreshAddressEvent, Boolean>() {
-              @Override public Boolean call(RefreshAddressEvent refreshAddressEvent) {
-                return !subscription.isUnsubscribed();
-              }
-            })
             .compose(
                 AddressAddActivity.this.<RefreshAddressEvent>bindUntilEvent(ActivityEvent.DESTROY))
             .subscribe(new Subscriber<RefreshAddressEvent>() {
@@ -423,6 +418,7 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
     super.onDestroy();
     this.progressDialog = null;
     this.simpleProgressDialog = null;
+    this.customWheelDialog = null;
     this.addressPresenter.detach();
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();
   }

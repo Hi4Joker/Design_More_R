@@ -248,11 +248,6 @@ public class RegisterActivity extends BaseActivity {
             }
           }
         })
-        .filter(new Func1<RegisterEntity, Boolean>() {
-          @Override public Boolean call(RegisterEntity registerEntity) {
-            return !subscription.isUnsubscribed();
-          }
-        })
         .compose(RegisterActivity.this.<RegisterEntity>bindUntilEvent(ActivityEvent.DESTROY))
         .subscribe(new Action1<RegisterEntity>() {
           @Override public void call(RegisterEntity registerEntity) {

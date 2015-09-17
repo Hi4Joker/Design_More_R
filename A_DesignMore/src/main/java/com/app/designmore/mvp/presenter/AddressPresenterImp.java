@@ -21,6 +21,7 @@ import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func0;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.Subscriptions;
 
 /**
  * Created by Joker on 2015/9/9.
@@ -31,8 +32,7 @@ public class AddressPresenterImp implements AddressPresenter {
   private Context context;
   private AddressView addressView;
   private List<Province> provinces = new ArrayList<>();
-  private Scheduler.Worker worker;
-  private Subscription subscribe;
+  private Subscription subscribe = Subscriptions.empty();
 
   public AddressPresenterImp() {
 
@@ -43,39 +43,45 @@ public class AddressPresenterImp implements AddressPresenter {
     this.addressView = addressView;
   }
 
-  @Override public void showPicker() {
+  /*@Override public void showPicker() {
     if (provinces.size() > 0) {
       addressView.onInflateFinish(provinces);
     } else {
 
       provinces = Observable.create(new Observable.OnSubscribe<List<Province>>() {
         @Override public void call(final Subscriber<? super List<Province>> subscriber) {
-          InputStream inputStream = null;
-          try {
-            inputStream = context.getResources().getAssets().open("address.txt");
-            byte[] arrayOfByte = new byte[inputStream.available()];
-            inputStream.read(arrayOfByte);
-            JSONArray jsonList = new JSONArray(new String(arrayOfByte, "UTF-8"));
-            Gson gson =
-                new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
-            for (int i = 0; i < jsonList.length(); i++) {
-              provinces.add(gson.fromJson(jsonList.getString(i), Province.class));
-            }
-          } catch (Exception e) {
-            subscriber.onError(e);
-          } finally {
-            if (inputStream != null) {
+
+          subscribe = Schedulers.io().createWorker().schedule(new Action0() {
+            @Override public void call() {
+              InputStream inputStream = null;
               try {
-                inputStream.close();
-              } catch (IOException e) {
-                Observable.error(e);
+                inputStream = context.getResources().getAssets().open("address.txt");
+                byte[] arrayOfByte = new byte[inputStream.available()];
+                inputStream.read(arrayOfByte);
+                JSONArray jsonList = new JSONArray(new String(arrayOfByte, "UTF-8"));
+                Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
+                    .serializeNulls()
+                    .create();
+                for (int i = 0; i < jsonList.length(); i++) {
+                  provinces.add(gson.fromJson(jsonList.getString(i), Province.class));
+                }
+              } catch (Exception e) {
+                subscriber.onError(e);
+              } finally {
+                if (inputStream != null) {
+                  try {
+                    inputStream.close();
+                  } catch (IOException e) {
+                    Observable.error(e);
+                  }
+                }
               }
+              subscriber.onNext(provinces);
+              subscriber.onCompleted();
             }
-          }
-          subscriber.onNext(provinces);
-          subscriber.onCompleted();
+          });
         }
-      }).subscribeOn(Schedulers.io()).toBlocking().single();
+      }).toBlocking().single();
 
       if (provinces != null && provinces.size() > 0) {
         addressView.onInflateFinish(provinces);
@@ -83,15 +89,17 @@ public class AddressPresenterImp implements AddressPresenter {
         addressView.showError();
       }
     }
-  }
+  }*/
 
-  /*@Override public void showPicker() {
+  @Override public void showPicker() {
 
     if (provinces.size() > 0) {
       addressView.onInflateFinish(provinces);
     } else {
+
       subscribe = Observable.create(new Observable.OnSubscribe<List<Province>>() {
         @Override public void call(final Subscriber<? super List<Province>> subscriber) {
+
           Schedulers.io().createWorker().schedule(new Action0() {
             @Override public void call() {
               InputStream in = null;
@@ -140,10 +148,9 @@ public class AddressPresenterImp implements AddressPresenter {
         }
       });
     }
-  }*/
+  }
 
   @Override public void detach() {
-    //if (!worker.isUnsubscribed()) worker.unsubscribe();
     if (subscribe != null && !subscribe.isUnsubscribed()) subscribe.unsubscribe();
   }
 }

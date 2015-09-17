@@ -246,11 +246,6 @@ public class RetrieveActivity extends BaseActivity {
             }
           }
         })
-        .filter(new Func1<RetrieveEntity, Boolean>() {
-          @Override public Boolean call(RetrieveEntity retrieveEntity) {
-            return !subscription.isUnsubscribed();
-          }
-        })
         .compose(RetrieveActivity.this.<RetrieveEntity>bindUntilEvent(ActivityEvent.DESTROY))
         .subscribe(new Action1<RetrieveEntity>() {
           @Override public void call(RetrieveEntity retrieveEntity) {

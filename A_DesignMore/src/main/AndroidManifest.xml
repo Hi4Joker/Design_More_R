@@ -170,6 +170,15 @@
         android:theme="@style/AppTheme.TransparentActivity"
         >
     </activity>
+
+    <!--用户中心ACT -> 前置拍照ACT-->
+    <activity
+        android:name=".activity.usercenter.ProfileGalleryActivity"
+        android:screenOrientation="portrait"
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.TransparentActivity"
+        >
+    </activity>
     <!--用户中心ACT -> 个人资料ACT -> 账户安全-->
     <activity
         android:name=".activity.usercenter.SafetyActivity"

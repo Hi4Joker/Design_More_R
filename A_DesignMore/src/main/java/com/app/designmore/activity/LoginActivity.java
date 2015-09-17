@@ -216,11 +216,6 @@ public class LoginActivity extends BaseActivity {
             }
           }
         })
-        .filter(new Func1<LoginEntity, Boolean>() {
-          @Override public Boolean call(LoginEntity loginEntity) {
-            return !subscription.isUnsubscribed();
-          }
-        })
         .compose(LoginActivity.this.<LoginEntity>bindUntilEvent(ActivityEvent.DESTROY))
         .subscribe(new Subscriber<LoginEntity>() {
           @Override public void onCompleted() {

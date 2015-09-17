@@ -38,6 +38,7 @@ import com.app.designmore.manager.DialogManager;
 import com.app.designmore.retrofit.AddressRetrofit;
 import com.app.designmore.retrofit.entity.AddressEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
+import com.app.designmore.rxAndroid.SimpleObserver;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
@@ -128,12 +129,6 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
 
     /*创建Adapter*/
     AddressMangerActivity.this.setupAdapter();
-
-   /* ViewGroup.LayoutParams mParams = recyclerView.getLayoutParams();
-    mParams.height = (DensityUtil.getScreenWidth(this) * 480 / 720 + DensityUtil.dip2px(40)) * 5
-        + DensityUtil.dip2px(8);
-    mParams.width = DensityUtil.getScreenWidth(this);
-    recyclerView.setLayoutParams(mParams);*/
 
     if (savedInstanceState == null) {
       rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -273,17 +268,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
       AddressMangerActivity.this.exitWithoutDialog();
     } else {
       if (items.contains(defaultAddress)) {
-        DialogManager.getInstance()
-            .showNormalDialog(AddressMangerActivity.this, "请确认当前默认地址",
-                new DialogInterface.OnClickListener() {
-                  @Override public void onClick(DialogInterface dialog, int which) {
-                    if (which == DialogInterface.BUTTON_POSITIVE) {
-                      AddressMangerActivity.this.requestSetDefaultAddress();
-                    } else {
-                      AddressMangerActivity.this.exitWithoutDialog();
-                    }
-                  }
-                });
+        AddressMangerActivity.this.exitWithoutDialog();
       } else {
         DialogManager.getInstance().showConfirmDialog(AddressMangerActivity.this, "请选择默认地址");
       }
@@ -325,17 +310,8 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
                 }
               }
             })
-            .filter(new Func1<BaseResponse, Boolean>() {
-              @Override public Boolean call(BaseResponse baseResponse) {
-                return !subscription.isUnsubscribed();
-              }
-            })
             .compose(AddressMangerActivity.this.<BaseResponse>bindUntilEvent(ActivityEvent.DESTROY))
-            .subscribe(new Subscriber<BaseResponse>() {
-              @Override public void onCompleted() {
-                AddressMangerActivity.this.exitWithoutDialog();
-              }
-
+            .subscribe(new SimpleObserver<BaseResponse>() {
               @Override public void onError(Throwable e) {
                 DialogManager.getInstance()
                     .showConfirmDialog(AddressMangerActivity.this, "设置失败，请重试");
@@ -412,11 +388,6 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
                 }
               }
             })
-            .filter(new Func1<Integer, Boolean>() {
-              @Override public Boolean call(Integer position) {
-                return !subscription.isUnsubscribed();
-              }
-            })
             .compose(AddressMangerActivity.this.<Integer>bindUntilEvent(ActivityEvent.DESTROY))
             .subscribe(addressAdapter);
   }
@@ -431,6 +402,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
   /*点击RadioButton*/
   @Override public void onDefaultChange(AddressEntity addressEntity) {
     this.defaultAddress = addressEntity;
+    AddressMangerActivity.this.requestSetDefaultAddress();
   }
 
   /*发生错误回调*/

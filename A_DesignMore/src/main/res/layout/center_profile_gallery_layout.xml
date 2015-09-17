@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/profile_gallery_layout_root_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/primary_background_color"
+    >
+
+  <include
+      layout="@layout/include_white_toolbar_layout"/>
+
+  <ImageView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="?attr/actionBarSize"
+      android:layout_centerInParent="true"
+      android:scaleType="center"
+      android:src="@drawable/ic_grey_logo_icon"/>
+
+  <com.app.designmore.view.CropImageView
+      android:id="@+id/profile_gallery_layout_taken_view"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_marginTop="?attr/actionBarSize"
+      android:visibility="gone"
+      app:cropMode="circle"
+      app:minFrameSize="@dimen/material_48dp"
+      app:backgroundColor="@color/black"
+      app:overlayColor="@color/overlay_color"
+      app:frameColor="@color/darker_gray"
+      app:handleColor="@color/darker_gray"
+      app:guideColor="@color/lighter_gray"
+      app:guideStrokeWeight="@dimen/material_1dp"
+      app:frameStrokeWeight="@dimen/material_2dp"
+      app:handleSize="@dimen/material_8dp"
+      app:touchPadding="@dimen/material_16dp"
+      app:guideShowMode="show_on_touch"
+      app:handleShowMode="show_always"
+      app:cropEnabled="true"
+      />
+
+
+</RelativeLayout>

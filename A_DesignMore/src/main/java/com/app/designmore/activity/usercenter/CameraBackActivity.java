@@ -41,6 +41,7 @@ import com.app.designmore.event.AvatarRefreshEvent;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.rxAndroid.SchedulersCompat;
+import com.app.designmore.rxAndroid.SimpleObserver;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.utils.Utils;
@@ -85,7 +86,6 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
   private ImageButton switchActionButton;
 
   private State currentState = State.TAKE;
-  private File photoFile;
 
   private Subscription subscription = Subscriptions.empty();
   private Subscription threadSubscription = Subscriptions.empty();
@@ -227,15 +227,9 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
           progressDialog.show();
         }
       }
-    }).filter(new Func1<File, Boolean>() {
-      @Override public Boolean call(File file) {
-        return !subscription.isUnsubscribed();
-      }
-    }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<File>() {
+    }).observeOn(AndroidSchedulers.mainThread()).subscribe(new SimpleObserver<File>() {
       @Override public void onCompleted() {
-        EventBusInstance.getDefault()
-            .post(new AvatarRefreshEvent(photoFile, cropImageView.getCroppedBitmap()));
-        CameraBackActivity.this.exitWhitAnim();
+
       }
 
       @Override public void onError(Throwable e) {
@@ -244,7 +238,9 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
       }
 
       @Override public void onNext(File file) {
-        CameraBackActivity.this.photoFile = file;
+        EventBusInstance.getDefault()
+            .post(new AvatarRefreshEvent(file, cropImageView.getCroppedBitmap()));
+        CameraBackActivity.this.exitWhitAnim();
       }
     });
   }
@@ -294,7 +290,7 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
 
     @Override public void saveImage(PictureTransaction xact, byte[] image) {
       super.saveImage(xact, image);
-      CameraBackActivity.this.photoFile = this.getPhotoPath();
+      //CameraBackActivity.this.photoFile = this.getPhotoPath();
     }
 
     @Override public boolean useFrontFacingCamera() {

@@ -284,10 +284,6 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
             @Override public Observable<TrolleyEntity> call() {
               return Observable.from(items);
             }
-          }).filter(new Func1<TrolleyEntity, Boolean>() {
-            @Override public Boolean call(TrolleyEntity trolleyEntity) {
-              return !trolleyEntity.isChecked;
-            }
           }).map(new Func1<TrolleyEntity, TrolleyEntity>() {
             @Override public TrolleyEntity call(TrolleyEntity trolleyEntity) {
               trolleyEntity.isChecked = true;

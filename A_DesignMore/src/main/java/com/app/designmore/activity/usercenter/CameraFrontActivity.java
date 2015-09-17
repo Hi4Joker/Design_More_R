@@ -38,6 +38,7 @@ import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.event.AvatarRefreshEvent;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
+import com.app.designmore.rxAndroid.SimpleObserver;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.utils.Utils;
@@ -212,16 +213,7 @@ public class CameraFrontActivity extends BaseActivity implements CameraHostProvi
           progressDialog.show();
         }
       }
-    }).filter(new Func1<File, Boolean>() {
-      @Override public Boolean call(File file) {
-        return !subscription.isUnsubscribed();
-      }
-    }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<File>() {
-      @Override public void onCompleted() {
-        EventBusInstance.getDefault()
-            .post(new AvatarRefreshEvent(photoFile, cropImageView.getCroppedBitmap()));
-        CameraFrontActivity.this.exitWhitAnim();
-      }
+    }).observeOn(AndroidSchedulers.mainThread()).subscribe(new SimpleObserver<File>() {
 
       @Override public void onError(Throwable e) {
         e.printStackTrace();
@@ -229,7 +221,9 @@ public class CameraFrontActivity extends BaseActivity implements CameraHostProvi
       }
 
       @Override public void onNext(File file) {
-        CameraFrontActivity.this.photoFile = file;
+        EventBusInstance.getDefault()
+            .post(new AvatarRefreshEvent(file, cropImageView.getCroppedBitmap()));
+        CameraFrontActivity.this.exitWhitAnim();
       }
     });
   }
@@ -279,7 +273,7 @@ public class CameraFrontActivity extends BaseActivity implements CameraHostProvi
 
     @Override public void saveImage(PictureTransaction xact, byte[] image) {
       super.saveImage(xact, image);
-      CameraFrontActivity.this.photoFile = this.getPhotoPath();
+      //CameraFrontActivity.this.photoFile = this.getPhotoPath();
     }
 
     @Override public boolean useFrontFacingCamera() {
