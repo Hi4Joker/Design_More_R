@@ -15,21 +15,21 @@
       android:layout_marginTop="?attr/actionBarSize"
       android:layout_marginBottom="@dimen/material_48dp"
       android:layout_alignParentTop="true"
-      android:background="@color/white"
+      android:background="@color/primary_background_color"
       >
 
     <com.app.designmore.view.ProgressLayout
         android:id="@+id/journal_layout_pl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:progressEmptyStateBackgroundColor="@color/holo_blue_dark"
-        app:progressEmptyStateContentTextColor="#FFFFFF"
-        app:progressEmptyStateTitleTextColor="#FFFFFF"
-        app:progressErrorStateBackgroundColor="@color/holo_red_dark"
-        app:progressErrorStateButtonTextColor="#FFFFFF"
-        app:progressErrorStateContentTextColor="#FFFFFF"
-        app:progressErrorStateTitleTextColor="#FFFFFF"
-        android:background="@color/primary_background_color"
+        app:progressEmptyStateBackgroundColor="@color/primary_background_color"
+        app:progressEmptyStateTitleTextColor="@color/black"
+        app:progressEmptyStateContentTextColor="@color/black"
+        app:progressErrorStateBackgroundColor="@color/primary_background_color"
+        app:progressErrorStateTitleTextColor="@color/black"
+        app:progressErrorStateContentTextColor="@color/black"
+        app:progressErrorStateButtonTextColor="@color/white"
+        android:background="@color/white"
         >
 
       <android.support.v4.widget.SwipeRefreshLayout
@@ -41,7 +41,7 @@
             android:id="@+id/journal_layout_rl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/primary_background_color"
+            android:background="@color/white"
             />
       </android.support.v4.widget.SwipeRefreshLayout>
 

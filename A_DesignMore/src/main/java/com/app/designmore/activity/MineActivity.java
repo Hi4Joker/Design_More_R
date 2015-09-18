@@ -10,7 +10,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,9 +19,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
@@ -37,9 +34,7 @@ import com.app.designmore.helper.DBHelper;
 import com.app.designmore.manager.CropCircleTransformation;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
-import com.app.designmore.retrofit.CollectionRetrofit;
 import com.app.designmore.retrofit.LoginRetrofit;
-import com.app.designmore.retrofit.entity.CollectionEntity;
 import com.app.designmore.retrofit.response.UserInfoEntity;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
@@ -53,9 +48,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.trello.rxlifecycle.ActivityEvent;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
@@ -333,7 +326,7 @@ public class MineActivity extends BaseActivity {
    * 上新
    */
   @Nullable @OnClick(R.id.bottom_bar_fashion_rl) void onFashionClick() {
-    FashionActivity.navigateToUserCenter(MineActivity.this);
+    FashionActivity.navigateToFashion(MineActivity.this);
     MineActivity.this.finish();
     overridePendingTransition(0, 0);
   }

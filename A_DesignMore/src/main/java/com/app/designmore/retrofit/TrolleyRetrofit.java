@@ -7,7 +7,6 @@ import com.app.designmore.retrofit.response.TrolleyResponse;
 import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +31,7 @@ public class TrolleyRetrofit {
 
   private TrolleyEntity instance = new TrolleyEntity();
 
-  interface CollectionService {
+  interface TrolleyService {
 
     //@Headers("Accept-Encoding: application/json")
     @FormUrlEncoded @POST("/mobile/api/client/interface.php")
@@ -42,7 +41,7 @@ public class TrolleyRetrofit {
     Observable<BaseResponse> requestDeleteCollection(@FieldMap Map<String, String> params);
   }
 
-  private final CollectionService collectionService;
+  private final TrolleyService collectionService;
 
   private TrolleyRetrofit() {
     RequestInterceptor requestInterceptor = new RequestInterceptor() {
@@ -65,7 +64,7 @@ public class TrolleyRetrofit {
         .setConverter(new GsonConverter(gson))
         .build();
 
-    collectionService = restAdapter.create(CollectionService.class);
+    collectionService = restAdapter.create(TrolleyService.class);
   }
 
   private static class SingletonHolder {

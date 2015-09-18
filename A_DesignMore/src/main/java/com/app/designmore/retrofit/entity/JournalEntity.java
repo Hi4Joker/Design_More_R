@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class JournalEntity implements Cloneable ,Serializable{
 
   private String journalId;
-  private String thumbUrl;
+  private String journalThumbUrl;
   private String journalTitle;
   private String journalContent;
   private String journalUrl;
@@ -29,12 +29,12 @@ public class JournalEntity implements Cloneable ,Serializable{
     this.journalId = journalId;
   }
 
-  public String getThumbUrl() {
-    return thumbUrl;
+  public String getJournalThumbUrl() {
+    return journalThumbUrl;
   }
 
-  public void setThumbUrl(String thumbUrl) {
-    this.thumbUrl = thumbUrl;
+  public void setJournalThumbUrl(String journalThumbUrl) {
+    this.journalThumbUrl = journalThumbUrl;
   }
 
   public String getJournalTitle() {
@@ -71,7 +71,7 @@ public class JournalEntity implements Cloneable ,Serializable{
   @Override public String toString() {
     return "JournalEntity{" +
         "journalId='" + journalId + '\'' +
-        ", thumbUrl='" + thumbUrl + '\'' +
+        ", journalThumbUrl='" + journalThumbUrl + '\'' +
         ", journalTitle='" + journalTitle + '\'' +
         ", journalContent='" + journalContent + '\'' +
         ", journalUrl='" + journalUrl + '\'' +

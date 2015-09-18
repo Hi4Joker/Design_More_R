@@ -141,7 +141,7 @@ public class HomeActivity extends BaseActivity {
    */
   @Nullable @OnClick(R.id.bottom_bar_fashion_rl) void onFashionClick() {
 
-    FashionActivity.navigateToUserCenter(HomeActivity.this);
+    FashionActivity.navigateToFashion(HomeActivity.this);
     overridePendingTransition(0, 0);
   }
 

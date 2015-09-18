@@ -3,7 +3,6 @@ package com.app.designmore.adapter;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,7 +70,7 @@ public class JournalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     holder.content.setText(journalEntity.getJournalContent());
 
     Glide.with(context)
-        .load(journalEntity.getThumbUrl())
+        .load(journalEntity.getJournalThumbUrl())
         .placeholder(R.drawable.ic_default_1080)
         .error(R.drawable.ic_default_1080)
         .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -109,17 +108,11 @@ public class JournalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
   @Override public void onNext(List<JournalEntity> journalEntities) {
 
     if (journalEntities != null && journalEntities.size() == 0) {
-
       if (callback != null) callback.onNoData();
     } else {
 
       this.items.addAll(journalEntities);
       JournalAdapter.this.notifyItemInserted(items.size() - journalEntities.size() + 1);
-
-      //notifyDataSetChanged();
-      //notifyItemRangeChanged();
-      /*JournalAdapter.this.notifyItemRangeChanged(items.size() - journalEntities.size() + 1,
-          journalEntities.size());*/
     }
   }
 

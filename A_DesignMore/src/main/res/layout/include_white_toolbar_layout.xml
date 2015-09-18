@@ -35,6 +35,5 @@
         android:src="@drawable/ic_title_icon"
         android:visibility="gone"
         />
-
   </LinearLayout>
 </android.support.v7.widget.Toolbar>

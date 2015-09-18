@@ -1,10 +1,8 @@
 package com.app.designmore.retrofit;
 
 import com.app.designmore.Constants;
-import com.app.designmore.retrofit.entity.CollectionEntity;
 import com.app.designmore.retrofit.entity.JournalEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
-import com.app.designmore.retrofit.response.CollectionResponse;
 import com.app.designmore.retrofit.response.JournalResponse;
 import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.google.gson.Gson;
@@ -33,7 +31,7 @@ public class JournalRetrofit {
 
   private JournalEntity instance = new JournalEntity();
 
-  interface CollectionService {
+  interface JournalService {
 
     //@Headers("Accept-Encoding: application/json")
     @FormUrlEncoded @POST("/mobile/api/client/interface.php")
@@ -43,7 +41,7 @@ public class JournalRetrofit {
     Observable<JournalResponse> requestMoreJournalList(@FieldMap Map<String, String> params);
   }
 
-  private final CollectionService collectionService;
+  private final JournalService collectionService;
 
   private JournalRetrofit() {
     RequestInterceptor requestInterceptor = new RequestInterceptor() {
@@ -66,7 +64,7 @@ public class JournalRetrofit {
         .setConverter(new GsonConverter(gson))
         .build();
 
-    collectionService = restAdapter.create(CollectionService.class);
+    collectionService = restAdapter.create(JournalService.class);
   }
 
   private static class SingletonHolder {
@@ -84,7 +82,7 @@ public class JournalRetrofit {
 
     return Observable.defer(new Func0<Observable<JournalResponse>>() {
       @Override public Observable<JournalResponse> call() {
-             /*获取热搜列表，超时8秒*/
+        /*获取杂志列表，超时8秒*/
         return collectionService.getJournalList(params)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
       }
@@ -106,7 +104,7 @@ public class JournalRetrofit {
         JournalEntity clone = instance.newInstance();
 
         clone.setJournalId(journal.journalId);
-        clone.setThumbUrl(journal.journalThumb);
+        clone.setJournalThumbUrl(journal.journalThumb);
         clone.setJournalTitle(journal.journalTitle);
         clone.setJournalContent(journal.journalContent);
         clone.setJournalUrl(journal.journalUrl);

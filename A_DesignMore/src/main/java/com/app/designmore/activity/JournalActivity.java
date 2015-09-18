@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -54,14 +53,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
 import rx.Subscriber;
-import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Action1;
-import rx.subscriptions.Subscriptions;
 
 public class JournalActivity extends BaseActivity implements JournalAdapter.Callback {
 
@@ -354,7 +350,7 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
    * 上新
    */
   @Nullable @OnClick(R.id.bottom_bar_fashion_rl) void onJournalClick() {
-    FashionActivity.navigateToUserCenter(JournalActivity.this);
+    FashionActivity.navigateToFashion(JournalActivity.this);
     JournalActivity.this.finish();
     overridePendingTransition(0, 0);
   }
@@ -414,13 +410,12 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
    */
   @Override public void onItemClick(JournalEntity entity) {
 
-    Log.e(TAG, entity.getJournalUrl());
     JournalDetailActivity.navigateToJournalDetail(JournalActivity.this, entity);
     overridePendingTransition(0, 0);
   }
 
   @Override public void onNoData() {
-    Toast.makeText(JournalActivity.this, "没有更多杂志", Toast.LENGTH_LONG).show();
+    Toast.makeText(JournalActivity.this, "没有更多杂志了", Toast.LENGTH_LONG).show();
   }
 
   @Override public void onError(Throwable error) {
