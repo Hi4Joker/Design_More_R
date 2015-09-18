@@ -208,13 +208,13 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
   }
 
   @Override public void onError(Throwable error) {
-
     if (error instanceof TimeoutException) {
       SearchActivity.this.showError(getResources().getString(R.string.timeout_title),
           getResources().getString(R.string.timeout_content));
     } else if (error instanceof RetrofitError) {
       Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
-      SearchActivity.this.showError("网络连接异常", "请点击重试");
+      SearchActivity.this.showError(getResources().getString(R.string.six_word_title),
+          getResources().getString(R.string.six_word_content));
     } else if (error instanceof WebServiceException) {
       SearchActivity.this.showError(getResources().getString(R.string.service_exception_title),
           getResources().getString(R.string.service_exception_content));

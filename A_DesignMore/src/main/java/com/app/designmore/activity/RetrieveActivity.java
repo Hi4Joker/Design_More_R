@@ -21,6 +21,7 @@ import com.app.designmore.R;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.retrofit.LoginRetrofit;
 import com.app.designmore.retrofit.entity.LoginCodeEntity;
+import com.app.designmore.retrofit.entity.RegisterEntity;
 import com.app.designmore.retrofit.entity.RetrieveEntity;
 import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.app.designmore.rxAndroid.SimpleObserver;
@@ -221,7 +222,6 @@ public class RetrieveActivity extends BaseActivity {
     }
 
     /*Action=UserByChangePwd&old_passwd=lanlan111&new_passwd=lanlan&uid=2*/
-
     Map<String, String> params = new HashMap<>();
     params.put("Action", "UserByChangePwd");
 
@@ -247,6 +247,11 @@ public class RetrieveActivity extends BaseActivity {
           }
         })
         .compose(RetrieveActivity.this.<RetrieveEntity>bindUntilEvent(ActivityEvent.DESTROY))
+        .filter(new Func1<RetrieveEntity, Boolean>() {
+          @Override public Boolean call(RetrieveEntity retrieveEntity) {
+            return !subscription.isUnsubscribed();
+          }
+        })
         .subscribe(new Action1<RetrieveEntity>() {
           @Override public void call(RetrieveEntity retrieveEntity) {
             Toast.makeText(RetrieveActivity.this, retrieveEntity.getRegisterMessage(),
@@ -267,7 +272,7 @@ public class RetrieveActivity extends BaseActivity {
       RetrieveActivity.this.showSnackBar(getResources().getString(R.string.timeout_title));
     } else if (error instanceof RetrofitError) {
       Log.e(TAG, "kind:  " + ((RetrofitError) error).getKind());
-      RetrieveActivity.this.showSnackBar(getResources().getString(R.string.six_word));
+      RetrieveActivity.this.showSnackBar(getResources().getString(R.string.six_word_title));
     } else {
       Log.e(TAG, error.getMessage());
       error.printStackTrace();

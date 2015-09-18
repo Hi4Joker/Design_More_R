@@ -307,6 +307,11 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
                 }
               }
             })
+            .filter(new Func1<RefreshAddressEvent, Boolean>() {
+              @Override public Boolean call(RefreshAddressEvent refreshAddressEvent) {
+                return !subscription.isUnsubscribed();
+              }
+            })
             .compose(
                 AddressAddActivity.this.<RefreshAddressEvent>bindUntilEvent(ActivityEvent.DESTROY))
             .subscribe(new Subscriber<RefreshAddressEvent>() {
@@ -331,7 +336,7 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
       AddressAddActivity.this.showSnackBar(getResources().getString(R.string.timeout_title));
     } else if (error instanceof RetrofitError) {
       Log.e(TAG, "kind:  " + ((RetrofitError) error).getKind());
-      AddressAddActivity.this.showSnackBar(getResources().getString(R.string.six_word));
+      AddressAddActivity.this.showSnackBar(getResources().getString(R.string.six_word_title));
     } else if (error instanceof WebServiceException) {
       AddressAddActivity.this.showSnackBar(
           getResources().getString(R.string.service_exception_content));

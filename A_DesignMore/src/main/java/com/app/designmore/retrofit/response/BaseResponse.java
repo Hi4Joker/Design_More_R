@@ -27,4 +27,8 @@ public class BaseResponse {
       return Observable.error(new WebServiceException(BaseResponse.this.message));
     }
   }
+
+  public boolean resultOK() {
+    return resultCode == Constants.RESULT_OK;
+  }
 }

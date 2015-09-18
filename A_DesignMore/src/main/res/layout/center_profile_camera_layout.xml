@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/profile_camera_layout_root_view"
     android:layout_width="match_parent"
@@ -47,15 +48,6 @@
       app:cropEnabled="true"
       />
 
-  <!--<ImageView
-    android:id="@+id/profile_camera_layout_taken_view"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="?attr/actionBarSize"
-    android:scaleType="centerCrop"
-    android:background="@android:color/transparent"
-    android:visibility="gone"/>-->
-
   <View
       android:id="@+id/profile_camera_layout_shutter_view"
       android:layout_width="match_parent"
@@ -79,6 +71,5 @@
       app:elevation="@dimen/material_elevation_6dp"
       app:pressedTranslationZ="@dimen/material_elevation_6dp"
       />
-
 
 </RelativeLayout>

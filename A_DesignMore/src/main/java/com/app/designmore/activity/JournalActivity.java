@@ -87,7 +87,6 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
 
   private SupportAnimator revealAnimator;
   private ProgressDialog progressDialog;
-  private Subscription subscription = Subscriptions.empty();
 
   private int visibleItemCount;
   private int totalItemCount;
@@ -107,12 +106,6 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
     }
   };
 
-  private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
-    @Override public void onCancel(DialogInterface dialog) {
-      subscription.unsubscribe();
-    }
-  };
-
   public static void navigateToJournal(AppCompatActivity startingActivity) {
     Intent intent = new Intent(startingActivity, JournalActivity.class);
     startingActivity.startActivity(intent);
@@ -129,7 +122,6 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
   @Override public void initView(Bundle savedInstanceState) {
 
     JournalActivity.this.setSupportActionBar(toolbar);
-    //toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
 
     /*创建Adapter*/
     JournalActivity.this.setupAdapter();
@@ -149,12 +141,7 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
 
   private void setupAdapter() {
 
-    int[] colors = new int[] {
-        R.color.design_more_red, R.color.accent_material_light, R.color.design_more_red,
-        R.color.accent_material_light
-    };
-
-    swipeRefreshLayout.setColorSchemeResources(colors);
+    swipeRefreshLayout.setColorSchemeResources(Constants.colors);
     RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
       @Override public void call(Void aVoid) {
         JournalActivity.this.loadData();
@@ -177,24 +164,24 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
     RxRecyclerView.scrollEvents(recyclerView)
         .skip(1)
         .forEach(new Action1<RecyclerViewScrollEvent>() {
-              @Override public void call(RecyclerViewScrollEvent recyclerViewScrollEvent) {
+          @Override public void call(RecyclerViewScrollEvent recyclerViewScrollEvent) {
 
-                //stackoverflow.com/questions/26543131/how-to-implement-endless-list-with-recyclerview/26561717#26561717
-                visibleItemCount = linearLayoutManager.getChildCount();
-                totalItemCount = linearLayoutManager.getItemCount();
-                pastVisibleItems = linearLayoutManager.findFirstVisibleItemPosition();
+            //stackoverflow.com/questions/26543131/how-to-implement-endless-list-with-recyclerview/26561717#26561717
+            visibleItemCount = linearLayoutManager.getChildCount();
+            totalItemCount = linearLayoutManager.getItemCount();
+            pastVisibleItems = linearLayoutManager.findFirstVisibleItemPosition();
 
-                Log.e(TAG, "visibleItemCount:   " + visibleItemCount);
-                Log.e(TAG, "totalItemCount:  " + totalItemCount);
-                Log.e(TAG, "pastVisibleItems:  " + pastVisibleItems);
+           /* Log.e(TAG, "visibleItemCount:   " + visibleItemCount);
+            Log.e(TAG, "totalItemCount:  " + totalItemCount);
+            Log.e(TAG, "pastVisibleItems:  " + pastVisibleItems);*/
 
-                if (!isLoading) {
-                  if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
-                    JournalActivity.this.loadDataMore();
-                  }
-                }
+            if (!isLoading) {
+              if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
+                JournalActivity.this.loadDataMore();
               }
-            });
+            }
+          }
+        });
   }
 
   private void loadData() {
@@ -205,45 +192,42 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
     params.put("count", "10");
     params.put("page", String.valueOf(count = 1));
 
-    subscription =
-        JournalRetrofit.getInstance()
-            .getJournalList(params)
-            .doOnSubscribe(new Action0() {
-              @Override public void call() {
+    JournalRetrofit.getInstance()
+        .getJournalList(params)
+        .doOnSubscribe(new Action0() {
+          @Override public void call() {
             /*加载数据，显示进度条*/
-                if (!swipeRefreshLayout.isRefreshing()) progressLayout.showLoading();
+            if (!swipeRefreshLayout.isRefreshing()) progressLayout.showLoading();
+          }
+        })
+        .compose(JournalActivity.this.<List<JournalEntity>>bindUntilEvent(ActivityEvent.DESTROY))
+        .subscribe(new Subscriber<List<JournalEntity>>() {
+          @Override public void onCompleted() {
+            /*加载完毕，显示内容界面*/
+            if (items != null && items.size() != 0) {
+              if (swipeRefreshLayout.isRefreshing()) {
+                swipeRefreshLayout.setRefreshing(false);
+              } else if (!progressLayout.isContent()) {
+                progressLayout.showContent();
               }
-            })
-            .compose(
-                JournalActivity.this.<List<JournalEntity>>bindUntilEvent(ActivityEvent.DESTROY))
-            .subscribe(new Subscriber<List<JournalEntity>>() {
-              @Override public void onCompleted() {
+            } else if (items != null && items.size() == 0) {
+              progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
+                  "当前没有杂志可看", null, "去首页看看", goHomeClickListener);
+            }
+          }
 
-                /*加载完毕，显示内容界面*/
-                if (items != null && items.size() != 0) {
-                  if (swipeRefreshLayout.isRefreshing()) {
-                    swipeRefreshLayout.setRefreshing(false);
-                  } else {
-                    progressLayout.showContent();
-                  }
-                } else if (items != null && items.size() == 0) {
-                  progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
-                      "当前没有杂志可看", null, "去首页看看", goHomeClickListener);
-                }
-              }
-
-              @Override public void onError(Throwable error) {
+          @Override public void onError(Throwable error) {
             /*加载失败，显示错误界面*/
-                JournalActivity.this.showErrorLayout(error);
-              }
+            JournalActivity.this.showErrorLayout(error);
+          }
 
-              @Override public void onNext(List<JournalEntity> journalEntities) {
+          @Override public void onNext(List<JournalEntity> journalEntities) {
 
-                JournalActivity.this.items.clear();
-                JournalActivity.this.items.addAll(journalEntities);
-                journalAdapter.updateItems(items);
-              }
-            });
+            JournalActivity.this.items.clear();
+            JournalActivity.this.items.addAll(journalEntities);
+            journalAdapter.updateItems(items);
+          }
+        });
   }
 
   private void loadDataMore() {
@@ -262,8 +246,8 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
             JournalActivity.this.isLoading = true;
             /*加载数据，显示进度条*/
             if (progressDialog == null) {
-              progressDialog = DialogManager.getInstance()
-                  .showSimpleProgressDialog(JournalActivity.this, cancelListener);
+              progressDialog =
+                  DialogManager.getInstance().showSimpleProgressDialog(JournalActivity.this, null);
             } else {
               progressDialog.show();
             }
@@ -286,7 +270,8 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
           getResources().getString(R.string.timeout_content));
     } else if (error instanceof RetrofitError) {
       Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
-      JournalActivity.this.showError("网络连接异常", "请点击重试");
+      JournalActivity.this.showError(getResources().getString(R.string.six_word_title),
+          getResources().getString(R.string.six_word_content));
     } else if (error instanceof WebServiceException) {
       JournalActivity.this.showError(getResources().getString(R.string.service_exception_title),
           getResources().getString(R.string.service_exception_content));
@@ -360,7 +345,6 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
    * 主页
    */
   @Nullable @OnClick(R.id.bottom_bar_home_rl) void onFashionClick() {
-
     HomeActivity.navigateToHome(JournalActivity.this);
     JournalActivity.this.finish();
     overridePendingTransition(0, 0);
@@ -370,7 +354,6 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
    * 上新
    */
   @Nullable @OnClick(R.id.bottom_bar_fashion_rl) void onJournalClick() {
-
     FashionActivity.navigateToUserCenter(JournalActivity.this);
     JournalActivity.this.finish();
     overridePendingTransition(0, 0);
@@ -380,7 +363,6 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
    * 我
    */
   @Nullable @OnClick(R.id.bottom_bar_mine_rl) void onMineClick() {
-
     MineActivity.navigateToUserCenter(JournalActivity.this);
     JournalActivity.this.finish();
     overridePendingTransition(0, 0);
@@ -442,7 +424,7 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
   }
 
   @Override public void onError(Throwable error) {
-    Snackbar.make(rootView, "加载更多失败，请稍后重试", Snackbar.LENGTH_LONG)
+    Snackbar.make(rootView, getResources().getString(R.string.fail_load_more), Snackbar.LENGTH_LONG)
         .setAction("确定", new View.OnClickListener() {
           @Override public void onClick(View v) {
             /*do nothing*/
@@ -468,8 +450,6 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
 
   @Override protected void onDestroy() {
     super.onDestroy();
-
     this.progressDialog = null;
-    if (!subscription.isUnsubscribed()) subscription.unsubscribe();
   }
 }

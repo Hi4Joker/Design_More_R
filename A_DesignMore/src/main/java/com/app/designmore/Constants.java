@@ -17,4 +17,9 @@ public class Constants {
   public static final int MILLISECONDS_200 = 200;
   public static final int MILLISECONDS_300 = 300;
   public static final int MILLISECONDS_400 = 400;
+
+  public static int[] colors = new int[] {
+      R.color.design_more_red, R.color.accent_material_light, R.color.design_more_red,
+      R.color.accent_material_light
+  };
 }

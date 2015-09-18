@@ -70,12 +70,6 @@ public class DialogManager {
     return showCancelableProgressDialog(context, null, onCancelListener, true);
   }
 
-  public ProgressDialog showProgressDialog(Context context,
-      final DialogInterface.OnShowListener onShowListener,
-      final DialogInterface.OnCancelListener onCancelListener) {
-    return showCancelableProgressDialog(context, onShowListener, onCancelListener, true);
-  }
-
   public ProgressDialog showCancelableProgressDialog(Context context,
       final DialogInterface.OnShowListener onShowListener,
       final DialogInterface.OnCancelListener onCancelListener, boolean cancelable) {

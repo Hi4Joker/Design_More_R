@@ -153,7 +153,7 @@ public class RegisterActivity extends BaseActivity {
             .subscribe(new Action1<Boolean>() {
               @Override public void call(Boolean aBoolean) {
 
-                Log.e(TAG, "call() called with: " + "aBoolean = [" + aBoolean + "]");
+                //Log.e(TAG, "call() called with: " + "aBoolean = [" + aBoolean + "]");
                 registerBtn.setEnabled(aBoolean);
               }
             }));
@@ -219,7 +219,6 @@ public class RegisterActivity extends BaseActivity {
 
   @Nullable @OnClick(R.id.register_layout_register_btn) void onRegisterClick() {
 
-
     /* Username=linuxlan22221&Password=lanlan1111&Action=RegisterUser&Mobile_phone=18622816322&Email=adsfasdf%40aaa.com*/
     Map<String, String> params = new HashMap<>(4);
     params.put("Action", "RegisterUser");
@@ -248,6 +247,11 @@ public class RegisterActivity extends BaseActivity {
             }
           }
         })
+        .filter(new Func1<RegisterEntity, Boolean>() {
+          @Override public Boolean call(RegisterEntity registerEntity) {
+            return !subscription.isUnsubscribed();
+          }
+        })
         .compose(RegisterActivity.this.<RegisterEntity>bindUntilEvent(ActivityEvent.DESTROY))
         .subscribe(new Action1<RegisterEntity>() {
           @Override public void call(RegisterEntity registerEntity) {
@@ -270,7 +274,7 @@ public class RegisterActivity extends BaseActivity {
       RegisterActivity.this.showSnackBar(getResources().getString(R.string.timeout_title));
     } else if (error instanceof RetrofitError) {
       Log.e(TAG, "kind:  " + ((RetrofitError) error).getKind());
-      RegisterActivity.this.showSnackBar(getResources().getString(R.string.six_word));
+      RegisterActivity.this.showSnackBar(getResources().getString(R.string.six_word_title));
     } else {
       Log.e(TAG, error.getMessage());
       error.printStackTrace();

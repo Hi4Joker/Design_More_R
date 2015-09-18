@@ -79,15 +79,14 @@ public class MineActivity extends BaseActivity {
   @Nullable @Bind(R.id.mine_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.mine_layout_srl) SwipeRefreshLayout swipeRefreshLayout;
   @Nullable @Bind(R.id.mine_layout_avatar_iv) ImageView avatarIv;
+  @Nullable @Bind(R.id.mine_layout_nickname_tv) TextView nickNameTv;
   @Nullable @Bind(R.id.bottom_bar_mine_iv) ImageView mineIv;
   @Nullable @Bind(R.id.bottom_bar_mine_tv) TextView mineTv;
   @Nullable @Bind(R.id.bottom_bar_home_rl) RelativeLayout bottomBarHomeRl;
   @Nullable @Bind(R.id.bottom_bar_fashion_rl) RelativeLayout bottomBarFashionRl;
   @Nullable @Bind(R.id.bottom_bar_journal_rl) RelativeLayout bottomBarJournalRl;
 
-  private List<Integer> skipIds = Arrays.asList(R.id.mine_layout_bar_layout);
   private SupportAnimator revealAnimator;
-  private UserInfoEntity currentUserInfoEntity;
 
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
@@ -207,7 +206,7 @@ public class MineActivity extends BaseActivity {
           @Override public void onCompleted() {
             if (swipeRefreshLayout.isRefreshing()) {
               swipeRefreshLayout.setRefreshing(false);
-            } else {
+            } else if (!progressLayout.isContent()) {
               progressLayout.showContent();
             }
           }
@@ -219,7 +218,7 @@ public class MineActivity extends BaseActivity {
 
           @Override public void onNext(UserInfoEntity userInfoEntity) {
 
-            MineActivity.this.currentUserInfoEntity = userInfoEntity;
+            MineActivity.this.nickNameTv.setText(userInfoEntity.getNickname());
 
             BitmapPool bitmapPool = Glide.get(MineActivity.this).getBitmapPool();
             Glide.with(MineActivity.this)
@@ -241,7 +240,8 @@ public class MineActivity extends BaseActivity {
           getResources().getString(R.string.timeout_content));
     } else if (error instanceof RetrofitError) {
       Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
-      MineActivity.this.showError("网络连接异常", "请点击重试");
+      MineActivity.this.showError(getResources().getString(R.string.six_word_title),
+          getResources().getString(R.string.six_word_content));
     } else if (error instanceof WebServiceException) {
       MineActivity.this.showError(getResources().getString(R.string.service_exception_title),
           getResources().getString(R.string.service_exception_content));
@@ -284,7 +284,6 @@ public class MineActivity extends BaseActivity {
    * 购物车
    */
   @Nullable @OnClick(R.id.mine_layout_trolley_ll) void onTrolleyClick(View view) {
-
     TrolleyActivity.startFromLocation(MineActivity.this, DensityUtil.getLocationY(view),
         TrolleyActivity.Type.EXTEND);
     overridePendingTransition(0, 0);
@@ -322,17 +321,9 @@ public class MineActivity extends BaseActivity {
   }
 
   /**
-   * 消息中心
-   */
-  @Nullable @OnClick(R.id.mine_layout_message_ll) void onMessageClick(View view) {
-
-  }
-
-  /**
    * 主页
    */
   @Nullable @OnClick(R.id.bottom_bar_home_rl) void onMineClick() {
-
     HomeActivity.navigateToHome(MineActivity.this);
     MineActivity.this.finish();
     overridePendingTransition(0, 0);
@@ -342,7 +333,6 @@ public class MineActivity extends BaseActivity {
    * 上新
    */
   @Nullable @OnClick(R.id.bottom_bar_fashion_rl) void onFashionClick() {
-
     FashionActivity.navigateToUserCenter(MineActivity.this);
     MineActivity.this.finish();
     overridePendingTransition(0, 0);
@@ -352,7 +342,6 @@ public class MineActivity extends BaseActivity {
    * 杂志
    */
   @Nullable @OnClick(R.id.bottom_bar_journal_rl) void onJournalClick() {
-
     JournalActivity.navigateToJournal(MineActivity.this);
     MineActivity.this.finish();
     overridePendingTransition(0, 0);

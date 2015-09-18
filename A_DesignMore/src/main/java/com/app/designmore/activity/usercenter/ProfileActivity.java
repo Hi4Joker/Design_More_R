@@ -65,6 +65,7 @@ import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func0;
+import rx.functions.Func1;
 import rx.functions.Func3;
 import rx.functions.Func4;
 import rx.subscriptions.Subscriptions;
@@ -96,7 +97,7 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
   private String nickName;
   private String gender;
   private String birthday;
-  private File avatarFile;
+  private File avatarFile = null;
 
   private Button actionButton;
   private CustomCameraDialog customCameraDialog;
@@ -202,7 +203,8 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
           getResources().getString(R.string.timeout_content));
     } else if (error instanceof RetrofitError) {
       Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
-      ProfileActivity.this.showError("网络连接异常", "请点击重试");
+      ProfileActivity.this.showError(getResources().getString(R.string.six_word_title),
+          getResources().getString(R.string.six_word_title));
     } else if (error instanceof WebServiceException) {
       ProfileActivity.this.showError(getResources().getString(R.string.service_exception_title),
           getResources().getString(R.string.service_exception_content));
@@ -254,7 +256,7 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
       }
     });
 
-     /*创建联合observable*/
+    /*创建联合observable*/
     ProfileActivity.this.combineLatestEvents();
 
     return true;
@@ -293,18 +295,19 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
 
     final LoginRetrofit loginRetrofit = LoginRetrofit.getInstance();
 
-    subscription = Observable.defer(new Func0<Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call() {
+    subscription = Observable.defer(new Func0<Observable<Boolean>>() {
+      @Override public Observable<Boolean> call() {
 
         if (avatarFile == null) {
           return Observable.zip(loginRetrofit.requestChangeUserInfo(nickParams),
               loginRetrofit.requestChangeUserInfo(genderParams),
               loginRetrofit.requestChangeUserInfo(birthdayParams),
-              new Func3<BaseResponse, BaseResponse, BaseResponse, BaseResponse>() {
-                @Override
-                public BaseResponse call(BaseResponse baseResponse, BaseResponse baseResponse2,
+              new Func3<BaseResponse, BaseResponse, BaseResponse, Boolean>() {
+                @Override public Boolean call(BaseResponse baseResponse, BaseResponse baseResponse2,
                     BaseResponse baseResponse3) {
-                  return baseResponse3;
+                  return baseResponse.resultOK()
+                      && baseResponse2.resultOK()
+                      && baseResponse3.resultOK();
                 }
               });
         } else {
@@ -312,11 +315,13 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
               loginRetrofit.requestChangeUserInfo(genderParams),
               loginRetrofit.requestChangeUserInfo(birthdayParams),
               loginRetrofit.uploadProfileHeader(uploadParams, avatarFile),
-              new Func4<BaseResponse, BaseResponse, BaseResponse, BaseResponse, BaseResponse>() {
-                @Override
-                public BaseResponse call(BaseResponse baseResponse, BaseResponse baseResponse2,
+              new Func4<BaseResponse, BaseResponse, BaseResponse, BaseResponse, Boolean>() {
+                @Override public Boolean call(BaseResponse baseResponse, BaseResponse baseResponse2,
                     BaseResponse baseResponse3, BaseResponse baseResponse4) {
-                  return baseResponse4;
+                  return baseResponse.resultOK()
+                      && baseResponse2.resultOK()
+                      && baseResponse3.resultOK()
+                      && baseResponse4.resultOK();
                 }
               });
         }
@@ -341,9 +346,14 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
             }
           }
         })
-        .compose(ProfileActivity.this.<BaseResponse>bindUntilEvent(ActivityEvent.DESTROY))
+        .filter(new Func1<Boolean, Boolean>() {
+          @Override public Boolean call(Boolean b) {
+            return !subscription.isUnsubscribed();
+          }
+        })
+        .compose(ProfileActivity.this.<Boolean>bindUntilEvent(ActivityEvent.DESTROY))
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new SimpleObserver<BaseResponse>() {
+        .subscribe(new SimpleObserver<Boolean>() {
           @Override public void onError(Throwable e) {
             Snackbar.make(toolbar, "修改失败，请重试", Snackbar.LENGTH_LONG)
                 .setAction("确定", new View.OnClickListener() {
@@ -353,8 +363,8 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
                 });
           }
 
-          @Override public void onNext(BaseResponse baseResponse) {
-            Toast.makeText(ProfileActivity.this, baseResponse.message, Toast.LENGTH_LONG).show();
+          @Override public void onNext(Boolean isOk) {
+            Toast.makeText(ProfileActivity.this, "修改成功", Toast.LENGTH_LONG).show();
             ProfileActivity.this.exit();
           }
         });
@@ -433,35 +443,6 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
     overridePendingTransition(0, 0);
   }
 
-  private void startEnterAnim(int startLocationY) {
-    ViewCompat.setLayerType(rootView, ViewCompat.LAYER_TYPE_HARDWARE, null);
-    rootView.setPivotY(startLocationY);
-    ViewCompat.setScaleY(rootView, 0.0f);
-
-    ViewCompat.animate(rootView)
-        .scaleY(1.0f)
-        .setDuration(Constants.MILLISECONDS_400 / 2)
-        .setInterpolator(new AccelerateInterpolator())
-        .setListener(new ViewPropertyAnimatorListenerAdapter() {
-          @Override public void onAnimationEnd(View view) {
-            if (progressLayout != null) ProfileActivity.this.loadData();
-          }
-        });
-  }
-
-  @Override public void exit() {
-
-    ViewCompat.animate(rootView)
-        .translationY(DensityUtil.getScreenHeight(ProfileActivity.this))
-        .setDuration(Constants.MILLISECONDS_400)
-        .setInterpolator(new LinearInterpolator())
-        .setListener(new ViewPropertyAnimatorListenerAdapter() {
-          @Override public void onAnimationEnd(View view) {
-            ProfileActivity.this.finish();
-          }
-        });
-  }
-
   @Override public void onCameraClick() {
     CameraBackActivity.navigateToCamera(ProfileActivity.this, true);
     overridePendingTransition(0, 0);
@@ -490,6 +471,35 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
         .error(R.drawable.center_profile_default_icon)
         .diskCacheStrategy(DiskCacheStrategy.NONE)
         .into(avatarIv);
+  }
+
+  private void startEnterAnim(int startLocationY) {
+    ViewCompat.setLayerType(rootView, ViewCompat.LAYER_TYPE_HARDWARE, null);
+    rootView.setPivotY(startLocationY);
+    ViewCompat.setScaleY(rootView, 0.0f);
+
+    ViewCompat.animate(rootView)
+        .scaleY(1.0f)
+        .setDuration(Constants.MILLISECONDS_400 / 2)
+        .setInterpolator(new AccelerateInterpolator())
+        .setListener(new ViewPropertyAnimatorListenerAdapter() {
+          @Override public void onAnimationEnd(View view) {
+            if (progressLayout != null) ProfileActivity.this.loadData();
+          }
+        });
+  }
+
+  @Override public void exit() {
+
+    ViewCompat.animate(rootView)
+        .translationY(DensityUtil.getScreenHeight(ProfileActivity.this))
+        .setDuration(Constants.MILLISECONDS_400)
+        .setInterpolator(new LinearInterpolator())
+        .setListener(new ViewPropertyAnimatorListenerAdapter() {
+          @Override public void onAnimationEnd(View view) {
+            ProfileActivity.this.finish();
+          }
+        });
   }
 
   @Override protected void onDestroy() {

@@ -287,6 +287,11 @@ public class AddressEditorActivity extends BaseActivity implements AddressView {
                 if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
               }
             })
+            .filter(new Func1<EditorAddressEvent, Boolean>() {
+              @Override public Boolean call(EditorAddressEvent editorAddressEvent) {
+                return !subscription.isUnsubscribed();
+              }
+            })
             .compose(
                 AddressEditorActivity.this.<AddressEntity>bindUntilEvent(ActivityEvent.DESTROY))
             .subscribe(new Subscriber<AddressEntity>() {
@@ -309,7 +314,7 @@ public class AddressEditorActivity extends BaseActivity implements AddressView {
       AddressEditorActivity.this.showSnackBar(getResources().getString(R.string.timeout_title));
     } else if (error instanceof RetrofitError) {
       Log.e(TAG, "kind:  " + ((RetrofitError) error).getKind());
-      AddressEditorActivity.this.showSnackBar(getResources().getString(R.string.six_word));
+      AddressEditorActivity.this.showSnackBar(getResources().getString(R.string.six_word_title));
     } else if (error instanceof WebServiceException) {
       AddressEditorActivity.this.showSnackBar(
           getResources().getString(R.string.service_exception_content));

@@ -179,7 +179,7 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
     subscription = Observable.create(new Observable.OnSubscribe<File>() {
       @Override public void call(final Subscriber<? super File> subscriber) {
 
-        threadSubscription = Schedulers.newThread().createWorker().schedule(new Action0() {
+        threadSubscription = Schedulers.io().createWorker().schedule(new Action0() {
           @Override public void call() {
             FileOutputStream out = null;
             File file = new File(Environment.getExternalStorageDirectory().getPath(),
@@ -212,11 +212,6 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
       @Override public Boolean call(Integer integer, Throwable throwable) {
         return throwable instanceof IOException && integer < 1;
       }
-    }).doOnTerminate(new Action0() {
-      @Override public void call() {
-        /*隐藏进度条*/
-        if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
-      }
     }).doOnSubscribe(new Action0() {
       @Override public void call() {
          /*加载数据，显示进度条*/
@@ -227,9 +222,18 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
           progressDialog.show();
         }
       }
+    }).doOnTerminate(new Action0() {
+      @Override public void call() {
+        /*隐藏进度条*/
+        if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
+      }
+    }).filter(new Func1<File, Boolean>() {
+      @Override public Boolean call(File file) {
+        return !threadSubscription.isUnsubscribed() && !subscription.isUnsubscribed();
+      }
     }).observeOn(AndroidSchedulers.mainThread()).subscribe(new SimpleObserver<File>() {
       @Override public void onCompleted() {
-
+        CameraBackActivity.this.exitWhitAnim();
       }
 
       @Override public void onError(Throwable e) {
@@ -240,7 +244,6 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
       @Override public void onNext(File file) {
         EventBusInstance.getDefault()
             .post(new AvatarRefreshEvent(file, cropImageView.getCroppedBitmap()));
-        CameraBackActivity.this.exitWhitAnim();
       }
     });
   }
@@ -276,14 +279,10 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
     }
 
     @Override public void saveImage(PictureTransaction xact, final Bitmap bitmap) {
-      runOnUiThread(new Runnable() {
-        @Override public void run() {
-          AndroidSchedulers.mainThread().createWorker().schedule(new Action0() {
-            @Override public void call() {
-               /*显示照片*/
-              CameraBackActivity.this.showTakenPicture(bitmap);
-            }
-          });
+      AndroidSchedulers.mainThread().createWorker().schedule(new Action0() {
+        @Override public void call() {
+          /*显示照片*/
+          CameraBackActivity.this.showTakenPicture(bitmap);
         }
       });
     }
@@ -340,23 +339,6 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
       this.cropImageView.setVisibility(View.VISIBLE);
     }
   }
-
-
- /* private void switchCamera() {
-    if (cameraState == CameraState.BACK) {
-      // TODO: 2015/9/15 切换至前置摄像头
-      cameraState = CameraState.FRONT;
-      doneActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_camera_front));
-      cameraView.setHost(new MyCameraHost(CameraActivity.this, true));
-      cameraView.restartPreview();
-    } else {
-      // TODO: 2015/9/15 切换至后置摄像头
-      cameraState = CameraState.BACK;
-      doneActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_camera_black));
-      cameraView.setHost(new MyCameraHost(CameraActivity.this, false));
-      cameraView.restartPreview();
-    }
-  }*/
 
   @Nullable @OnClick(R.id.profile_camera_layout_camera_btn) void onFABClick() {
     cameraView.takePicture(true, true);

@@ -217,6 +217,11 @@ public class SafetyActivity extends BaseActivity {
                 }
               }
             })
+            .filter(new Func1<BaseResponse, Boolean>() {
+              @Override public Boolean call(BaseResponse baseResponse) {
+                return !subscription.isUnsubscribed();
+              }
+            })
             .compose(SafetyActivity.this.<BaseResponse>bindUntilEvent(ActivityEvent.DESTROY))
             .subscribe(new Subscriber<BaseResponse>() {
               @Override public void onCompleted() {

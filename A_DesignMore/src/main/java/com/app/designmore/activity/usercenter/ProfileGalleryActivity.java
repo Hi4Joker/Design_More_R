@@ -51,6 +51,7 @@ import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.Subscriptions;
@@ -179,11 +180,6 @@ public class ProfileGalleryActivity extends BaseActivity {
       @Override public Boolean call(Integer integer, Throwable throwable) {
         return throwable instanceof IOException && integer < 1;
       }
-    }).doOnTerminate(new Action0() {
-      @Override public void call() {
-        /*隐藏进度条*/
-        if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
-      }
     }).doOnSubscribe(new Action0() {
       @Override public void call() {
          /*加载数据，显示进度条*/
@@ -194,7 +190,20 @@ public class ProfileGalleryActivity extends BaseActivity {
           progressDialog.show();
         }
       }
+    }).doOnTerminate(new Action0() {
+      @Override public void call() {
+        /*隐藏进度条*/
+        if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
+      }
+    }).filter(new Func1<File, Boolean>() {
+      @Override public Boolean call(File file) {
+        return !threadSubscription.isUnsubscribed() && !subscription.isUnsubscribed();
+      }
     }).observeOn(AndroidSchedulers.mainThread()).subscribe(new SimpleObserver<File>() {
+
+      @Override public void onCompleted() {
+        ProfileGalleryActivity.this.exit();
+      }
 
       @Override public void onError(Throwable e) {
         e.printStackTrace();
@@ -204,7 +213,6 @@ public class ProfileGalleryActivity extends BaseActivity {
       @Override public void onNext(File file) {
         EventBusInstance.getDefault()
             .post(new AvatarRefreshEvent(file, cropImageView.getCroppedBitmap()));
-        ProfileGalleryActivity.this.exit();
       }
     });
   }
@@ -219,7 +227,13 @@ public class ProfileGalleryActivity extends BaseActivity {
             ProfileGalleryActivity.this.finish();
             overridePendingTransition(0, 0);
           }
-        })
-        .start();
+        });
+  }
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
+    this.progressDialog = null;
+    if (!threadSubscription.isUnsubscribed()) threadSubscription.unsubscribe();
+    if (!subscription.isUnsubscribed()) subscription.unsubscribe();
   }
 }

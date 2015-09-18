@@ -29,6 +29,8 @@ import com.app.designmore.retrofit.LoginRetrofit;
 import com.app.designmore.retrofit.entity.LoginEntity;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.utils.DensityUtil;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
 import com.trello.rxlifecycle.ActivityEvent;
@@ -45,18 +47,6 @@ import rx.functions.Func2;
 import rx.subscriptions.Subscriptions;
 
 public class LoginActivity extends BaseActivity {
-
-  /* DBHelper.getInstance(getApplicationContext())
-       .saveLoginInfo(new UserInfoEntity(null, "1", "1", "1", "1", "1"));
-   DBHelper.getInstance(getApplicationContext())
-       .saveLoginInfo(new UserInfoEntity(null, "2", "2", "2", "2", "2"));
-
-   PreferencesUtils.putString(LoginActivity.this, Constants.CURRENT_USER_ID, "1");
-
-   UserInfoEntity userInfoEntity =
-       DBHelper.getInstance(getApplicationContext()).getCurrentUser(LoginActivity.this);
-
-   Log.e(TAG, userInfoEntity.getPhone());*/
 
   private static final String TAG = LoginActivity.class.getSimpleName();
 
@@ -168,10 +158,6 @@ public class LoginActivity extends BaseActivity {
         });
   }
 
-  @Override public void exit() {
-    LoginActivity.this.finish();
-  }
-
   @Nullable @OnClick(R.id.login_layout_name_clear_btn) void onClearClick() {
     userNameEt.setText(null);
   }
@@ -187,7 +173,6 @@ public class LoginActivity extends BaseActivity {
   }
 
   @Nullable @OnClick(R.id.login_layout_login_btn) void onLoginClick() {
-
 
     /*UserId=linuxlan&Password=lanlan&Action=UserLogin*/
     Map<String, String> params = new HashMap<>(3);
@@ -216,6 +201,11 @@ public class LoginActivity extends BaseActivity {
             }
           }
         })
+        .filter(new Func1<LoginEntity, Boolean>() {
+          @Override public Boolean call(LoginEntity loginEntity) {
+            return !subscription.isUnsubscribed();
+          }
+        })
         .compose(LoginActivity.this.<LoginEntity>bindUntilEvent(ActivityEvent.DESTROY))
         .subscribe(new Subscriber<LoginEntity>() {
           @Override public void onCompleted() {
@@ -224,11 +214,8 @@ public class LoginActivity extends BaseActivity {
           }
 
           @Override public void onError(Throwable e) {
-            if (e instanceof WebServiceException) {
-              Toast.makeText(LoginActivity.this, "密码错误，请重试", Toast.LENGTH_LONG).show();
-            } else {
-              Toast.makeText(LoginActivity.this, "登陆失败，请重试", Toast.LENGTH_LONG).show();
-            }
+
+            Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
           }
 
           @Override public void onNext(LoginEntity loginEntity) {
@@ -239,6 +226,10 @@ public class LoginActivity extends BaseActivity {
                     new Dao_LoginInfo(null, loginEntity.getUserId(), loginEntity.getAddressId()));
           }
         });
+  }
+
+  @Override public void exit() {
+    LoginActivity.this.finish();
   }
 
   @Override protected void onDestroy() {

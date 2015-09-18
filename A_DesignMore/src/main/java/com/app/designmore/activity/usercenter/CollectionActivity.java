@@ -136,12 +136,7 @@ public class CollectionActivity extends BaseActivity
 
   private void setupAdapter() {
 
-    int[] colors = new int[] {
-        R.color.design_more_red, R.color.accent_material_light, R.color.design_more_red,
-        R.color.accent_material_light
-    };
-
-    swipeRefreshLayout.setColorSchemeResources(colors);
+    swipeRefreshLayout.setColorSchemeResources(Constants.colors);
     RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
       @Override public void call(Void aVoid) {
         CollectionActivity.this.loadData();
@@ -179,6 +174,9 @@ public class CollectionActivity extends BaseActivity
         });
   }
 
+  /**
+   * 刷新数据
+   */
   private void loadData() {
 
     /*Action=GetCollectByGoods&uid=1*/
@@ -202,7 +200,7 @@ public class CollectionActivity extends BaseActivity
             if (items != null && items.size() != 0) {
               if (swipeRefreshLayout.isRefreshing()) {
                 swipeRefreshLayout.setRefreshing(false);
-              } else {
+              } else if (!progressLayout.isContent()) {
                 progressLayout.showContent();
               }
             } else if (items != null && items.size() == 0) {
@@ -231,7 +229,8 @@ public class CollectionActivity extends BaseActivity
           getResources().getString(R.string.timeout_content));
     } else if (error instanceof RetrofitError) {
       Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
-      CollectionActivity.this.showError("网络连接异常", "请点击重试");
+      CollectionActivity.this.showError(getResources().getString(R.string.six_word_title),
+          getResources().getString(R.string.six_word_content));
     } else if (error instanceof WebServiceException) {
       CollectionActivity.this.showError(getResources().getString(R.string.service_exception_title),
           getResources().getString(R.string.service_exception_content));
@@ -258,7 +257,6 @@ public class CollectionActivity extends BaseActivity
     DialogManager.getInstance()
         .showNormalDialog(CollectionActivity.this, "删除收藏", new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {
-
             if (which == DialogInterface.BUTTON_POSITIVE) {
               CollectionActivity.this.requestDeleteCollection(entity);
             }
@@ -320,6 +318,11 @@ public class CollectionActivity extends BaseActivity
                     }
                   });
             }
+          }
+        })
+        .filter(new Func1<Integer, Boolean>() {
+          @Override public Boolean call(Integer integer) {
+            return !subscription.isUnsubscribed();
           }
         })
         .compose(CollectionActivity.this.<Integer>bindUntilEvent(ActivityEvent.DESTROY))

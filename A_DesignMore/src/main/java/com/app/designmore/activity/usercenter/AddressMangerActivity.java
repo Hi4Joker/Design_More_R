@@ -98,13 +98,6 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
     }
   };
 
-  private DialogInterface.OnClickListener onConfirmClick = new DialogInterface.OnClickListener() {
-    @Override public void onClick(DialogInterface dialog, int which) {
-      // TODO: 2015/9/2 请求修改默认地址接口
-
-    }
-  };
-
   public static void startFromLocation(MineActivity startingActivity, int startingLocationY) {
 
     Intent intent = new Intent(startingActivity, AddressMangerActivity.class);
@@ -145,12 +138,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
 
   private void setupAdapter() {
 
-    int[] colors = new int[] {
-        R.color.design_more_red, R.color.accent_material_light, R.color.design_more_red,
-        R.color.accent_material_light
-    };
-
-    swipeRefreshLayout.setColorSchemeResources(colors);
+    swipeRefreshLayout.setColorSchemeResources(Constants.colors);
     RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
       @Override public void call(Void aVoid) {
         AddressMangerActivity.this.loadData();
@@ -171,11 +159,11 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
     recyclerView.setItemAnimator(new DefaultItemAnimator());
 
     RxRecyclerView.scrollStateChangeEvents(recyclerView)
-        .compose(AddressMangerActivity.this.<RecyclerViewScrollStateChangeEvent>bindUntilEvent(
-            ActivityEvent.DESTROY))
-        .subscribe(new Action1<RecyclerViewScrollStateChangeEvent>() {
-          @Override public void call(RecyclerViewScrollStateChangeEvent stateChangeEvent) {
-            if (stateChangeEvent.newState() == RecyclerView.SCROLL_STATE_DRAGGING) {
+        .forEach(new Action1<RecyclerViewScrollStateChangeEvent>() {
+          @Override
+          public void call(RecyclerViewScrollStateChangeEvent recyclerViewScrollStateChangeEvent) {
+            if (recyclerViewScrollStateChangeEvent.newState()
+                == RecyclerView.SCROLL_STATE_DRAGGING) {
               addressAdapter.setAnimationsLocked(true);
             }
           }
@@ -235,7 +223,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
             if (items != null && items.size() != 0) {
               if (swipeRefreshLayout.isRefreshing()) {
                 swipeRefreshLayout.setRefreshing(false);
-              } else {
+              } else if (!progressLayout.isContent()) {
                 progressLayout.showContent();
               }
             } else if (items != null && items.size() == 0) {
@@ -263,27 +251,15 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
         errorContent, getResources().getString(R.string.retry_button_text), retryClickListener);
   }
 
-  private void checkAddress() {
-    if (items != null && items.size() == 0) {
-      AddressMangerActivity.this.exitWithoutDialog();
-    } else {
-      if (items.contains(defaultAddress)) {
-        AddressMangerActivity.this.exitWithoutDialog();
-      } else {
-        DialogManager.getInstance().showConfirmDialog(AddressMangerActivity.this, "请选择默认地址");
-      }
-    }
-  }
-
   /**
    * 设置默认地址
    */
-  private void requestSetDefaultAddress() {
+  private void requestSetDefaultAddress(final AddressEntity addressEntity) {
 
     /* Action=SetDefaultAddress&uid=2&address_id=113*/
     Map<String, String> params = new HashMap<>(3);
     params.put("Action", "SetDefaultAddress");
-    params.put("address_id", defaultAddress.getAddressId());
+    params.put("address_id", addressEntity.getAddressId());
     params.put("uid",
         DBHelper.getInstance(getApplicationContext()).getUserID(AddressMangerActivity.this));
 
@@ -296,7 +272,8 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
                 if (progressDialog == null) {
                   progressDialog = DialogManager.
                       getInstance()
-                      .showSimpleProgressDialog(AddressMangerActivity.this, cancelListener);
+                      .showCancelableProgressDialog(AddressMangerActivity.this, null,
+                          cancelListener, false);
                 } else {
                   progressDialog.show();
                 }
@@ -310,8 +287,18 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
                 }
               }
             })
+            .filter(new Func1<BaseResponse, Boolean>() {
+              @Override public Boolean call(BaseResponse baseResponse) {
+                return !subscription.isUnsubscribed();
+              }
+            })
             .compose(AddressMangerActivity.this.<BaseResponse>bindUntilEvent(ActivityEvent.DESTROY))
             .subscribe(new SimpleObserver<BaseResponse>() {
+
+              @Override public void onCompleted() {
+                AddressMangerActivity.this.defaultAddress = addressEntity;
+              }
+
               @Override public void onError(Throwable e) {
                 DialogManager.getInstance()
                     .showConfirmDialog(AddressMangerActivity.this, "设置失败，请重试");
@@ -328,7 +315,6 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
    */
   /*点击删除按钮*/
   @Override public void onDeleteClick(final AddressEntity addressEntity) {
-
     DialogManager.getInstance()
         .showNormalDialog(AddressMangerActivity.this, "确认删除地址",
             new DialogInterface.OnClickListener() {
@@ -388,6 +374,11 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
                 }
               }
             })
+            .filter(new Func1<Integer, Boolean>() {
+              @Override public Boolean call(Integer integer) {
+                return !subscription.isUnsubscribed();
+              }
+            })
             .compose(AddressMangerActivity.this.<Integer>bindUntilEvent(ActivityEvent.DESTROY))
             .subscribe(addressAdapter);
   }
@@ -401,8 +392,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
 
   /*点击RadioButton*/
   @Override public void onDefaultChange(AddressEntity addressEntity) {
-    this.defaultAddress = addressEntity;
-    AddressMangerActivity.this.requestSetDefaultAddress();
+    AddressMangerActivity.this.requestSetDefaultAddress(addressEntity);
   }
 
   /*发生错误回调*/
@@ -420,7 +410,8 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
           getResources().getString(R.string.timeout_content));
     } else if (error instanceof RetrofitError) {
       Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
-      AddressMangerActivity.this.showError("网络连接异常", "请点击重试");
+      AddressMangerActivity.this.showError(getResources().getString(R.string.six_word_title),
+          getResources().getString(R.string.six_word_content));
     } else if (error instanceof WebServiceException) {
       AddressMangerActivity.this.showError(
           getResources().getString(R.string.service_exception_title),
@@ -476,6 +467,18 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
 
   @Override public void exit() {
     AddressMangerActivity.this.checkAddress();
+  }
+
+  private void checkAddress() {
+    if (items != null && items.size() == 0) {
+      AddressMangerActivity.this.exitWithoutDialog();
+    } else {
+      if (items.contains(defaultAddress)) {
+        AddressMangerActivity.this.exitWithoutDialog();
+      } else {
+        DialogManager.getInstance().showConfirmDialog(AddressMangerActivity.this, "请选择默认地址");
+      }
+    }
   }
 
   private void exitWithoutDialog() {
