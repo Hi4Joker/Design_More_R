@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-  <!-- dialog plus-->
-  <color name="card_shadow">#D4D4D4</color>
-  <color name="black_overlay">#60000000</color>
-  <color name="gray_overlay">#40FFFFFF</color>
-
-</resources>

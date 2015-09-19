@@ -15,9 +15,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageButton;
@@ -83,11 +85,13 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
 
   private SupportAnimator revealAnimator;
   private ProgressDialog progressDialog;
+  private ViewGroup noMoreDialog;
 
   private int visibleItemCount;
   private int totalItemCount;
   private int pastVisibleItems;
   private boolean isLoading = false;
+  private boolean isEndless;
 
   private View.OnClickListener goHomeClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
@@ -167,12 +171,9 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
             totalItemCount = linearLayoutManager.getItemCount();
             pastVisibleItems = linearLayoutManager.findFirstVisibleItemPosition();
 
-           /* Log.e(TAG, "visibleItemCount:   " + visibleItemCount);
-            Log.e(TAG, "totalItemCount:  " + totalItemCount);
-            Log.e(TAG, "pastVisibleItems:  " + pastVisibleItems);*/
-
             if (!isLoading) {
-              if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
+              if ((visibleItemCount + pastVisibleItems) >= totalItemCount && isEndless) {
+                /*加载更多*/
                 JournalActivity.this.loadDataMore();
               }
             }
@@ -201,6 +202,7 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
           @Override public void onCompleted() {
             /*加载完毕，显示内容界面*/
             if (items != null && items.size() != 0) {
+              JournalActivity.this.isEndless = true;
               if (swipeRefreshLayout.isRefreshing()) {
                 swipeRefreshLayout.setRefreshing(false);
               } else if (!progressLayout.isContent()) {
@@ -415,7 +417,9 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
   }
 
   @Override public void onNoData() {
-    Toast.makeText(JournalActivity.this, "没有更多杂志了", Toast.LENGTH_LONG).show();
+    isEndless = false;
+    noMoreDialog =
+        DialogManager.getInstance().showNoMoreDialog(JournalActivity.this, Gravity.TOP, null);
   }
 
   @Override public void onError(Throwable error) {
@@ -445,6 +449,10 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
 
   @Override protected void onDestroy() {
     super.onDestroy();
+    if (noMoreDialog != null && noMoreDialog.getParent() != null) {
+      getWindowManager().removeViewImmediate(noMoreDialog);
+    }
     this.progressDialog = null;
+    this.noMoreDialog = null;
   }
 }

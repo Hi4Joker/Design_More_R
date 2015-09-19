@@ -58,6 +58,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
+import retrofit.mime.TypedFile;
 import retrofit.mime.TypedString;
 import rx.Observable;
 import rx.Subscriber;
@@ -267,6 +268,7 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
    */
   private void requestChangeUserInfo() {
 
+    final LoginRetrofit loginRetrofit = LoginRetrofit.getInstance();
     /* Action=EditUserInfo&uid=2&key=nickname&data=aaaaa*/
     final Map<String, String> baseParams = new HashMap<>(2);
     baseParams.put("Action", "EditUserInfo");
@@ -289,11 +291,10 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
     birthdayParams.put("data", birthday);
 
     final Map<String, TypedString> uploadParams = new HashMap<>(2);
-    uploadParams.put("Action", new TypedString("EditUserInfo"));
+    uploadParams.put("Action", new TypedString("UploadHeader"));
     uploadParams.put("uid", new TypedString(
         DBHelper.getInstance(getApplicationContext()).getUserID(ProfileActivity.this)));
-
-    final LoginRetrofit loginRetrofit = LoginRetrofit.getInstance();
+    final TypedFile typedFile = new TypedFile("multipart/form-data", avatarFile);
 
     subscription = Observable.defer(new Func0<Observable<Boolean>>() {
       @Override public Observable<Boolean> call() {
@@ -314,7 +315,7 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
           return Observable.zip(loginRetrofit.requestChangeUserInfo(nickParams),
               loginRetrofit.requestChangeUserInfo(genderParams),
               loginRetrofit.requestChangeUserInfo(birthdayParams),
-              loginRetrofit.uploadProfileHeader(uploadParams, avatarFile),
+              loginRetrofit.uploadProfileHeader(uploadParams, typedFile),
               new Func4<BaseResponse, BaseResponse, BaseResponse, BaseResponse, Boolean>() {
                 @Override public Boolean call(BaseResponse baseResponse, BaseResponse baseResponse2,
                     BaseResponse baseResponse3, BaseResponse baseResponse4) {
@@ -407,7 +408,7 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
 
   @Nullable @OnClick(R.id.profile_layout_avatar_rl) void onAvatarClick(View view) {
     if (customCameraDialog == null) {
-      customCameraDialog = new CustomCameraDialog(ProfileActivity.this, this);
+      customCameraDialog = DialogManager.getInstance().showCameraDialog(ProfileActivity.this, this);
     }
     customCameraDialog.show();
   }

@@ -28,7 +28,7 @@
       app:cropMode="circle"
       app:minFrameSize="@dimen/material_48dp"
       app:backgroundColor="@color/black"
-      app:overlayColor="@color/overlay_color"
+      app:overlayColor="@color/dark_overlay_color"
       app:frameColor="@color/darker_gray"
       app:handleColor="@color/darker_gray"
       app:guideColor="@color/lighter_gray"

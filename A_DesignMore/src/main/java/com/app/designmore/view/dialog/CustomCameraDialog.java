@@ -19,7 +19,6 @@ import com.app.designmore.utils.DensityUtil;
  */
 public class CustomCameraDialog extends Dialog {
 
-  private Activity activity;
   private Callback callback;
 
   public CustomCameraDialog(Activity activity, Callback callback) {
@@ -35,7 +34,6 @@ public class CustomCameraDialog extends Dialog {
         ViewGroup.LayoutParams.MATCH_PARENT);
     super.setContentView(rootView, params);
 
-    this.activity = activity;
     this.callback = callback;
     CustomCameraDialog.this.setCancelable(true);
     CustomCameraDialog.this.setCanceledOnTouchOutside(false);

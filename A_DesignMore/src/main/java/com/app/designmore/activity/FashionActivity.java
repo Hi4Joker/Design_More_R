@@ -1,14 +1,17 @@
 package com.app.designmore.activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.view.LayoutInflaterFactory;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -16,11 +19,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -84,6 +90,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
 
   private SupportAnimator revealAnimator;
   private ProgressDialog progressDialog;
+  private ViewGroup noMoreDialog;
 
   private int visibleItemCount;
   private int totalItemCount;
@@ -93,6 +100,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
   private FashionAdapter fashionAdapter;
   private List<FashionEntity> items = new ArrayList<>();
   private volatile int count = 1;
+  private volatile boolean isEndless = true;
 
   private View.OnClickListener goHomeClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
@@ -173,12 +181,10 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
             totalItemCount = linearLayoutManager.getItemCount();
             pastVisibleItems = linearLayoutManager.findFirstVisibleItemPosition();
 
-           /* Log.e(TAG, "visibleItemCount:   " + visibleItemCount);
-            Log.e(TAG, "totalItemCount:  " + totalItemCount);
-            Log.e(TAG, "pastVisibleItems:  " + pastVisibleItems);*/
-
             if (!isLoading) {
-              if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
+              if ((visibleItemCount + pastVisibleItems) >= totalItemCount && isEndless) {
+
+                /*加载更多*/
                 FashionActivity.this.loadDataMore();
               }
             }
@@ -208,6 +214,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
 
             /*加载完毕，显示内容界面*/
             if (items != null && items.size() != 0) {
+              FashionActivity.this.isEndless = true;
               if (swipeRefreshLayout.isRefreshing()) {
                 swipeRefreshLayout.setRefreshing(false);
               } else if (!progressLayout.isContent()) {
@@ -436,12 +443,13 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
   }
 
   @Override public void onItemClick(FashionEntity entity) {
-
     Log.e(TAG, entity.toString());
   }
 
   @Override public void onNoData() {
-    Toast.makeText(FashionActivity.this, "没有更多新品了", Toast.LENGTH_LONG).show();
+    isEndless = false;
+    noMoreDialog =
+        DialogManager.getInstance().showNoMoreDialog(FashionActivity.this, Gravity.TOP, null);
   }
 
   @Override public void onError(Throwable error) {
@@ -455,6 +463,10 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
 
   @Override protected void onDestroy() {
     super.onDestroy();
+    if (noMoreDialog != null && noMoreDialog.getParent() != null) {
+      getWindowManager().removeViewImmediate(noMoreDialog);
+    }
     this.progressDialog = null;
+    this.noMoreDialog = null;
   }
 }

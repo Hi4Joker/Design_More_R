@@ -1,5 +1,6 @@
 package com.app.designmore.retrofit;
 
+import android.util.Log;
 import com.app.designmore.Constants;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.retrofit.entity.HelpEntity;
@@ -11,13 +12,13 @@ import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.retrofit.response.HelpResponse;
 import com.app.designmore.retrofit.response.LoginCodeResponse;
 import com.app.designmore.retrofit.response.LoginResponse;
+import com.app.designmore.retrofit.response.TestResponse;
 import com.app.designmore.retrofit.response.UserInfoEntity;
 import com.app.designmore.retrofit.response.UserInfoResponse;
 import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -29,13 +30,16 @@ import retrofit.client.OkClient;
 import retrofit.converter.GsonConverter;
 import retrofit.http.FieldMap;
 import retrofit.http.FormUrlEncoded;
+import retrofit.http.GET;
 import retrofit.http.Multipart;
 import retrofit.http.POST;
 import retrofit.http.Part;
 import retrofit.http.PartMap;
+import retrofit.http.Query;
 import retrofit.mime.TypedFile;
 import retrofit.mime.TypedString;
 import rx.Observable;
+import rx.Subscriber;
 import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.functions.Func2;
@@ -71,8 +75,8 @@ public class LoginRetrofit {
     Observable<BaseResponse> requestChangeUserInfo(@FieldMap Map<String, String> params);
 
     @Multipart @POST("/mobile/api/client/interface.php")
-    Observable<BaseResponse> uploadProfileHeader(@Part("Action") TypedString action,
-        @Part("uid") TypedString uid, @Part("header") TypedFile file);
+    Observable<BaseResponse> uploadProfileHeader(@PartMap Map<String, TypedString> params,
+        @Part("header") TypedFile file);
 
     @FormUrlEncoded @POST("/mobile/api/client/interface.php") Observable<HelpResponse> getHelpList(
         @FieldMap Map<String, String> params);
@@ -308,13 +312,11 @@ public class LoginRetrofit {
    * 上传头像
    */
   public Observable<BaseResponse> uploadProfileHeader(final Map<String, TypedString> params,
-      File avatarFile) {
-
-    final TypedFile file = new TypedFile("multipart/form-data", avatarFile);
+      final TypedFile avatarFile) {
 
     return Observable.defer(new Func0<Observable<BaseResponse>>() {
       @Override public Observable<BaseResponse> call() {
-        return loginService.uploadProfileHeader(params.get("Action"), params.get("uid"), file)
+        return loginService.uploadProfileHeader(params, avatarFile)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
       }
     }).retry(new Func2<Integer, Throwable, Boolean>() {

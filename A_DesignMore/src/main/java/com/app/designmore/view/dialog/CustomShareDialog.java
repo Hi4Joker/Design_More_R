@@ -19,7 +19,6 @@ import com.app.designmore.utils.DensityUtil;
  */
 public class CustomShareDialog extends Dialog {
 
-  private Activity activity;
   private Callback callback;
 
   public CustomShareDialog(Activity activity, Callback callback) {
@@ -33,7 +32,6 @@ public class CustomShareDialog extends Dialog {
         ViewGroup.LayoutParams.MATCH_PARENT);
     super.setContentView(rootView, params);
 
-    this.activity = activity;
     this.callback = callback;
     CustomShareDialog.this.setCancelable(false);
     CustomShareDialog.this.setCanceledOnTouchOutside(false);

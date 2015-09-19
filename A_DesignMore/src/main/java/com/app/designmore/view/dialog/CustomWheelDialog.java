@@ -59,7 +59,7 @@ public class CustomWheelDialog extends Dialog {
     getWindow().setGravity(Gravity.BOTTOM);
     getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
     getWindow().setWindowAnimations(R.style.AnimBottom);
-    View rootView = getLayoutInflater().inflate(R.layout.custom_wheel_layout, null);
+    View rootView = getLayoutInflater().inflate(R.layout.dialog_wheel_layout, null);
     LayoutParams params =
         new LayoutParams(DensityUtil.getScreenWidth(activity), LayoutParams.MATCH_PARENT);
     super.setContentView(rootView, params);
@@ -86,7 +86,7 @@ public class CustomWheelDialog extends Dialog {
 
   private void setupAdapter() {
 
-    provinceAdapter = new AbstractWheelTextAdapter(activity, R.layout.wheel_text_item) {
+    provinceAdapter = new AbstractWheelTextAdapter(activity, R.layout.i_wheel_text_item) {
       @Override public int getItemsCount() {
         return provinces.size();
       }
@@ -96,7 +96,7 @@ public class CustomWheelDialog extends Dialog {
       }
     };
 
-    cityAdapter = new AbstractWheelTextAdapter(activity, R.layout.wheel_text_item) {
+    cityAdapter = new AbstractWheelTextAdapter(activity, R.layout.i_wheel_text_item) {
       @Override public int getItemsCount() {
         return cities.size();
       }

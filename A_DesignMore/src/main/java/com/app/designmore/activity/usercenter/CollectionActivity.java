@@ -267,7 +267,8 @@ public class CollectionActivity extends BaseActivity
   /*弹出列表对话框，分享操作*/
   @Override public void onShareClick(final CollectionEntity entity) {
     if (customShareDialog == null) {
-      customShareDialog = new CustomShareDialog(CollectionActivity.this, this);
+      customShareDialog =
+          DialogManager.getInstance().showShareDialog(CollectionActivity.this, this);
     }
     customShareDialog.show();
   }

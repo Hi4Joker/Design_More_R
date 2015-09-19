@@ -22,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import butterknife.Bind;
 import com.app.designmore.R;
+import com.app.designmore.manager.DialogManager;
 import com.app.designmore.retrofit.entity.JournalEntity;
 import com.app.designmore.retrofit.response.JournalResponse;
 import com.app.designmore.view.ProgressLayout;
@@ -157,8 +158,8 @@ public class JournalDetailActivity extends BaseActivity implements CustomShareDi
     shareItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         if (customShareDialog == null) {
-          customShareDialog =
-              new CustomShareDialog(JournalDetailActivity.this, JournalDetailActivity.this);
+          customShareDialog = DialogManager.getInstance()
+              .showShareDialog(JournalDetailActivity.this, JournalDetailActivity.this);
         }
         customShareDialog.show();
       }
