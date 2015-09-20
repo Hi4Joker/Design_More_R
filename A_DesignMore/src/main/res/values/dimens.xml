@@ -30,6 +30,8 @@
   <dimen name="material_200dp">200dip</dimen>
   <dimen name="material_248dp">248dip</dimen>
   <dimen name="material_256dp">256dip</dimen>
+  <dimen name="material_320dp">320dip</dimen>
+  <dimen name="material_400dp">400dip</dimen>
   <dimen name="_material_16dp">-16dip</dimen>
   <dimen name="_material_24dp">-24dip</dimen>
 

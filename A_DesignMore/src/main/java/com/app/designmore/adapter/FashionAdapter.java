@@ -74,9 +74,7 @@ public class FashionAdapter extends RecyclerView.Adapter<FashionAdapter.ViewHold
       if (callback != null) callback.onNoData();
     } else {
       this.items.addAll(fashionEntities);
-      notifyDataSetChanged();
-
-      //FashionAdapter.this.notifyItemInserted(items.size() - fashionEntities.size());
+      FashionAdapter.this.notifyItemInserted(items.size() - fashionEntities.size());
     }
   }
 

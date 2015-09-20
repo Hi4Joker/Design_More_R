@@ -1,17 +1,14 @@
 package com.app.designmore.activity;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v4.view.LayoutInflaterFactory;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -20,20 +17,17 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
@@ -45,10 +39,7 @@ import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.retrofit.FashionRetrofit;
-import com.app.designmore.retrofit.JournalRetrofit;
 import com.app.designmore.retrofit.entity.FashionEntity;
-import com.app.designmore.retrofit.entity.JournalEntity;
-import com.app.designmore.retrofit.response.FashionResponse;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
@@ -414,7 +405,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
     trolleyItem.setActionView(R.layout.menu_inbox_btn_item);
     ImageButton trolleyButton =
         (ImageButton) trolleyItem.getActionView().findViewById(R.id.action_inbox_btn);
-    trolleyButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_trolley_icon));
+    trolleyButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_trolley_black_icon));
 
     trolleyItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
@@ -443,7 +434,8 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
   }
 
   @Override public void onItemClick(FashionEntity entity) {
-    Log.e(TAG, entity.toString());
+    DetailActivity.navigateToDetail(FashionActivity.this, entity.getGoodId());
+    overridePendingTransition(0, 0);
   }
 
   @Override public void onNoData() {

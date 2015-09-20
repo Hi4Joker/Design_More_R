@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/material_8dp"
     android:orientation="horizontal"
-    android:background="@color/holo_blue_light"
+    android:background="@color/white"
     >
 
   <ImageView
@@ -16,7 +16,6 @@
       android:background="@color/design_more_red"/>
 
   <TextView
-      android:layout_below="@id/journal_item_thumb_iv"
       android:id="@+id/journal_item_title_tv"
       android:layout_width="match_parent"
       android:layout_height="match_parent"

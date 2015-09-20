@@ -132,5 +132,15 @@
     <item name="android:windowExitAnimation">@anim/slide_out_bottom</item>
   </style>
 
+  <style name="ExpandedAppBar" parent="@android:style/TextAppearance.Medium">
+    <item name="android:textSize">@dimen/material_16sp</item>
+    <item name="android:textColor">@android:color/white</item>
+  </style>
+
+  <style name="CollapsedAppBar" parent="@android:style/TextAppearance.Medium">
+    <item name="android:textSize">@dimen/material_18sp</item>
+    <item name="android:textColor">@color/black</item>
+  </style>
+
 
 </resources>

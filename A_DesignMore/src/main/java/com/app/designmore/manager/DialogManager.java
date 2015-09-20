@@ -198,7 +198,6 @@ public class DialogManager {
   }
 
   public CustomShareDialog showShareDialog(Activity activity, CustomShareDialog.Callback callback) {
-
     return new CustomShareDialog(activity, callback);
   }
 

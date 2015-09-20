@@ -256,7 +256,7 @@ public class MineActivity extends BaseActivity {
         getResources().getColor(R.color.design_more_red));
     mineTv.setTextColor(getResources().getColor(R.color.design_more_red));
 
-    getMenuInflater().inflate(R.menu.menu_center, menu);
+    getMenuInflater().inflate(R.menu.menu_single, menu);
 
     MenuItem menuItem = menu.findItem(R.id.action_inbox);
     menuItem.setActionView(R.layout.menu_inbox_btn_item);

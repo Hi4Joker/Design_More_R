@@ -27,7 +27,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
@@ -395,7 +394,7 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
     trolleyItem.setActionView(R.layout.menu_inbox_btn_item);
     ImageButton trolleyButton =
         (ImageButton) trolleyItem.getActionView().findViewById(R.id.action_inbox_btn);
-    trolleyButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_trolley_icon));
+    trolleyButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_trolley_black_icon));
 
     trolleyItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {

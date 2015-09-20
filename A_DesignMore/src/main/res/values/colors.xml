@@ -7,6 +7,7 @@
   <color name="design_more_red">#DA498C</color>
   <color name="dark_overlay_color">#BB000000</color>
   <color name="light_overlay_color">#44000000</color>
+  <color name="white_overlay_color">#66ffffff</color>
 
 
   <color name="white">#ffffffff</color>

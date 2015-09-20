@@ -352,13 +352,6 @@ public class CollectionActivity extends BaseActivity
         });
   }
 
-  @Override protected void onDestroy() {
-    swipeRefreshLayout.setOnRefreshListener(null);
-    super.onDestroy();
-    this.progressDialog = null;
-    if (!subscription.isUnsubscribed()) subscription.unsubscribe();
-  }
-
   @Override public void onWeiboClick() {
     // TODO: 2015/9/15 新浪分享
 
@@ -367,5 +360,12 @@ public class CollectionActivity extends BaseActivity
   @Override public void onWechatClick() {
     // TODO: 2015/9/15 微信分享
 
+  }
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
+    this.progressDialog = null;
+    this.customShareDialog = null;
+    if (!subscription.isUnsubscribed()) subscription.unsubscribe();
   }
 }

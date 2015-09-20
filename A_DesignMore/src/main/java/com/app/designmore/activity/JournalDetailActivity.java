@@ -2,12 +2,10 @@ package com.app.designmore.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,10 +22,8 @@ import butterknife.Bind;
 import com.app.designmore.R;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.retrofit.entity.JournalEntity;
-import com.app.designmore.retrofit.response.JournalResponse;
 import com.app.designmore.view.ProgressLayout;
 import com.app.designmore.view.dialog.CustomShareDialog;
-import com.jakewharton.rxbinding.view.RxView;
 
 /**
  * Created by Joker on 2015/9/15.
@@ -148,7 +144,7 @@ public class JournalDetailActivity extends BaseActivity implements CustomShareDi
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
 
-    getMenuInflater().inflate(R.menu.menu_center, menu);
+    getMenuInflater().inflate(R.menu.menu_single, menu);
 
     MenuItem shareItem = menu.findItem(R.id.action_inbox);
     shareItem.setActionView(R.layout.menu_inbox_btn_item);

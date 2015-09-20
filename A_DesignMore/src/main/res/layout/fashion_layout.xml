@@ -82,6 +82,7 @@
           android:text="@string/fashion_string"
           />
     </LinearLayout>
+
     <include layout="@layout/include_white_toolbar_layout"/>
 
   </android.support.design.widget.CoordinatorLayout>

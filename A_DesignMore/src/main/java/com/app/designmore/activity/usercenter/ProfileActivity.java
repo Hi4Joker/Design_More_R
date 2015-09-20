@@ -54,7 +54,6 @@ import com.trello.rxlifecycle.ActivityEvent;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
@@ -245,7 +244,7 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.menu_center, menu);
+    getMenuInflater().inflate(R.menu.menu_single, menu);
 
     MenuItem menuItem = menu.findItem(R.id.action_inbox);
     menuItem.setActionView(R.layout.menu_inbox_tv_item);

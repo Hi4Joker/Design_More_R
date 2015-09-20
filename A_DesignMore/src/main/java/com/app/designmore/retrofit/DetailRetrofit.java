@@ -1,7 +1,10 @@
 package com.app.designmore.retrofit;
 
 import com.app.designmore.Constants;
+import com.app.designmore.retrofit.entity.DetailEntity;
 import com.app.designmore.retrofit.entity.SearchItemEntity;
+import com.app.designmore.retrofit.response.BaseResponse;
+import com.app.designmore.retrofit.response.DetailResponse;
 import com.app.designmore.retrofit.response.SearchListResponse;
 import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.google.gson.Gson;
@@ -20,27 +23,28 @@ import retrofit.http.FieldMap;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.POST;
 import rx.Observable;
+import rx.Subscriber;
 import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.functions.Func2;
 
 /**
- * Created by Joker on 2015/9/4.
+ * Created by Joker on 2015/9/20.
  */
-public class SearchRetrofit {
+public class DetailRetrofit {
 
-  interface SearchService {
+  interface DetailService {
 
     //@Headers("Accept-Encoding: application/json")
     @FormUrlEncoded @POST("/mobile/api/client/interface.php")
-    Observable<SearchListResponse> getHotSearchList(@FieldMap Map<String, String> params);
+    Observable<DetailResponse> getGoodDetail(@FieldMap Map<String, String> params);
   }
 
-  private final SearchService searchService;
+  private final DetailService detailService;
 
-  private SearchRetrofit() {
+  private DetailRetrofit() {
     RequestInterceptor requestInterceptor = new RequestInterceptor() {
-      @Override public void intercept(RequestInterceptor.RequestFacade request) {
+      @Override public void intercept(RequestFacade request) {
         request.addHeader("Accept-Encoding", "application/json");
         //request.addHeader("Content-Type", "application/json");
       }
@@ -59,51 +63,46 @@ public class SearchRetrofit {
         .setConverter(new GsonConverter(gson))
         .build();
 
-    searchService = restAdapter.create(SearchService.class);
+    detailService = restAdapter.create(DetailService.class);
   }
 
   private static class SingletonHolder {
-    private static SearchRetrofit instance = new SearchRetrofit();
+    private static DetailRetrofit instance = new DetailRetrofit();
   }
 
-  public static SearchRetrofit getInstance() {
+  public static DetailRetrofit getInstance() {
     return SingletonHolder.instance;
   }
 
   /**
-   * 获取热搜列表
+   * 获取商品详情
    */
-  public Observable<List<SearchItemEntity>> getHotSearchList(final Map<String, String> params) {
+  public Observable<DetailEntity> getGoodDetail(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<SearchListResponse>>() {
-      @Override public Observable<SearchListResponse> call() {
-             /*获取热搜列表，超时8秒*/
-        return searchService.getHotSearchList(params)
+    return Observable.defer(new Func0<Observable<DetailResponse>>() {
+      @Override public Observable<DetailResponse> call() {
+        return detailService.getGoodDetail(params)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
       }
     }).retry(new Func2<Integer, Throwable, Boolean>() {
       @Override public Boolean call(Integer integer, Throwable throwable) {
         return throwable instanceof TimeoutException && integer < 1;
       }
-    }).concatMap(new Func1<SearchListResponse, Observable<SearchListResponse>>() {
-      @Override public Observable<SearchListResponse> call(SearchListResponse searchListResponse) {
-        return searchListResponse.filterWebServiceErrors();
+    }).concatMap(new Func1<DetailResponse, Observable<DetailResponse>>() {
+      @Override public Observable<DetailResponse> call(DetailResponse detailResponse) {
+        return detailResponse.filterWebServiceErrors();
       }
-    }).map(new Func1<SearchListResponse, List<SearchItemEntity>>() {
-      @Override public List<SearchItemEntity> call(SearchListResponse searchListResponse) {
-
-        final ArrayList<SearchItemEntity> searchItemEntities = new ArrayList<>();
-        SearchItemEntity instance = new SearchItemEntity();
-
-        for (String text : searchListResponse.getResult()) {
-
-          SearchItemEntity clone = instance.newInstance();
-          clone.setText(text);
-          searchItemEntities.add(clone);
-        }
-
-        return searchItemEntities;
+    }).map(new Func1<DetailResponse, DetailResponse.Detail>() {
+      @Override public DetailResponse.Detail call(DetailResponse detailResponse) {
+        return detailResponse.getDetail();
       }
-    }).compose(SchedulersCompat.<List<SearchItemEntity>>applyExecutorSchedulers());
+    }).map(new Func1<DetailResponse.Detail, DetailEntity>() {
+      @Override public DetailEntity call(DetailResponse.Detail detail) {
+
+        return new DetailEntity(detail.goodId, detail.goodName, detail.marketPrice,
+            detail.shopPrice, detail.goodDes, detail.goodDesUrl, detail.goodRepertory,
+            detail.productImages, detail.productAttrs);
+      }
+    }).compose(SchedulersCompat.<DetailEntity>applyExecutorSchedulers());
   }
 }

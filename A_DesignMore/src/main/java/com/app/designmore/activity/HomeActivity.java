@@ -191,7 +191,7 @@ public class HomeActivity extends BaseActivity {
     trolleyItem.setActionView(R.layout.menu_inbox_btn_item);
     ImageButton trolleyButton =
         (ImageButton) trolleyItem.getActionView().findViewById(R.id.action_inbox_btn);
-    trolleyButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_trolley_icon));
+    trolleyButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_trolley_black_icon));
 
     trolleyItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
