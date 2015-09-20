@@ -18,8 +18,6 @@ import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.activity.LoginActivity;
 import com.app.designmore.activity.MineActivity;
-import com.app.designmore.activity.SplashActivity;
-import com.app.designmore.greendao.entity.Dao_LoginInfo;
 import com.app.designmore.helper.DBHelper;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.revealLib.animation.SupportAnimator;
@@ -59,7 +57,7 @@ public class SettingActivity extends BaseActivity {
   @Override public void initView(final Bundle savedInstanceState) {
 
     SettingActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+    toolbar.setNavigationIcon(R.drawable.ic_arrow_back_icon);
 
     LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toolbarTitleTv.getLayoutParams();
     params.rightMargin = DensityUtil.getActionBarSize(SettingActivity.this);

@@ -9,9 +9,11 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
@@ -69,6 +71,8 @@ public class SafetyActivity extends BaseActivity {
 
   private Button actionButton;
   private ProgressDialog progressDialog;
+  private ViewGroup toast;
+
   private Subscription subscription = Subscriptions.empty();
 
   private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
@@ -93,7 +97,7 @@ public class SafetyActivity extends BaseActivity {
   @Override public void initView(Bundle savedInstanceState) {
 
     SafetyActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
+    toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_icon));
 
     toolbarTitleTv.setVisibility(View.VISIBLE);
     toolbarTitleTv.setText("账户安全");
@@ -127,7 +131,7 @@ public class SafetyActivity extends BaseActivity {
     MenuItem menuItem = menu.findItem(R.id.action_inbox);
     menuItem.setActionView(R.layout.menu_inbox_tv_item);
     actionButton = (Button) menuItem.getActionView().findViewById(R.id.action_inbox_btn);
-    actionButton.setText(getText(R.string.action_submit));
+    actionButton.setText(getText(R.string.action_done));
     actionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         SafetyActivity.this.requestChangePassword();
@@ -157,10 +161,6 @@ public class SafetyActivity extends BaseActivity {
             newPassword = newPasswordEvent.text().toString();
             confirmPassword = confirmPasswordEvent.text().toString();
 
-           /* Log.e(TAG, "oldPassword: " + oldPassword);
-            Log.e(TAG, "newPassword: " + newPassword);
-            Log.e(TAG, "confirmPassword: " + confirmPassword);*/
-
             boolean oldPasswordValid = !TextUtils.isEmpty(oldPassword);
             boolean newPasswordValid = !TextUtils.isEmpty(newPassword);
             boolean confirmPasswordValid = !TextUtils.isEmpty(confirmPassword);
@@ -175,7 +175,6 @@ public class SafetyActivity extends BaseActivity {
         .subscribe(new Action1<Boolean>() {
           @Override public void call(Boolean aBoolean) {
 
-            //Log.e(TAG, "call() called with: " + "aBoolean = [" + aBoolean + "]");
             actionButton.setEnabled(aBoolean);
           }
         });
@@ -229,11 +228,12 @@ public class SafetyActivity extends BaseActivity {
               }
 
               @Override public void onError(Throwable e) {
-                Toast.makeText(SafetyActivity.this, "修改失败，请重试", Toast.LENGTH_LONG).show();
+                toast = DialogManager.getInstance()
+                    .showNoMoreDialog(SafetyActivity.this, Gravity.TOP, "操作失败，请重试，O__O …");
               }
 
               @Override public void onNext(BaseResponse baseResponse) {
-                Toast.makeText(SafetyActivity.this, "修改成功", Toast.LENGTH_LONG).show();
+                Toast.makeText(SafetyActivity.this, "操作成功", Toast.LENGTH_LONG).show();
               }
             });
   }
@@ -245,14 +245,17 @@ public class SafetyActivity extends BaseActivity {
         .setInterpolator(new LinearInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
-            SafetyActivity.super.onBackPressed();
-            overridePendingTransition(0, 0);
+            SafetyActivity.this.finish();
           }
         });
   }
 
   @Override protected void onDestroy() {
     super.onDestroy();
+    if (toast != null && toast.getParent() != null) {
+      getWindowManager().removeViewImmediate(toast);
+    }
+    this.toast = null;
     this.progressDialog = null;
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();
   }

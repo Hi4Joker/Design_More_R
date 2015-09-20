@@ -84,7 +84,7 @@ public class ProfileGalleryActivity extends BaseActivity {
 
   @Override public void initView(Bundle savedInstanceState) {
     ProfileGalleryActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+    toolbar.setNavigationIcon(R.drawable.ic_arrow_back_icon);
   }
 
   private void startGallery() {

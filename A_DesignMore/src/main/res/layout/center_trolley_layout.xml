@@ -42,7 +42,7 @@
           android:layout_height="@dimen/material_32dp"
           android:layout_gravity="left|center_vertical"
           android:scaleType="center"
-          android:src="@drawable/ic_radio_normal"
+          android:src="@drawable/ic_radio_normal_icon_icon"
           android:background="@drawable/transparent_background"
           />
 

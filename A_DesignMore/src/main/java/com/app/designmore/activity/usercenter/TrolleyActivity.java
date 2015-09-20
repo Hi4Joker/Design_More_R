@@ -105,7 +105,7 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
   @Override public void initView(Bundle savedInstanceState) {
 
     TrolleyActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
+    toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_icon));
 
     toolbarTitleTv.setVisibility(View.VISIBLE);
     toolbarTitleTv.setText("我的购物车");
@@ -152,7 +152,7 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
             if (trolleyEntities.size() == items.size()) {
               radioBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_selected));
             } else {
-              radioBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_normal));
+              radioBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_normal_icon_icon));
             }
             compositeSubscription.remove(this);
           }
@@ -171,7 +171,7 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
               radioIv.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_selected));
               trolleyEntities.add(trolleyEntity);
             } else {
-              radioIv.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_normal));
+              radioIv.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_normal_icon_icon));
               trolleyEntities.remove(trolleyEntity);
             }
           }

@@ -116,7 +116,7 @@ public class CameraFrontActivity extends BaseActivity implements CameraHostProvi
   @Override public void initView(Bundle savedInstanceState) {
 
     CameraFrontActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+    toolbar.setNavigationIcon(R.drawable.ic_arrow_back_icon);
 
     /*拍摄状态*/
     CameraFrontActivity.this.updateState(State.TAKE);
@@ -148,7 +148,7 @@ public class CameraFrontActivity extends BaseActivity implements CameraHostProvi
     switchMenuItem.setActionView(R.layout.menu_inbox_btn_item);
     switchActionButton =
         (ImageButton) switchMenuItem.getActionView().findViewById(R.id.action_inbox_btn);
-    switchActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_camera_black));
+    switchActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_camera_black_icon));
     switchActionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         /*切换至后置摄像头*/

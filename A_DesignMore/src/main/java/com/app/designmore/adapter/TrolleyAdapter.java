@@ -6,7 +6,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -54,8 +53,8 @@ public class TrolleyAdapter extends RecyclerView.Adapter<TrolleyAdapter.ViewHold
         .load(trolleyEntity.getGoodThumb())
         .centerCrop()
         .crossFade()
-        .placeholder(R.drawable.ic_default)
-        .error(R.drawable.ic_default)
+        .placeholder(R.drawable.ic_default_icon)
+        .error(R.drawable.ic_default_icon)
         .diskCacheStrategy(DiskCacheStrategy.RESULT)
         .into(holder.goodIv);
 
@@ -66,7 +65,7 @@ public class TrolleyAdapter extends RecyclerView.Adapter<TrolleyAdapter.ViewHold
 
     holder.radioBtn.setImageDrawable(
         trolleyEntity.isChecked ? context.getResources().getDrawable(R.drawable.ic_radio_selected)
-            : context.getResources().getDrawable(R.drawable.ic_radio_normal));
+            : context.getResources().getDrawable(R.drawable.ic_radio_normal_icon_icon));
   }
 
   @Override public int getItemCount() {
@@ -129,10 +128,8 @@ public class TrolleyAdapter extends RecyclerView.Adapter<TrolleyAdapter.ViewHold
     @Nullable @OnClick(R.id.trolley_item_root_view) void onItemClick(RelativeLayout imageButton) {
 
       int pos = (int) imageButton.getTag();
-
       TrolleyEntity entity = items.get(pos);
       entity.isChecked = !entity.isChecked;
-
       if (callback != null) callback.onRadioClick(entity);
     }
   }

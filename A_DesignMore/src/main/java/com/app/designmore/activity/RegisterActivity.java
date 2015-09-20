@@ -4,10 +4,8 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,8 +33,6 @@ import com.trello.rxlifecycle.ActivityEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscription;
 import rx.functions.Action0;
@@ -95,7 +91,7 @@ public class RegisterActivity extends BaseActivity {
   @Override public void initView(Bundle savedInstanceState) {
 
     RegisterActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+    toolbar.setNavigationIcon(R.drawable.ic_arrow_back_icon);
 
     LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toolbarTitleTv.getLayoutParams();
     params.rightMargin = DensityUtil.getActionBarSize(RegisterActivity.this);

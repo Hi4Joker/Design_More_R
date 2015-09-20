@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary_background_color"
+    >
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/material_120dp"
+      android:padding="@dimen/material_16dp"
+      android:layout_marginBottom="@dimen/material_1dp"
+      android:orientation="horizontal"
+      android:background="@color/white"
+      >
+
+    <ImageView
+        android:id="@+id/custom_account_thumb_iv"
+        android:layout_width="@dimen/material_80dp"
+        android:layout_height="@dimen/material_80dp"
+        android:layout_gravity="center_vertical"
+        android:scaleType="centerCrop"
+        android:src="@drawable/test_background"
+        />
+
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/material_8dp"
+        android:padding="@dimen/material_8dp"
+        android:orientation="vertical"
+        >
+      <TextView
+          android:id="@+id/custom_account_price_tv"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:textColor="@color/design_more_red"
+          android:textSize="@dimen/material_16sp"
+          android:text="价钱"
+          />
+
+      <TextView
+          android:id="@+id/custom_account_discount_tv"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:paddingTop="@dimen/material_16dp"
+          android:textColor="@color/black"
+          android:textSize="@dimen/material_14sp"
+          android:text="满减优惠"
+          />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        >
+
+      <ImageButton
+          android:id="@+id/custom_account_cancel_btn"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:padding="@dimen/material_4dp"
+          android:src="@drawable/ic_cancel_icon"
+          android:background="@drawable/transparent_background"
+          />
+    </LinearLayout>
+  </LinearLayout>
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/material_100dp"
+      android:layout_marginBottom="@dimen/material_1dp"
+      android:padding="@dimen/material_8dp"
+      android:orientation="vertical"
+      android:background="@color/white"
+      >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="@dimen/material_14sp"
+        android:text="颜色分类"
+        android:background="@color/white"
+        />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/custom_account_layout_rl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/material_8dp"
+        />
+  </LinearLayout>
+
+
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/material_64dp"
+      android:padding="@dimen/material_16dp"
+      android:orientation="horizontal"
+      android:background="@color/white"
+      >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:textColor="@color/black"
+        android:textSize="@dimen/material_14sp"
+        android:text="购买数量"
+        android:background="@color/white"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:orientation="horizontal"
+        >
+
+      <com.app.designmore.view.MaterialRippleLayout
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:layout_gravity="right"
+          app:mrl_rippleDimension="2dip"
+          app:mrl_rippleFadeDuration="100"
+          app:mrl_rippleAlpha="0.4"
+          app:mrl_rippleDuration="600"
+          app:mrl_rippleHover="true"
+          app:mrl_rippleOverlay="true"
+          app:mrl_rippleDelayClick="true"
+          app:mrl_rippleColor="@color/darker_gray"
+          >
+        <ImageButton
+            android:id="@+id/custom_account_count_add_btn"
+            android:layout_width="@dimen/material_24dp"
+            android:layout_height="match_parent"
+            android:scaleType="center"
+            android:src="@drawable/ic_add_icon"
+            android:background="@drawable/white_corner_background"
+            />
+      </com.app.designmore.view.MaterialRippleLayout>
+
+      <TextView
+          android:id="@+id/custom_account_count_tv"
+          android:layout_width="@dimen/material_56dp"
+          android:layout_height="match_parent"
+          android:layout_marginLeft="@dimen/material_8dp"
+          android:layout_marginRight="@dimen/material_8dp"
+          android:layout_alignParentLeft="true"
+          android:layout_centerVertical="true"
+          android:gravity="center"
+          android:textColor="@color/design_more_red"
+          android:textSize="@dimen/material_14sp"
+          android:text="1"
+          android:background="@drawable/white_corner_background"
+          />
+
+
+      <com.app.designmore.view.MaterialRippleLayout
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:layout_gravity="right"
+          app:mrl_rippleDimension="2dip"
+          app:mrl_rippleFadeDuration="100"
+          app:mrl_rippleAlpha="0.4"
+          app:mrl_rippleDuration="600"
+          app:mrl_rippleHover="true"
+          app:mrl_rippleOverlay="true"
+          app:mrl_rippleDelayClick="true"
+          app:mrl_rippleColor="@color/darker_gray"
+          >
+        <ImageButton
+            android:id="@+id/custom_account_count_subtract_btn"
+            android:layout_width="@dimen/material_24dp"
+            android:layout_height="match_parent"
+            android:scaleType="center"
+            android:src="@drawable/ic_subtract_icon"
+            android:background="@drawable/white_corner_background"
+            />
+      </com.app.designmore.view.MaterialRippleLayout>
+    </LinearLayout>
+
+
+  </RelativeLayout>
+
+
+  <com.app.designmore.view.MaterialRippleLayout
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/material_48dp"
+      app:mrl_rippleDimension="20dip"
+      app:mrl_rippleRoundedCorners="@dimen/material_corners"
+      app:mrl_rippleFadeDuration="100"
+      app:mrl_rippleAlpha="0.4"
+      app:mrl_rippleDuration="600"
+      app:mrl_rippleHover="true"
+      app:mrl_rippleOverlay="true"
+      app:mrl_rippleDelayClick="true"
+      app:mrl_rippleColor="@color/darker_gray"
+      >
+    <Button
+        android:id="@+id/custom_account_btn"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="确定"
+        android:textSize="@dimen/material_16sp"
+        android:textColor="@color/white"
+        android:background="@drawable/red_background"
+        />
+  </com.app.designmore.view.MaterialRippleLayout>
+
+
+</LinearLayout>

@@ -18,7 +18,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -40,7 +39,6 @@ import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.event.AvatarRefreshEvent;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
-import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.app.designmore.rxAndroid.SimpleObserver;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.utils.DensityUtil;
@@ -120,7 +118,7 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
   @Override public void initView(Bundle savedInstanceState) {
 
     CameraBackActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+    toolbar.setNavigationIcon(R.drawable.ic_arrow_back_icon);
 
     /*拍摄状态*/
     CameraBackActivity.this.updateState(State.TAKE);
@@ -149,7 +147,7 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
     switchMenuItem.setActionView(R.layout.menu_inbox_btn_item);
     switchActionButton =
         (ImageButton) switchMenuItem.getActionView().findViewById(R.id.action_inbox_btn);
-    switchActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_camera_front));
+    switchActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_camera_front_icon));
     switchActionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         /*切换至前置摄像头*/

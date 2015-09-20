@@ -23,9 +23,10 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
@@ -37,6 +38,7 @@ import com.app.designmore.manager.DialogManager;
 import com.app.designmore.retrofit.CollectionRetrofit;
 import com.app.designmore.retrofit.DetailRetrofit;
 import com.app.designmore.retrofit.entity.DetailEntity;
+import com.app.designmore.retrofit.entity.ProductAttrEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.retrofit.response.DetailResponse;
 import com.app.designmore.revealLib.animation.SupportAnimator;
@@ -46,9 +48,14 @@ import com.app.designmore.rxAndroid.SimpleObserver;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.ProgressLayout;
+import com.app.designmore.view.dialog.CustomAccountDialog;
 import com.app.designmore.view.dialog.CustomShareDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.AnimatorListenerAdapter;
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.HashMap;
 import java.util.List;
@@ -64,12 +71,14 @@ import rx.subscriptions.Subscriptions;
 /**
  * Created by Joker on 2015/9/19.
  */
-public class DetailActivity extends BaseActivity implements CustomShareDialog.Callback {
+public class DetailActivity extends BaseActivity
+    implements CustomShareDialog.Callback, CustomAccountDialog.Callback {
 
   private static final String TAG = DetailActivity.class.getCanonicalName();
   private static final String GOOD_ID = "GOOD_ID";
 
-  @Nullable @Bind(R.id.detail_layout_root_view) RevealFrameLayout rootView;
+  @Nullable @Bind(R.id.detail_layout_root_view_rl) RelativeLayout rootView;
+  @Nullable @Bind(R.id.detail_layout_root_view) RevealFrameLayout revealFrameLayout;
   @Nullable @Bind(R.id.detail_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.detail_layout_toolbar_root_view) Toolbar toolbar;
   @Nullable @Bind(R.id.detail_layout_collapsing_toolbar) CollapsingToolbarLayout collapsingToolbar;
@@ -85,11 +94,12 @@ public class DetailActivity extends BaseActivity implements CustomShareDialog.Ca
   private String goodId;
   private ProgressDialog progressDialog;
   private CustomShareDialog customShareDialog;
+  private CustomAccountDialog customAccountDialog;
   private ViewGroup toast;
 
   private ViewPager viewPager;
   private List<DetailResponse.Detail.ProductImage> productImages;
-  private List<DetailResponse.Detail.ProductAttr> productAttrs;
+  private DetailEntity currentEntity;
 
   private Subscription subscription = Subscriptions.empty();
 
@@ -129,22 +139,19 @@ public class DetailActivity extends BaseActivity implements CustomShareDialog.Ca
   @Override public void initView(Bundle savedInstanceState) {
 
     DetailActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
-
-    collapsingToolbar.setTitle("商品详情");
-    collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
-    collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
+    toolbar.setNavigationIcon(R.drawable.ic_arrow_back_icon);
 
     this.goodId = getIntent().getStringExtra(GOOD_ID);
 
     if (savedInstanceState == null) {
-      rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-        @Override public boolean onPreDraw() {
-          rootView.getViewTreeObserver().removeOnPreDrawListener(this);
-          DetailActivity.this.startEnterAnim();
-          return true;
-        }
-      });
+      revealFrameLayout.getViewTreeObserver()
+          .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override public boolean onPreDraw() {
+              revealFrameLayout.getViewTreeObserver().removeOnPreDrawListener(this);
+              DetailActivity.this.startEnterAnim();
+              return true;
+            }
+          });
     } else {
       DetailActivity.this.loadData();
     }
@@ -160,10 +167,10 @@ public class DetailActivity extends BaseActivity implements CustomShareDialog.Ca
   private void startEnterAnim() {
 
     final Rect bounds = new Rect();
-    rootView.getHitRect(bounds);
+    revealFrameLayout.getHitRect(bounds);
 
     revealAnimator =
-        ViewAnimationUtils.createCircularReveal(rootView.getChildAt(0), 0, bounds.left, 0,
+        ViewAnimationUtils.createCircularReveal(revealFrameLayout.getChildAt(0), 0, bounds.left, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
     revealAnimator.setDuration(Constants.MILLISECONDS_400);
     revealAnimator.setInterpolator(new AccelerateInterpolator());
@@ -207,6 +214,8 @@ public class DetailActivity extends BaseActivity implements CustomShareDialog.Ca
 
           @Override public void onNext(DetailEntity detailEntity) {
 
+            DetailActivity.this.currentEntity = detailEntity;
+
             titleTv.setText(detailEntity.getGoodName());
             priceTv.setText("设计猫价格："
                 + detailEntity.getShopPrice()
@@ -224,7 +233,6 @@ public class DetailActivity extends BaseActivity implements CustomShareDialog.Ca
                 .into(detailIv);
 
             DetailActivity.this.productImages = detailEntity.getProductImages();
-            DetailActivity.this.productAttrs = detailEntity.getProductAttrs();
           }
         });
   }
@@ -252,19 +260,7 @@ public class DetailActivity extends BaseActivity implements CustomShareDialog.Ca
         errorContent, getResources().getString(R.string.retry_button_text), retryClickListener);
   }
 
-  @Nullable @OnClick(R.id.detail_layout_collection_rl) void onCollectionClick() {
-
-    DetailActivity.this.collectionGood();
-  }
-
-  @Nullable @OnClick(R.id.detail_layout_share_rl) void onShareClick() {
-    if (customShareDialog == null) {
-      customShareDialog = DialogManager.getInstance().showShareDialog(DetailActivity.this, this);
-    }
-    customShareDialog.show();
-  }
-
-  private void collectionGood() {
+  private void requestCollectionGood() {
 
     /*Action=AddCollectByGoods&gid=1&uid=1*/
     Map<String, String> params = new HashMap<>(3);
@@ -311,7 +307,88 @@ public class DetailActivity extends BaseActivity implements CustomShareDialog.Ca
             });
   }
 
+  @Nullable @OnClick(R.id.detail_layout_collection_rl) void onCollectionClick() {
+    DetailActivity.this.requestCollectionGood();
+  }
+
+  @Nullable @OnClick(R.id.detail_layout_share_rl) void onShareClick() {
+    if (customShareDialog == null) {
+      customShareDialog = DialogManager.getInstance().showShareDialog(DetailActivity.this, this);
+    }
+    customShareDialog.show();
+  }
+
+  @Nullable @OnClick(R.id.detail_layout_trolley_rl) void onTrylleyClick() {
+
+    if (customAccountDialog == null) {
+      Map map = new HashMap();
+      map.put(CustomAccountDialog.PRICE, currentEntity.getShopPrice());
+      map.put(CustomAccountDialog.DES, currentEntity.getGoodDes());
+      map.put(CustomAccountDialog.MAX, currentEntity.getGoodRepertory());
+      map.put(CustomAccountDialog.ATTRS, currentEntity.getProductAttrs());
+      customAccountDialog =
+          DialogManager.getInstance().showDetailDialog(DetailActivity.this, map, this);
+    }
+    DetailActivity.this.showAnim();
+  }
+
+  @Override public void onAccountClick(ProductAttrEntity productAttrEntity, int count) {
+
+    /*Action=、&uid=1&gid=1&goods_attr=0&count=0*/
+    Map<String, String> params = new HashMap<>(5);
+    params.put("Action", "");
+    params.put("uid", DBHelper.getInstance(getApplicationContext()).getUserID(DetailActivity.this));
+    params.put("gid", goodId);
+    params.put("goods_attr", productAttrEntity.getAttrId());
+    params.put("count", count + "");
+
+    subscription = DetailRetrofit.getInstance()
+        .requestBuyGood(params)
+        .doOnSubscribe(new Action0() {
+          @Override public void call() {
+                /*加载数据，显示进度条*/
+            if (progressDialog == null) {
+              progressDialog = DialogManager.
+                  getInstance().showSimpleProgressDialog(DetailActivity.this, cancelListener);
+            } else {
+              progressDialog.show();
+            }
+          }
+        })
+        .doOnTerminate(new Action0() {
+          @Override public void call() {
+                /*隐藏进度条*/
+            if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
+          }
+        })
+        .filter(new Func1<BaseResponse, Boolean>() {
+          @Override public Boolean call(BaseResponse baseResponse) {
+            return !subscription.isUnsubscribed();
+          }
+        })
+        .compose(DetailActivity.this.<BaseResponse>bindUntilEvent(ActivityEvent.DESTROY))
+        .subscribe(new SimpleObserver<BaseResponse>() {
+          @Override public void onCompleted() {
+            toast = DialogManager.getInstance()
+                .showNoMoreDialog(DetailActivity.this, Gravity.TOP, "成功加入购物车,(≧∇≦)ﾉ");
+          }
+
+          @Override public void onError(Throwable e) {
+            toast = DialogManager.getInstance()
+                .showNoMoreDialog(DetailActivity.this, Gravity.TOP, "收藏失败，请重试，O__O …");
+          }
+        });
+  }
+
+  @Override public void onDialogDismiss() {
+    DetailActivity.this.hiddenAnim();
+  }
+
   @Override public boolean onCreateOptionsMenu(Menu menu) {
+
+    collapsingToolbar.setTitle("商品详情");
+    collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
+    collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
 
     getMenuInflater().inflate(R.menu.menu_single, menu);
 
@@ -339,8 +416,64 @@ public class DetailActivity extends BaseActivity implements CustomShareDialog.Ca
 
   }
 
+  private void showAnim() {
+    ObjectAnimator scaleXAnim = ObjectAnimator.ofFloat(rootView, "scaleX", 1.0f, 0.8f);
+    scaleXAnim.setDuration(Constants.MILLISECONDS_400);
+    ObjectAnimator scaleYAnim = ObjectAnimator.ofFloat(rootView, "scaleY", 1.0f, 0.8f);
+    scaleYAnim.setDuration(Constants.MILLISECONDS_400);
+
+    ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(rootView, "alpha", 1.0f, 0.5f);
+    alphaAnim.setDuration(Constants.MILLISECONDS_400);
+
+    ObjectAnimator rotationXAnim = ObjectAnimator.ofFloat(rootView, "rotationX", 0.0f, 10.0f);
+    rotationXAnim.setDuration(Constants.MILLISECONDS_400);
+
+    ObjectAnimator resumeAnim = ObjectAnimator.ofFloat(rootView, "rotationX", 10.0f, 0.0f);
+    resumeAnim.setDuration(Constants.MILLISECONDS_400);
+    resumeAnim.setStartDelay(Constants.MILLISECONDS_300);
+
+    ObjectAnimator transYAnim =
+        ObjectAnimator.ofFloat(rootView, "translationY", 0.0f, -0.1f * rootView.getHeight(), 0.0f);
+    transYAnim.setDuration(Constants.MILLISECONDS_400);
+
+    AnimatorSet showAnim = new AnimatorSet();
+    showAnim.playTogether(scaleXAnim, rotationXAnim, resumeAnim, transYAnim, alphaAnim, scaleYAnim);
+    showAnim.addListener(new AnimatorListenerAdapter() {
+      @Override public void onAnimationStart(Animator animation) {
+        DetailActivity.this.customAccountDialog.show();
+      }
+    });
+    showAnim.start();
+  }
+
+  private void hiddenAnim() {
+
+    ObjectAnimator scaleXAnim = ObjectAnimator.ofFloat(rootView, "scaleX", 0.8f, 1.0f);
+    scaleXAnim.setDuration(Constants.MILLISECONDS_400);
+    ObjectAnimator scaleYAnim = ObjectAnimator.ofFloat(rootView, "scaleY", 0.8f, 1.0f);
+    scaleYAnim.setDuration(Constants.MILLISECONDS_400);
+
+    ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(rootView, "alpha", 0.5f, 1.0f);
+    alphaAnim.setDuration(Constants.MILLISECONDS_400);
+
+    ObjectAnimator rotationXAnim = ObjectAnimator.ofFloat(rootView, "rotationX", 0.0f, 10.0f);
+    rotationXAnim.setDuration(Constants.MILLISECONDS_200);
+
+    ObjectAnimator resumeAnim = ObjectAnimator.ofFloat(rootView, "rotationX", 10.0f, 0.0f);
+    resumeAnim.setDuration(Constants.MILLISECONDS_200);
+    resumeAnim.setStartDelay(Constants.MILLISECONDS_200);
+
+    ObjectAnimator transYAnim =
+        ObjectAnimator.ofFloat(rootView, "translationY", -0.1f * rootView.getHeight(), 0.0f);
+    transYAnim.setDuration(Constants.MILLISECONDS_400);
+
+    AnimatorSet showAnim = new AnimatorSet();
+    showAnim.playTogether(scaleXAnim, rotationXAnim, resumeAnim, transYAnim, alphaAnim, scaleYAnim);
+    showAnim.start();
+  }
+
   @Override public void exit() {
-    ViewCompat.animate(rootView)
+    ViewCompat.animate(revealFrameLayout)
         .translationY(DensityUtil.getScreenHeight(DetailActivity.this))
         .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())

@@ -72,7 +72,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
           context.getResources().getDrawable(R.drawable.ic_radio_selected));
     } else {
       holder.radioBtn.setImageDrawable(
-          context.getResources().getDrawable(R.drawable.ic_radio_normal));
+          context.getResources().getDrawable(R.drawable.ic_radio_normal_icon_icon));
     }
   }
 

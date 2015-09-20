@@ -6,11 +6,9 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,7 +34,6 @@ import com.app.designmore.mvp.presenter.AddressPresenter;
 import com.app.designmore.mvp.presenter.AddressPresenterImp;
 import com.app.designmore.mvp.viewinterface.AddressView;
 import com.app.designmore.retrofit.AddressRetrofit;
-import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.retrofit.entity.Province;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
@@ -51,8 +48,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -149,7 +144,7 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
   @Override public void initView(Bundle savedInstanceState) {
 
     AddressAddActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
+    toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_icon));
 
     toolbarTitleTv.setVisibility(View.VISIBLE);
     toolbarTitleTv.setText("新增地址");

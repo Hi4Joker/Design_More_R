@@ -152,7 +152,7 @@ public class DetailResponse extends BaseResponse {
 
     public class ProductAttr {
       @Expose @SerializedName("goods_attr_id") public String attrId;
-      @Expose @SerializedName("image") public String attrThumburl;
+      @Expose @SerializedName("image") public String attrThumbUrl;
     }
   }
 }

@@ -14,7 +14,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
@@ -60,11 +59,10 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
 
   private SupportAnimator revealAnimator;
 
-  /*键盘*/
-  private InputMethodManager inputMethodManager;
-  /*adapter*/
   private SearchAdapter searchAdapter;
   private List<SearchItemEntity> items;
+  /*键盘*/
+  private InputMethodManager inputMethodManager;
 
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
@@ -88,7 +86,7 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
   @Override public void initView(Bundle savedInstanceState) {
 
     SearchActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+    toolbar.setNavigationIcon(R.drawable.ic_arrow_back_icon);
 
     inputMethodManager =
         (InputMethodManager) SearchActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);

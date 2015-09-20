@@ -62,7 +62,7 @@
         android:layout_height="@dimen/material_100dp"
         android:layout_alignParentLeft="true"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_default"
+        android:src="@drawable/ic_default_icon"
         />
 
     <RelativeLayout

@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.app.designmore.utils.DensityUtil;
  */
 public class CustomShareDialog extends Dialog {
 
+  private static final String TAG = CustomShareDialog.class.getCanonicalName();
   private Callback callback;
 
   public CustomShareDialog(Activity activity, Callback callback) {

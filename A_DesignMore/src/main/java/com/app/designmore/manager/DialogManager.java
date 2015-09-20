@@ -24,9 +24,11 @@ import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.rxAndroid.schedulers.HandlerScheduler;
 import com.app.designmore.utils.DensityUtil;
+import com.app.designmore.view.dialog.CustomAccountDialog;
 import com.app.designmore.view.dialog.CustomCameraDialog;
 import com.app.designmore.view.dialog.CustomShareDialog;
 import java.lang.ref.WeakReference;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import rx.functions.Action0;
 import rx.schedulers.Schedulers;
@@ -199,6 +201,11 @@ public class DialogManager {
 
   public CustomShareDialog showShareDialog(Activity activity, CustomShareDialog.Callback callback) {
     return new CustomShareDialog(activity, callback);
+  }
+
+  public CustomAccountDialog showDetailDialog(Activity activity, Map map,
+      CustomAccountDialog.Callback callback) {
+    return new CustomAccountDialog(activity, map, callback);
   }
 
   public ViewGroup showNoMoreDialog(BaseActivity activity, int gravity, String content) {

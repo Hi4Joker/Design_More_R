@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/account_root_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="@dimen/material_8dp"
+    android:padding="@dimen/material_1dp"
+    android:orientation="vertical"
+    android:background="@color/design_more_red"
+    >
+  <com.app.designmore.view.MaterialRippleLayout
+      android:layout_width="@dimen/material_64dp"
+      android:layout_height="@dimen/material_64dp"
+      app:mrl_rippleDimension="20dip"
+      app:mrl_rippleRoundedCorners="@dimen/material_corners"
+      app:mrl_rippleFadeDuration="100"
+      app:mrl_rippleAlpha="0.4"
+      app:mrl_rippleDuration="600"
+      app:mrl_rippleHover="true"
+      app:mrl_rippleOverlay="true"
+      app:mrl_rippleDelayClick="true"
+      app:mrl_rippleColor="@color/darker_gray"
+      >
+    <ImageView
+        android:id="@+id/account_item_iv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="center"
+        android:src="@drawable/ic_default_icon"
+        />
+  </com.app.designmore.view.MaterialRippleLayout>
+
+</LinearLayout>

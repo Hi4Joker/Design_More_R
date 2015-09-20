@@ -16,7 +16,7 @@
       android:layout_alignParentLeft="true"
       android:layout_centerVertical="true"
       android:scaleType="center"
-      android:src="@drawable/ic_radio_normal"
+      android:src="@drawable/ic_radio_normal_icon_icon"
       android:background="@drawable/transparent_background"
       />
 

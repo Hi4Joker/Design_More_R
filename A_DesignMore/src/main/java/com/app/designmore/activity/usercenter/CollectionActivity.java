@@ -15,8 +15,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -40,7 +38,6 @@ import com.app.designmore.retrofit.entity.CollectionEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
-import com.app.designmore.view.dialog.CustomCameraDialog;
 import com.app.designmore.view.dialog.CustomShareDialog;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.trello.rxlifecycle.ActivityEvent;
@@ -116,7 +113,7 @@ public class CollectionActivity extends BaseActivity
   @Override public void initView(Bundle savedInstanceState) {
 
     CollectionActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
+    toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_icon));
 
     LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toolbarTitleTv.getLayoutParams();
     params.rightMargin = DensityUtil.getActionBarSize(CollectionActivity.this);

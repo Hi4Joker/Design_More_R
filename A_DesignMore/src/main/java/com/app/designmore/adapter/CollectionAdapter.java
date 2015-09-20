@@ -56,8 +56,8 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
         .load(collectionEntity.getGoodThumb())
         .centerCrop()
         .crossFade()
-        .placeholder(R.drawable.ic_default)
-        .error(R.drawable.ic_default)
+        .placeholder(R.drawable.ic_default_icon)
+        .error(R.drawable.ic_default_icon)
         .diskCacheStrategy(DiskCacheStrategy.RESULT)
         .into(holder.goodIv);
 

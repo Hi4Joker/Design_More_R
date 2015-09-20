@@ -23,7 +23,6 @@ public class CustomCameraDialog extends Dialog {
 
   public CustomCameraDialog(Activity activity, Callback callback) {
     super(activity);
-
     getWindow().requestFeature(Window.FEATURE_NO_TITLE);
     getWindow().setGravity(Gravity.CENTER);
     getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));

@@ -21,7 +21,6 @@ import com.app.designmore.R;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.retrofit.LoginRetrofit;
 import com.app.designmore.retrofit.entity.LoginCodeEntity;
-import com.app.designmore.retrofit.entity.RegisterEntity;
 import com.app.designmore.retrofit.entity.RetrieveEntity;
 import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.app.designmore.rxAndroid.SimpleObserver;
@@ -89,7 +88,7 @@ public class RetrieveActivity extends BaseActivity {
   @Override public void initView(Bundle savedInstanceState) {
 
     RetrieveActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+    toolbar.setNavigationIcon(R.drawable.ic_arrow_back_icon);
 
     LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toolbarTitleTv.getLayoutParams();
     params.rightMargin = DensityUtil.getActionBarSize(RetrieveActivity.this);

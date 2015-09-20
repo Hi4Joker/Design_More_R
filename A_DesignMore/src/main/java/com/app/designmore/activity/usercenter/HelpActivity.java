@@ -1,13 +1,11 @@
 package com.app.designmore.activity.usercenter;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -22,18 +20,13 @@ import butterknife.ButterKnife;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
-import com.app.designmore.activity.HomeActivity;
-import com.app.designmore.adapter.CollectionAdapter;
 import com.app.designmore.adapter.HelpAdapter;
-import com.app.designmore.retrofit.AddressRetrofit;
 import com.app.designmore.retrofit.LoginRetrofit;
-import com.app.designmore.retrofit.entity.AddressEntity;
 import com.app.designmore.retrofit.entity.HelpEntity;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.trello.rxlifecycle.ActivityEvent;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import rx.functions.Action0;
@@ -79,7 +72,7 @@ public class HelpActivity extends BaseActivity implements HelpAdapter.Callback {
   @Override public void initView(Bundle savedInstanceState) {
 
     HelpActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
+    toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_icon));
 
     LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toolbarTitleTv.getLayoutParams();
     params.rightMargin = DensityUtil.getActionBarSize(HelpActivity.this);

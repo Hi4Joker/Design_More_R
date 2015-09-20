@@ -117,7 +117,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
   @Override public void initView(Bundle savedInstanceState) {
 
     AddressMangerActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back));
+    toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_icon));
 
     toolbarTitleTv.setVisibility(View.VISIBLE);
     toolbarTitleTv.setText("地址管理");

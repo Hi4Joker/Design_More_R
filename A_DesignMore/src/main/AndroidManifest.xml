@@ -84,12 +84,13 @@
         android:theme="@style/AppTheme.TransparentActivity"
         >
     </activity>
+
     <!--商品详情ACT-->
     <activity
         android:name=".activity.DetailActivity"
         android:screenOrientation="portrait"
         android:launchMode="singleTop"
-        android:theme="@style/AppTheme.TransparentActivity"
+        android:theme="@style/AppTheme.BlackActivity"
         >
     </activity>
 

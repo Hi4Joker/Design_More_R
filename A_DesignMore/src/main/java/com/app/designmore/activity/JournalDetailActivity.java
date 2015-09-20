@@ -104,7 +104,7 @@ public class JournalDetailActivity extends BaseActivity implements CustomShareDi
   @Override public void initView(Bundle savedInstanceState) {
 
     JournalDetailActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+    toolbar.setNavigationIcon(R.drawable.ic_arrow_back_icon);
 
     toolbarTitleTv.setVisibility(View.VISIBLE);
     toolbarTitleTv.setText("杂志详情");

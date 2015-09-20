@@ -153,7 +153,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
     linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
     linearLayoutManager.setSmoothScrollbarEnabled(true);
 
-    fashionAdapter = new FashionAdapter(this);
+    fashionAdapter = new FashionAdapter(FashionActivity.this);
     fashionAdapter.setCallback(FashionActivity.this);
 
     recyclerView.setLayoutManager(linearLayoutManager);
@@ -440,8 +440,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
 
   @Override public void onNoData() {
     isEndless = false;
-    toast =
-        DialogManager.getInstance().showNoMoreDialog(FashionActivity.this, Gravity.TOP, null);
+    toast = DialogManager.getInstance().showNoMoreDialog(FashionActivity.this, Gravity.TOP, null);
   }
 
   @Override public void onError(Throwable error) {

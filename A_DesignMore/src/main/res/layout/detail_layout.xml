@@ -2,6 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/detail_layout_root_view_rl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary_background_color"
@@ -44,7 +45,6 @@
               android:id="@+id/detail_layout_collapsing_toolbar"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:minHeight="?attr/actionBarSize"
               app:contentScrim="@color/white_overlay_color"
               app:layout_scrollFlags="scroll|exitUntilCollapsed"
               app:expandedTitleMarginStart="@dimen/material_16dp"
@@ -308,12 +308,13 @@
             >
 
           <RelativeLayout
+              android:id="@+id/detail_layout_trolley_rl"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@color/design_more_red"
               >
             <TextView
-                android:id="@+id/detail_layout_trolley_btn"
+                android:id="@+id/detail_layout_trolley_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
@@ -323,7 +324,7 @@
                 android:textColor="@color/white"
                 />
             <ImageView
-                android:layout_toLeftOf="@id/detail_layout_trolley_btn"
+                android:layout_toLeftOf="@id/detail_layout_trolley_tv"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
                 android:scaleType="center"

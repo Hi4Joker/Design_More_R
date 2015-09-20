@@ -83,10 +83,6 @@ public class FashionAdapter extends RecyclerView.Adapter<FashionAdapter.ViewHold
     FashionAdapter.this.notifyDataSetChanged();
   }
 
-  public void setCallback(Callback callback) {
-    this.callback = callback;
-  }
-
   public class ViewHolder extends RecyclerView.ViewHolder {
 
     @Nullable @Bind(R.id.fashion_item_root_view) RelativeLayout rootView;
@@ -106,6 +102,10 @@ public class FashionAdapter extends RecyclerView.Adapter<FashionAdapter.ViewHold
         callback.onItemClick(fashionEntity);
       }
     }
+  }
+
+  public void setCallback(Callback callback) {
+    this.callback = callback;
   }
 
   public interface Callback {
