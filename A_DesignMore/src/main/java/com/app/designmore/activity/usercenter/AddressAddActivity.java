@@ -11,15 +11,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
@@ -90,6 +93,7 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
   private ProgressDialog progressDialog;
   private ProgressDialog simpleProgressDialog;
   private CustomWheelDialog customWheelDialog;
+  private ViewGroup toast;
 
   private AddressPresenter addressPresenter;
 
@@ -116,7 +120,6 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
           addressPresenter.detach();
         }
       };
-
   private CustomWheelDialog.Callback callback = new CustomWheelDialog.Callback() {
     @Override public void onPicked(Province selectProvince, Province.City selectCity) {
 
@@ -321,40 +324,17 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
               }
 
               @Override public void onError(Throwable error) {
-                AddressAddActivity.this.showError(error);
+                toast = DialogManager.getInstance()
+                    .showNoMoreDialog(AddressAddActivity.this, Gravity.TOP, "操作失败，请重试，O__O …");
               }
 
               @Override public void onNext(RefreshAddressEvent refreshAddressEvent) {
+
+                Toast.makeText(AddressAddActivity.this, "操作成功", Toast.LENGTH_LONG).show();
                 /*通过eventBus发送通知，刷新地址列表*/
                 EventBusInstance.getDefault().post(refreshAddressEvent);
               }
             });
-  }
-
-  private void showError(Throwable error) {
-    if (error instanceof TimeoutException) {
-      AddressAddActivity.this.showSnackBar(getResources().getString(R.string.timeout_title));
-    } else if (error instanceof RetrofitError) {
-      Log.e(TAG, "kind:  " + ((RetrofitError) error).getKind());
-      AddressAddActivity.this.showSnackBar(getResources().getString(R.string.six_word_title));
-    } else if (error instanceof WebServiceException) {
-      AddressAddActivity.this.showSnackBar(
-          getResources().getString(R.string.service_exception_content));
-    } else {
-      Log.e(TAG, error.getMessage());
-      error.printStackTrace();
-      throw new RuntimeException("See inner exception");
-    }
-  }
-
-  private void showSnackBar(String text) {
-    Snackbar.make(rootView, text, Snackbar.LENGTH_SHORT)
-        .setAction("确定", new View.OnClickListener() {
-          @Override public void onClick(View v) {
-        /*do nothing*/
-          }
-        })
-        .show();
   }
 
   @Override public void exit() {
@@ -414,13 +394,19 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
   }
 
   @Override public void showError() {
-    AddressAddActivity.this.showSnackBar("请重新获取省市");
+    toast = DialogManager.getInstance()
+        .showNoMoreDialog(AddressAddActivity.this, Gravity.TOP, "获取城市失败，请重试，O__O …");
   }
 
   /*************************************************/
 
   @Override protected void onDestroy() {
     super.onDestroy();
+
+    if (toast != null && toast.getParent() != null) {
+      getWindowManager().removeViewImmediate(toast);
+    }
+    this.toast = null;
     this.progressDialog = null;
     this.simpleProgressDialog = null;
     this.customWheelDialog = null;

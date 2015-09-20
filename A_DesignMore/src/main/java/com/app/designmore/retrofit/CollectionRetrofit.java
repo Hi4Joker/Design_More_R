@@ -40,6 +40,9 @@ public class CollectionRetrofit {
 
     @FormUrlEncoded @POST("/mobile/api/client/interface.php")
     Observable<BaseResponse> requestDeleteCollection(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded @POST("/mobile/api/client/interface.php")
+    Observable<BaseResponse> requestCollectionGood(@FieldMap Map<String, String> params);
   }
 
   private final CollectionService collectionService;
@@ -137,6 +140,32 @@ public class CollectionRetrofit {
     }).map(new Func1<BaseResponse, BaseResponse>() {
       @Override public BaseResponse call(BaseResponse baseResponse) {
         /*删除成功*/
+        return baseResponse;
+      }
+    }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
+  }
+
+  /**
+   * 收藏商品
+   */
+  public Observable<BaseResponse> requestCollectionGood(final Map<String, String> params) {
+
+    return Observable.defer(new Func0<Observable<BaseResponse>>() {
+      @Override public Observable<BaseResponse> call() {
+        return collectionService.requestCollectionGood(params)
+            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
+      }
+    }).retry(new Func2<Integer, Throwable, Boolean>() {
+      @Override public Boolean call(Integer integer, Throwable throwable) {
+        return throwable instanceof TimeoutException && integer < 1;
+      }
+    }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
+      @Override public Observable<BaseResponse> call(BaseResponse addressResponse) {
+        return addressResponse.filterWebServiceErrors();
+      }
+    }).map(new Func1<BaseResponse, BaseResponse>() {
+      @Override public BaseResponse call(BaseResponse baseResponse) {
+        /*收藏成功*/
         return baseResponse;
       }
     }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());

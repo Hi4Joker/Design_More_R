@@ -8,7 +8,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -72,7 +74,9 @@ public class RegisterActivity extends BaseActivity {
   private String password;
   private String mobile;
   private String code;
+
   private ProgressDialog progressDialog;
+  private ViewGroup toast;
 
   private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
     @Override public void onCancel(DialogInterface dialog) {
@@ -264,30 +268,11 @@ public class RegisterActivity extends BaseActivity {
           }
         }, new Action1<Throwable>() {
           @Override public void call(Throwable error) {
-            RegisterActivity.this.showError(error);
+
+            toast = DialogManager.getInstance()
+                .showNoMoreDialog(RegisterActivity.this, Gravity.TOP, "注册失败，请重试，O__O …");
           }
         });
-  }
-
-  private void showError(Throwable error) {
-    if (error instanceof TimeoutException) {
-      RegisterActivity.this.showSnackBar(getResources().getString(R.string.timeout_title));
-    } else if (error instanceof RetrofitError) {
-      Log.e(TAG, "kind:  " + ((RetrofitError) error).getKind());
-      RegisterActivity.this.showSnackBar(getResources().getString(R.string.six_word_title));
-    } else {
-      Log.e(TAG, error.getMessage());
-      error.printStackTrace();
-      throw new RuntimeException("See inner exception");
-    }
-  }
-
-  private void showSnackBar(String text) {
-    Snackbar.make(toolbar, text, Snackbar.LENGTH_SHORT).setAction("确定", new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        /*do nothing*/
-      }
-    }).show();
   }
 
   @Override public void exit() {
@@ -296,7 +281,12 @@ public class RegisterActivity extends BaseActivity {
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    progressDialog = null;
+
+    if (toast != null && toast.getParent() != null) {
+      getWindowManager().removeViewImmediate(toast);
+    }
+    this.toast = null;
+    this.progressDialog = null;
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();
     if (compositeSubscription.hasSubscriptions()) compositeSubscription.clear();
   }

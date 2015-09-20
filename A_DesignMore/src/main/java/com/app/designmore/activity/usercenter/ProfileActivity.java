@@ -13,6 +13,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -104,6 +105,7 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
   private AlertDialog genderDialog;
   private CustomDatePickDialog dateTimePicKDialog;
   private ProgressDialog progressDialog;
+  private View toast;
 
   private Subscription subscription = Subscriptions.empty();
 
@@ -355,16 +357,13 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new SimpleObserver<Boolean>() {
           @Override public void onError(Throwable e) {
-            Snackbar.make(toolbar, "修改失败，请重试", Snackbar.LENGTH_LONG)
-                .setAction("确定", new View.OnClickListener() {
-                  @Override public void onClick(View v) {
-                    /*do nothing*/
-                  }
-                });
+
+            toast = DialogManager.getInstance()
+                .showNoMoreDialog(ProfileActivity.this, Gravity.TOP, "操作失败，请重试，O__O …");
           }
 
           @Override public void onNext(Boolean isOk) {
-            Toast.makeText(ProfileActivity.this, "修改成功", Toast.LENGTH_LONG).show();
+            Toast.makeText(ProfileActivity.this, "操作成功", Toast.LENGTH_LONG).show();
             ProfileActivity.this.exit();
           }
         });
@@ -504,6 +503,11 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
 
   @Override protected void onDestroy() {
     super.onDestroy();
+
+    if (toast != null && toast.getParent() != null) {
+      getWindowManager().removeViewImmediate(toast);
+    }
+    this.toast = null;
     this.progressDialog = null;
     this.genderDialog = null;
     this.dateTimePicKDialog = null;

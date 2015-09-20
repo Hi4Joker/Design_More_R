@@ -81,7 +81,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
 
   private SupportAnimator revealAnimator;
   private ProgressDialog progressDialog;
-  private ViewGroup noMoreDialog;
+  private ViewGroup toast;
 
   private int visibleItemCount;
   private int totalItemCount;
@@ -440,7 +440,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
 
   @Override public void onNoData() {
     isEndless = false;
-    noMoreDialog =
+    toast =
         DialogManager.getInstance().showNoMoreDialog(FashionActivity.this, Gravity.TOP, null);
   }
 
@@ -455,10 +455,10 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    if (noMoreDialog != null && noMoreDialog.getParent() != null) {
-      getWindowManager().removeViewImmediate(noMoreDialog);
+    if (toast != null && toast.getParent() != null) {
+      getWindowManager().removeViewImmediate(toast);
     }
     this.progressDialog = null;
-    this.noMoreDialog = null;
+    this.toast = null;
   }
 }

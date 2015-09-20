@@ -14,9 +14,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
@@ -26,10 +28,12 @@ import butterknife.Bind;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
+import com.app.designmore.activity.DetailActivity;
 import com.app.designmore.activity.HomeActivity;
 import com.app.designmore.activity.MineActivity;
 import com.app.designmore.adapter.CollectionAdapter;
 import com.app.designmore.exception.WebServiceException;
+import com.app.designmore.helper.DBHelper;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.retrofit.CollectionRetrofit;
 import com.app.designmore.retrofit.entity.CollectionEntity;
@@ -75,6 +79,7 @@ public class CollectionActivity extends BaseActivity
 
   private ProgressDialog progressDialog;
   private CustomShareDialog customShareDialog;
+  private ViewGroup toast;
 
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
@@ -182,7 +187,8 @@ public class CollectionActivity extends BaseActivity
     /*Action=GetCollectByGoods&uid=1*/
     Map<String, String> params = new HashMap<>(2);
     params.put("Action", "GetCollectByGoods");
-    params.put("uid", "10");
+    params.put("uid",
+        DBHelper.getInstance(getApplicationContext()).getUserID(CollectionActivity.this));
 
     CollectionRetrofit.getInstance()
         .getCollectionList(params)
@@ -250,6 +256,8 @@ public class CollectionActivity extends BaseActivity
   /*点击条目，跳转商品详情*/
   @Override public void onItemClick(CollectionEntity entity) {
 
+    DetailActivity.navigateToDetail(CollectionActivity.this, entity.getGoodId());
+    overridePendingTransition(0, 0);
   }
 
   /*点击更多按钮，弹出列表对话框，删除操作*/
@@ -282,7 +290,8 @@ public class CollectionActivity extends BaseActivity
     Map<String, String> params = new HashMap<>(3);
     params.put("Action", "DelCollectByGoods");
     params.put("rec_id", deleteCollection.getCollectionId());
-    params.put("uid", "10");
+    params.put("uid",
+        DBHelper.getInstance(getApplicationContext()).getUserID(CollectionActivity.this));
 
     subscription = CollectionRetrofit.getInstance()
         .requestDeleteCollection(params)
@@ -310,6 +319,10 @@ public class CollectionActivity extends BaseActivity
         })
         .doOnCompleted(new Action0() {
           @Override public void call() {
+
+            toast = DialogManager.getInstance()
+                .showNoMoreDialog(CollectionActivity.this, Gravity.TOP, "删除成功，O(∩_∩)O~~");
+
             if (items.size() == 0) {
               progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
                   "您还没有收藏", null, "去首页看看", new View.OnClickListener() {
@@ -364,6 +377,11 @@ public class CollectionActivity extends BaseActivity
 
   @Override protected void onDestroy() {
     super.onDestroy();
+
+    if (toast != null && toast.getParent() != null) {
+      getWindowManager().removeViewImmediate(toast);
+    }
+    this.toast = null;
     this.progressDialog = null;
     this.customShareDialog = null;
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();

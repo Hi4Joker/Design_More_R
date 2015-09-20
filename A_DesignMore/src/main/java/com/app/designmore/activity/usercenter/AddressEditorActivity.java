@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
@@ -77,6 +79,8 @@ public class AddressEditorActivity extends BaseActivity implements AddressView {
   private ProgressDialog progressDialog;
   private ProgressDialog simpleProgressDialog;
   private CustomWheelDialog customWheelDialog;
+  private View toast;
+
   private AddressPresenter addressPresenter;
 
   private Province defaultProvince;
@@ -300,33 +304,16 @@ public class AddressEditorActivity extends BaseActivity implements AddressView {
               }
 
               @Override public void onError(Throwable error) {
-                AddressEditorActivity.this.showError(error);
+
+                toast = DialogManager.getInstance()
+                    .showNoMoreDialog(AddressEditorActivity.this, Gravity.TOP, "操作失败，请重试，O__O …");
               }
 
               @Override public void onNext(AddressEntity address) {
+                Toast.makeText(AddressEditorActivity.this, "操作成功", Toast.LENGTH_LONG).show();
                 EventBusInstance.getDefault().post((EditorAddressEvent) address);
               }
             });
-  }
-
-  private void showError(Throwable error) {
-    if (error instanceof TimeoutException) {
-      AddressEditorActivity.this.showSnackBar(getResources().getString(R.string.timeout_title));
-    } else if (error instanceof RetrofitError) {
-      Log.e(TAG, "kind:  " + ((RetrofitError) error).getKind());
-      AddressEditorActivity.this.showSnackBar(getResources().getString(R.string.six_word_title));
-    } else if (error instanceof WebServiceException) {
-      AddressEditorActivity.this.showSnackBar(
-          getResources().getString(R.string.service_exception_content));
-    } else {
-      Log.e(TAG, error.getMessage());
-      error.printStackTrace();
-      throw new RuntimeException("See inner exception");
-    }
-  }
-
-  private void showSnackBar(String text) {
-    Snackbar.make(rootView, text, Snackbar.LENGTH_SHORT).setAction("确定", null).show();
   }
 
   @Override public void exit() {
@@ -367,11 +354,17 @@ public class AddressEditorActivity extends BaseActivity implements AddressView {
   }
 
   @Override public void showError() {
-    AddressEditorActivity.this.showSnackBar("请重新获取省市");
+    toast = DialogManager.getInstance()
+        .showNoMoreDialog(AddressEditorActivity.this, Gravity.TOP, "获取城市失败，请重试，O__O …");
   }
 
   @Override protected void onDestroy() {
     super.onDestroy();
+
+    if (toast != null && toast.getParent() != null) {
+      getWindowManager().removeViewImmediate(toast);
+    }
+    this.toast = null;
     this.progressDialog = null;
     this.simpleProgressDialog = null;
     this.customWheelDialog = null;

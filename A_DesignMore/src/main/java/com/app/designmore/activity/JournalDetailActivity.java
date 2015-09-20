@@ -4,11 +4,14 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -16,12 +19,15 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import butterknife.Bind;
+import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.retrofit.entity.JournalEntity;
+import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
 import com.app.designmore.view.dialog.CustomShareDialog;
 
@@ -31,8 +37,9 @@ import com.app.designmore.view.dialog.CustomShareDialog;
 public class JournalDetailActivity extends BaseActivity implements CustomShareDialog.Callback {
 
   private static final String TAG = JournalDetailActivity.class.getCanonicalName();
-
   private static final String ENTITY = "ENTITY";
+
+  @Nullable @Bind(R.id.journal_detail_layout_root_view) FrameLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
 
@@ -41,7 +48,6 @@ public class JournalDetailActivity extends BaseActivity implements CustomShareDi
 
   private CustomShareDialog customShareDialog;
   private WebSettings webSettings;
-
   private JournalEntity journalEntity;
 
   class MyWebViewClient extends WebViewClient {
@@ -165,8 +171,16 @@ public class JournalDetailActivity extends BaseActivity implements CustomShareDi
   }
 
   @Override public void exit() {
-    JournalDetailActivity.this.finish();
-    overridePendingTransition(0, 0);
+
+    ViewCompat.animate(rootView)
+        .translationY(DensityUtil.getScreenHeight(JournalDetailActivity.this))
+        .setDuration(Constants.MILLISECONDS_400)
+        .setInterpolator(new LinearInterpolator())
+        .setListener(new ViewPropertyAnimatorListenerAdapter() {
+          @Override public void onAnimationEnd(View view) {
+            JournalDetailActivity.this.finish();
+          }
+        });
   }
 
   @Override public void onWeiboClick() {

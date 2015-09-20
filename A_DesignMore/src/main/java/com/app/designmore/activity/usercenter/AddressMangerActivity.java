@@ -13,9 +13,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
@@ -73,6 +75,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
   @Nullable @Bind(R.id.address_manager_layout_rv) RecyclerView recyclerView;
 
   private ProgressDialog progressDialog;
+  private ViewGroup toast;
 
   private AddressAdapter addressAdapter;
   private List<AddressEntity> items = new ArrayList<>();
@@ -367,6 +370,10 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
             })
             .doOnCompleted(new Action0() {
               @Override public void call() {
+
+                toast = DialogManager.getInstance()
+                    .showNoMoreDialog(AddressMangerActivity.this, Gravity.TOP, "删除成功，O(∩_∩)O~~");
+
                 if (items.size() == 0) {
                   progressLayout.showEmpty(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
                       "您还没有收货地址", null);
@@ -396,7 +403,8 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
 
   /*发生错误回调*/
   @Override public void onError(Throwable error) {
-    DialogManager.getInstance().showConfirmDialog(AddressMangerActivity.this, "删除失败，请重试");
+    toast = DialogManager.getInstance()
+        .showNoMoreDialog(AddressMangerActivity.this, Gravity.TOP, "删除失败，请重试，O__O …");
   }
 
   /**
@@ -495,6 +503,10 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
 
   @Override protected void onDestroy() {
     super.onDestroy();
+    if (toast != null && toast.getParent() != null) {
+      getWindowManager().removeViewImmediate(toast);
+    }
+    this.toast = null;
     this.progressDialog = null;
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();
   }

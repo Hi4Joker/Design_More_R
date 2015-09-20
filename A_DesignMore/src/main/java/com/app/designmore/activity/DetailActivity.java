@@ -1,6 +1,7 @@
 package com.app.designmore.activity;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -12,9 +13,11 @@ import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
@@ -29,13 +32,17 @@ import com.app.designmore.R;
 import com.app.designmore.activity.usercenter.TrolleyActivity;
 import com.app.designmore.adapter.DetailBannerAdapter;
 import com.app.designmore.exception.WebServiceException;
+import com.app.designmore.helper.DBHelper;
 import com.app.designmore.manager.DialogManager;
+import com.app.designmore.retrofit.CollectionRetrofit;
 import com.app.designmore.retrofit.DetailRetrofit;
 import com.app.designmore.retrofit.entity.DetailEntity;
+import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.retrofit.response.DetailResponse;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
+import com.app.designmore.rxAndroid.SimpleObserver;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.ProgressLayout;
@@ -51,6 +58,7 @@ import retrofit.RetrofitError;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
+import rx.functions.Func1;
 import rx.subscriptions.Subscriptions;
 
 /**
@@ -77,6 +85,7 @@ public class DetailActivity extends BaseActivity implements CustomShareDialog.Ca
   private String goodId;
   private ProgressDialog progressDialog;
   private CustomShareDialog customShareDialog;
+  private ViewGroup toast;
 
   private ViewPager viewPager;
   private List<DetailResponse.Detail.ProductImage> productImages;
@@ -90,10 +99,16 @@ public class DetailActivity extends BaseActivity implements CustomShareDialog.Ca
     }
   };
 
+  private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
+    @Override public void onCancel(DialogInterface dialog) {
+      subscription.unsubscribe();
+    }
+  };
+
   private ViewPager.SimpleOnPageChangeListener simpleOnPageChangeListener =
       new ViewPager.SimpleOnPageChangeListener() {
         @Override public void onPageSelected(int position) {
-          DetailActivity.this.bannerPageTv.setText(++position+"/"+productImages.size());
+          DetailActivity.this.bannerPageTv.setText(++position + "/" + productImages.size());
         }
       };
 
@@ -239,6 +254,7 @@ public class DetailActivity extends BaseActivity implements CustomShareDialog.Ca
 
   @Nullable @OnClick(R.id.detail_layout_collection_rl) void onCollectionClick() {
 
+    DetailActivity.this.collectionGood();
   }
 
   @Nullable @OnClick(R.id.detail_layout_share_rl) void onShareClick() {
@@ -246,6 +262,53 @@ public class DetailActivity extends BaseActivity implements CustomShareDialog.Ca
       customShareDialog = DialogManager.getInstance().showShareDialog(DetailActivity.this, this);
     }
     customShareDialog.show();
+  }
+
+  private void collectionGood() {
+
+    /*Action=AddCollectByGoods&gid=1&uid=1*/
+    Map<String, String> params = new HashMap<>(3);
+    params.put("Action", "AddCollectByGoods");
+    params.put("gid", goodId);
+    params.put("uid", DBHelper.getInstance(getApplicationContext()).getUserID(DetailActivity.this));
+
+    subscription =
+        CollectionRetrofit.getInstance()
+            .requestCollectionGood(params)
+            .doOnSubscribe(new Action0() {
+              @Override public void call() {
+                /*加载数据，显示进度条*/
+                if (progressDialog == null) {
+                  progressDialog = DialogManager.
+                      getInstance().showSimpleProgressDialog(DetailActivity.this, cancelListener);
+                } else {
+                  progressDialog.show();
+                }
+              }
+            })
+            .doOnTerminate(new Action0() {
+              @Override public void call() {
+                /*隐藏进度条*/
+                if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
+              }
+            })
+            .filter(new Func1<BaseResponse, Boolean>() {
+              @Override public Boolean call(BaseResponse baseResponse) {
+                return !subscription.isUnsubscribed();
+              }
+            })
+            .compose(DetailActivity.this.<BaseResponse>bindUntilEvent(ActivityEvent.DESTROY))
+            .subscribe(new SimpleObserver<BaseResponse>() {
+              @Override public void onCompleted() {
+                toast = DialogManager.getInstance()
+                    .showNoMoreDialog(DetailActivity.this, Gravity.TOP, "收藏成功，O(∩_∩)O~~");
+              }
+
+              @Override public void onError(Throwable e) {
+                toast = DialogManager.getInstance()
+                    .showNoMoreDialog(DetailActivity.this, Gravity.TOP, "收藏失败，请重试，O__O …");
+              }
+            });
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -290,6 +353,10 @@ public class DetailActivity extends BaseActivity implements CustomShareDialog.Ca
 
   @Override protected void onDestroy() {
     super.onDestroy();
+    if (toast != null && toast.getParent() != null) {
+      getWindowManager().removeViewImmediate(toast);
+    }
+    this.toast = null;
     this.progressDialog = null;
     this.customShareDialog = null;
     this.viewPager.removeOnPageChangeListener(simpleOnPageChangeListener);

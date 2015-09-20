@@ -9,7 +9,9 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
@@ -60,10 +62,11 @@ public class LoginActivity extends BaseActivity {
   private Observable<TextViewTextChangeEvent> passwordChangeObservable;
   private String userName;
   private String password;
+
   private ProgressDialog progressDialog;
+  private ViewGroup toast;
 
   private Subscription subscription = Subscriptions.empty();
-
   private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
     @Override public void onCancel(DialogInterface dialog) {
       subscription.unsubscribe();
@@ -214,8 +217,8 @@ public class LoginActivity extends BaseActivity {
           }
 
           @Override public void onError(Throwable e) {
-
-            Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+            toast = DialogManager.getInstance()
+                .showNoMoreDialog(LoginActivity.this, Gravity.TOP, "登陆失败，请重试，O__O …");
           }
 
           @Override public void onNext(LoginEntity loginEntity) {
@@ -234,6 +237,11 @@ public class LoginActivity extends BaseActivity {
 
   @Override protected void onDestroy() {
     super.onDestroy();
+
+    if (toast != null && toast.getParent() != null) {
+      getWindowManager().removeViewImmediate(toast);
+    }
+    this.toast = null;
     this.progressDialog = null;
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();
   }
