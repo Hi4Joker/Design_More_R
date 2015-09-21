@@ -237,9 +237,7 @@ public class DialogManager {
         .createWorker()
         .schedule(new Action0() {
           @Override public void call() {
-
             if (parent != null && parent.getParent() != null) {
-
               /*rootView ViewRootImpl*/
               windowManager.removeView(parent);
             }

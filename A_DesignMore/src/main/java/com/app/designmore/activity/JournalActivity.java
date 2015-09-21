@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -84,7 +83,7 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
 
   private SupportAnimator revealAnimator;
   private ProgressDialog progressDialog;
-  private ViewGroup noMoreDialog;
+  private ViewGroup toast;
 
   private int visibleItemCount;
   private int totalItemCount;
@@ -417,17 +416,13 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
 
   @Override public void onNoData() {
     isEndless = false;
-    noMoreDialog =
+    toast =
         DialogManager.getInstance().showNoMoreDialog(JournalActivity.this, Gravity.TOP, null);
   }
 
   @Override public void onError(Throwable error) {
-    Snackbar.make(rootView, getResources().getString(R.string.fail_load_more), Snackbar.LENGTH_LONG)
-        .setAction("确定", new View.OnClickListener() {
-          @Override public void onClick(View v) {
-            /*do nothing*/
-          }
-        });
+    toast = DialogManager.getInstance()
+        .showNoMoreDialog(JournalActivity.this, Gravity.TOP, "加载更多失败，请重试,/(ㄒoㄒ)/~~");
   }
 
   @Override public void exit() {
@@ -448,10 +443,10 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    if (noMoreDialog != null && noMoreDialog.getParent() != null) {
-      getWindowManager().removeViewImmediate(noMoreDialog);
+    if (toast != null && toast.getParent() != null) {
+      getWindowManager().removeViewImmediate(toast);
     }
     this.progressDialog = null;
-    this.noMoreDialog = null;
+    this.toast = null;
   }
 }

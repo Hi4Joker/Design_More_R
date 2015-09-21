@@ -199,6 +199,7 @@ public class CollectionActivity extends BaseActivity
             CollectionActivity.this.<List<CollectionEntity>>bindUntilEvent(ActivityEvent.DESTROY))
         .subscribe(new Subscriber<List<CollectionEntity>>() {
           @Override public void onCompleted() {
+
             /*加载完毕，显示内容界面*/
             if (items != null && items.size() != 0) {
               if (swipeRefreshLayout.isRefreshing()) {

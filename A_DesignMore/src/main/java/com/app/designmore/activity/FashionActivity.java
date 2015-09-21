@@ -444,12 +444,8 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
   }
 
   @Override public void onError(Throwable error) {
-    Snackbar.make(rootView, getResources().getString(R.string.fail_load_more), Snackbar.LENGTH_LONG)
-        .setAction("确定", new View.OnClickListener() {
-          @Override public void onClick(View v) {
-            /*do nothing*/
-          }
-        });
+    toast = DialogManager.getInstance()
+        .showNoMoreDialog(FashionActivity.this, Gravity.TOP, "加载更多失败，请重试,/(ㄒoㄒ)/~~");
   }
 
   @Override protected void onDestroy() {

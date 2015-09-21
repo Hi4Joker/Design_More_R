@@ -334,9 +334,9 @@ public class DetailActivity extends BaseActivity
 
   @Override public void onAccountClick(ProductAttrEntity productAttrEntity, int count) {
 
-    /*Action=、&uid=1&gid=1&goods_attr=0&count=0*/
+    /*Action=AddGoodsCart&uid=1&gid=1&goods_attr=0&count=0*/
     Map<String, String> params = new HashMap<>(5);
-    params.put("Action", "");
+    params.put("Action", "AddGoodsCart");
     params.put("uid", DBHelper.getInstance(getApplicationContext()).getUserID(DetailActivity.this));
     params.put("gid", goodId);
     params.put("goods_attr", productAttrEntity.getAttrId());
@@ -346,7 +346,7 @@ public class DetailActivity extends BaseActivity
         .requestBuyGood(params)
         .doOnSubscribe(new Action0() {
           @Override public void call() {
-                /*加载数据，显示进度条*/
+            /*加载数据，显示进度条*/
             if (progressDialog == null) {
               progressDialog = DialogManager.
                   getInstance().showSimpleProgressDialog(DetailActivity.this, cancelListener);
@@ -357,7 +357,7 @@ public class DetailActivity extends BaseActivity
         })
         .doOnTerminate(new Action0() {
           @Override public void call() {
-                /*隐藏进度条*/
+            /*隐藏进度条*/
             if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
           }
         })

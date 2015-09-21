@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,10 +31,12 @@ import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.activity.HomeActivity;
 import com.app.designmore.adapter.TrolleyAdapter;
 import com.app.designmore.exception.WebServiceException;
+import com.app.designmore.helper.DBHelper;
 import com.app.designmore.retrofit.TrolleyRetrofit;
 import com.app.designmore.retrofit.entity.TrolleyEntity;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.ProgressLayout;
+import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +47,7 @@ import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action0;
+import rx.functions.Action1;
 import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -60,6 +64,7 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
   @Nullable @Bind(R.id.trolley_layout_root_view) LinearLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
+  @Nullable @Bind(R.id.trolley_layout_srl) SwipeRefreshLayout swipeRefreshLayout;
   @Nullable @Bind(R.id.trolley_layout_rv) RecyclerView recyclerView;
   @Nullable @Bind(R.id.trolley_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.trolley_layout_radio_btn) ImageButton radioBtn;
@@ -128,6 +133,13 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
 
   private void setupAdapter() {
 
+    swipeRefreshLayout.setColorSchemeResources(Constants.colors);
+    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
+      @Override public void call(Void aVoid) {
+        TrolleyActivity.this.loadData();
+      }
+    });
+
     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(TrolleyActivity.this);
     linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
     linearLayoutManager.setSmoothScrollbarEnabled(true);
@@ -152,7 +164,8 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
             if (trolleyEntities.size() == items.size()) {
               radioBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_selected));
             } else {
-              radioBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_normal_icon_icon));
+              radioBtn.setImageDrawable(
+                  getResources().getDrawable(R.drawable.ic_radio_normal_icon_icon));
             }
             compositeSubscription.remove(this);
           }
@@ -171,7 +184,8 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
               radioIv.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_selected));
               trolleyEntities.add(trolleyEntity);
             } else {
-              radioIv.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_normal_icon_icon));
+              radioIv.setImageDrawable(
+                  getResources().getDrawable(R.drawable.ic_radio_normal_icon_icon));
               trolleyEntities.remove(trolleyEntity);
             }
           }
@@ -183,23 +197,27 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
     /*Action=GoodsCartList&uid=1*/
     Map<String, String> params = new HashMap<>(2);
     params.put("Action", "GoodsCartList");
-    params.put("uid", "1");
+    params.put("uid",
+        DBHelper.getInstance(getApplicationContext()).getUserID(TrolleyActivity.this));
 
     TrolleyRetrofit.getInstance()
         .getTrolleyList(params)
         .doOnSubscribe(new Action0() {
           @Override public void call() {
             /*加载数据，显示进度条*/
-            progressLayout.showLoading();
+            if (!swipeRefreshLayout.isRefreshing()) progressLayout.showLoading();
           }
         })
         .compose(TrolleyActivity.this.<List<TrolleyEntity>>bindUntilEvent(ActivityEvent.DESTROY))
         .subscribe(new Subscriber<List<TrolleyEntity>>() {
           @Override public void onCompleted() {
-
             /*加载完毕，显示内容界面*/
             if (items != null && items.size() != 0) {
-              progressLayout.showContent();
+              if (swipeRefreshLayout.isRefreshing()) {
+                swipeRefreshLayout.setRefreshing(false);
+              } else if (!progressLayout.isContent()) {
+                progressLayout.showContent();
+              }
             } else if (items != null && items.size() == 0) {
               progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
                   "您的购物车空空如也，快去购物吧", null, "去首页看看", new View.OnClickListener() {
@@ -278,11 +296,14 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
           }));
     } else {/*未全选 -> 全选*/
 
-      //for (int pos = 0; pos < items.size(); pos++) {
       TrolleyActivity.this.observableListenerWrapper(
           Observable.defer(new Func0<Observable<TrolleyEntity>>() {
             @Override public Observable<TrolleyEntity> call() {
               return Observable.from(items);
+            }
+          }).filter(new Func1<TrolleyEntity, Boolean>() {
+            @Override public Boolean call(TrolleyEntity trolleyEntity) {
+              return !trolleyEntity.isChecked;
             }
           }).map(new Func1<TrolleyEntity, TrolleyEntity>() {
             @Override public TrolleyEntity call(TrolleyEntity trolleyEntity) {
@@ -290,7 +311,6 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
               return trolleyEntity;
             }
           }));
-      //}
     }
   }
 
