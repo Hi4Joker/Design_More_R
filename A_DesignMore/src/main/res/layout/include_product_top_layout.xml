@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/material_32dp"
+    android:orientation="horizontal"
+    android:background="@color/white"
+    tools:showIn="@layout/product_layout"
+    >
+
+    <ImageView android:layout_width="@dimen/material_2dp"
+        android:layout_height="match_parent"
+        android:background="@color/design_more_red"
+        />
+
+    <!--综合排序-->
+    <com.app.designmore.view.MaterialRippleLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/material_24dp"
+        android:paddingRight="@dimen/material_16dp"
+        android:layout_gravity="center"
+        app:mrl_rippleDimension="4dip"
+        app:mrl_rippleFadeDuration="100"
+        app:mrl_rippleAlpha="0.4"
+        app:mrl_rippleDuration="600"
+        app:mrl_rippleHover="true"
+        app:mrl_rippleOverlay="true"
+        app:mrl_rippleDelayClick="true"
+        app:mrl_rippleColor="@color/darker_gray"
+        >
+        <TextView
+            android:id="@+id/composite_order_tv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="综合排序"
+            android:textSize="@dimen/material_11sp"
+            />
+    </com.app.designmore.view.MaterialRippleLayout>
+
+    <ImageView
+        style="@style/product_divider"/>
+
+    <!--销量-->
+    <com.app.designmore.view.MaterialRippleLayout
+        android:layout_width="0dip"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/material_16dp"
+        android:paddingRight="@dimen/material_16dp"
+        android:layout_gravity="center"
+        app:mrl_rippleDimension="4dip"
+        app:mrl_rippleFadeDuration="100"
+        app:mrl_rippleAlpha="0.4"
+        app:mrl_rippleDuration="600"
+        app:mrl_rippleHover="true"
+        app:mrl_rippleOverlay="true"
+        app:mrl_rippleDelayClick="true"
+        app:mrl_rippleColor="@color/darker_gray"
+        >
+        <TextView
+            android:id="@+id/sales_order_tv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="销量"
+            android:textSize="@dimen/material_11sp"
+            />
+    </com.app.designmore.view.MaterialRippleLayout>
+
+    <ImageView
+        style="@style/product_divider"/>
+
+    <!-- 新品-->
+    <com.app.designmore.view.MaterialRippleLayout
+        android:layout_width="0dip"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/material_16dp"
+        android:paddingRight="@dimen/material_16dp"
+        android:layout_gravity="center"
+        app:mrl_rippleDimension="4dip"
+        app:mrl_rippleFadeDuration="100"
+        app:mrl_rippleAlpha="0.4"
+        app:mrl_rippleDuration="600"
+        app:mrl_rippleHover="true"
+        app:mrl_rippleOverlay="true"
+        app:mrl_rippleDelayClick="true"
+        app:mrl_rippleColor="@color/darker_gray"
+        >
+        <TextView
+            android:id="@+id/fashion_order_tv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="新品"
+            android:textSize="@dimen/material_11sp"
+            />
+    </com.app.designmore.view.MaterialRippleLayout>
+
+    <ImageView
+        style="@style/product_divider"/>
+
+    <!-- 收藏-->
+    <com.app.designmore.view.MaterialRippleLayout
+        android:layout_width="0dip"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/material_16dp"
+        android:paddingRight="@dimen/material_16dp"
+        android:layout_gravity="center"
+        app:mrl_rippleDimension="4dip"
+        app:mrl_rippleFadeDuration="100"
+        app:mrl_rippleAlpha="0.4"
+        app:mrl_rippleDuration="600"
+        app:mrl_rippleHover="true"
+        app:mrl_rippleOverlay="true"
+        app:mrl_rippleDelayClick="true"
+        app:mrl_rippleColor="@color/darker_gray"
+        >
+        <TextView
+            android:id="@+id/collection_order_tv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="收藏"
+            android:textSize="@dimen/material_11sp"
+            />
+    </com.app.designmore.view.MaterialRippleLayout>
+
+    <ImageView
+        style="@style/product_divider"/>
+
+    <!-- 价格-->
+    <com.app.designmore.view.MaterialRippleLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/material_16dp"
+        android:paddingRight="@dimen/material_24dp"
+        android:layout_gravity="center"
+        app:mrl_rippleDimension="4dip"
+        app:mrl_rippleFadeDuration="100"
+        app:mrl_rippleAlpha="0.4"
+        app:mrl_rippleDuration="600"
+        app:mrl_rippleHover="true"
+        app:mrl_rippleOverlay="true"
+        app:mrl_rippleDelayClick="true"
+        app:mrl_rippleColor="@color/darker_gray"
+        >
+        <LinearLayout
+            android:id="@+id/price_item_ll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            >
+            <TextView
+                android:id="@+id/price_item_tv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="价格"
+                android:textSize="@dimen/material_11sp"
+                />
+            <ImageView
+                android:id="@+id/price_item_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/material_4dp"
+                android:layout_marginLeft="@dimen/material_8dp"
+                android:layout_gravity="center"
+                android:scaleType="center"
+                android:src="@drawable/ic_product_down_icon"
+                />
+        </LinearLayout>
+
+    </com.app.designmore.view.MaterialRippleLayout>
+
+
+</LinearLayout>

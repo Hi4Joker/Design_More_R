@@ -90,7 +90,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
 
   private FashionAdapter fashionAdapter;
   private List<FashionEntity> items = new ArrayList<>();
-  private volatile int count = 1;
+  private volatile int page = 1;
   private volatile boolean isEndless = true;
 
   private View.OnClickListener goHomeClickListener = new View.OnClickListener() {
@@ -189,7 +189,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
     Map<String, String> params = new HashMap<>(3);
     params.put("Action", "GetProductByNew");
     params.put("count", "10");
-    params.put("page", String.valueOf(count = 1));
+    params.put("page", String.valueOf(page = 1));
 
     FashionRetrofit.getInstance()
         .getFashionList(params)
@@ -260,7 +260,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
     final Map<String, String> params = new HashMap<>(3);
     params.put("Action", "GetProductByNew");
     params.put("count", "10");
-    params.put("page", String.valueOf(++count));
+    params.put("page", String.valueOf(++page));
 
     FashionRetrofit.getInstance()
         .getFashionList(params)
@@ -439,7 +439,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
   }
 
   @Override public void onNoData() {
-    isEndless = false;
+    this.isEndless = false;
     toast = DialogManager.getInstance().showNoMoreDialog(FashionActivity.this, Gravity.TOP, null);
   }
 
@@ -453,7 +453,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
     if (toast != null && toast.getParent() != null) {
       getWindowManager().removeViewImmediate(toast);
     }
-    this.progressDialog = null;
     this.toast = null;
+    this.progressDialog = null;
   }
 }

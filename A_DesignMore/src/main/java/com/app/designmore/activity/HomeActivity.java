@@ -42,11 +42,13 @@ public class HomeActivity extends BaseActivity {
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
   @Nullable @Bind(R.id.white_toolbar_title_iv) ImageView toolbarTitleIv;
   @Nullable @Bind(R.id.home_layout_pl) ProgressLayout progressLayout;
+
   @Nullable @Bind(R.id.bottom_bar_home_iv) ImageView homeIv;
   @Nullable @Bind(R.id.bottom_bar_home_tv) TextView homeTv;
   @Nullable @Bind(R.id.bottom_bar_fashion_rl) RelativeLayout bottomBarFashionRl;
   @Nullable @Bind(R.id.bottom_bar_journal_rl) RelativeLayout bottomBarJournalRl;
   @Nullable @Bind(R.id.bottom_bar_mine_rl) RelativeLayout bottomBarMineRl;
+
   private SupportAnimator revealAnimator;
 
   public static void navigateToHome(AppCompatActivity startingActivity) {
@@ -79,15 +81,6 @@ public class HomeActivity extends BaseActivity {
   }
 
   private void setListener() {
-
-    /*app:mrl_rippleDimension="5dip"
-    app:mrl_rippleFadeDuration="100"
-    app:mrl_rippleAlpha="0.4"
-    app:mrl_rippleDuration="600"
-    app:mrl_rippleHover="true"
-    app:mrl_rippleOverlay="true"
-    app:mrl_rippleDelayClick="true"
-    app:mrl_rippleColor="@android:color/darker_gray"*/
 
     MaterialRippleLayout.on(bottomBarJournalRl)
         .rippleDiameterDp(DensityUtil.dip2px(5))
@@ -133,6 +126,11 @@ public class HomeActivity extends BaseActivity {
             Utils.pythagorean(bounds.width(), bounds.height()));
     revealAnimator.setDuration(Constants.MILLISECONDS_400);
     revealAnimator.setInterpolator(new AccelerateInterpolator());
+    revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
+      @Override public void onAnimationEnd() {
+        progressLayout.showContent();
+      }
+    });
     revealAnimator.start();
   }
 
@@ -160,6 +158,16 @@ public class HomeActivity extends BaseActivity {
   @Nullable @OnClick(R.id.bottom_bar_mine_rl) void onMineClick() {
 
     MineActivity.navigateToUserCenter(HomeActivity.this);
+    overridePendingTransition(0, 0);
+  }
+
+  /**
+   * 全部商品
+   */
+  @Nullable @OnClick(R.id.home_layout_all_product_ib) void onAllProductClick() {
+
+    //ProductKeyListActivity.navigateToProductKeyList(HomeActivity.this, "手表","手表");
+    AllProductListActivity.navigateToAllProductList(HomeActivity.this, "手表","手表");
     overridePendingTransition(0, 0);
   }
 

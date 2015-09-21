@@ -24,6 +24,7 @@
   <dimen name="material_114dp">114dip</dimen>
   <dimen name="material_120dp">120dip</dimen>
   <dimen name="material_128dp">128dip</dimen>
+  <dimen name="material_144dp">144dip</dimen>
   <dimen name="material_150dp">150dip</dimen>
   <dimen name="material_160dp">160dip</dimen>
   <dimen name="material_180dp">180dip</dimen>
@@ -32,6 +33,8 @@
   <dimen name="material_256dp">256dip</dimen>
   <dimen name="material_320dp">320dip</dimen>
   <dimen name="material_400dp">400dip</dimen>
+  <dimen name="_material_4dp">-4dip</dimen>
+  <dimen name="_material_8dp">-8dip</dimen>
   <dimen name="_material_16dp">-16dip</dimen>
   <dimen name="_material_24dp">-24dip</dimen>
 

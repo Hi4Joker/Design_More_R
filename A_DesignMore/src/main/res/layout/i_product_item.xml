@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.app.designmore.view.MaterialRippleLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/material_120dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    app:mrl_rippleDimension="10dip"
+    app:mrl_rippleFadeDuration="100"
+    app:mrl_rippleAlpha="0.4"
+    app:mrl_rippleDuration="600"
+    app:mrl_rippleHover="true"
+    app:mrl_rippleOverlay="true"
+    app:mrl_rippleDelayClick="true"
+    app:mrl_rippleColor="@color/darker_gray"
+    >
+
+  <LinearLayout
+      android:id="@+id/price_item_root_view"
+      android:orientation="vertical"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:padding="@dimen/material_4dp"
+      android:background="@color/white"
+      >
+
+    <ImageView
+        android:id="@+id/product_item_thumb_iv"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/material_100dp"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_default_300_icon"
+        />
+
+    <TextView
+        android:id="@+id/product_item_des_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/material_8dp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/material_13sp"
+        android:text=""
+        android:maxLength="3"
+        android:ellipsize="end"
+        />
+
+    <TextView
+        android:id="@+id/product_item_price_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/material_8dp"
+        android:textColor="@color/design_more_red"
+        android:textSize="@dimen/material_13sp"
+        android:text=""
+        />
+  </LinearLayout>
+
+</com.app.designmore.view.MaterialRippleLayout>

@@ -397,7 +397,6 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
 
   @Override protected void onDestroy() {
     super.onDestroy();
-
     if (toast != null && toast.getParent() != null) {
       getWindowManager().removeViewImmediate(toast);
     }

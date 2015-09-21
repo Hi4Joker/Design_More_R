@@ -146,6 +146,13 @@
     <item name="android:textSize">@dimen/material_18sp</item>
     <item name="android:textColor">@color/black</item>
   </style>
+  <style name="product_divider">
+    <item name="android:layout_width">@dimen/material_1dp</item>
+    <item name="android:layout_height">match_parent</item>
+    <item name="android:layout_marginTop">@dimen/material_8dp</item>
+    <item name="android:layout_marginBottom">@dimen/material_8dp</item>
+    <item name="android:background">@color/darker_gray</item>
+  </style>
 
 
 </resources>

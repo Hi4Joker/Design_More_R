@@ -198,7 +198,7 @@
       app:mrl_rippleHover="true"
       app:mrl_rippleOverlay="true"
       app:mrl_rippleDelayClick="true"
-      app:mrl_rippleColor="@android:color/holo_red_dark"
+      app:mrl_rippleColor="@color/darker_gray"
       >
     <Button
         android:id="@+id/retrieve_layout_retrieve_btn"

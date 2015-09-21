@@ -70,7 +70,7 @@ public class ProgressLayout extends RelativeLayout {
     CONTENT, LOADING, EMPTY, ERROR
   }
 
-  private State currentState = State.CONTENT;
+  private State currentState = State.LOADING;
 
   public ProgressLayout(Context context) {
     super(context);

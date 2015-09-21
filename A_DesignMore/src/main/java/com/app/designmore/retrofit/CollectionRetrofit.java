@@ -87,7 +87,7 @@ public class CollectionRetrofit {
     return Observable.defer(new Func0<Observable<CollectionResponse>>() {
       @Override public Observable<CollectionResponse> call() {
 
-             /*获取热搜列表，超时8秒*/
+        /*获取收藏列表，超时8秒*/
         return collectionService.getMyCollectionList(params)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
       }

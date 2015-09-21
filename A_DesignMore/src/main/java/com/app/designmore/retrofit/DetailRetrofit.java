@@ -109,6 +109,9 @@ public class DetailRetrofit {
     }).compose(SchedulersCompat.<DetailEntity>applyExecutorSchedulers());
   }
 
+  /**
+   * 添加购物车
+   */
   public Observable<BaseResponse> requestBuyGood(final Map<String, String> params) {
 
     return Observable.defer(new Func0<Observable<BaseResponse>>() {

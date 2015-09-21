@@ -66,7 +66,7 @@
       android:layout_marginRight="@dimen/material_16dp"
       android:layout_marginBottom="@dimen/material_16dp"
       android:scaleType="centerCrop"
-      android:src="@drawable/ic_photo_camera"
+      android:src="@drawable/ic_photo_camera_icon"
       app:borderWidth="0dip"
       app:elevation="@dimen/material_elevation_6dp"
       app:pressedTranslationZ="@dimen/material_elevation_6dp"

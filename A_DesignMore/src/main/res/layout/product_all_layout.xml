@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.app.designmore.revealLib.widget.RevealFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/product_all_layout_root_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    >
+
+  <com.app.designmore.view.ProgressLayout
+      android:id="@+id/product_all_layout_pl"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      app:progressEmptyStateBackgroundColor="@color/primary_background_color"
+      app:progressEmptyStateTitleTextColor="@color/black"
+      app:progressEmptyStateContentTextColor="@color/black"
+      app:progressErrorStateBackgroundColor="@color/primary_background_color"
+      app:progressErrorStateTitleTextColor="@color/black"
+      app:progressErrorStateContentTextColor="@color/black"
+      app:progressErrorStateButtonTextColor="@color/white"
+      android:background="@color/primary_background_color"
+      >
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/primary_background_color"
+        >
+
+      <android.support.design.widget.AppBarLayout
+          android:id="@+id/product_all_layout_app_bar"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+          >
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/product_all_layout_collapsing_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:contentScrim="@color/white"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:expandedTitleMarginStart="@dimen/material_16dp"
+            app:collapsedTitleGravity="center"
+            >
+
+          <android.support.v7.widget.RecyclerView
+              android:id="@+id/product_all_layout_keyword_rl"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/material_144dp"
+              android:layout_marginTop="?attr/actionBarSize"
+              android:paddingTop="@dimen/material_8dp"
+              android:paddingLeft="@dimen/material_8dp"
+              android:paddingRight="@dimen/material_8dp"
+              android:background="@color/white"
+              app:layout_collapseMode="parallax"
+              app:layout_collapseParallaxMultiplier="0.6"
+              />
+          <android.support.v7.widget.Toolbar
+              android:id="@+id/product_all_layout_toolbar"
+              android:layout_width="match_parent"
+              android:layout_height="?attr/actionBarSize"
+              android:layout_marginBottom="@dimen/material_1dp"
+              app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+              app:layout_collapseMode="pin"
+              android:background="@color/white"
+              >
+
+            <TextView
+                android:id="@+id/product_all_layout_toolbar_title_tv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="#88000000"
+                android:textSize="@dimen/material_18sp"
+                />
+          </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.CollapsingToolbarLayout>
+      </android.support.design.widget.AppBarLayout>
+
+
+      <!-- <android.support.v4.widget.NestedScrollView
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:fillViewport="true"
+           app:layout_behavior="@string/appbar_scrolling_view_behavior"
+           >-->
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:orientation="vertical"
+          android:layout_marginTop="@dimen/_material_4dp"
+          app:layout_behavior="@string/appbar_scrolling_view_behavior"
+          >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/material_24dp"
+            android:layout_gravity="right"
+            android:scaleType="center"
+            android:src="@drawable/ic_smart_logo_icon"
+            />
+        <include layout="@layout/include_product_top_layout"
+            android:layout_height="@dimen/material_32dp"
+            android:layout_width="match_parent"
+            />
+        <com.app.designmore.view.ProgressLayout
+            android:id="@+id/product_all_product_layout_rl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:progressEmptyStateBackgroundColor="@color/primary_background_color"
+            app:progressEmptyStateTitleTextColor="@color/black"
+            app:progressEmptyStateContentTextColor="@color/black"
+            app:progressErrorStateBackgroundColor="@color/primary_background_color"
+            app:progressErrorStateTitleTextColor="@color/black"
+            app:progressErrorStateContentTextColor="@color/black"
+            app:progressErrorStateButtonTextColor="@color/white"
+            android:background="@color/primary_background_color"
+            >
+
+          <android.support.v4.widget.SwipeRefreshLayout
+              android:id="@+id/product_all_layout_srl"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              >
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/product_all_layout_rl"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/material_8dp"
+                android:background="@color/primary_background_color"
+                />
+          </android.support.v4.widget.SwipeRefreshLayout>
+        </com.app.designmore.view.ProgressLayout>
+
+      </LinearLayout>
+      <!--</android.support.v4.widget.NestedScrollView>-->
+    </android.support.design.widget.CoordinatorLayout>
+
+  </com.app.designmore.view.ProgressLayout>
+</com.app.designmore.revealLib.widget.RevealFrameLayout>

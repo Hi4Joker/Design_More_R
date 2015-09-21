@@ -31,12 +31,7 @@
         android:background="@color/white"
         >
 
-      <ImageView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:scaleType="centerCrop"
-          android:src="@drawable/ic_default_icon"
-          />
+      <include layout="@layout/include_home_product_layout"/>
 
     </com.app.designmore.view.ProgressLayout>
   </com.app.designmore.revealLib.widget.RevealFrameLayout>

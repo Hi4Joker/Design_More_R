@@ -27,7 +27,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_default_1080"
+        android:src="@drawable/ic_default_1080_icon"
         />
     <LinearLayout
         android:layout_width="@dimen/material_150dp"
@@ -64,7 +64,6 @@
           />
 
     </LinearLayout>
-
   </RelativeLayout>
 
 </com.app.designmore.view.MaterialRippleLayout>

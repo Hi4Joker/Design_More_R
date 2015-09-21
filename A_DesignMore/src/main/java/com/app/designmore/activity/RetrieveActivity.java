@@ -8,7 +8,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -71,6 +73,7 @@ public class RetrieveActivity extends BaseActivity {
   private String password;
   private String confirmPassword;
   private ProgressDialog progressDialog;
+  private ViewGroup toast;
 
   private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
     @Override public void onCancel(DialogInterface dialog) {
@@ -121,19 +124,14 @@ public class RetrieveActivity extends BaseActivity {
     compositeSubscription.add(Observable.combineLatest(mobileChangeObservable, codeChangeObservable,
         passwordChangeObservable, confirmChangeObservable,
         new Func4<TextViewTextChangeEvent, TextViewTextChangeEvent, TextViewTextChangeEvent, TextViewTextChangeEvent, Boolean>() {
-          @Override public Boolean call(TextViewTextChangeEvent userNameEvent,
-              TextViewTextChangeEvent passwordEvent, TextViewTextChangeEvent mobileEvent,
-              TextViewTextChangeEvent codeEvent) {
+          @Override public Boolean call(TextViewTextChangeEvent mobileEvent,
+              TextViewTextChangeEvent codeEvent, TextViewTextChangeEvent passwordEvent,
+              TextViewTextChangeEvent confirmEvent) {
 
-            mobile = userNameEvent.text().toString();
+            mobile = mobileEvent.text().toString();
             code = codeEvent.text().toString();
             password = passwordEvent.text().toString();
-            confirmPassword = mobileEvent.text().toString();
-
-             /*   Log.e(TAG, "userName: " + userName);
-                Log.e(TAG, "password: " + password);
-                Log.e(TAG, "mobile: " + mobile);
-                Log.e(TAG, "code: " + code);*/
+            confirmPassword = confirmEvent.text().toString();
 
             boolean userNameValid = !TextUtils.isEmpty(mobile);
             boolean codeValid = !TextUtils.isEmpty(code);
@@ -149,7 +147,6 @@ public class RetrieveActivity extends BaseActivity {
         .subscribe(new Action1<Boolean>() {
           @Override public void call(Boolean aBoolean) {
 
-            Log.e(TAG, "call() called with: " + "aBoolean = [" + aBoolean + "]");
             retrieveBtn.setEnabled(aBoolean);
           }
         }));
@@ -200,7 +197,7 @@ public class RetrieveActivity extends BaseActivity {
     Map<String, String> params = new HashMap<>();
     params.put("Action", "SendCheckMessage");
     params.put("mobile", mobileEt.getText().toString());
-    params.put("message", "请妥善保管验证码,");
+    params.put("message", "设计猫提醒您，请妥善保管验证码,");
 
     LoginRetrofit.getInstance()
         .getAuthCode(params)
@@ -220,9 +217,11 @@ public class RetrieveActivity extends BaseActivity {
       return;
     }
 
-    /*Action=UserByChangePwd&old_passwd=lanlan111&new_passwd=lanlan&uid=2*/
+    /* Action= findMyPasswd&mobile=18622816323&pwd=新密码*/
     Map<String, String> params = new HashMap<>();
-    params.put("Action", "UserByChangePwd");
+    params.put("Action", "findMyPasswd");
+    params.put("mobile", mobile);
+    params.put("pwd", confirmPassword);
 
     subscription = LoginRetrofit.getInstance()
         .requestRetrieve(params)
@@ -245,14 +244,15 @@ public class RetrieveActivity extends BaseActivity {
             }
           }
         })
-        .compose(RetrieveActivity.this.<RetrieveEntity>bindUntilEvent(ActivityEvent.DESTROY))
         .filter(new Func1<RetrieveEntity, Boolean>() {
           @Override public Boolean call(RetrieveEntity retrieveEntity) {
             return !subscription.isUnsubscribed();
           }
         })
+        .compose(RetrieveActivity.this.<RetrieveEntity>bindUntilEvent(ActivityEvent.DESTROY))
         .subscribe(new Action1<RetrieveEntity>() {
           @Override public void call(RetrieveEntity retrieveEntity) {
+
             Toast.makeText(RetrieveActivity.this, retrieveEntity.getRegisterMessage(),
                 Toast.LENGTH_LONG).show();
             if (retrieveEntity.getRegisterCode() == Constants.RESULT_OK) {
@@ -261,30 +261,10 @@ public class RetrieveActivity extends BaseActivity {
           }
         }, new Action1<Throwable>() {
           @Override public void call(Throwable error) {
-            RetrieveActivity.this.showError(error);
+            toast = DialogManager.getInstance()
+                .showNoMoreDialog(RetrieveActivity.this, Gravity.TOP, "操作失败，请重试，O__O …");
           }
         });
-  }
-
-  private void showError(Throwable error) {
-    if (error instanceof TimeoutException) {
-      RetrieveActivity.this.showSnackBar(getResources().getString(R.string.timeout_title));
-    } else if (error instanceof RetrofitError) {
-      Log.e(TAG, "kind:  " + ((RetrofitError) error).getKind());
-      RetrieveActivity.this.showSnackBar(getResources().getString(R.string.six_word_title));
-    } else {
-      Log.e(TAG, error.getMessage());
-      error.printStackTrace();
-      throw new RuntimeException("See inner exception");
-    }
-  }
-
-  private void showSnackBar(String text) {
-    Snackbar.make(toolbar, text, Snackbar.LENGTH_SHORT).setAction("确定", new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        /*do nothing*/
-      }
-    }).show();
   }
 
   @Override public void exit() {
@@ -293,7 +273,12 @@ public class RetrieveActivity extends BaseActivity {
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    progressDialog = null;
+
+    if (toast != null && toast.getParent() != null) {
+      getWindowManager().removeViewImmediate(toast);
+    }
+    this.toast = null;
+    this.progressDialog = null;
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();
     if (compositeSubscription.hasSubscriptions()) compositeSubscription.clear();
   }

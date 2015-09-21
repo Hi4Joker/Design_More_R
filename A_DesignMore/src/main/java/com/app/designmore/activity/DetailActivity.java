@@ -23,8 +23,6 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -77,10 +75,10 @@ public class DetailActivity extends BaseActivity
   private static final String TAG = DetailActivity.class.getCanonicalName();
   private static final String GOOD_ID = "GOOD_ID";
 
-  @Nullable @Bind(R.id.detail_layout_root_view_rl) RelativeLayout rootView;
-  @Nullable @Bind(R.id.detail_layout_root_view) RevealFrameLayout revealFrameLayout;
+  @Nullable @Bind(R.id.detail_layout_root_view) RevealFrameLayout rootView;
   @Nullable @Bind(R.id.detail_layout_pl) ProgressLayout progressLayout;
-  @Nullable @Bind(R.id.detail_layout_toolbar_root_view) Toolbar toolbar;
+  @Nullable @Bind(R.id.detail_layout_toolbar) Toolbar toolbar;
+  @Nullable @Bind(R.id.detail_layout_toolbar_title_tv) TextView toolbarTitleTv;
   @Nullable @Bind(R.id.detail_layout_collapsing_toolbar) CollapsingToolbarLayout collapsingToolbar;
   @Nullable @Bind(R.id.detail_layout_banner_page_tv) TextView bannerPageTv;
   @Nullable @Bind(R.id.detail_layout_title_tv) TextView titleTv;
@@ -144,14 +142,13 @@ public class DetailActivity extends BaseActivity
     this.goodId = getIntent().getStringExtra(GOOD_ID);
 
     if (savedInstanceState == null) {
-      revealFrameLayout.getViewTreeObserver()
-          .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override public boolean onPreDraw() {
-              revealFrameLayout.getViewTreeObserver().removeOnPreDrawListener(this);
-              DetailActivity.this.startEnterAnim();
-              return true;
-            }
-          });
+      rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+        @Override public boolean onPreDraw() {
+          rootView.getViewTreeObserver().removeOnPreDrawListener(this);
+          DetailActivity.this.startEnterAnim();
+          return true;
+        }
+      });
     } else {
       DetailActivity.this.loadData();
     }
@@ -167,10 +164,10 @@ public class DetailActivity extends BaseActivity
   private void startEnterAnim() {
 
     final Rect bounds = new Rect();
-    revealFrameLayout.getHitRect(bounds);
+    rootView.getHitRect(bounds);
 
     revealAnimator =
-        ViewAnimationUtils.createCircularReveal(revealFrameLayout.getChildAt(0), 0, bounds.left, 0,
+        ViewAnimationUtils.createCircularReveal(rootView.getChildAt(0), 0, bounds.left, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
     revealAnimator.setDuration(Constants.MILLISECONDS_400);
     revealAnimator.setInterpolator(new AccelerateInterpolator());
@@ -227,8 +224,8 @@ public class DetailActivity extends BaseActivity
                 .load(detailEntity.getGoodDesUrl())
                 .centerCrop()
                 .crossFade()
-                .placeholder(R.drawable.ic_default_1080)
-                .error(R.drawable.ic_default_1080)
+                .placeholder(R.drawable.ic_default_1080_icon)
+                .error(R.drawable.ic_default_1080_icon)
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .into(detailIv);
 
@@ -386,9 +383,11 @@ public class DetailActivity extends BaseActivity
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
 
-    collapsingToolbar.setTitle("商品详情");
-    collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
-    collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
+    this.toolbarTitleTv.setText("商品详情");
+    this.collapsingToolbar.setTitle("");
+
+    /*collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
+    collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);*/
 
     getMenuInflater().inflate(R.menu.menu_single, menu);
 
@@ -473,7 +472,7 @@ public class DetailActivity extends BaseActivity
   }
 
   @Override public void exit() {
-    ViewCompat.animate(revealFrameLayout)
+    ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(DetailActivity.this))
         .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())

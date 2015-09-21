@@ -38,10 +38,10 @@
           >
 
         <com.app.designmore.view.MaterialRippleLayout
-            android:layout_width="@dimen/material_48dp"
-            android:layout_height="@dimen/material_48dp"
+            android:layout_width="@dimen/material_64dp"
+            android:layout_height="@dimen/material_64dp"
             android:layout_gravity="center"
-            app:mrl_rippleRoundedCorners="@dimen/material_56dp"
+            app:mrl_rippleRoundedCorners="@dimen/material_64dp"
             app:mrl_rippleDimension="10dip"
             app:mrl_rippleFadeDuration="100"
             app:mrl_rippleAlpha="0.4"
@@ -54,9 +54,9 @@
 
           <ImageButton
               android:id="@+id/custom_share_layout_weibo_btn"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:layout_alignParentBottom="true"
+              android:layout_width="@dimen/material_48dp"
+              android:layout_height="@dimen/material_48dp"
+              android:layout_gravity="center"
               android:scaleType="center"
               android:src="@drawable/ic_share_weibo_icon"
               android:background="@drawable/share_weibo_48dp_corner_background"
@@ -82,10 +82,10 @@
           android:orientation="vertical"
           >
         <com.app.designmore.view.MaterialRippleLayout
-            android:layout_width="@dimen/material_48dp"
-            android:layout_height="@dimen/material_48dp"
+            android:layout_width="@dimen/material_64dp"
+            android:layout_height="@dimen/material_64dp"
             android:layout_gravity="center"
-            app:mrl_rippleRoundedCorners="@dimen/material_56dp"
+            app:mrl_rippleRoundedCorners="@dimen/material_64dp"
             app:mrl_rippleDimension="10dip"
             app:mrl_rippleFadeDuration="100"
             app:mrl_rippleAlpha="0.4"
@@ -98,9 +98,9 @@
 
           <ImageButton
               android:id="@+id/custom_share_layout_wechat_btn"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:layout_alignParentBottom="true"
+              android:layout_width="@dimen/material_48dp"
+              android:layout_height="@dimen/material_48dp"
+              android:layout_gravity="center"
               android:scaleType="center"
               android:src="@drawable/ic_share_wechat_icon"
               android:background="@drawable/share_wechat_48dp_corner_background"

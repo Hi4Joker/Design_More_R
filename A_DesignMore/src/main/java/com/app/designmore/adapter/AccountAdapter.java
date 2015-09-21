@@ -47,8 +47,8 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
         .load(items.get(position).getUrl())
         .centerCrop()
         .crossFade()
-        .placeholder(R.drawable.ic_default_icon)
-        .error(R.drawable.ic_default_icon)
+        .placeholder(R.drawable.ic_default_256_icon)
+        .error(R.drawable.ic_default_256_icon)
         .diskCacheStrategy(DiskCacheStrategy.RESULT)
         .into(holder.imageView);
 

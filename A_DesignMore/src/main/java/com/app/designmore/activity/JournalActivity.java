@@ -79,7 +79,7 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
 
   private JournalAdapter journalAdapter;
   private List<JournalEntity> items = new ArrayList<>();
-  private volatile int count = 1;
+  private volatile int page = 1;
 
   private SupportAnimator revealAnimator;
   private ProgressDialog progressDialog;
@@ -185,7 +185,7 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
     Map<String, String> params = new HashMap<>(3);
     params.put("Action", "GetMagazine");
     params.put("count", "10");
-    params.put("page", String.valueOf(count = 1));
+    params.put("page", String.valueOf(page = 1));
 
     JournalRetrofit.getInstance()
         .getJournalList(params)
@@ -232,7 +232,7 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
     final Map<String, String> params = new HashMap<>(3);
     params.put("Action", "GetMagazine");
     params.put("count", "10");
-    params.put("page", String.valueOf(++count));
+    params.put("page", String.valueOf(++page));
 
     JournalRetrofit.getInstance()
         .getJournalList(params)

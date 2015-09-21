@@ -290,12 +290,6 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
     birthdayParams.put("key", "birthday");
     birthdayParams.put("data", birthday);
 
-    final Map<String, TypedString> uploadParams = new HashMap<>(2);
-    uploadParams.put("Action", new TypedString("UploadHeader"));
-    uploadParams.put("uid", new TypedString(
-        DBHelper.getInstance(getApplicationContext()).getUserID(ProfileActivity.this)));
-    final TypedFile typedFile = new TypedFile("multipart/form-data", avatarFile);
-
     subscription = Observable.defer(new Func0<Observable<Boolean>>() {
       @Override public Observable<Boolean> call() {
 
@@ -312,6 +306,13 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
                 }
               });
         } else {
+
+          final Map<String, TypedString> uploadParams = new HashMap<>(2);
+          uploadParams.put("Action", new TypedString("UploadHeader"));
+          uploadParams.put("uid", new TypedString(
+              DBHelper.getInstance(getApplicationContext()).getUserID(ProfileActivity.this)));
+          final TypedFile typedFile = new TypedFile("multipart/form-data", avatarFile);
+
           return Observable.zip(loginRetrofit.requestChangeUserInfo(nickParams),
               loginRetrofit.requestChangeUserInfo(genderParams),
               loginRetrofit.requestChangeUserInfo(birthdayParams),

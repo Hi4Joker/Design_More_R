@@ -76,6 +76,24 @@
         >
     </activity>
 
+    <!--商品列表ACT BY Key-->
+    <activity
+        android:name=".activity.ProductKeyListActivity"
+        android:screenOrientation="portrait"
+        android:launchMode="singleTask"
+        android:theme="@style/AppTheme.TransparentActivity"
+        >
+    </activity>
+
+    <!--商品列表ACT ALL-->
+    <activity
+        android:name=".activity.AllProductListActivity"
+        android:screenOrientation="portrait"
+        android:launchMode="singleTask"
+        android:theme="@style/AppTheme.TransparentActivity"
+        >
+    </activity>
+
     <!--上新ACT-->
     <activity
         android:name=".activity.FashionActivity"
@@ -138,6 +156,7 @@
         android:theme="@style/AppTheme.TransparentActivity"
         >
     </activity>
+
     <!--用户中心ACT -> 我的收藏ACT-->
     <activity
         android:name=".activity.usercenter.CollectionActivity"

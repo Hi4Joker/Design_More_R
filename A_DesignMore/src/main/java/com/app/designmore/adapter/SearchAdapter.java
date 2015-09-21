@@ -11,6 +11,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.R;
+import com.app.designmore.retrofit.entity.ProductEntity;
 import com.app.designmore.retrofit.entity.SearchItemEntity;
 import java.util.List;
 import rx.Observer;
@@ -75,6 +76,11 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
   }
 
   @Override public void onNext(List<SearchItemEntity> searchItemEntities) {
+    this.items = searchItemEntities;
+    SearchAdapter.this.notifyDataSetChanged();
+  }
+
+  public void updateItems(List<SearchItemEntity> searchItemEntities) {
     this.items = searchItemEntities;
     SearchAdapter.this.notifyDataSetChanged();
   }

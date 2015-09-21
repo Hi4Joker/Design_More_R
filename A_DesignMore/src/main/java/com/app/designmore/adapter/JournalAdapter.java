@@ -71,8 +71,8 @@ public class JournalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     Glide.with(context)
         .load(journalEntity.getJournalThumbUrl())
-        .placeholder(R.drawable.ic_default_1080)
-        .error(R.drawable.ic_default_1080)
+        .placeholder(R.drawable.ic_default_1080_icon)
+        .error(R.drawable.ic_default_1080_icon)
         .diskCacheStrategy(DiskCacheStrategy.NONE)
         .into(holder.thumbIv);
   }

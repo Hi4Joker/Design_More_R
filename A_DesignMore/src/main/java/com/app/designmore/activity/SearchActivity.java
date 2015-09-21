@@ -12,6 +12,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -32,8 +33,10 @@ import com.app.designmore.retrofit.entity.SearchItemEntity;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
+import com.app.designmore.utils.MarginDecoration;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.ProgressLayout;
+import com.jakewharton.rxbinding.view.RxView;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.HashMap;
 import java.util.List;
@@ -119,6 +122,7 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
     recyclerView.setLayoutManager(gridLayoutManager);
     recyclerView.setHasFixedSize(true);
     recyclerView.setAdapter(searchAdapter);
+    recyclerView.addItemDecoration(new MarginDecoration(SearchActivity.this, R.dimen.material_4dp));
   }
 
   private void setListener() {
@@ -128,6 +132,13 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
         if (actionId == EditorInfo.IME_ACTION_SEARCH) {
           /*关闭键盘*/
           inputMethodManager.hideSoftInputFromWindow(revealRootView.getApplicationWindowToken(), 0);
+
+          if (TextUtils.isEmpty(searchEt.getText().toString())) return true;
+
+          ProductKeyListActivity.navigateToProductKeyList(SearchActivity.this,
+              searchEt.getText().toString(), searchEt.getText().toString());
+          overridePendingTransition(0, 0);
+
           return true;
         }
         return false;
@@ -203,6 +214,12 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
 
      /*关闭键盘*/
     inputMethodManager.hideSoftInputFromWindow(revealRootView.getApplicationWindowToken(), 0);
+
+    if (TextUtils.isEmpty(searchEt.getText().toString())) return;
+
+    ProductKeyListActivity.navigateToProductKeyList(SearchActivity.this,
+        searchEt.getText().toString(), searchEt.getText().toString());
+    overridePendingTransition(0, 0);
   }
 
   @Override public void onError(Throwable error) {

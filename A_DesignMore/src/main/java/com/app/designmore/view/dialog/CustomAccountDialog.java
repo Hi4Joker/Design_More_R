@@ -103,8 +103,8 @@ public class CustomAccountDialog extends Dialog implements AccountAdapter.Callba
         .load(currentProductAttrEntity.getUrl())
         .centerCrop()
         .crossFade()
-        .placeholder(R.drawable.ic_default_1080)
-        .error(R.drawable.ic_default_1080)
+        .placeholder(R.drawable.ic_default_1080_icon)
+        .error(R.drawable.ic_default_1080_icon)
         .diskCacheStrategy(DiskCacheStrategy.RESULT)
         .into(thumbIv);
 

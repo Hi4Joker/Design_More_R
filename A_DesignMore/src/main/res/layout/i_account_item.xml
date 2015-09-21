@@ -28,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="center"
-        android:src="@drawable/ic_default_icon"
+        android:src="@drawable/ic_default_256_icon"
         />
   </com.app.designmore.view.MaterialRippleLayout>
 

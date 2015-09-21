@@ -292,20 +292,24 @@ public class LoginRetrofit {
    */
   public Observable<BaseResponse> requestChangeUserInfo(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<BaseResponse>>() {
+    return /*Observable.defer(new Func0<Observable<BaseResponse>>() {
       @Override public Observable<BaseResponse> call() {
-        return loginService.requestChangeUserInfo(params)
-            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
+        return ;
       }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call(final BaseResponse baseResponse) {
-        return baseResponse.filterWebServiceErrors();
-      }
-    }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
+    })*/
+        loginService.requestChangeUserInfo(params)
+            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+            .retry(new Func2<Integer, Throwable, Boolean>() {
+              @Override public Boolean call(Integer integer, Throwable throwable) {
+                return throwable instanceof TimeoutException && integer < 1;
+              }
+            })
+            .concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
+              @Override public Observable<BaseResponse> call(final BaseResponse baseResponse) {
+                return baseResponse.filterWebServiceErrors();
+              }
+            })
+            .compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
   }
 
   /**
