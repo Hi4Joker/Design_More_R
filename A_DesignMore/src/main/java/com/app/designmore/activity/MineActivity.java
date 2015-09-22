@@ -62,10 +62,6 @@ import rx.functions.Action1;
 public class MineActivity extends BaseActivity {
 
   private static final String TAG = MineActivity.class.getSimpleName();
-  private int[] colors = new int[] {
-      R.color.design_more_red, R.color.accent_material_light, R.color.design_more_red,
-      R.color.accent_material_light
-  };
 
   @Nullable @Bind(R.id.mine_layout_root_view) RevealFrameLayout rootView;
   @Nullable @Bind(R.id.transparent_toolbar_root) Toolbar toolbar;
@@ -105,7 +101,7 @@ public class MineActivity extends BaseActivity {
     MineActivity.this.setSupportActionBar(toolbar);
     MineActivity.this.getSupportActionBar().setTitle("");
 
-    swipeRefreshLayout.setColorSchemeResources(colors);
+    swipeRefreshLayout.setColorSchemeResources(Constants.colors);
     RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
       @Override public void call(Void aVoid) {
         MineActivity.this.loadData();

@@ -3,11 +3,9 @@ package com.app.designmore.activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -54,7 +52,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
 import rx.Subscriber;
@@ -73,15 +70,15 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
   private static final String KEYWORD = "KEYWORD";
   private static final String TITLE = "TITLE";
 
-  @Nullable @Bind(R.id.product_layout_root_view) LinearLayout rootView;
+  @Nullable @Bind(R.id.product_key_layout_root_view) LinearLayout rootView;
 
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
-  @Nullable @Bind(R.id.product_layout_reveal_view) RevealFrameLayout revealFrameLayout;
+  @Nullable @Bind(R.id.product_key_layout_reveal_view) RevealFrameLayout revealFrameLayout;
 
-  @Nullable @Bind(R.id.product_layout_pl) ProgressLayout progressLayout;
+  @Nullable @Bind(R.id.product_key_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.product_layout_srl) SwipeRefreshLayout swipeRefreshLayout;
-  @Nullable @Bind(R.id.product_layout_rl) RecyclerView recyclerView;
+  @Nullable @Bind(R.id.product_key_layout_rl) RecyclerView recyclerView;
 
   private SupportAnimator revealAnimator;
 
@@ -131,7 +128,7 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.product_layout);
+    setContentView(R.layout.product_key_layout);
 
     ProductKeyListActivity.this.initView(savedInstanceState);
   }

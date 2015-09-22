@@ -431,10 +431,9 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
 
   @Nullable @OnClick(R.id.profile_layout_birthday_rl) void onBirthdayClick() {
     if (dateTimePicKDialog == null) {
-      dateTimePicKDialog = CustomDatePickDialog.getInstance();
+      dateTimePicKDialog = new CustomDatePickDialog(ProfileActivity.this);
     }
-    dateTimePicKDialog.showPickerDialog(ProfileActivity.this, birthdayTv,
-        birthdayTv.getText().toString());
+    dateTimePicKDialog.showPickerDialog(birthdayTv, birthdayTv.getText().toString());
   }
 
   @Nullable @OnClick(R.id.profile_layout_safety_rl) void onSafetyClick(View view) {

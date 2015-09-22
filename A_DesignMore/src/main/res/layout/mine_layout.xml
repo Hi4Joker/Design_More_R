@@ -12,7 +12,6 @@
       android:layout_height="match_parent"
       android:layout_marginBottom="@dimen/material_48dp"
       android:layout_alignParentTop="true"
-      android:background="@color/white"
       >
 
     <com.app.designmore.view.ProgressLayout

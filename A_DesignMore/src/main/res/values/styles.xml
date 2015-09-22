@@ -25,6 +25,11 @@
     <item name="android:windowIsTranslucent">false</item>
   </style>
 
+  <style name="AppTheme.PrimaryActivity">
+    <item name="android:windowBackground">@color/primary_background_color</item>
+    <item name="android:windowIsTranslucent">false</item>
+  </style>
+
   <!--登陆界面，ET风格-->
   <style name="login_layout_et_style">
     <item name="android:layout_width">match_parent</item>

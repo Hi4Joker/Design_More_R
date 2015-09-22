@@ -38,10 +38,10 @@
           >
 
         <com.app.designmore.view.MaterialRippleLayout
-            android:layout_width="@dimen/material_64dp"
-            android:layout_height="@dimen/material_64dp"
+            android:layout_width="@dimen/material_56dp"
+            android:layout_height="@dimen/material_56dp"
             android:layout_gravity="center"
-            app:mrl_rippleRoundedCorners="@dimen/material_64dp"
+            app:mrl_rippleRoundedCorners="@dimen/material_56dp"
             app:mrl_rippleDimension="10dip"
             app:mrl_rippleFadeDuration="100"
             app:mrl_rippleAlpha="0.4"
@@ -72,7 +72,6 @@
             android:textColor="@color/darker_gray"
             android:text="新浪微博"
             />
-
       </LinearLayout>
 
       <LinearLayout
@@ -82,10 +81,10 @@
           android:orientation="vertical"
           >
         <com.app.designmore.view.MaterialRippleLayout
-            android:layout_width="@dimen/material_64dp"
-            android:layout_height="@dimen/material_64dp"
+            android:layout_width="@dimen/material_56dp"
+            android:layout_height="@dimen/material_56dp"
             android:layout_gravity="center"
-            app:mrl_rippleRoundedCorners="@dimen/material_64dp"
+            app:mrl_rippleRoundedCorners="@dimen/material_56dp"
             app:mrl_rippleDimension="10dip"
             app:mrl_rippleFadeDuration="100"
             app:mrl_rippleAlpha="0.4"

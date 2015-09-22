@@ -73,6 +73,7 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
   private static final Interpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
   private static final Interpolator DECELERATE_INTERPOLATOR = new DecelerateInterpolator();
   private static final String IS_ANIM = "IS_ANIM";
+  
   @Nullable @Bind(R.id.profile_camera_layout_root_view) RelativeLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
   @Nullable @Bind(R.id.profile_camera_layout_camera_view) CameraView cameraView;
@@ -147,7 +148,8 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
     switchMenuItem.setActionView(R.layout.menu_inbox_btn_item);
     switchActionButton =
         (ImageButton) switchMenuItem.getActionView().findViewById(R.id.action_inbox_btn);
-    switchActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_camera_front_icon));
+    switchActionButton.setImageDrawable(
+        getResources().getDrawable(R.drawable.ic_camera_front_icon));
     switchActionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         /*切换至前置摄像头*/

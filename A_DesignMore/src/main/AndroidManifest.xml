@@ -33,7 +33,6 @@
     <activity
         android:name=".activity.SplashActivity"
         android:screenOrientation="portrait"
-        android:launchMode="singleTask"
         android:theme="@style/SplashTheme"
         >
       <intent-filter>
@@ -56,6 +55,7 @@
         android:name=".activity.RegisterActivity"
         android:screenOrientation="portrait"
         android:launchMode="singleTop"
+        android:theme="@style/AppTheme.TransparentActivity"
         >
     </activity>
 
@@ -64,6 +64,7 @@
         android:name=".activity.RetrieveActivity"
         android:screenOrientation="portrait"
         android:launchMode="singleTop"
+        android:theme="@style/AppTheme.TransparentActivity"
         >
     </activity>
 
@@ -72,7 +73,7 @@
         android:name=".activity.HomeActivity"
         android:screenOrientation="portrait"
         android:launchMode="singleTask"
-        android:theme="@style/AppTheme.WhiteActivity"
+        android:theme="@style/AppTheme.PrimaryActivity"
         >
     </activity>
 
@@ -99,7 +100,7 @@
         android:name=".activity.FashionActivity"
         android:screenOrientation="portrait"
         android:launchMode="singleTop"
-        android:theme="@style/AppTheme.TransparentActivity"
+        android:theme="@style/AppTheme.PrimaryActivity"
         >
     </activity>
 
@@ -108,7 +109,7 @@
         android:name=".activity.DetailActivity"
         android:screenOrientation="portrait"
         android:launchMode="singleTop"
-        android:theme="@style/AppTheme.BlackActivity"
+        android:theme="@style/AppTheme.TransparentActivity"
         >
     </activity>
 
@@ -117,7 +118,7 @@
         android:name=".activity.JournalActivity"
         android:screenOrientation="portrait"
         android:launchMode="singleTop"
-        android:theme="@style/AppTheme.TransparentActivity"
+        android:theme="@style/AppTheme.PrimaryActivity"
         >
     </activity>
 
@@ -135,7 +136,7 @@
         android:name=".activity.MineActivity"
         android:screenOrientation="portrait"
         android:launchMode="singleTop"
-        android:theme="@style/AppTheme.TransparentActivity"
+        android:theme="@style/AppTheme.WhiteActivity"
         >
     </activity>
 
@@ -174,6 +175,7 @@
         android:theme="@style/AppTheme.TransparentActivity"
         >
     </activity>
+
     <!--用户中心ACT -> 个人资料ACT-->
     <activity
         android:name=".activity.usercenter.ProfileActivity"
@@ -208,6 +210,7 @@
         android:theme="@style/AppTheme.TransparentActivity"
         >
     </activity>
+
     <!--用户中心ACT -> 个人资料ACT -> 账户安全-->
     <activity
         android:name=".activity.usercenter.SafetyActivity"

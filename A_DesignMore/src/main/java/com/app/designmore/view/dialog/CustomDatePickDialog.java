@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.TimePicker.OnTimeChangedListener;
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -22,20 +23,14 @@ public class CustomDatePickDialog implements OnDateChangedListener, OnTimeChange
   private String dateTime;
   private String initDateTime;
   private AppCompatDialog alertDialog;
+  private Context context;
 
-  private CustomDatePickDialog() {
+  public CustomDatePickDialog(Context context) {
+
+    this.context = context;
   }
 
-  private static class SingleTonHolder {
-    private static CustomDatePickDialog instance = new CustomDatePickDialog();
-  }
-
-  public static CustomDatePickDialog getInstance() {
-    return SingleTonHolder.instance;
-  }
-
-  public void showPickerDialog(Context context, final TextView textView,
-      final String initDateTime) {
+  public void showPickerDialog(final TextView textView, final String initDateTime) {
 
     LinearLayout dateTimeLayout =
         (LinearLayout) View.inflate(context, R.layout.center_profile_data_dailaog_layout, null);
@@ -72,8 +67,8 @@ public class CustomDatePickDialog implements OnDateChangedListener, OnTimeChange
       calendar = this.getCalendarByInitData(initDateTime);
     } else {
       this.initDateTime =
-          calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.MONTH) + "-" + calendar.get(
-              Calendar.DAY_OF_MONTH);
+          calendar.get(Calendar.YEAR) + "年" + calendar.get(Calendar.MONTH) + "月" + calendar.get(
+              Calendar.DAY_OF_MONTH) + "日";
     }
 
     datePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),

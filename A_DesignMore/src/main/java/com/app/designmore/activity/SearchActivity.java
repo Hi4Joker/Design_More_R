@@ -6,6 +6,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.GridLayoutManager;
@@ -18,6 +19,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
@@ -33,6 +35,7 @@ import com.app.designmore.retrofit.entity.SearchItemEntity;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
+import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.utils.MarginDecoration;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.ProgressLayout;
@@ -53,6 +56,7 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
 
   private static final String TAG = SearchActivity.class.getSimpleName();
 
+  @Nullable @Bind(R.id.search_layout_root_view) LinearLayout rootView;
   @Nullable @Bind(R.id.search_layout_toolbar) Toolbar toolbar;
   @Nullable @Bind(R.id.search_layout_toolbar_rfl) RevealFrameLayout revealRootView;
   @Nullable @Bind(R.id.search_layout_et) AppCompatEditText searchEt;
@@ -246,7 +250,15 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
   }
 
   @Override public void exit() {
-    SearchActivity.this.finish();
+    ViewCompat.animate(rootView)
+        .translationY(DensityUtil.getScreenHeight(SearchActivity.this))
+        .setDuration(Constants.MILLISECONDS_400)
+        .setInterpolator(new LinearInterpolator())
+        .setListener(new ViewPropertyAnimatorListenerAdapter() {
+          @Override public void onAnimationEnd(View view) {
+            SearchActivity.this.finish();
+          }
+        });
   }
 
   @Override protected void onDestroy() {

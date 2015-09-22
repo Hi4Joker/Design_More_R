@@ -2,7 +2,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primary_background_color"
     >
 
   <include
@@ -15,7 +14,6 @@
       android:layout_marginTop="?attr/actionBarSize"
       android:layout_marginBottom="@dimen/material_48dp"
       android:layout_alignParentTop="true"
-      android:background="@color/primary_background_color"
       >
 
     <com.app.designmore.view.ProgressLayout

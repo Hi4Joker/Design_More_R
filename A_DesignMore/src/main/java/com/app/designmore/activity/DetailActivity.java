@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -75,7 +76,8 @@ public class DetailActivity extends BaseActivity
   private static final String TAG = DetailActivity.class.getCanonicalName();
   private static final String GOOD_ID = "GOOD_ID";
 
-  @Nullable @Bind(R.id.detail_layout_root_view) RevealFrameLayout rootView;
+  @Nullable @Bind(R.id.detail_layout_root_view) FrameLayout rootView;
+  @Nullable @Bind(R.id.detail_layout_reveal_fl) RevealFrameLayout revealFrameLayout;
   @Nullable @Bind(R.id.detail_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.detail_layout_toolbar) Toolbar toolbar;
   @Nullable @Bind(R.id.detail_layout_toolbar_title_tv) TextView toolbarTitleTv;
@@ -142,9 +144,9 @@ public class DetailActivity extends BaseActivity
     this.goodId = getIntent().getStringExtra(GOOD_ID);
 
     if (savedInstanceState == null) {
-      rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+      revealFrameLayout.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
         @Override public boolean onPreDraw() {
-          rootView.getViewTreeObserver().removeOnPreDrawListener(this);
+          revealFrameLayout.getViewTreeObserver().removeOnPreDrawListener(this);
           DetailActivity.this.startEnterAnim();
           return true;
         }
@@ -164,10 +166,10 @@ public class DetailActivity extends BaseActivity
   private void startEnterAnim() {
 
     final Rect bounds = new Rect();
-    rootView.getHitRect(bounds);
+    revealFrameLayout.getHitRect(bounds);
 
     revealAnimator =
-        ViewAnimationUtils.createCircularReveal(rootView.getChildAt(0), 0, bounds.left, 0,
+        ViewAnimationUtils.createCircularReveal(revealFrameLayout.getChildAt(0), 0, bounds.left, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
     revealAnimator.setDuration(Constants.MILLISECONDS_400);
     revealAnimator.setInterpolator(new AccelerateInterpolator());
@@ -416,23 +418,23 @@ public class DetailActivity extends BaseActivity
   }
 
   private void showAnim() {
-    ObjectAnimator scaleXAnim = ObjectAnimator.ofFloat(rootView, "scaleX", 1.0f, 0.8f);
+    ObjectAnimator scaleXAnim = ObjectAnimator.ofFloat(revealFrameLayout, "scaleX", 1.0f, 0.8f);
     scaleXAnim.setDuration(Constants.MILLISECONDS_400);
-    ObjectAnimator scaleYAnim = ObjectAnimator.ofFloat(rootView, "scaleY", 1.0f, 0.8f);
+    ObjectAnimator scaleYAnim = ObjectAnimator.ofFloat(revealFrameLayout, "scaleY", 1.0f, 0.8f);
     scaleYAnim.setDuration(Constants.MILLISECONDS_400);
 
-    ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(rootView, "alpha", 1.0f, 0.5f);
+    ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(revealFrameLayout, "alpha", 1.0f, 0.5f);
     alphaAnim.setDuration(Constants.MILLISECONDS_400);
 
-    ObjectAnimator rotationXAnim = ObjectAnimator.ofFloat(rootView, "rotationX", 0.0f, 10.0f);
+    ObjectAnimator rotationXAnim = ObjectAnimator.ofFloat(revealFrameLayout, "rotationX", 0.0f, 10.0f);
     rotationXAnim.setDuration(Constants.MILLISECONDS_400);
 
-    ObjectAnimator resumeAnim = ObjectAnimator.ofFloat(rootView, "rotationX", 10.0f, 0.0f);
+    ObjectAnimator resumeAnim = ObjectAnimator.ofFloat(revealFrameLayout, "rotationX", 10.0f, 0.0f);
     resumeAnim.setDuration(Constants.MILLISECONDS_400);
     resumeAnim.setStartDelay(Constants.MILLISECONDS_300);
 
     ObjectAnimator transYAnim =
-        ObjectAnimator.ofFloat(rootView, "translationY", 0.0f, -0.1f * rootView.getHeight(), 0.0f);
+        ObjectAnimator.ofFloat(revealFrameLayout, "translationY", 0.0f, -0.1f * revealFrameLayout.getHeight(), 0.0f);
     transYAnim.setDuration(Constants.MILLISECONDS_400);
 
     AnimatorSet showAnim = new AnimatorSet();
@@ -447,23 +449,23 @@ public class DetailActivity extends BaseActivity
 
   private void hiddenAnim() {
 
-    ObjectAnimator scaleXAnim = ObjectAnimator.ofFloat(rootView, "scaleX", 0.8f, 1.0f);
+    ObjectAnimator scaleXAnim = ObjectAnimator.ofFloat(revealFrameLayout, "scaleX", 0.8f, 1.0f);
     scaleXAnim.setDuration(Constants.MILLISECONDS_400);
-    ObjectAnimator scaleYAnim = ObjectAnimator.ofFloat(rootView, "scaleY", 0.8f, 1.0f);
+    ObjectAnimator scaleYAnim = ObjectAnimator.ofFloat(revealFrameLayout, "scaleY", 0.8f, 1.0f);
     scaleYAnim.setDuration(Constants.MILLISECONDS_400);
 
-    ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(rootView, "alpha", 0.5f, 1.0f);
+    ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(revealFrameLayout, "alpha", 0.5f, 1.0f);
     alphaAnim.setDuration(Constants.MILLISECONDS_400);
 
-    ObjectAnimator rotationXAnim = ObjectAnimator.ofFloat(rootView, "rotationX", 0.0f, 10.0f);
+    ObjectAnimator rotationXAnim = ObjectAnimator.ofFloat(revealFrameLayout, "rotationX", 0.0f, 10.0f);
     rotationXAnim.setDuration(Constants.MILLISECONDS_200);
 
-    ObjectAnimator resumeAnim = ObjectAnimator.ofFloat(rootView, "rotationX", 10.0f, 0.0f);
+    ObjectAnimator resumeAnim = ObjectAnimator.ofFloat(revealFrameLayout, "rotationX", 10.0f, 0.0f);
     resumeAnim.setDuration(Constants.MILLISECONDS_200);
     resumeAnim.setStartDelay(Constants.MILLISECONDS_200);
 
     ObjectAnimator transYAnim =
-        ObjectAnimator.ofFloat(rootView, "translationY", -0.1f * rootView.getHeight(), 0.0f);
+        ObjectAnimator.ofFloat(revealFrameLayout, "translationY", -0.1f * revealFrameLayout.getHeight(), 0.0f);
     transYAnim.setDuration(Constants.MILLISECONDS_400);
 
     AnimatorSet showAnim = new AnimatorSet();
