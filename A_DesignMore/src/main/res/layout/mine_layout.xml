@@ -14,278 +14,279 @@
       android:layout_alignParentTop="true"
       >
 
-    <com.app.designmore.view.ProgressLayout
-        android:id="@+id/mine_layout_pl"
+    <!-- <com.app.designmore.view.ProgressLayout
+         android:id="@+id/mine_layout_pl"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         app:progressEmptyStateBackgroundColor="@color/primary_background_color"
+         app:progressEmptyStateTitleTextColor="@color/black"
+         app:progressEmptyStateContentTextColor="@color/black"
+         app:progressErrorStateBackgroundColor="@color/primary_background_color"
+         app:progressErrorStateTitleTextColor="@color/black"
+         app:progressErrorStateContentTextColor="@color/black"
+         app:progressErrorStateButtonTextColor="@color/white"
+         android:background="@color/primary_background_color"
+         >-->
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/mine_layout_srl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:progressEmptyStateBackgroundColor="@color/primary_background_color"
-        app:progressEmptyStateTitleTextColor="@color/black"
-        app:progressEmptyStateContentTextColor="@color/black"
-        app:progressErrorStateBackgroundColor="@color/primary_background_color"
-        app:progressErrorStateTitleTextColor="@color/black"
-        app:progressErrorStateContentTextColor="@color/black"
-        app:progressErrorStateButtonTextColor="@color/white"
         android:background="@color/primary_background_color"
         >
 
-      <android.support.v4.widget.SwipeRefreshLayout
-          android:id="@+id/mine_layout_srl"
-          android:layout_width="match_parent"
+      <android.support.v4.widget.NestedScrollView
           android:layout_height="match_parent"
-          android:background="@color/primary_background_color"
-          >
+          android:layout_width="match_parent">
 
-        <android.support.v4.widget.NestedScrollView
-            android:layout_height="match_parent"
-            android:layout_width="match_parent">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-          <FrameLayout
+          <android.support.design.widget.AppBarLayout
+              android:id="@+id/mine_layout_bar_layout"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="@dimen/material_200dp"
+              android:orientation="vertical"
+              android:background="#000000"
+              android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+              >
 
-            <android.support.design.widget.AppBarLayout
-                android:id="@+id/mine_layout_bar_layout"
+            <include layout="@layout/include_transparent_toolbar_layout"/>
+
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/material_200dp"
-                android:orientation="vertical"
-                android:background="#000000"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                >
+                android:layout_height="match_parent">
 
-              <include layout="@layout/include_transparent_toolbar_layout"/>
-
-              <RelativeLayout
+              <ImageView
+                  android:id="@+id/mine_layout_avatar_iv"
+                  android:layout_width="@dimen/material_72dp"
+                  android:layout_height="@dimen/material_72dp"
+                  android:layout_alignParentTop="true"
+                  android:layout_centerHorizontal="true"
+                  android:scaleType="centerCrop"
+                  android:background="@drawable/center_profile_default_icon"
+                  />
+              <TextView
+                  android:layout_below="@id/mine_layout_avatar_iv"
+                  android:id="@+id/mine_layout_nickname_tv"
                   android:layout_width="match_parent"
-                  android:layout_height="match_parent">
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="@dimen/material_24dp"
+                  android:gravity="center"
+                  android:textSize="@dimen/material_16sp"
+                  android:textColor="@android:color/white"
+                  android:text=""
+                  />
+            </RelativeLayout>
+          </android.support.design.widget.AppBarLayout>
+
+          <LinearLayout
+              android:layout_marginTop="@dimen/material_200dp"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:background="@color/primary_background_color"
+              >
+            <!--购物车-->
+            <com.app.designmore.view.MaterialRippleLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/material_48dp"
+                android:layout_marginBottom="1dip"
+                app:mrl_rippleDimension="20dip"
+                app:mrl_rippleFadeDuration="100"
+                app:mrl_rippleAlpha="0.4"
+                app:mrl_rippleDuration="600"
+                app:mrl_rippleHover="true"
+                app:mrl_rippleOverlay="true"
+                app:mrl_rippleDelayClick="true"
+                app:mrl_rippleColor="@color/darker_gray"
+                >
+              <LinearLayout
+                  android:id="@+id/mine_layout_trolley_ll"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:orientation="horizontal"
+                  android:background="@color/white"
+                  >
 
                 <ImageView
-                    android:id="@+id/mine_layout_avatar_iv"
-                    android:layout_width="@dimen/material_72dp"
-                    android:layout_height="@dimen/material_72dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
+                    android:layout_width="@dimen/material_24dp"
+                    android:layout_height="@dimen/material_24dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/material_24dp"
+                    android:layout_centerVertical="true"
                     android:scaleType="centerCrop"
+                    android:src="@drawable/mine_trolley_icon"
                     />
                 <TextView
-                    android:layout_below="@id/mine_layout_avatar_iv"
-                    android:id="@+id/mine_layout_nickname_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/material_24dp"
-                    android:gravity="center"
-                    android:textSize="@dimen/material_16sp"
-                    android:textColor="@android:color/white"
-                    android:text=""
+                    android:text="购物车"
+                    style="@style/center_item_tv_style"
                     />
-              </RelativeLayout>
-            </android.support.design.widget.AppBarLayout>
 
-            <LinearLayout
-                android:layout_marginTop="@dimen/material_200dp"
+                <ImageView
+                    style="@style/center_navigate_iv_style"/>
+              </LinearLayout>
+            </com.app.designmore.view.MaterialRippleLayout>
+
+            <!--我的订单-->
+            <com.app.designmore.view.MaterialRippleLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@color/primary_background_color"
+                android:layout_height="@dimen/material_48dp"
+                android:layout_marginBottom="1dip"
+                app:mrl_rippleDimension="20dip"
+                app:mrl_rippleFadeDuration="100"
+                app:mrl_rippleAlpha="0.4"
+                app:mrl_rippleDuration="600"
+                app:mrl_rippleHover="true"
+                app:mrl_rippleOverlay="true"
+                app:mrl_rippleDelayClick="true"
+                app:mrl_rippleColor="@color/darker_gray"
                 >
-              <!--购物车-->
-              <com.app.designmore.view.MaterialRippleLayout
+              <LinearLayout
+                  android:id="@+id/mine_layout_order_ll"
                   android:layout_width="match_parent"
-                  android:layout_height="@dimen/material_48dp"
-                  android:layout_marginBottom="1dip"
-                  app:mrl_rippleDimension="20dip"
-                  app:mrl_rippleFadeDuration="100"
-                  app:mrl_rippleAlpha="0.4"
-                  app:mrl_rippleDuration="600"
-                  app:mrl_rippleHover="true"
-                  app:mrl_rippleOverlay="true"
-                  app:mrl_rippleDelayClick="true"
-                  app:mrl_rippleColor="@color/darker_gray"
+                  android:layout_height="match_parent"
+                  android:orientation="horizontal"
+                  android:background="@color/white"
                   >
-                <LinearLayout
-                    android:id="@+id/mine_layout_trolley_ll"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:background="@color/white"
-                    >
+                <ImageView
+                    android:layout_width="@dimen/material_24dp"
+                    android:layout_height="@dimen/material_24dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/material_24dp"
+                    android:layout_centerVertical="true"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/mine_order_icon"
+                    />
+                <TextView
+                    android:text="我的订单"
+                    style="@style/center_item_tv_style"/>
+                <ImageView
+                    style="@style/center_navigate_iv_style"/>
+              </LinearLayout>
+            </com.app.designmore.view.MaterialRippleLayout>
 
-                  <ImageView
-                      android:layout_width="@dimen/material_24dp"
-                      android:layout_height="@dimen/material_24dp"
-                      android:layout_gravity="center"
-                      android:layout_marginLeft="@dimen/material_24dp"
-                      android:layout_centerVertical="true"
-                      android:scaleType="centerCrop"
-                      android:src="@drawable/mine_trolley_icon"
-                      />
-                  <TextView
-                      android:text="购物车"
-                      style="@style/center_item_tv_style"
-                      />
-
-                  <ImageView
-                      style="@style/center_navigate_iv_style"/>
-                </LinearLayout>
-              </com.app.designmore.view.MaterialRippleLayout>
-
-              <!--我的订单-->
-              <com.app.designmore.view.MaterialRippleLayout
+            <!--我的收藏-->
+            <com.app.designmore.view.MaterialRippleLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/material_48dp"
+                android:layout_marginBottom="1dip"
+                app:mrl_rippleDimension="20dip"
+                app:mrl_rippleFadeDuration="100"
+                app:mrl_rippleAlpha="0.4"
+                app:mrl_rippleDuration="600"
+                app:mrl_rippleHover="true"
+                app:mrl_rippleOverlay="true"
+                app:mrl_rippleDelayClick="true"
+                app:mrl_rippleColor="@color/darker_gray"
+                >
+              <LinearLayout
+                  android:id="@+id/mine_layout_favorite_ll"
                   android:layout_width="match_parent"
-                  android:layout_height="@dimen/material_48dp"
-                  android:layout_marginBottom="1dip"
-                  app:mrl_rippleDimension="20dip"
-                  app:mrl_rippleFadeDuration="100"
-                  app:mrl_rippleAlpha="0.4"
-                  app:mrl_rippleDuration="600"
-                  app:mrl_rippleHover="true"
-                  app:mrl_rippleOverlay="true"
-                  app:mrl_rippleDelayClick="true"
-                  app:mrl_rippleColor="@color/darker_gray"
+                  android:layout_height="match_parent"
+                  android:orientation="horizontal"
+                  android:background="@color/white"
                   >
-                <LinearLayout
-                    android:id="@+id/mine_layout_order_ll"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:background="@color/white"
-                    >
-                  <ImageView
-                      android:layout_width="@dimen/material_24dp"
-                      android:layout_height="@dimen/material_24dp"
-                      android:layout_gravity="center"
-                      android:layout_marginLeft="@dimen/material_24dp"
-                      android:layout_centerVertical="true"
-                      android:scaleType="centerCrop"
-                      android:src="@drawable/mine_order_icon"
-                      />
-                  <TextView
-                      android:text="我的订单"
-                      style="@style/center_item_tv_style"/>
-                  <ImageView
-                      style="@style/center_navigate_iv_style"/>
-                </LinearLayout>
-              </com.app.designmore.view.MaterialRippleLayout>
+                <ImageView
+                    android:layout_width="@dimen/material_24dp"
+                    android:layout_height="@dimen/material_24dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/material_24dp"
+                    android:layout_centerVertical="true"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/mine_favorite_icon"
+                    />
+                <TextView
+                    android:text="我的收藏"
+                    style="@style/center_item_tv_style"/>
+                <ImageView
+                    style="@style/center_navigate_iv_style"/>
+              </LinearLayout>
+            </com.app.designmore.view.MaterialRippleLayout>
 
-              <!--我的收藏-->
-              <com.app.designmore.view.MaterialRippleLayout
+
+            <!--个人资料-->
+            <com.app.designmore.view.MaterialRippleLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/material_48dp"
+                android:layout_marginBottom="1dip"
+                app:mrl_rippleDimension="20dip"
+                app:mrl_rippleFadeDuration="100"
+                app:mrl_rippleAlpha="0.4"
+                app:mrl_rippleDuration="600"
+                app:mrl_rippleHover="true"
+                app:mrl_rippleOverlay="true"
+                app:mrl_rippleDelayClick="true"
+                app:mrl_rippleColor="@color/darker_gray"
+                >
+              <LinearLayout
+                  android:id="@+id/mine_layout_information_ll"
                   android:layout_width="match_parent"
-                  android:layout_height="@dimen/material_48dp"
-                  android:layout_marginBottom="1dip"
-                  app:mrl_rippleDimension="20dip"
-                  app:mrl_rippleFadeDuration="100"
-                  app:mrl_rippleAlpha="0.4"
-                  app:mrl_rippleDuration="600"
-                  app:mrl_rippleHover="true"
-                  app:mrl_rippleOverlay="true"
-                  app:mrl_rippleDelayClick="true"
-                  app:mrl_rippleColor="@color/darker_gray"
+                  android:layout_height="match_parent"
+                  android:orientation="horizontal"
+                  android:background="@color/white"
                   >
-                <LinearLayout
-                    android:id="@+id/mine_layout_favorite_ll"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:background="@color/white"
-                    >
-                  <ImageView
-                      android:layout_width="@dimen/material_24dp"
-                      android:layout_height="@dimen/material_24dp"
-                      android:layout_gravity="center"
-                      android:layout_marginLeft="@dimen/material_24dp"
-                      android:layout_centerVertical="true"
-                      android:scaleType="centerCrop"
-                      android:src="@drawable/mine_favorite_icon"
-                      />
-                  <TextView
-                      android:text="我的收藏"
-                      style="@style/center_item_tv_style"/>
-                  <ImageView
-                      style="@style/center_navigate_iv_style"/>
-                </LinearLayout>
-              </com.app.designmore.view.MaterialRippleLayout>
+                <ImageView
+                    android:layout_width="@dimen/material_24dp"
+                    android:layout_height="@dimen/material_24dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/material_24dp"
+                    android:layout_centerVertical="true"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/mine_information_icon"
+                    />
+                <TextView
+                    android:text="个人资料"
+                    style="@style/center_item_tv_style"/>
+                <ImageView
+                    style="@style/center_navigate_iv_style"/>
+              </LinearLayout>
+            </com.app.designmore.view.MaterialRippleLayout>
 
-
-              <!--个人资料-->
-              <com.app.designmore.view.MaterialRippleLayout
+            <!--地址管理-->
+            <com.app.designmore.view.MaterialRippleLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/material_48dp"
+                android:layout_marginBottom="1dip"
+                app:mrl_rippleDimension="20dip"
+                app:mrl_rippleFadeDuration="100"
+                app:mrl_rippleAlpha="0.4"
+                app:mrl_rippleDuration="600"
+                app:mrl_rippleHover="true"
+                app:mrl_rippleOverlay="true"
+                app:mrl_rippleDelayClick="true"
+                app:mrl_rippleColor="@color/darker_gray"
+                >
+              <LinearLayout
+                  android:id="@+id/mine_layout_address_ll"
                   android:layout_width="match_parent"
-                  android:layout_height="@dimen/material_48dp"
-                  android:layout_marginBottom="1dip"
-                  app:mrl_rippleDimension="20dip"
-                  app:mrl_rippleFadeDuration="100"
-                  app:mrl_rippleAlpha="0.4"
-                  app:mrl_rippleDuration="600"
-                  app:mrl_rippleHover="true"
-                  app:mrl_rippleOverlay="true"
-                  app:mrl_rippleDelayClick="true"
-                  app:mrl_rippleColor="@color/darker_gray"
+                  android:layout_height="match_parent"
+                  android:orientation="horizontal"
+                  android:background="@color/white"
                   >
-                <LinearLayout
-                    android:id="@+id/mine_layout_information_ll"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:background="@color/white"
-                    >
-                  <ImageView
-                      android:layout_width="@dimen/material_24dp"
-                      android:layout_height="@dimen/material_24dp"
-                      android:layout_gravity="center"
-                      android:layout_marginLeft="@dimen/material_24dp"
-                      android:layout_centerVertical="true"
-                      android:scaleType="centerCrop"
-                      android:src="@drawable/mine_information_icon"
-                      />
-                  <TextView
-                      android:text="个人资料"
-                      style="@style/center_item_tv_style"/>
-                  <ImageView
-                      style="@style/center_navigate_iv_style"/>
-                </LinearLayout>
-              </com.app.designmore.view.MaterialRippleLayout>
+                <ImageView
+                    android:layout_width="@dimen/material_24dp"
+                    android:layout_height="@dimen/material_24dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/material_24dp"
+                    android:layout_centerVertical="true"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/mine_address_icon"
+                    />
+                <TextView
+                    android:text="地址管理"
+                    style="@style/center_item_tv_style"/>
+                <ImageView
+                    style="@style/center_navigate_iv_style"/>
+              </LinearLayout>
+            </com.app.designmore.view.MaterialRippleLayout>
+          </LinearLayout>
+        </FrameLayout>
 
-              <!--地址管理-->
-              <com.app.designmore.view.MaterialRippleLayout
-                  android:layout_width="match_parent"
-                  android:layout_height="@dimen/material_48dp"
-                  android:layout_marginBottom="1dip"
-                  app:mrl_rippleDimension="20dip"
-                  app:mrl_rippleFadeDuration="100"
-                  app:mrl_rippleAlpha="0.4"
-                  app:mrl_rippleDuration="600"
-                  app:mrl_rippleHover="true"
-                  app:mrl_rippleOverlay="true"
-                  app:mrl_rippleDelayClick="true"
-                  app:mrl_rippleColor="@color/darker_gray"
-                  >
-                <LinearLayout
-                    android:id="@+id/mine_layout_address_ll"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:background="@color/white"
-                    >
-                  <ImageView
-                      android:layout_width="@dimen/material_24dp"
-                      android:layout_height="@dimen/material_24dp"
-                      android:layout_gravity="center"
-                      android:layout_marginLeft="@dimen/material_24dp"
-                      android:layout_centerVertical="true"
-                      android:scaleType="centerCrop"
-                      android:src="@drawable/mine_address_icon"
-                      />
-                  <TextView
-                      android:text="地址管理"
-                      style="@style/center_item_tv_style"/>
-                  <ImageView
-                      style="@style/center_navigate_iv_style"/>
-                </LinearLayout>
-              </com.app.designmore.view.MaterialRippleLayout>
-            </LinearLayout>
-          </FrameLayout>
-
-        </android.support.v4.widget.NestedScrollView>
-      </android.support.v4.widget.SwipeRefreshLayout>
-    </com.app.designmore.view.ProgressLayout>
+      </android.support.v4.widget.NestedScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+    <!--</com.app.designmore.view.ProgressLayout>-->
   </com.app.designmore.revealLib.widget.RevealFrameLayout>
 
   <include layout="@layout/include_bottom_bar_layout"/>

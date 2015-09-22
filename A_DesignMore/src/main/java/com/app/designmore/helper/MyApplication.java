@@ -2,11 +2,15 @@ package com.app.designmore.helper;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.StrictMode;
 import com.app.designmore.Constants;
 import com.app.designmore.greendao.DaoMaster;
 import com.app.designmore.greendao.DaoSession;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
+
+import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.GINGERBREAD;
 
 /**
  * Created by Joker on 2015/8/24.
@@ -31,13 +35,25 @@ public class MyApplication extends Application {
     super.onCreate();
 
     instance = (MyApplication) getApplicationContext();
+
+    MyApplication.this.enabledStrictMode();
     refWatcher = LeakCanary.install(this);
   }
 
+  private void enabledStrictMode() {
+    if (SDK_INT >= GINGERBREAD) {
+      StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder() //
+          .detectAll()  //
+          .penaltyLog() //
+          .penaltyDeath() //
+          .build());
+    }
+  }
+
   /**
-   * 取得DaoMaster
+   * 获取DaoMaster
    */
-  private  DaoMaster getDaoMaster(Context context) {
+  private DaoMaster getDaoMaster(Context context) {
     if (daoMaster == null) {
       synchronized (MyApplication.class) {
         if (daoMaster == null) {
@@ -51,9 +67,9 @@ public class MyApplication extends Application {
   }
 
   /**
-   * 取得DaoSession
+   * 获取DaoSession
    */
-  protected  DaoSession getDaoSession(Context context) {
+  protected DaoSession getDaoSession(Context context) {
     if (daoSession == null) {
 
       synchronized (MyApplication.class) {

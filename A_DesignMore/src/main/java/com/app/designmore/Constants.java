@@ -21,6 +21,9 @@ public class Constants {
   public static final int MILLISECONDS_400 = 400;
   public static final int MILLISECONDS_2000 = 2 * 1000;
 
+
+  public static final int ACTIVITY_CODE = 4;
+
   public static int[] colors = new int[] {
       R.color.design_more_red, R.color.accent_material_light, R.color.design_more_red,
       R.color.accent_material_light

@@ -108,7 +108,6 @@ public class ProfileGalleryActivity extends BaseActivity {
       cropImageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
     } else {
       ProfileGalleryActivity.this.finish();
-      overridePendingTransition(0, 0);
     }
 
     super.onActivityResult(requestCode, resultCode, data);

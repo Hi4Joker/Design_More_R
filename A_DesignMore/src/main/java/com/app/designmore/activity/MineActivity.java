@@ -2,17 +2,23 @@ package com.app.designmore.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageButton;
@@ -48,7 +54,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.trello.rxlifecycle.ActivityEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
@@ -62,10 +70,12 @@ import rx.functions.Action1;
 public class MineActivity extends BaseActivity {
 
   private static final String TAG = MineActivity.class.getSimpleName();
+  public static final String FILE_URL = "FILE_URL";
+  public static final String NICKNAME = "NICKNAME";
 
   @Nullable @Bind(R.id.mine_layout_root_view) RevealFrameLayout rootView;
   @Nullable @Bind(R.id.transparent_toolbar_root) Toolbar toolbar;
-  @Nullable @Bind(R.id.mine_layout_pl) ProgressLayout progressLayout;
+  //@Nullable @Bind(R.id.mine_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.mine_layout_srl) SwipeRefreshLayout swipeRefreshLayout;
   @Nullable @Bind(R.id.mine_layout_avatar_iv) ImageView avatarIv;
   @Nullable @Bind(R.id.mine_layout_nickname_tv) TextView nickNameTv;
@@ -76,6 +86,7 @@ public class MineActivity extends BaseActivity {
   @Nullable @Bind(R.id.bottom_bar_journal_rl) RelativeLayout bottomBarJournalRl;
 
   private SupportAnimator revealAnimator;
+  private ViewGroup toast;
 
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
@@ -182,27 +193,30 @@ public class MineActivity extends BaseActivity {
     params.put("Action", "GetUserInfo");
     params.put("uid", DBHelper.getInstance(getApplicationContext()).getUserID(MineActivity.this));
 
-    LoginRetrofit.getInstance()
-        .requestUserInfo(params)
-        .doOnSubscribe(new Action0() {
+    LoginRetrofit.getInstance().requestUserInfo(params)
+        /*.doOnSubscribe(new Action0() {
           @Override public void call() {
-            /*加载数据，显示进度条*/
+            *//*加载数据，显示进度条*//*
             if (!swipeRefreshLayout.isRefreshing()) progressLayout.showLoading();
           }
-        })
-        .compose(MineActivity.this.<UserInfoEntity>bindUntilEvent(ActivityEvent.DESTROY))
+        })*/.compose(MineActivity.this.<UserInfoEntity>bindUntilEvent(ActivityEvent.DESTROY))
         .subscribe(new Subscriber<UserInfoEntity>() {
           @Override public void onCompleted() {
+
             if (swipeRefreshLayout.isRefreshing()) {
               swipeRefreshLayout.setRefreshing(false);
-            } else if (!progressLayout.isContent()) {
+            } /*else if (!progressLayout.isContent()) {
               progressLayout.showContent();
-            }
+            }*/
           }
 
           @Override public void onError(Throwable error) {
+
             /*加载失败，显示错误界面*/
-            MineActivity.this.showErrorLayout(error);
+            toast = DialogManager.getInstance()
+                .showNoMoreDialog(MineActivity.this, Gravity.TOP, "加载失败，请重试,/(ㄒoㄒ)/~~");
+
+           /* MineActivity.this.showErrorLayout(error);*/
           }
 
           @Override public void onNext(UserInfoEntity userInfoEntity) {
@@ -242,8 +256,8 @@ public class MineActivity extends BaseActivity {
   }
 
   private void showError(String errorTitle, String errorContent) {
-    progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon), errorTitle,
-        errorContent, getResources().getString(R.string.retry_button_text), retryClickListener);
+   /* progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon), errorTitle,
+        errorContent, getResources().getString(R.string.retry_button_text), retryClickListener);*/
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -347,8 +361,34 @@ public class MineActivity extends BaseActivity {
         });
   }
 
-  @Override protected void onNewIntent(Intent intent) {
-    super.onNewIntent(intent);
-    MineActivity.this.setIntent(intent);
+  @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+    if (requestCode == Constants.ACTIVITY_CODE && resultCode == RESULT_OK && null != data) {
+
+      this.nickNameTv.setText(data.getStringExtra(NICKNAME));
+
+      if (data.getParcelableExtra(FILE_URL) != null) {
+        BitmapPool bitmapPool = Glide.get(MineActivity.this).getBitmapPool();
+        Glide.with(MineActivity.this)
+            .load(data.getParcelableExtra(FILE_URL))
+            .centerCrop()
+            .crossFade()
+            .bitmapTransform(new CropCircleTransformation(bitmapPool))
+            .placeholder(R.drawable.center_profile_default_icon)
+            .error(R.drawable.center_profile_default_icon)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .into(avatarIv);
+      }
+    }
+
+    super.onActivityResult(requestCode, resultCode, data);
+  }
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
+    if (toast != null && toast.getParent() != null) {
+      getWindowManager().removeViewImmediate(toast);
+    }
+    this.toast = null;
   }
 }

@@ -123,7 +123,7 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
   public static void startFromLocation(MineActivity startingActivity, int startingLocationY) {
     Intent intent = new Intent(startingActivity, ProfileActivity.class);
     intent.putExtra(START_LOCATION_Y, startingLocationY);
-    startingActivity.startActivity(intent);
+    startingActivity.startActivityForResult(intent, Constants.ACTIVITY_CODE);
   }
 
   @Override protected void onCreate(Bundle savedInstanceState) {
@@ -230,7 +230,7 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
     usernameTv.setText(userInfoEntity.getUserName());
     nicknameEt.setText(nickName);
     genderTv.setText("0".equals(gender) ? "男" : gender);
-    birthdayTv.setText("0000-00-00".equals(birthday) ? "1900年01月01日" : birthday);
+    birthdayTv.setText(birthday.contains("-") ? "1900年01月01日" : birthday);
 
     BitmapPool bitmapPool = Glide.get(ProfileActivity.this).getBitmapPool();
     Glide.with(ProfileActivity.this)
@@ -358,12 +358,24 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
         .subscribe(new SimpleObserver<Boolean>() {
           @Override public void onError(Throwable e) {
 
+            e.printStackTrace();
+
             toast = DialogManager.getInstance()
                 .showNoMoreDialog(ProfileActivity.this, Gravity.TOP, "操作失败，请重试，O__O …");
           }
 
           @Override public void onNext(Boolean isOk) {
+
             Toast.makeText(ProfileActivity.this, "操作成功", Toast.LENGTH_LONG).show();
+
+            Intent intent = new Intent();
+
+            if (avatarFile != null) {
+              intent.putExtra(MineActivity.FILE_URL, Uri.fromFile(avatarFile));
+            }
+            intent.putExtra(MineActivity.NICKNAME, nickName);
+            ProfileActivity.this.setResult(RESULT_OK, intent);
+
             ProfileActivity.this.exit();
           }
         });
@@ -460,7 +472,7 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
 
     BitmapPool bitmapPool = Glide.get(ProfileActivity.this).getBitmapPool();
     Glide.with(ProfileActivity.this)
-        .load(Uri.fromFile(event.getFile()))
+        .load(Uri.fromFile(avatarFile))
         .centerCrop()
         .crossFade()
         .skipMemoryCache(true)
