@@ -183,11 +183,11 @@ public class JournalDetailActivity extends BaseActivity implements CustomShareDi
         });
   }
 
-  @Override public void onWeiboClick() {
+  @Override public void onWeiboClick(String content) {
 
   }
 
-  @Override public void onWechatClick() {
+  @Override public void onWechatClick(String content) {
 
   }
 }

@@ -363,15 +363,18 @@ public class CollectionActivity extends BaseActivity
         });
   }
 
-  @Override public void onWeiboClick() {
+  @Override public void onWeiboClick(String content) {
     // TODO: 2015/9/15 新浪分享
 
   }
 
-  @Override public void onWechatClick() {
+  @Override public void onWechatClick(String content) {
     // TODO: 2015/9/15 微信分享
 
   }
+
+
+
 
   @Override protected void onDestroy() {
     super.onDestroy();

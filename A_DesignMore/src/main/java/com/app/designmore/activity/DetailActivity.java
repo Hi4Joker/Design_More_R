@@ -409,11 +409,11 @@ public class DetailActivity extends BaseActivity
     return true;
   }
 
-  @Override public void onWeiboClick() {
+  @Override public void onWeiboClick(String content) {
 
   }
 
-  @Override public void onWechatClick() {
+  @Override public void onWechatClick(String content) {
 
   }
 

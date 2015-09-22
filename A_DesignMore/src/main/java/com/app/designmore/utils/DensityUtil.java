@@ -134,7 +134,7 @@ public class DensityUtil {
   public static int hideFromBottom(View view) {
     int height = view.getHeight();
     ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-    int margins = params.topMargin + params.bottomMargin;
+    int margins = params.bottomMargin;
     return height + margins;
   }
 }
