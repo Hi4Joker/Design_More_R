@@ -59,7 +59,7 @@ public class TrolleyAdapter extends RecyclerView.Adapter<TrolleyAdapter.ViewHold
         .into(holder.goodIv);
 
     holder.goodNameTv.setText(trolleyEntity.getGoodName());
-    holder.goodAttrTv.setText(trolleyEntity.getGoodAttr());
+    holder.goodAttrTv.setText(trolleyEntity.getGoodAttrValue());
     holder.goodCountTv.setText(trolleyEntity.getGoodCount());
     holder.goodPriceTv.setText(trolleyEntity.getGoodPrice());
 

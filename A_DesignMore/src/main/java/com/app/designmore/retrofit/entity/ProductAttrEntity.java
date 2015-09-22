@@ -6,11 +6,13 @@ package com.app.designmore.retrofit.entity;
 public class ProductAttrEntity {
 
   private String attrId;
+  private String attrValue;
   private String url;
   private boolean isChecked;
 
-  public ProductAttrEntity(String attrId, String url, boolean isChecked) {
+  public ProductAttrEntity(String attrId, String attrValue, String url, boolean isChecked) {
     this.attrId = attrId;
+    this.attrValue = attrValue;
     this.url = url;
     this.isChecked = isChecked;
   }
@@ -28,16 +30,12 @@ public class ProductAttrEntity {
     return attrId;
   }
 
-  public void setAttrId(String attrId) {
-    this.attrId = attrId;
+  public String getAttrValue() {
+    return attrValue;
   }
 
   public String getUrl() {
     return url;
-  }
-
-  public void setUrl(String url) {
-    this.url = url;
   }
 
   public boolean isChecked() {

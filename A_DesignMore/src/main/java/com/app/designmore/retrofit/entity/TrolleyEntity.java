@@ -1,8 +1,5 @@
 package com.app.designmore.retrofit.entity;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Created by Joker on 2015/9/5.
  */
@@ -14,17 +11,16 @@ public class TrolleyEntity implements Cloneable {
   private String goodCount;
   private String goodPrice;
   private String goodThumb;
+  private String goodAttrValue;
 
   public boolean isChecked = false;
 
   @Override public boolean equals(Object obj) {
 
-    //if (this == obj) return true;
     if (obj == null || this.getClass() != obj.getClass() || !this.getGoodId()
         .equals(((TrolleyEntity) obj).getGoodId())) {
       return false;
     }
-
     return true;
   }
 
@@ -74,6 +70,14 @@ public class TrolleyEntity implements Cloneable {
 
   public void setGoodThumb(String goodThumb) {
     this.goodThumb = goodThumb;
+  }
+
+  public String getGoodAttrValue() {
+    return goodAttrValue;
+  }
+
+  public void setGoodAttrValue(String goodAttrValue) {
+    this.goodAttrValue = goodAttrValue;
   }
 
   public TrolleyEntity newInstance() {

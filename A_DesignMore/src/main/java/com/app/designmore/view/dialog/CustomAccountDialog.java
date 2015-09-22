@@ -84,7 +84,8 @@ public class CustomAccountDialog extends Dialog implements AccountAdapter.Callba
     this.productEntities = new ArrayList<>(productAttrs.size());
     for (DetailResponse.Detail.ProductAttr productAttr : productAttrs) {
       productEntities.add(
-          new ProductAttrEntity(productAttr.attrId, productAttr.attrThumbUrl, false));
+          new ProductAttrEntity(productAttr.attrId, productAttr.attrValue, productAttr.attrThumbUrl,
+              false));
     }
     this.backgroundColor = activity.getResources().getColor(R.color.design_more_red);
     this.currentProductAttrEntity = productEntities.get(0);
@@ -155,7 +156,7 @@ public class CustomAccountDialog extends Dialog implements AccountAdapter.Callba
   @Nullable @OnClick(R.id.custom_account_btn) void onAccountClick() {
     CustomAccountDialog.this.dismiss();
     if (callback != null) {
-      callback.onAccountClick(currentProductAttrEntity,count);
+      callback.onAccountClick(currentProductAttrEntity, count);
       callback.onDialogDismiss();
     }
   }

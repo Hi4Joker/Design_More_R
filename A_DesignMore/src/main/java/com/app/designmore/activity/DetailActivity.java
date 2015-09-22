@@ -144,13 +144,14 @@ public class DetailActivity extends BaseActivity
     this.goodId = getIntent().getStringExtra(GOOD_ID);
 
     if (savedInstanceState == null) {
-      revealFrameLayout.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-        @Override public boolean onPreDraw() {
-          revealFrameLayout.getViewTreeObserver().removeOnPreDrawListener(this);
-          DetailActivity.this.startEnterAnim();
-          return true;
-        }
-      });
+      revealFrameLayout.getViewTreeObserver()
+          .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override public boolean onPreDraw() {
+              revealFrameLayout.getViewTreeObserver().removeOnPreDrawListener(this);
+              DetailActivity.this.startEnterAnim();
+              return true;
+            }
+          });
     } else {
       DetailActivity.this.loadData();
     }
@@ -426,15 +427,16 @@ public class DetailActivity extends BaseActivity
     ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(revealFrameLayout, "alpha", 1.0f, 0.5f);
     alphaAnim.setDuration(Constants.MILLISECONDS_400);
 
-    ObjectAnimator rotationXAnim = ObjectAnimator.ofFloat(revealFrameLayout, "rotationX", 0.0f, 10.0f);
+    ObjectAnimator rotationXAnim =
+        ObjectAnimator.ofFloat(revealFrameLayout, "rotationX", 0.0f, 10.0f);
     rotationXAnim.setDuration(Constants.MILLISECONDS_400);
 
     ObjectAnimator resumeAnim = ObjectAnimator.ofFloat(revealFrameLayout, "rotationX", 10.0f, 0.0f);
     resumeAnim.setDuration(Constants.MILLISECONDS_400);
     resumeAnim.setStartDelay(Constants.MILLISECONDS_300);
 
-    ObjectAnimator transYAnim =
-        ObjectAnimator.ofFloat(revealFrameLayout, "translationY", 0.0f, -0.1f * revealFrameLayout.getHeight(), 0.0f);
+    ObjectAnimator transYAnim = ObjectAnimator.ofFloat(revealFrameLayout, "translationY", 0.0f,
+        -0.1f * revealFrameLayout.getHeight(), 0.0f);
     transYAnim.setDuration(Constants.MILLISECONDS_400);
 
     AnimatorSet showAnim = new AnimatorSet();
@@ -457,15 +459,16 @@ public class DetailActivity extends BaseActivity
     ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(revealFrameLayout, "alpha", 0.5f, 1.0f);
     alphaAnim.setDuration(Constants.MILLISECONDS_400);
 
-    ObjectAnimator rotationXAnim = ObjectAnimator.ofFloat(revealFrameLayout, "rotationX", 0.0f, 10.0f);
+    ObjectAnimator rotationXAnim =
+        ObjectAnimator.ofFloat(revealFrameLayout, "rotationX", 0.0f, 10.0f);
     rotationXAnim.setDuration(Constants.MILLISECONDS_200);
 
     ObjectAnimator resumeAnim = ObjectAnimator.ofFloat(revealFrameLayout, "rotationX", 10.0f, 0.0f);
     resumeAnim.setDuration(Constants.MILLISECONDS_200);
     resumeAnim.setStartDelay(Constants.MILLISECONDS_200);
 
-    ObjectAnimator transYAnim =
-        ObjectAnimator.ofFloat(revealFrameLayout, "translationY", -0.1f * revealFrameLayout.getHeight(), 0.0f);
+    ObjectAnimator transYAnim = ObjectAnimator.ofFloat(revealFrameLayout, "translationY",
+        -0.1f * revealFrameLayout.getHeight(), 0.0f);
     transYAnim.setDuration(Constants.MILLISECONDS_400);
 
     AnimatorSet showAnim = new AnimatorSet();

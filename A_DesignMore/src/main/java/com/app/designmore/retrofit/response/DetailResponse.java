@@ -152,7 +152,28 @@ public class DetailResponse extends BaseResponse {
 
     public class ProductAttr {
       @Expose @SerializedName("goods_attr_id") public String attrId;
+      @Expose @SerializedName("attr_value") public String attrValue;
       @Expose @SerializedName("image") public String attrThumbUrl;
     }
+
+    @Override public String toString() {
+      return "Detail{" +
+          "goodId='" + goodId + '\'' +
+          ", goodName='" + goodName + '\'' +
+          ", marketPrice='" + marketPrice + '\'' +
+          ", shopPrice='" + shopPrice + '\'' +
+          ", goodDes='" + goodDes + '\'' +
+          ", goodDesUrl='" + goodDesUrl + '\'' +
+          ", goodRepertory='" + goodRepertory + '\'' +
+          ", productImages=" + productImages +
+          ", productAttrs=" + productAttrs +
+          '}';
+    }
+  }
+
+  @Override public String toString() {
+    return "DetailResponse{" +
+        "detail=" + detail +
+        '}';
   }
 }

@@ -10,26 +10,28 @@ import java.util.List;
  */
 public class TrolleyResponse extends BaseResponse {
 
-  /*
-      "rec_id": "2", //自增id
-      "user_id": "1", //用户id
-      "session_id": "1", //sessionID
-      "goods_id": "1", //产品ID
-      "goods_sn": "ECS000000", //产品编号
-      "product_id": "1",//产品ID
-      "goods_name": "设计猫天鼎 创意中国风文武官补子纹杯垫餐垫 木质加厚隔热防滑厨",//产品名称
-      "market_price": "60.00", //市场价格
-      "goods_price": "60.00", //产品价格
-      "goods_number": "1", //产品数量
-      "goods_attr": "", //购买商品时选择的属性
-      "is_real": "1", //是否是实物
-      "extension_code": "", //商品的扩展属性，比如像虚拟卡，取值ecs_goods
-      "parent_id": "0", //父商品id，如果有值则是代表的物品的配件
-      "rec_type": "0", //购物车类型 0普通；1 团购；2拍卖；3夺宝奇兵
-      "is_gift": "0", //是否是赠品， 0否，是，参见优惠活动的id，取值于ecs_favourable_activity
-      "is_shipping": "0", //未知
-      "can_handsel": "0",//未知
-      "goods_attr_id": "NULL" //商品属性id*/
+  /*  "rec_id": "76",
+      "user_id": "37",
+      "session_id": "37",
+      "goods_id": "52",
+      "goods_sn": "E900001109",
+      "product_id": "52",
+      "goods_name": "轮播图",
+      "market_price": "2398.00",
+      "goods_price": "1998.33",
+      "goods_number": "1",
+      "goods_attr": "37",
+      "is_real": "1",
+      "extension_code": "",
+      "parent_id": "0",
+      "rec_type": "0",
+      "is_gift": "0",
+      "is_shipping": "0",
+      "can_handsel": "0",
+      "goods_attr_id": "37",
+      "goods_img": "images/201508/goods_img/51_G_1440926083389.jpg",
+      "goods_attr_str": "黄色"
+    */
 
   @Expose @SerializedName("result") private List<Trolley> addressList = new ArrayList<>();
 
@@ -41,18 +43,21 @@ public class TrolleyResponse extends BaseResponse {
 
     @Expose @SerializedName("goods_id") public String goodId;
     @Expose @SerializedName("goods_name") public String goodName;
-    @Expose @SerializedName("goods_attr") public String goodAttr;
+    @Expose @SerializedName("goods_attr") public String goodAttrId;
     @Expose @SerializedName("goods_number") public String goodCount;
     @Expose @SerializedName("goods_price") public String goodPrice;
-    //public String goodThumb;
+    @Expose @SerializedName("goods_img") public String goodThumb;
+    @Expose @SerializedName("goods_attr_str") public String goodAttrValue;
 
     @Override public String toString() {
       return "Trolley{" +
-          "goodId='" + goodId + '\'' +
+          "goodAttrId='" + goodAttrId + '\'' +
+          ", goodId='" + goodId + '\'' +
           ", goodName='" + goodName + '\'' +
-          ", goodAttr='" + goodAttr + '\'' +
           ", goodCount='" + goodCount + '\'' +
           ", goodPrice='" + goodPrice + '\'' +
+          ", goodThumb='" + goodThumb + '\'' +
+          ", goodAttrValue='" + goodAttrValue + '\'' +
           '}';
     }
   }

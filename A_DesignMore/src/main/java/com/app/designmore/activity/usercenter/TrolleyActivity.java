@@ -34,7 +34,9 @@ import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.helper.DBHelper;
 import com.app.designmore.retrofit.TrolleyRetrofit;
 import com.app.designmore.retrofit.entity.TrolleyEntity;
+import com.app.designmore.retrofit.response.TrolleyResponse;
 import com.app.designmore.utils.DensityUtil;
+import com.app.designmore.utils.MarginDecoration;
 import com.app.designmore.view.ProgressLayout;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.trello.rxlifecycle.ActivityEvent;
@@ -71,13 +73,19 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
   @Nullable @Bind(R.id.trolley_layout_total_tv) TextView totalTv;
   @Nullable @Bind(R.id.trolley_ayout_pay_btn) Button payBtn;
 
+  private Button actionButton;
   private TrolleyAdapter trolleyAdapter;
-  private List<TrolleyEntity> items;
+  private List<TrolleyEntity> items = new ArrayList<>();
 
   private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
   /*传入订单界面*/
   private List<TrolleyEntity> trolleyEntities = new ArrayList<>();
+
+  public enum Type {
+    EXTEND,
+    UP
+  }
 
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
@@ -85,10 +93,12 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
     }
   };
 
-  public enum Type {
-    EXTEND,
-    UP
-  }
+  private View.OnClickListener goHomeClickListener = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      HomeActivity.navigateToHome(TrolleyActivity.this);
+      overridePendingTransition(0, 0);
+    }
+  };
 
   public static void startFromLocation(AppCompatActivity startingActivity, int startingLocationY,
       Type type) {
@@ -112,8 +122,8 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
     TrolleyActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_icon));
 
-    toolbarTitleTv.setVisibility(View.VISIBLE);
-    toolbarTitleTv.setText("我的购物车");
+    TrolleyActivity.this.toolbarTitleTv.setVisibility(View.VISIBLE);
+    TrolleyActivity.this.toolbarTitleTv.setText("我的购物车");
 
     /*创建Adapter*/
     TrolleyActivity.this.setupAdapter();
@@ -149,6 +159,8 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
 
     recyclerView.setLayoutManager(linearLayoutManager);
     recyclerView.setHasFixedSize(true);
+    recyclerView.addItemDecoration(
+        new MarginDecoration(TrolleyActivity.this, R.dimen.material_1dp));
     recyclerView.setAdapter(trolleyAdapter);
   }
 
@@ -167,6 +179,13 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
               radioBtn.setImageDrawable(
                   getResources().getDrawable(R.drawable.ic_radio_normal_icon_icon));
             }
+
+            if (trolleyEntities.size() != 0) {
+              TrolleyActivity.this.payBtn.setEnabled(true);
+            } else {
+              TrolleyActivity.this.payBtn.setEnabled(false);
+            }
+
             compositeSubscription.remove(this);
           }
 
@@ -208,11 +227,18 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
             if (!swipeRefreshLayout.isRefreshing()) progressLayout.showLoading();
           }
         })
+        .doOnCompleted(new Action0() {
+          @Override public void call() {
+            TrolleyActivity.this.payBtn.setEnabled(false);
+          }
+        })
         .compose(TrolleyActivity.this.<List<TrolleyEntity>>bindUntilEvent(ActivityEvent.DESTROY))
         .subscribe(new Subscriber<List<TrolleyEntity>>() {
           @Override public void onCompleted() {
+
             /*加载完毕，显示内容界面*/
             if (items != null && items.size() != 0) {
+              TrolleyActivity.this.actionButton.setEnabled(true);
               if (swipeRefreshLayout.isRefreshing()) {
                 swipeRefreshLayout.setRefreshing(false);
               } else if (!progressLayout.isContent()) {
@@ -220,12 +246,7 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
               }
             } else if (items != null && items.size() == 0) {
               progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
-                  "您的购物车空空如也，快去购物吧", null, "去首页看看", new View.OnClickListener() {
-                    @Override public void onClick(View v) {
-                      HomeActivity.navigateToHome(TrolleyActivity.this);
-                      overridePendingTransition(0, 0);
-                    }
-                  });
+                  "您的购物车空空如也，快去购物吧", null, "去首页看看", goHomeClickListener);
             }
           }
 
@@ -236,7 +257,8 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
 
           @Override public void onNext(List<TrolleyEntity> trolleyEntities) {
 
-            TrolleyActivity.this.items = trolleyEntities;
+            TrolleyActivity.this.items.clear();
+            TrolleyActivity.this.items.addAll(trolleyEntities);
             trolleyAdapter.updateItems(items);
           }
         });
@@ -270,7 +292,8 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
 
     MenuItem menuItem = menu.findItem(R.id.action_inbox);
     menuItem.setActionView(R.layout.menu_inbox_tv_item);
-    Button actionButton = (Button) menuItem.getActionView().findViewById(R.id.action_inbox_btn);
+    actionButton = (Button) menuItem.getActionView().findViewById(R.id.action_inbox_btn);
+    actionButton.setEnabled(false);
     actionButton.setText(getText(R.string.action_editor));
     actionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {

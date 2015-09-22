@@ -37,6 +37,7 @@ import com.app.designmore.retrofit.CollectionRetrofit;
 import com.app.designmore.retrofit.entity.CollectionEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.utils.DensityUtil;
+import com.app.designmore.utils.MarginDecoration;
 import com.app.designmore.view.ProgressLayout;
 import com.app.designmore.view.dialog.CustomShareDialog;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
@@ -156,6 +157,8 @@ public class CollectionActivity extends BaseActivity
     recyclerView.setHasFixedSize(true);
     recyclerView.setAdapter(collectionAdapter);
     recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+    recyclerView.addItemDecoration(
+        new MarginDecoration(CollectionActivity.this, R.dimen.material_1dp));
     recyclerView.setItemAnimator(new DefaultItemAnimator());
   }
 
@@ -372,9 +375,6 @@ public class CollectionActivity extends BaseActivity
     // TODO: 2015/9/15 微信分享
 
   }
-
-
-
 
   @Override protected void onDestroy() {
     super.onDestroy();

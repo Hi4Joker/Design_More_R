@@ -82,7 +82,6 @@ public class TrolleyRetrofit {
 
     return Observable.defer(new Func0<Observable<TrolleyResponse>>() {
       @Override public Observable<TrolleyResponse> call() {
-        /*获取热搜列表，超时8秒*/
         return collectionService.getTrolleyList(params)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
       }
@@ -104,9 +103,11 @@ public class TrolleyRetrofit {
         TrolleyEntity clone = instance.newInstance();
         clone.setGoodId(trolley.goodId);
         clone.setGoodName(trolley.goodName);
-        clone.setGoodAttr(trolley.goodAttr);
+        clone.setGoodAttr(trolley.goodAttrId);
         clone.setGoodCount(trolley.goodCount);
         clone.setGoodPrice(trolley.goodPrice);
+        clone.setGoodThumb(trolley.goodThumb);
+        clone.setGoodAttrValue(trolley.goodAttrValue);
 
         return clone;
       }

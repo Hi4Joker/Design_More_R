@@ -20,7 +20,7 @@ import java.util.List;
 import rx.Observer;
 
 /**
- * Created by Administrator on 2015/9/21.
+ * Created by Joker on 2015/9/21.
  */
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder>
     implements Observer<List<ProductEntity>> {

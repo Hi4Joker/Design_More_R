@@ -106,6 +106,7 @@ public class AllProductListActivity extends BaseActivity
   private volatile int code = 0;
   private volatile int currentCode = 0;
   private volatile int order_by = 1;/*1,降序 0,升序*/
+  private volatile int currentOrderBy = 1;/*1,降序 0,升序*/
   private volatile String keyword;
   private volatile String title;
 
@@ -302,11 +303,16 @@ public class AllProductListActivity extends BaseActivity
 
                 /*加载数据，显示进度条*/
                 if (!swipeRefreshLayout.isRefreshing()) {
-                  if (progressDialog == null) {
-                    progressDialog = DialogManager.getInstance()
-                        .showSimpleProgressDialog(AllProductListActivity.this, cancelListener);
+
+                  if (productProgressLayout.isContent()) {
+                    if (progressDialog == null) {
+                      progressDialog = DialogManager.getInstance()
+                          .showSimpleProgressDialog(AllProductListActivity.this, cancelListener);
+                    } else {
+                      progressDialog.show();
+                    }
                   } else {
-                    progressDialog.show();
+                    productProgressLayout.showLoading();
                   }
                 }
               }
@@ -512,25 +518,41 @@ public class AllProductListActivity extends BaseActivity
     this.collectionTv.setTextColor(greyTextColor);
     this.priceTv.setTextColor(greyTextColor);
 
+    if (code != price) {
+      ViewCompat.animate(priceArrowIv).rotation(0.0f).setDuration(Constants.MILLISECONDS_300);
+    }
+
     switch (code) {
 
       case composite:
         this.currentCode = composite;
+        this.currentOrderBy = 1;
         this.compositeTv.setTextColor(redTextColor);
         break;
       case sale:
         this.currentCode = sale;
+        this.currentOrderBy = 1;
         this.saleTv.setTextColor(redTextColor);
         break;
       case fashion:
         this.currentCode = fashion;
+        this.currentOrderBy = 1;
         this.fashionTv.setTextColor(redTextColor);
         break;
       case collection:
         this.currentCode = collection;
+        this.currentOrderBy = 1;
         this.collectionTv.setTextColor(redTextColor);
         break;
       case price:
+
+        if (currentCode == price) {
+          if (this.currentOrderBy == 1) {
+            this.currentOrderBy = 0;
+          } else {
+            this.currentOrderBy = 1;
+          }
+        }
         this.currentCode = price;
         this.priceTv.setTextColor(redTextColor);
         break;
@@ -544,6 +566,7 @@ public class AllProductListActivity extends BaseActivity
   @Nullable @OnClick(R.id.composite_order_tv) void onCompositeClick(TextView textView) {
     if (this.currentCode != 0) {
       this.code = 0;
+      this.order_by = 1;
       AllProductListActivity.this.loadData();
     }
   }
@@ -551,6 +574,7 @@ public class AllProductListActivity extends BaseActivity
   @Nullable @OnClick(R.id.sales_order_tv) void onSaleClick(TextView textView) {
     if (this.currentCode != 1) {
       this.code = 1;
+      this.order_by = 1;
       AllProductListActivity.this.loadData();
     }
   }
@@ -558,6 +582,7 @@ public class AllProductListActivity extends BaseActivity
   @Nullable @OnClick(R.id.fashion_order_tv) void onFashionClick(TextView textView) {
     if (this.currentCode != 2) {
       this.code = 2;
+      this.order_by = 1;
       AllProductListActivity.this.loadData();
     }
   }
@@ -565,6 +590,7 @@ public class AllProductListActivity extends BaseActivity
   @Nullable @OnClick(R.id.collection_order_tv) void onCollectionClick(TextView textView) {
     if (this.currentCode != 3) {
       this.code = 3;
+      this.order_by = 1;
       AllProductListActivity.this.loadData();
     }
   }
@@ -573,8 +599,9 @@ public class AllProductListActivity extends BaseActivity
 
     if (currentCode != 4) {
       this.code = 4;
+      this.order_by = 1;
     } else {
-      if (this.order_by == 1) {
+      if (this.currentOrderBy == 1) {
         this.order_by = 0;
         ViewCompat.animate(priceArrowIv).rotation(180.0f).setDuration(Constants.MILLISECONDS_300);
       } else {

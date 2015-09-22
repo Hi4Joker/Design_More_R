@@ -92,6 +92,7 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
   private volatile int code = 0;
   private volatile int currentCode = 0;
   private volatile int order_by = 1;/*1,降序 0,升序*/
+  private volatile int currentOrderBy = 1;/*1,降序 0,升序*/
   private volatile String keyword;
   private volatile String title;
 
@@ -178,9 +179,12 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
             .getProductByKey(params)
             .doOnSubscribe(new Action0() {
               @Override public void call() {
-            /*加载数据，显示进度条*/
+
+                /*加载数据，显示进度条*/
                 if (!swipeRefreshLayout.isRefreshing()) {
+
                   if (progressLayout.isContent()) {
+
                     if (progressDialog == null) {
                       progressDialog = DialogManager.getInstance()
                           .showSimpleProgressDialog(ProductKeyListActivity.this, cancelListener);
@@ -378,26 +382,39 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
     this.collectionTv.setTextColor(greyTextColor);
     this.priceTv.setTextColor(greyTextColor);
 
+    if (code != price) {
+      ViewCompat.animate(priceArrowIv).rotation(0.0f).setDuration(Constants.MILLISECONDS_300);
+    }
+
     switch (code) {
 
       case composite:
         this.currentCode = composite;
+        this.currentOrderBy = 1;
         this.compositeTv.setTextColor(redTextColor);
         break;
       case sale:
         this.currentCode = sale;
+        this.currentOrderBy = 1;
         this.saleTv.setTextColor(redTextColor);
         break;
       case fashion:
         this.currentCode = fashion;
+        this.currentOrderBy = 1;
         this.fashionTv.setTextColor(redTextColor);
         break;
       case collection:
         this.currentCode = collection;
+        this.currentOrderBy = 1;
         this.collectionTv.setTextColor(redTextColor);
         break;
       case price:
         this.currentCode = price;
+        if (this.currentOrderBy == 1) {
+          this.currentOrderBy = 0;
+        } else {
+          this.currentOrderBy = 1;
+        }
         this.priceTv.setTextColor(redTextColor);
         break;
     }
@@ -410,6 +427,7 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
   @Nullable @OnClick(R.id.composite_order_tv) void onCompositeClick(TextView textView) {
     if (this.currentCode != 0) {
       this.code = 0;
+      this.order_by = 1;
       ProductKeyListActivity.this.loadData();
     }
   }
@@ -417,6 +435,7 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
   @Nullable @OnClick(R.id.sales_order_tv) void onSaleClick(TextView textView) {
     if (this.currentCode != 1) {
       this.code = 1;
+      this.order_by = 1;
       ProductKeyListActivity.this.loadData();
     }
   }
@@ -424,6 +443,7 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
   @Nullable @OnClick(R.id.fashion_order_tv) void onFashionClick(TextView textView) {
     if (this.currentCode != 2) {
       this.code = 2;
+      this.order_by = 1;
       ProductKeyListActivity.this.loadData();
     }
   }
@@ -431,6 +451,7 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
   @Nullable @OnClick(R.id.collection_order_tv) void onCollectionClick(TextView textView) {
     if (this.currentCode != 3) {
       this.code = 3;
+      this.order_by = 1;
       ProductKeyListActivity.this.loadData();
     }
   }
@@ -440,7 +461,7 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
     if (currentCode != 4) {
       this.code = 4;
     } else {
-      if (this.order_by == 1) {
+      if (this.currentOrderBy == 1) {
         this.order_by = 0;
         ViewCompat.animate(priceArrowIv).rotation(180.0f).setDuration(Constants.MILLISECONDS_300);
       } else {
