@@ -2,15 +2,11 @@ package com.app.designmore.retrofit;
 
 import com.app.designmore.Constants;
 import com.app.designmore.retrofit.entity.DetailEntity;
-import com.app.designmore.retrofit.entity.SearchItemEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.retrofit.response.DetailResponse;
-import com.app.designmore.retrofit.response.SearchListResponse;
 import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -23,7 +19,6 @@ import retrofit.http.FieldMap;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.POST;
 import rx.Observable;
-import rx.Subscriber;
 import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.functions.Func2;
@@ -102,8 +97,8 @@ public class DetailRetrofit {
     }).map(new Func1<DetailResponse.Detail, DetailEntity>() {
       @Override public DetailEntity call(DetailResponse.Detail detail) {
 
-        return new DetailEntity(detail.goodId, detail.goodName, detail.marketPrice,
-            detail.shopPrice, detail.goodDes, detail.goodDesUrl, detail.goodRepertory,
+        return new DetailEntity(detail.goodId, detail.goodName, detail.goodMarketPrice,
+            detail.goodShopPrice, detail.goodDes, detail.goodDesUrl, detail.goodRepertory,
             detail.productImages, detail.productAttrs);
       }
     }).compose(SchedulersCompat.<DetailEntity>applyExecutorSchedulers());

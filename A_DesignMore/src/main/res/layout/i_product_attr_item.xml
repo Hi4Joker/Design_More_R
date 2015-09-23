@@ -2,7 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/account_root_view"
+    android:id="@+id/product_attr_item_root_view"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginRight="@dimen/material_8dp"
@@ -24,7 +24,7 @@
       app:mrl_rippleColor="@color/darker_gray"
       >
     <ImageView
-        android:id="@+id/account_item_iv"
+        android:id="@+id/product_attr_item_iv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="center"

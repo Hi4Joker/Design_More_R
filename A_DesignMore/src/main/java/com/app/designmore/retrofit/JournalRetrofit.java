@@ -113,33 +113,4 @@ public class JournalRetrofit {
       }
     }).toList().compose(SchedulersCompat.<List<JournalEntity>>applyExecutorSchedulers());
   }
-
-  /**
-   * 获取更多杂志列表
-   */
-  public Observable<BaseResponse> requestDeleteCollection(final Map<String, String> params) {
-
-   /* return Observable.defer(new Func0<Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call() {
-        return collectionService.requestMoreJournalList(params)
-            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call(BaseResponse addressResponse) {
-        return addressResponse.filterWebServiceErrors();
-      }
-    }).map(new Func1<BaseResponse, BaseResponse>() {
-      @Override public BaseResponse call(BaseResponse baseResponse) {
-        *//*删除成功*//*
-        return baseResponse;
-      }
-    }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
-  }*/
-
-    return null;
-  }
 }

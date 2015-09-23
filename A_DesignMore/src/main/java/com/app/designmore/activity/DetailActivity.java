@@ -332,7 +332,7 @@ public class DetailActivity extends BaseActivity
     DetailActivity.this.showAnim();
   }
 
-  @Override public void onAccountClick(ProductAttrEntity productAttrEntity, int count) {
+  @Override public void onConfirmClick(ProductAttrEntity productAttrEntity, int count) {
 
     /*Action=AddGoodsCart&uid=1&gid=1&goods_attr=0&count=0*/
     Map<String, String> params = new HashMap<>(5);
@@ -496,6 +496,7 @@ public class DetailActivity extends BaseActivity
     this.toast = null;
     this.progressDialog = null;
     this.customShareDialog = null;
+    this.customAccountDialog = null;
     this.viewPager.removeOnPageChangeListener(simpleOnPageChangeListener);
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();
   }

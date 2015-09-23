@@ -32,15 +32,17 @@ public class TrolleyResponse extends BaseResponse {
       "goods_img": "images/201508/goods_img/51_G_1440926083389.jpg",
       "goods_attr_str": "黄色"
     */
+  /*max_count*/
 
-  @Expose @SerializedName("result") private List<Trolley> addressList = new ArrayList<>();
+  @Expose @SerializedName("result") private List<Trolley> trolleys = new ArrayList<>();
 
   public List<Trolley> getTrolleyList() {
-    return addressList;
+    return trolleys;
   }
 
   public class Trolley {
 
+    @Expose @SerializedName("rec_id") public String recId;
     @Expose @SerializedName("goods_id") public String goodId;
     @Expose @SerializedName("goods_name") public String goodName;
     @Expose @SerializedName("goods_attr") public String goodAttrId;
@@ -51,9 +53,10 @@ public class TrolleyResponse extends BaseResponse {
 
     @Override public String toString() {
       return "Trolley{" +
-          "goodAttrId='" + goodAttrId + '\'' +
+          "recId='" + recId + '\'' +
           ", goodId='" + goodId + '\'' +
           ", goodName='" + goodName + '\'' +
+          ", goodAttrId='" + goodAttrId + '\'' +
           ", goodCount='" + goodCount + '\'' +
           ", goodPrice='" + goodPrice + '\'' +
           ", goodThumb='" + goodThumb + '\'' +
@@ -64,7 +67,7 @@ public class TrolleyResponse extends BaseResponse {
 
   @Override public String toString() {
     return "TrolleyResponse{" +
-        "addressList=" + addressList +
+        "trolleys=" + trolleys +
         '}';
   }
 }

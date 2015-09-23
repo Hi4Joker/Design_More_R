@@ -64,8 +64,7 @@ public class TrolleyAdapter extends RecyclerView.Adapter<TrolleyAdapter.ViewHold
     holder.goodPriceTv.setText(trolleyEntity.getGoodPrice());
 
     holder.radioBtn.setImageDrawable(
-        trolleyEntity.isChecked ? context.getResources().getDrawable(R.drawable.ic_radio_selected)
-            : context.getResources().getDrawable(R.drawable.ic_radio_normal_icon_icon));
+        context.getResources().getDrawable(R.drawable.ic_radio_normal_icon_icon));
   }
 
   @Override public int getItemCount() {

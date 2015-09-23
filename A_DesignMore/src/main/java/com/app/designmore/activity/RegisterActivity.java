@@ -134,11 +134,6 @@ public class RegisterActivity extends BaseActivity {
                 mobile = mobileEvent.text().toString();
                 code = codeEvent.text().toString();
 
-             /*   Log.e(TAG, "userName: " + userName);
-                Log.e(TAG, "password: " + password);
-                Log.e(TAG, "mobile: " + mobile);
-                Log.e(TAG, "code: " + code);*/
-
                 boolean userNameValid = !TextUtils.isEmpty(userName);
                 boolean passwordValid = !TextUtils.isEmpty(password);
                 boolean mobileValid = !TextUtils.isEmpty(mobile) /*&& Utils.isMobile(mobile)*/;
@@ -153,7 +148,6 @@ public class RegisterActivity extends BaseActivity {
             .subscribe(new Action1<Boolean>() {
               @Override public void call(Boolean aBoolean) {
 
-                //Log.e(TAG, "call() called with: " + "aBoolean = [" + aBoolean + "]");
                 registerBtn.setEnabled(aBoolean);
               }
             }));
@@ -167,11 +161,11 @@ public class RegisterActivity extends BaseActivity {
 
   private void getRegisterCode() {
 
-    /*Action=SendCheckMessage&mobile=18622816323&message=欢迎您注册设计猫，*/
+    /*Action=SendCheckMessage&mobile=18622816323&message=欢迎您注册设计猫*/
     Map<String, String> params = new HashMap<>();
     params.put("Action", "SendCheckMessage");
     params.put("mobile", mobileEt.getText().toString());
-    params.put("message", "欢迎您注册设计猫,");
+    params.put("message", "请输入此校验码完成注册；感谢您使用设计猫! 更多惊喜等着您!");
 
     LoginRetrofit.getInstance()
         .getAuthCode(params)

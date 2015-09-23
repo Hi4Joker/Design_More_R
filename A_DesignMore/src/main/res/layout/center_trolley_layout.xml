@@ -99,7 +99,7 @@
           app:mrl_rippleColor="@color/darker_gray"
           >
         <Button
-            android:id="@+id/trolley_ayout_pay_btn"
+            android:id="@+id/trolley_layout_pay_btn"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"

@@ -11,7 +11,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,11 +29,12 @@ import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.activity.HomeActivity;
 import com.app.designmore.adapter.TrolleyAdapter;
+import com.app.designmore.event.RefreshAddressEvent;
+import com.app.designmore.event.RefreshTrolleyEvent;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.helper.DBHelper;
 import com.app.designmore.retrofit.TrolleyRetrofit;
 import com.app.designmore.retrofit.entity.TrolleyEntity;
-import com.app.designmore.retrofit.response.TrolleyResponse;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.utils.MarginDecoration;
 import com.app.designmore.view.ProgressLayout;
@@ -71,16 +71,14 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
   @Nullable @Bind(R.id.trolley_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.trolley_layout_radio_btn) ImageButton radioBtn;
   @Nullable @Bind(R.id.trolley_layout_total_tv) TextView totalTv;
-  @Nullable @Bind(R.id.trolley_ayout_pay_btn) Button payBtn;
+  @Nullable @Bind(R.id.trolley_layout_pay_btn) Button payBtn;
 
   private Button actionButton;
   private TrolleyAdapter trolleyAdapter;
   private List<TrolleyEntity> items = new ArrayList<>();
+  private List<TrolleyEntity> accountEntities = new ArrayList<>();
 
   private CompositeSubscription compositeSubscription = new CompositeSubscription();
-
-  /*传入订单界面*/
-  private List<TrolleyEntity> trolleyEntities = new ArrayList<>();
 
   public enum Type {
     EXTEND,
@@ -171,16 +169,16 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
         .subscribe(new Subscriber<TrolleyEntity>() {
           @Override public void onCompleted() {
             /*计算总价钱*/
-            payBtn.setText(String.valueOf(trolleyEntities.size()));
+            payBtn.setText(String.valueOf(accountEntities.size()));
 
-            if (trolleyEntities.size() == items.size()) {
+            if (accountEntities.size() == items.size()) {
               radioBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_selected));
             } else {
               radioBtn.setImageDrawable(
                   getResources().getDrawable(R.drawable.ic_radio_normal_icon_icon));
             }
 
-            if (trolleyEntities.size() != 0) {
+            if (accountEntities.size() != 0) {
               TrolleyActivity.this.payBtn.setEnabled(true);
             } else {
               TrolleyActivity.this.payBtn.setEnabled(false);
@@ -201,11 +199,11 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
 
             if (trolleyEntity.isChecked) {
               radioIv.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_selected));
-              trolleyEntities.add(trolleyEntity);
+              accountEntities.add(trolleyEntity);
             } else {
               radioIv.setImageDrawable(
                   getResources().getDrawable(R.drawable.ic_radio_normal_icon_icon));
-              trolleyEntities.remove(trolleyEntity);
+              accountEntities.remove(trolleyEntity);
             }
           }
         }));
@@ -298,6 +296,10 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
     actionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
 
+        TrolleyActivity.this.payBtn.setText(null);
+        TrolleyEditorActivity.navigateToTrolleyEditor(TrolleyActivity.this,
+            (ArrayList<TrolleyEntity>) items);
+        overridePendingTransition(0, 0);
       }
     });
     return true;
@@ -305,7 +307,7 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
 
   @Nullable @OnClick(R.id.trolley_layout_radio_btn) void onRadioClick(ImageButton imageButton) {
 
-    if (trolleyEntities.size() == items.size()) {/*全选 -> 清空*/
+    if (accountEntities.size() == items.size()) {/*全选 -> 清空*/
       TrolleyActivity.this.observableListenerWrapper(
           Observable.defer(new Func0<Observable<TrolleyEntity>>() {
             @Override public Observable<TrolleyEntity> call() {
@@ -379,13 +381,6 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
         }));
   }
 
-  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
-    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-      TrolleyActivity.this.exit();
-    }
-    return false;
-  }
-
   @Override public void exit() {
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(TrolleyActivity.this))
@@ -394,9 +389,15 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
             TrolleyActivity.this.finish();
-            overridePendingTransition(0, 0);
           }
         });
+  }
+
+  /**
+   * 修改购物车 -> 刷新界面
+   */
+  public void onEventMainThread(RefreshTrolleyEvent event) {
+    TrolleyActivity.this.loadData();
   }
 
   @Override protected void onDestroy() {

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/trolley_editor_layout_root_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+  <include layout="@layout/include_white_toolbar_layout"/>
+
+  <com.app.designmore.revealLib.widget.RevealFrameLayout
+      android:id="@+id/trolley_editor_layout_rfl"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      >
+
+    <com.app.designmore.view.ProgressLayout
+        android:id="@+id/trolley_editor_layout_pl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:progressEmptyStateBackgroundColor="@color/primary_background_color"
+        app:progressEmptyStateTitleTextColor="@color/black"
+        app:progressEmptyStateContentTextColor="@color/black"
+        app:progressErrorStateBackgroundColor="@color/primary_background_color"
+        app:progressErrorStateTitleTextColor="@color/black"
+        app:progressErrorStateContentTextColor="@color/black"
+        app:progressErrorStateButtonTextColor="@color/white"
+        android:background="@color/primary_background_color"
+        >
+
+      <RelativeLayout
+          android:id="@+id/trolley_editor_bottom_bar_layout"
+          android:layout_width="match_parent"
+          android:layout_height="@dimen/material_56dp"
+          android:layout_alignParentBottom="true"
+          android:orientation="horizontal"
+          android:background="@color/white"
+          >
+
+        <!--全选按钮-->
+        <ImageButton
+            android:id="@+id/trolley_editor_layout_radio_btn"
+            android:layout_width="@dimen/material_32dp"
+            android:layout_height="@dimen/material_32dp"
+            android:layout_centerVertical="true"
+            android:scaleType="center"
+            android:src="@drawable/ic_radio_normal_icon_icon"
+            android:background="@drawable/transparent_background"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/trolley_editor_layout_radio_btn"
+            android:layout_marginLeft="@dimen/material_8dp"
+            android:gravity="center"
+            android:textSize="@dimen/material_16sp"
+            android:textColor="@color/black"
+            android:text="全选"
+            />
+
+        <!--删除按钮-->
+        <com.app.designmore.view.MaterialRippleLayout
+            android:layout_width="@dimen/material_100dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            app:mrl_rippleDimension="4dip"
+            app:mrl_rippleFadeDuration="100"
+            app:mrl_rippleAlpha="0.4"
+            app:mrl_rippleDuration="600"
+            app:mrl_rippleHover="true"
+            app:mrl_rippleOverlay="true"
+            app:mrl_rippleDelayClick="true"
+            app:mrl_rippleColor="@color/darker_gray"
+            >
+          <Button
+              android:id="@+id/trolley_editor_layout_delete_btn"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_gravity="center"
+              android:gravity="center"
+              android:textColor="@color/white"
+              android:text="删除"
+              android:enabled="false"
+              android:background="@drawable/red_dark_corner_button_selector"
+              />
+        </com.app.designmore.view.MaterialRippleLayout>
+      </RelativeLayout>
+
+      <android.support.v7.widget.RecyclerView
+          android:layout_above="@+id/trolley_editor_bottom_bar_layout"
+          android:id="@+id/trolley_editor_layout_rv"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:visibility="visible"
+          android:background="@color/primary_background_color"
+          />
+
+    </com.app.designmore.view.ProgressLayout>
+  </com.app.designmore.revealLib.widget.RevealFrameLayout>
+
+</LinearLayout>

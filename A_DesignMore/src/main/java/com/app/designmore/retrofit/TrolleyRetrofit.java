@@ -1,12 +1,18 @@
 package com.app.designmore.retrofit;
 
 import com.app.designmore.Constants;
+import com.app.designmore.retrofit.entity.CollectionEntity;
+import com.app.designmore.retrofit.entity.ProductAttrEntity;
+import com.app.designmore.retrofit.entity.SimpleTrolleyEntity;
 import com.app.designmore.retrofit.entity.TrolleyEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
+import com.app.designmore.retrofit.response.ProductAttrResponse;
 import com.app.designmore.retrofit.response.TrolleyResponse;
 import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -29,7 +35,9 @@ import rx.functions.Func2;
  */
 public class TrolleyRetrofit {
 
-  private TrolleyEntity instance = new TrolleyEntity();
+  private final Gson gson;
+  private TrolleyEntity trolleyEntityInstance = new TrolleyEntity();
+  private ProductAttrEntity productAttrInstance = new ProductAttrEntity();
 
   interface TrolleyService {
 
@@ -38,10 +46,16 @@ public class TrolleyRetrofit {
     Observable<TrolleyResponse> getTrolleyList(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded @POST("/mobile/api/client/interface.php")
-    Observable<BaseResponse> requestDeleteCollection(@FieldMap Map<String, String> params);
+    Observable<BaseResponse> requestChangeTrolley(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded @POST("/mobile/api/client/interface.php")
+    Observable<BaseResponse> requestDeleteTrolley(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded @POST("/mobile/api/client/interface.php")
+    Observable<ProductAttrResponse> getTrolleyAttrList(@FieldMap Map<String, String> params);
   }
 
-  private final TrolleyService collectionService;
+  private final TrolleyService trolleyService;
 
   private TrolleyRetrofit() {
     RequestInterceptor requestInterceptor = new RequestInterceptor() {
@@ -51,7 +65,7 @@ public class TrolleyRetrofit {
       }
     };
 
-    Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation() //不导出实体中没有用@Expose注解的属性
+    gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation() //不导出实体中没有用@Expose注解的属性
         .enableComplexMapKeySerialization() //支持Map的key为复杂对象的形式
         .serializeNulls().create();
 
@@ -64,7 +78,7 @@ public class TrolleyRetrofit {
         .setConverter(new GsonConverter(gson))
         .build();
 
-    collectionService = restAdapter.create(TrolleyService.class);
+    trolleyService = restAdapter.create(TrolleyService.class);
   }
 
   private static class SingletonHolder {
@@ -82,7 +96,7 @@ public class TrolleyRetrofit {
 
     return Observable.defer(new Func0<Observable<TrolleyResponse>>() {
       @Override public Observable<TrolleyResponse> call() {
-        return collectionService.getTrolleyList(params)
+        return trolleyService.getTrolleyList(params)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
       }
     }).retry(new Func2<Integer, Throwable, Boolean>() {
@@ -100,10 +114,12 @@ public class TrolleyRetrofit {
     }).map(new Func1<TrolleyResponse.Trolley, TrolleyEntity>() {
       @Override public TrolleyEntity call(TrolleyResponse.Trolley trolley) {
 
-        TrolleyEntity clone = instance.newInstance();
+        TrolleyEntity clone = trolleyEntityInstance.newInstance();
+
+        clone.setRecId(trolley.recId);
         clone.setGoodId(trolley.goodId);
         clone.setGoodName(trolley.goodName);
-        clone.setGoodAttr(trolley.goodAttrId);
+        clone.setGoodAttrId(trolley.goodAttrId);
         clone.setGoodCount(trolley.goodCount);
         clone.setGoodPrice(trolley.goodPrice);
         clone.setGoodThumb(trolley.goodThumb);
@@ -114,11 +130,19 @@ public class TrolleyRetrofit {
     }).toList().compose(SchedulersCompat.<List<TrolleyEntity>>applyExecutorSchedulers());
   }
 
-  public Observable<BaseResponse> requestDeleteTrolley(final Map<String, String> params) {
+  /**
+   * 修改购物车
+   */
+  public Observable<BaseResponse> requestChangeTrolley(final Map<String, String> params,
+      final SimpleTrolleyEntity simpleTrolleyEntity) {
+
+    List<SimpleTrolleyEntity> list = new ArrayList<>(1);
+    list.add(simpleTrolleyEntity);
+    params.put("item_list", URLDecoder.decode(gson.toJson(list)));
 
     return Observable.defer(new Func0<Observable<BaseResponse>>() {
       @Override public Observable<BaseResponse> call() {
-        return collectionService.requestDeleteCollection(params)
+        return trolleyService.requestChangeTrolley(params)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
       }
     }).retry(new Func2<Integer, Throwable, Boolean>() {
@@ -126,15 +150,70 @@ public class TrolleyRetrofit {
         return throwable instanceof TimeoutException && integer < 1;
       }
     }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call(BaseResponse addressResponse) {
-
-        return addressResponse.filterWebServiceErrors();
-      }
-    }).map(new Func1<BaseResponse, BaseResponse>() {
-      @Override public BaseResponse call(BaseResponse baseResponse) {
-        /*删除成功*/
-        return baseResponse;
+      @Override public Observable<BaseResponse> call(BaseResponse baseResponse) {
+        return baseResponse.filterWebServiceErrors();
       }
     }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
+  }
+
+  /**
+   * 批量删除购物车
+   */
+  public Observable<BaseResponse> requestDeleteTrolley(final Map<String, String> params) {
+
+    return Observable.defer(new Func0<Observable<BaseResponse>>() {
+      @Override public Observable<BaseResponse> call() {
+        return trolleyService.requestDeleteTrolley(params)
+            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
+      }
+    }).retry(new Func2<Integer, Throwable, Boolean>() {
+      @Override public Boolean call(Integer integer, Throwable throwable) {
+        return throwable instanceof TimeoutException && integer < 1;
+      }
+    }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
+      @Override public Observable<BaseResponse> call(BaseResponse baseResponse) {
+        return baseResponse.filterWebServiceErrors();
+      }
+    }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
+  }
+
+  /**
+   * 获取商品属性
+   */
+  public Observable<List<ProductAttrEntity>> getTrolleyAttrList(final Map<String, String> params) {
+
+    return Observable.defer(new Func0<Observable<ProductAttrResponse>>() {
+      @Override public Observable<ProductAttrResponse> call() {
+        return trolleyService.getTrolleyAttrList(params)
+            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
+      }
+    }).retry(new Func2<Integer, Throwable, Boolean>() {
+      @Override public Boolean call(Integer integer, Throwable throwable) {
+        return throwable instanceof TimeoutException && integer < 1;
+      }
+    }).concatMap(new Func1<ProductAttrResponse, Observable<ProductAttrResponse>>() {
+      @Override
+      public Observable<ProductAttrResponse> call(ProductAttrResponse productAttrResponse) {
+        return productAttrResponse.filterWebServiceErrors();
+      }
+    }).flatMap(new Func1<ProductAttrResponse, Observable<ProductAttrResponse.Attr>>() {
+      @Override
+      public Observable<ProductAttrResponse.Attr> call(ProductAttrResponse productAttrResponse) {
+        return Observable.from(productAttrResponse.getAttrs());
+      }
+    }).map(new Func1<ProductAttrResponse.Attr, ProductAttrEntity>() {
+      @Override public ProductAttrEntity call(ProductAttrResponse.Attr attr) {
+
+        ProductAttrEntity clone = productAttrInstance.newInstance();
+
+        clone.setAttrId(attr.goodsAttrId);
+        clone.setAttrValue(attr.goodsAttrValue);
+        clone.setAttrPrice(attr.goodsAttrPrice);
+        clone.setAttrThumbUrl(attr.goodsAttrThumb);
+        clone.setIsChecked(false);
+
+        return clone;
+      }
+    }).toList().compose(SchedulersCompat.<List<ProductAttrEntity>>applyExecutorSchedulers());
   }
 }

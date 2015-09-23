@@ -86,7 +86,6 @@ public class CollectionRetrofit {
 
     return Observable.defer(new Func0<Observable<CollectionResponse>>() {
       @Override public Observable<CollectionResponse> call() {
-
         /*获取收藏列表，超时8秒*/
         return collectionService.getMyCollectionList(params)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
@@ -134,13 +133,8 @@ public class CollectionRetrofit {
         return throwable instanceof TimeoutException && integer < 1;
       }
     }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call(BaseResponse addressResponse) {
-        return addressResponse.filterWebServiceErrors();
-      }
-    }).map(new Func1<BaseResponse, BaseResponse>() {
-      @Override public BaseResponse call(BaseResponse baseResponse) {
-        /*删除成功*/
-        return baseResponse;
+      @Override public Observable<BaseResponse> call(BaseResponse baseResponse) {
+        return baseResponse.filterWebServiceErrors();
       }
     }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
   }
@@ -160,13 +154,8 @@ public class CollectionRetrofit {
         return throwable instanceof TimeoutException && integer < 1;
       }
     }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call(BaseResponse addressResponse) {
-        return addressResponse.filterWebServiceErrors();
-      }
-    }).map(new Func1<BaseResponse, BaseResponse>() {
-      @Override public BaseResponse call(BaseResponse baseResponse) {
-        /*收藏成功*/
-        return baseResponse;
+      @Override public Observable<BaseResponse> call(BaseResponse baseResponse) {
+        return baseResponse.filterWebServiceErrors();
       }
     }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
   }

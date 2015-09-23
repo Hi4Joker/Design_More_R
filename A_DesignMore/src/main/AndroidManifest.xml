@@ -94,6 +94,15 @@
         >
     </activity>
 
+    <!--商品列表ACT BY CatId-->
+    <activity
+        android:name=".activity.ProductCatIdListActivity"
+        android:screenOrientation="portrait"
+        android:launchMode="singleTask"
+        android:theme="@style/AppTheme.TransparentActivity"
+        >
+    </activity>
+
     <!--商品列表ACT ALL-->
     <activity
         android:name=".activity.AllProductListActivity"
@@ -160,6 +169,15 @@
     <!--用户中心ACT -> 购物车ACT-->
     <activity
         android:name=".activity.usercenter.TrolleyActivity"
+        android:screenOrientation="portrait"
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.TransparentActivity"
+        >
+    </activity>
+
+    <!--用户中心ACT -> 购物车ACT -> 编辑ACT-->
+    <activity
+        android:name=".activity.usercenter.TrolleyEditorActivity"
         android:screenOrientation="portrait"
         android:launchMode="singleTop"
         android:theme="@style/AppTheme.TransparentActivity"

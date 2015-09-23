@@ -19,9 +19,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.List;
 
 /**
- * Created by Administrator on 2015/9/20.
+ * Created by Administrator on 2015/9/24.
  */
-public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHolder> {
+public class TrolleyAttrAdapter extends RecyclerView.Adapter<TrolleyAttrAdapter.ViewHolder> {
 
   private Context context;
   private List<ProductAttrEntity> items;
@@ -29,22 +29,22 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
   private int backgroundColor;
 
-  public AccountAdapter(Context context, List<ProductAttrEntity> productAttrs) {
+  public TrolleyAttrAdapter(Context context, List<ProductAttrEntity> productAttrs) {
     this.context = context;
     this.items = productAttrs;
     this.backgroundColor = context.getResources().getColor(R.color.design_more_red);
   }
 
-  @Override public AccountAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @Override public TrolleyAttrAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
     return new ViewHolder(
-        LayoutInflater.from(context).inflate(R.layout.i_account_item, parent, false));
+        LayoutInflater.from(context).inflate(R.layout.i_product_attr_item, parent, false));
   }
 
-  @Override public void onBindViewHolder(AccountAdapter.ViewHolder holder, int position) {
+  @Override public void onBindViewHolder(TrolleyAttrAdapter.ViewHolder holder, int position) {
 
     Glide.with(context)
-        .load(items.get(position).getUrl())
+        .load(items.get(position).getAttrThumbUrl())
         .centerCrop()
         .crossFade()
         .placeholder(R.drawable.ic_default_256_icon)
@@ -66,15 +66,15 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
   public class ViewHolder extends RecyclerView.ViewHolder {
 
-    @Nullable @Bind(R.id.account_root_view) LinearLayout rootView;
-    @Nullable @Bind(R.id.account_item_iv) ImageView imageView;
+    @Nullable @Bind(R.id.product_attr_item_root_view) LinearLayout rootView;
+    @Nullable @Bind(R.id.product_attr_item_iv) ImageView imageView;
 
     public ViewHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(ViewHolder.this, itemView);
     }
 
-    @Nullable @OnClick(R.id.account_item_iv) void onItemClick(ImageView imageView) {
+    @Nullable @OnClick(R.id.product_attr_item_iv) void onItemClick(ImageView imageView) {
 
       ProductAttrEntity productAttrEntity = (ProductAttrEntity) imageView.getTag();
       if (callback != null && !productAttrEntity.isChecked()) {

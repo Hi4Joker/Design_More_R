@@ -136,8 +136,8 @@ public class DetailResponse extends BaseResponse {
 
     @Expose @SerializedName("goods_id") public String goodId;
     @Expose @SerializedName("goods_name") public String goodName;
-    @Expose @SerializedName("market_price") public String marketPrice;
-    @Expose @SerializedName("shop_price") public String shopPrice;
+    @Expose @SerializedName("market_price") public String goodMarketPrice;
+    @Expose @SerializedName("shop_price") public String goodShopPrice;
     @Expose @SerializedName("goods_brief") public String goodDes;
     @Expose @SerializedName("original_img") public String goodDesUrl;
     @Expose @SerializedName("goods_number") public String goodRepertory;
@@ -146,28 +146,43 @@ public class DetailResponse extends BaseResponse {
     @Expose @SerializedName("attr_list") public List<ProductAttr> productAttrs;
 
     public class ProductImage {
-      @Expose @SerializedName("img_desc") public String thumbDesc;
       @Expose @SerializedName("thumb_url") public String thumbUrl;
+
+      @Override public String toString() {
+        return "ProductImage{" +
+            "thumbUrl='" + thumbUrl + '\'' +
+            '}';
+      }
     }
 
     public class ProductAttr {
       @Expose @SerializedName("goods_attr_id") public String attrId;
       @Expose @SerializedName("attr_value") public String attrValue;
+      @Expose @SerializedName("attr_price") public String attrPrice;
       @Expose @SerializedName("image") public String attrThumbUrl;
+
+      @Override public String toString() {
+        return "ProductAttr{" +
+            "attrId='" + attrId + '\'' +
+            ", attrValue='" + attrValue + '\'' +
+            ", attrPrice='" + attrPrice + '\'' +
+            ", attrThumbUrl='" + attrThumbUrl + '\'' +
+            '}';
+      }
     }
 
-    @Override public String toString() {
-      return "Detail{" +
-          "goodId='" + goodId + '\'' +
-          ", goodName='" + goodName + '\'' +
-          ", marketPrice='" + marketPrice + '\'' +
-          ", shopPrice='" + shopPrice + '\'' +
-          ", goodDes='" + goodDes + '\'' +
-          ", goodDesUrl='" + goodDesUrl + '\'' +
-          ", goodRepertory='" + goodRepertory + '\'' +
-          ", productImages=" + productImages +
-          ", productAttrs=" + productAttrs +
-          '}';
+  @Override public String toString() {
+    return "Detail{" +
+        "goodId='" + goodId + '\'' +
+        ", goodName='" + goodName + '\'' +
+        ", goodMarketPrice='" + goodMarketPrice + '\'' +
+        ", goodShopPrice='" + goodShopPrice + '\'' +
+        ", goodDes='" + goodDes + '\'' +
+        ", goodDesUrl='" + goodDesUrl + '\'' +
+        ", goodRepertory='" + goodRepertory + '\'' +
+        ", productImages=" + productImages +
+        ", productAttrs=" + productAttrs +
+        '}';
     }
   }
 

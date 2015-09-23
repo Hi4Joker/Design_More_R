@@ -199,13 +199,8 @@ public class AddressRetrofit {
         return throwable instanceof TimeoutException && integer < 1;
       }
     }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call(BaseResponse addressResponse) {
-        return addressResponse.filterWebServiceErrors();
-      }
-    }).map(new Func1<BaseResponse, BaseResponse>() {
-      @Override public BaseResponse call(BaseResponse baseResponse) {
-        /*删除成功*/
-        return baseResponse;
+      @Override public Observable<BaseResponse> call(BaseResponse baseResponse) {
+        return baseResponse.filterWebServiceErrors();
       }
     }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
   }
@@ -224,13 +219,8 @@ public class AddressRetrofit {
         return throwable instanceof TimeoutException && integer < 1;
       }
     }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call(BaseResponse addressResponse) {
-        return addressResponse.filterWebServiceErrors();
-      }
-    }).map(new Func1<BaseResponse, BaseResponse>() {
-      @Override public BaseResponse call(BaseResponse baseResponse) {
-        /*设置成功*/
-        return baseResponse;
+      @Override public Observable<BaseResponse> call(BaseResponse baseResponse) {
+        return baseResponse.filterWebServiceErrors();
       }
     }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
   }
