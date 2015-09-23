@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import butterknife.Bind;
@@ -71,7 +72,7 @@ public class TrolleyEditorAdapter extends RecyclerView.Adapter<TrolleyEditorAdap
     holder.rootView.setTag(trolleyEntity);
     holder.addCountIb.setTag(trolleyEntity);
     holder.subtractCountIb.setTag(trolleyEntity);
-    holder.arrowIb.setTag(trolleyEntity);
+    holder.arrowLl.setTag(trolleyEntity);
   }
 
   @Override public int getItemCount() {
@@ -126,7 +127,8 @@ public class TrolleyEditorAdapter extends RecyclerView.Adapter<TrolleyEditorAdap
 
     @Nullable @Bind(R.id.trolley_editor_item_count_add_ib) ImageButton addCountIb;
     @Nullable @Bind(R.id.trolley_editor_item_count_subtract_ib) ImageButton subtractCountIb;
-    @Nullable @Bind(R.id.trolley_editor_fuck_arrow_ib) ImageButton arrowIb;
+    @Nullable @Bind(R.id.trolley_editor_fuck_attr_ll) LinearLayout arrowLl;
+
 
     public ViewHolder(View itemView) {
       super(itemView);
@@ -157,10 +159,10 @@ public class TrolleyEditorAdapter extends RecyclerView.Adapter<TrolleyEditorAdap
       }
     }
 
-    @Nullable @OnClick(R.id.trolley_editor_fuck_arrow_ib) void onArrowClick(
-        ImageButton imageButton) {
+    @Nullable @OnClick(R.id.trolley_editor_fuck_attr_ll) void onArrowClick(
+        LinearLayout linearLayout) {
 
-      TrolleyEntity entity = (TrolleyEntity) imageButton.getTag();
+      TrolleyEntity entity = (TrolleyEntity) linearLayout.getTag();
       if (callback != null) callback.onArrowClick(entity);
     }
   }

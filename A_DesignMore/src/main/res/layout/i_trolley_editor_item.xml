@@ -122,48 +122,50 @@
             />
       </com.app.designmore.view.MaterialRippleLayout>
 
-      <LinearLayout
+      <com.app.designmore.view.MaterialRippleLayout
           android:layout_width="match_parent"
           android:layout_height="match_parent"
           android:layout_marginLeft="@dimen/material_8dp"
-          android:orientation="horizontal"
-          android:layout_gravity="center"
+          app:mrl_rippleDimension="2dip"
+          app:mrl_rippleFadeDuration="100"
+          app:mrl_rippleAlpha="0.4"
+          app:mrl_rippleDuration="600"
+          app:mrl_rippleHover="true"
+          app:mrl_rippleOverlay="true"
+          app:mrl_rippleDelayClick="true"
+          app:mrl_rippleColor="@color/darker_gray"
           >
-
-        <!--颜色-->
-        <TextView
-            android:id="@+id/trolley_editor_item_good_attr_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:textColor="@color/darker_gray"
-            android:textSize="@dimen/material_11sp"
-            android:text="颜色分类：黄色"
-            />
-
-        <com.app.designmore.view.MaterialRippleLayout
+        <LinearLayout
+            android:id="@+id/trolley_editor_fuck_attr_ll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:mrl_rippleDimension="2dip"
-            app:mrl_rippleFadeDuration="100"
-            app:mrl_rippleAlpha="0.4"
-            app:mrl_rippleDuration="600"
-            app:mrl_rippleHover="true"
-            app:mrl_rippleOverlay="true"
-            app:mrl_rippleDelayClick="true"
-            app:mrl_rippleColor="@color/darker_gray"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
             >
+
+          <!--颜色-->
+          <TextView
+              android:id="@+id/trolley_editor_item_good_attr_tv"
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:gravity="center"
+              android:textColor="@color/darker_gray"
+              android:textSize="@dimen/material_11sp"
+              android:text="颜色分类：黄色"
+              />
+
+
           <ImageButton
-              android:id="@+id/trolley_editor_fuck_arrow_ib"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:scaleType="center"
               android:src="@drawable/ic_fuck_arrow"
               android:background="@drawable/transparent_background"
               />
-        </com.app.designmore.view.MaterialRippleLayout>
+        </LinearLayout>
+      </com.app.designmore.view.MaterialRippleLayout>
 
-      </LinearLayout>
+
     </LinearLayout>
   </RelativeLayout>
 
