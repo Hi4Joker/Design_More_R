@@ -150,7 +150,7 @@ public class CollectionActivity extends BaseActivity
     linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
     linearLayoutManager.setSmoothScrollbarEnabled(true);
 
-    collectionAdapter = new CollectionAdapter(this);
+    collectionAdapter = new CollectionAdapter(CollectionActivity.this);
     collectionAdapter.setCallback(CollectionActivity.this);
 
     recyclerView.setLayoutManager(linearLayoutManager);

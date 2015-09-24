@@ -82,7 +82,9 @@ public class DetailActivity extends BaseActivity
   @Nullable @Bind(R.id.detail_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.detail_layout_toolbar) Toolbar toolbar;
   @Nullable @Bind(R.id.detail_layout_toolbar_title_tv) TextView toolbarTitleTv;
+
   @Nullable @Bind(R.id.detail_layout_collapsing_toolbar) CollapsingToolbarLayout collapsingToolbar;
+  @Nullable @Bind(R.id.detail_layout_parallax_viewpager) ViewPager viewPager;
   @Nullable @Bind(R.id.detail_layout_banner_page_tv) TextView bannerPageTv;
   @Nullable @Bind(R.id.detail_layout_title_tv) TextView titleTv;
   @Nullable @Bind(R.id.detail_layout_price_tv) TextView priceTv;
@@ -98,7 +100,7 @@ public class DetailActivity extends BaseActivity
   private CustomAccountDialog customAccountDialog;
   private ViewGroup toast;
 
-  private ViewPager viewPager;
+  //private ViewPager viewPager;
   private List<DetailResponse.Detail.ProductImage> productImages;
   private DetailEntity currentEntity;
 
@@ -133,7 +135,7 @@ public class DetailActivity extends BaseActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.detail_layout);
 
-    viewPager = (ViewPager) findViewById(R.id.detail_layout_parallax_viewpager);
+    //viewPager = (ViewPager) findViewById(R.id.detail_layout_parallax_viewpager);
     DetailActivity.this.initView(savedInstanceState);
   }
 
@@ -159,6 +161,7 @@ public class DetailActivity extends BaseActivity
   }
 
   private void setupViewpager() {
+
     DetailBannerAdapter detailBannerAdapter =
         new DetailBannerAdapter(DetailActivity.this, productImages);
     viewPager.setAdapter(detailBannerAdapter);
@@ -493,6 +496,8 @@ public class DetailActivity extends BaseActivity
   }
 
   @Override protected void onDestroy() {
+
+    this.viewPager.removeOnPageChangeListener(simpleOnPageChangeListener);
     super.onDestroy();
     if (toast != null && toast.getParent() != null) {
       getWindowManager().removeViewImmediate(toast);
@@ -501,7 +506,6 @@ public class DetailActivity extends BaseActivity
     this.progressDialog = null;
     this.customShareDialog = null;
     this.customAccountDialog = null;
-    this.viewPager.removeOnPageChangeListener(simpleOnPageChangeListener);
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();
   }
 }

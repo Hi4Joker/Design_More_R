@@ -312,7 +312,7 @@
             app:mrl_rippleOverlay="true"
             app:mrl_rippleDelayClick="true"
             app:mrl_rippleColor="@color/darker_gray"
-            app:layout_behavior="com.app.designmore.manager.BottomBehavior"
+            app:layout_behavior="com.app.designmore.manager.BottomDependBehavior"
             >
 
           <RelativeLayout

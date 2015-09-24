@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+  <com.app.designmore.view.MaterialRippleLayout
+      android:layout_width="@dimen/material_72dp"
+      android:layout_height="@dimen/material_72dp"
+      android:layout_gravity="center"
+      app:mrl_rippleRoundedCorners="@dimen/material_72dp"
+      app:mrl_rippleDimension="10dip"
+      app:mrl_rippleFadeDuration="100"
+      app:mrl_rippleAlpha="0.4"
+      app:mrl_rippleDuration="600"
+      app:mrl_rippleHover="true"
+      app:mrl_rippleOverlay="true"
+      app:mrl_rippleDelayClick="true"
+      app:mrl_rippleColor="@color/darker_gray"
+      >
+    <ImageView
+        android:id="@+id/home_category_item_iv"
+        android:layout_width="@dimen/material_56dp"
+        android:layout_height="@dimen/material_56dp"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"
+        />
+  </com.app.designmore.view.MaterialRippleLayout>
+
+  <TextView
+      android:id="@+id/home_category_item_tv"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/material_16dp"
+      android:gravity="center"
+      android:text="全部商品"
+      android:textColor="@color/darker_gray"
+      android:textSize="@dimen/material_11sp"
+      />
+
+</LinearLayout>

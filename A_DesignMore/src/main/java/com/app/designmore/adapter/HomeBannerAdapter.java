@@ -2,34 +2,37 @@ package com.app.designmore.adapter;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.app.designmore.R;
-import com.app.designmore.retrofit.response.DetailResponse;
+import com.app.designmore.retrofit.entity.ProductEntity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.List;
 
 /**
- * Created by Joker on 2015/9/20.
+ * Created by Joker on 2015/9/24.
  */
-public class DetailBannerAdapter extends PagerAdapter {
+public class HomeBannerAdapter extends PagerAdapter implements ViewPager.OnPageChangeListener {
 
   private static final String TAG = DetailBannerAdapter.class.getCanonicalName();
+  private final int FAKE_BANNER_SIZE = 100;
+
   private Context context;
-  private List<DetailResponse.Detail.ProductImage> thumbUrls;
+  private List<ProductEntity> items;
   private LayoutInflater layoutInflater;
 
-  public DetailBannerAdapter(Context context, List<DetailResponse.Detail.ProductImage> thumbUrls) {
+  public HomeBannerAdapter(Context context, List<ProductEntity> items) {
     this.context = context;
-    this.thumbUrls = thumbUrls;
+    this.items = items;
     this.layoutInflater = LayoutInflater.from(context);
   }
 
   @Override public int getCount() {
-    return (this.thumbUrls != null) ? this.thumbUrls.size() : 0;
+    return (this.items != null) ? this.items.size() : 0;
   }
 
   @Override public boolean isViewFromObject(View view, Object object) {
@@ -42,7 +45,7 @@ public class DetailBannerAdapter extends PagerAdapter {
     ImageView imageView = (ImageView) view.findViewById(R.id.banner_item_iv);
 
     Glide.with(context)
-        .load(thumbUrls.get(position).thumbUrl)
+        .load(items.get(position).getGoodThumbUrl())
         .centerCrop()
         .crossFade()
         .placeholder(R.drawable.ic_default_1080_icon)
@@ -58,7 +61,16 @@ public class DetailBannerAdapter extends PagerAdapter {
     container.removeView((View) object);
   }
 
-  @Override public void finishUpdate(ViewGroup container) {
-    super.finishUpdate(container);
+  @Override
+  public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+  }
+
+  @Override public void onPageSelected(int position) {
+
+  }
+
+  @Override public void onPageScrollStateChanged(int state) {
+
   }
 }

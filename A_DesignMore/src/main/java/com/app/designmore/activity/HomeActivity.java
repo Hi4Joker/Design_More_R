@@ -1,18 +1,28 @@
 package com.app.designmore.activity;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.view.ViewPager;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageButton;
@@ -25,23 +35,33 @@ import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.usercenter.TrolleyActivity;
+import com.app.designmore.adapter.HomeBannerAdapter;
+import com.app.designmore.adapter.HomeCategoryAdapter;
+import com.app.designmore.adapter.HomeDiscountAdapter;
+import com.app.designmore.adapter.HomeProductAdapter;
 import com.app.designmore.event.FinishEvent;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
+import com.app.designmore.manager.WrappingGridLayoutManager;
 import com.app.designmore.retrofit.HomeRetrofit;
 import com.app.designmore.retrofit.ProductRetrofit;
 import com.app.designmore.retrofit.entity.CategoryEntity;
-import com.app.designmore.retrofit.entity.CollectionEntity;
 import com.app.designmore.retrofit.entity.FashionEntity;
 import com.app.designmore.retrofit.entity.ProductEntity;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.utils.DensityUtil;
+import com.app.designmore.utils.MarginDecoration;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.MaterialRippleLayout;
 import com.app.designmore.view.ProgressLayout;
+import com.app.designmore.manager.WrappingLinearLayoutManager;
+import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
+import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollEvent;
+import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
+import com.jakewharton.rxbinding.view.RxView;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,11 +73,15 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
+import rx.functions.Action1;
 import rx.functions.Func0;
+import rx.functions.Func1;
 import rx.functions.Func4;
 import rx.subscriptions.Subscriptions;
 
-public class HomeActivity extends BaseActivity {
+public class HomeActivity extends BaseActivity
+    implements HomeCategoryAdapter.Callback, HomeDiscountAdapter.Callback,
+    HomeProductAdapter.Callback {
 
   private static final String TAG = HomeActivity.class.getSimpleName();
   private static final String BANNER = "BANNER";
@@ -65,11 +89,17 @@ public class HomeActivity extends BaseActivity {
   private static final String DISCOUNT = "DISCOUNT";
   private static final String PRODUCT = "PRODUCT";
 
-  @Nullable @Bind(R.id.home_layout_root_view) RevealFrameLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
   @Nullable @Bind(R.id.white_toolbar_title_iv) ImageView toolbarTitleIv;
+  @Nullable @Bind(R.id.home_layout_root_view) RevealFrameLayout rootView;
   @Nullable @Bind(R.id.home_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.home_layout_srl) SwipeRefreshLayout swipeRefreshLayout;
+  @Nullable @Bind(R.id.home_layout_nest_view) NestedScrollView nestedScrollView;
+
+  @Nullable @Bind(R.id.home_layout_viewpager) ViewPager viewPager;
+  @Nullable @Bind(R.id.home_layout_category_rv) RecyclerView categoryRecyclerView;
+  @Nullable @Bind(R.id.home_layout_discount_rv) RecyclerView fashionRecyclerView;
+  @Nullable @Bind(R.id.home_layout_product_rv) RecyclerView productRecyclerView;
 
   @Nullable @Bind(R.id.bottom_bar_home_iv) ImageView homeIv;
   @Nullable @Bind(R.id.bottom_bar_home_tv) TextView homeTv;
@@ -78,19 +108,39 @@ public class HomeActivity extends BaseActivity {
   @Nullable @Bind(R.id.bottom_bar_mine_rl) RelativeLayout bottomBarMineRl;
 
   private SupportAnimator revealAnimator;
+  private ProgressDialog progressDialog;
+  private ViewGroup toast;
 
   private List<ProductEntity> bannerItems = new ArrayList<>();
   private List<CategoryEntity> categoryItems = new ArrayList<>();
   private List<FashionEntity> discountItems = new ArrayList<>();
   private List<ProductEntity> productItems = new ArrayList<>();
 
-  private int count = 1;
+  private HomeCategoryAdapter categoryAdapter;
+  private HomeDiscountAdapter discountAdapter;
+  private HomeProductAdapter productAdapter;
+
+  private LinearLayoutManager discountLayoutManager;
+  private GridLayoutManager productLayoutManager;
+
+  private int visibleItemCount;
+  private int totalItemCount;
+  private int pastVisibleItems;
+  private volatile boolean isLoading = false;
+  private volatile boolean isEndless = true;
+  private volatile int count = 1;
 
   private Subscription subscription = Subscriptions.empty();
 
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
       HomeActivity.this.loadData();
+    }
+  };
+
+  private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
+    @Override public void onCancel(DialogInterface dialog) {
+      subscription.unsubscribe();
     }
   };
 
@@ -112,6 +162,8 @@ public class HomeActivity extends BaseActivity {
     HomeActivity.this.setSupportActionBar(toolbar);
     //toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
 
+    HomeActivity.this.setupRecyclerAdapter();
+
     if (savedInstanceState == null) {
       rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
         @Override public boolean onPreDraw() {
@@ -125,11 +177,58 @@ public class HomeActivity extends BaseActivity {
     }
   }
 
+  private void setupRecyclerAdapter() {
+
+    swipeRefreshLayout.setColorSchemeResources(Constants.colors);
+    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
+      @Override public void call(Void aVoid) {
+        HomeActivity.this.loadData();
+      }
+    });
+
+    LinearLayoutManager categoryLayoutManager = new LinearLayoutManager(HomeActivity.this);
+    categoryLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+    categoryLayoutManager.setSmoothScrollbarEnabled(true);
+    categoryAdapter = new HomeCategoryAdapter(HomeActivity.this);
+    categoryAdapter.setCallback(HomeActivity.this);
+    categoryRecyclerView.setLayoutManager(categoryLayoutManager);
+    categoryRecyclerView.setHasFixedSize(true);
+    categoryRecyclerView.setAdapter(categoryAdapter);
+    categoryRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+    categoryRecyclerView.addItemDecoration(
+        new MarginDecoration(HomeActivity.this, R.dimen.material_1dp));
+
+    discountLayoutManager = new WrappingLinearLayoutManager(HomeActivity.this);
+    discountLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+    discountLayoutManager.setSmoothScrollbarEnabled(true);
+    discountAdapter = new HomeDiscountAdapter(HomeActivity.this);
+    discountAdapter.setCallback(HomeActivity.this);
+    fashionRecyclerView.setLayoutManager(discountLayoutManager);
+    fashionRecyclerView.setHasFixedSize(true);
+    fashionRecyclerView.setAdapter(discountAdapter);
+    fashionRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+    fashionRecyclerView.addItemDecoration(
+        new MarginDecoration(HomeActivity.this, R.dimen.material_1dp));
+
+    productLayoutManager = new WrappingGridLayoutManager(HomeActivity.this, 2);
+    productLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+    productLayoutManager.setSmoothScrollbarEnabled(true);
+    productAdapter = new HomeProductAdapter(HomeActivity.this);
+    productAdapter.setCallback(HomeActivity.this);
+    productRecyclerView.setLayoutManager(productLayoutManager);
+    productRecyclerView.setHasFixedSize(true);
+    productRecyclerView.setAdapter(productAdapter);
+    productRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+    productRecyclerView.setItemAnimator(new DefaultItemAnimator());
+    productRecyclerView.addItemDecoration(
+        new MarginDecoration(HomeActivity.this, R.dimen.material_8dp));
+  }
+
   private void loadData() {
 
     final HomeRetrofit homeRetrofit = HomeRetrofit.getInstance();
 
-    /*轮播：Action:GetProductByKeyOrType type:cat  data:1  page:1 count :3   code : 0  order_by: 1*/
+    /*轮播：Action:GetProductByKeyOrType type:cat  data:1  page:1 count :3   code : 0（综合排序）  order_by: 1（降序）*/
     final Map<String, String> bannerParams = new HashMap<>(7);
     bannerParams.put("Action", "GetProductByKeyOrType");
     bannerParams.put("type", "cat");
@@ -139,29 +238,29 @@ public class HomeActivity extends BaseActivity {
     bannerParams.put("code", "0");
     bannerParams.put("order_by", "1");
 
+     /*分类： Action=GetIndexCatList*/
+    final Map<String, String> catParams = new HashMap<>(1);
+    catParams.put("Action", "GetIndexCatList");
+
+
     /*打折：Action: GetProductByStar count:2 page:1*/
     final Map<String, String> discountParams = new HashMap<>(3);
     discountParams.put("Action", "GetProductByStar");
     discountParams.put("page", "1");
     discountParams.put("count", "2");
 
-    /*分类： Action=GetIndexCatList*/
-    final Map<String, String> catParams = new HashMap<>(1);
-    catParams.put("Action", "GetIndexCatList");
-
-    /* Action: GetProductByKeyOrType  type:keyword  data:手表 count:10 page:1(下拉加载page = 2,3,4,5) order_by : 1 code : 1*/
+    /* 精选：Action: GetProductByKeyOrType  type:keyword  data:手表 count:10 page:1(下拉加载page = 2,3,4,5) code : 1(销量) order_by : 1（降序）*/
     final Map<String, String> productParams = new HashMap<>();
     productParams.put("Action", "GetProductByKeyOrType");
     productParams.put("type", "keyword");
     productParams.put("data", "手表");
     productParams.put("page", String.valueOf(count = 1));
-    productParams.put("count", "10");
+    productParams.put("count", "100");
     productParams.put("code", "1");
     productParams.put("order_by", "1");
 
     Observable.defer(new Func0<Observable<Map<String, List>>>() {
       @Override public Observable<Map<String, List>> call() {
-
         return Observable.zip(homeRetrofit.getProductByXxx(bannerParams),
             homeRetrofit.getCategoryList(catParams), homeRetrofit.getDiscountList(discountParams),
             homeRetrofit.getProductByXxx(productParams),
@@ -196,6 +295,15 @@ public class HomeActivity extends BaseActivity {
             } else if (!progressLayout.isContent()) {
               progressLayout.showContent();
             }
+
+            /*设置banner*/
+            HomeActivity.this.setupViewPager();
+            /*设置category*/
+            HomeActivity.this.categoryAdapter.updateItems(categoryItems);
+            /*设置discount*/
+            HomeActivity.this.discountAdapter.updateItems(discountItems);
+            /*设置product*/
+            HomeActivity.this.productAdapter.updateItems(productItems);
           }
 
           @Override public void onError(Throwable e) {
@@ -218,6 +326,12 @@ public class HomeActivity extends BaseActivity {
             HomeActivity.this.productItems.addAll(map.get(PRODUCT));
           }
         });
+  }
+
+  private void setupViewPager() {
+
+    HomeBannerAdapter homeBannerAdapter = new HomeBannerAdapter(HomeActivity.this, bannerItems);
+    viewPager.setAdapter(homeBannerAdapter);
   }
 
   private void showErrorLayout(Throwable error) {
@@ -277,6 +391,92 @@ public class HomeActivity extends BaseActivity {
         .rippleDelayClick(true)
         .rippleColor(getResources().getColor(android.R.color.darker_gray))
         .create();
+
+    swipeRefreshLayout.setEnabled(false);
+
+    this.nestedScrollView.getViewTreeObserver()
+        .addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+          @Override public void onScrollChanged() {
+
+            if (nestedScrollView.getScrollY() == 0) {
+              swipeRefreshLayout.setEnabled(true);
+            } else {
+              swipeRefreshLayout.setEnabled(false);
+            }
+
+            visibleItemCount = productLayoutManager.getChildCount();
+            totalItemCount = productLayoutManager.getItemCount();
+            pastVisibleItems = productLayoutManager.findFirstVisibleItemPosition();
+
+         /*   Log.e(TAG, "visibleItemCount:  " + visibleItemCount);
+            Log.e(TAG, "totalItemCount:  " + totalItemCount);
+            Log.e(TAG, "pastVisibleItems:  " + pastVisibleItems);*/
+
+            if (!isLoading) {
+              if ((visibleItemCount + pastVisibleItems) >= totalItemCount && isEndless) {
+
+                /*加载更多*/
+                HomeActivity.this.loadDataMore();
+              }
+            }
+          }
+        });
+
+    viewPager.setOnTouchListener(new View.OnTouchListener() {
+      @Override public boolean onTouch(View v, MotionEvent event) {
+        swipeRefreshLayout.setEnabled(false);
+        switch (event.getAction()) {
+          case MotionEvent.ACTION_UP:
+            swipeRefreshLayout.setEnabled(true);
+            break;
+        }
+        return false;
+      }
+    });
+  }
+
+  private void loadDataMore() {
+
+    /* 精选：Action: GetProductByKeyOrType  type:keyword  data:手表 count:10 page:1(下拉加载page = 2,3,4,5) code : 1(销量) order_by : 1（降序）*/
+    final Map<String, String> productParams = new HashMap<>();
+    productParams.put("Action", "GetProductByKeyOrType");
+    productParams.put("type", "keyword");
+    productParams.put("data", "手表");
+    productParams.put("page", String.valueOf(++count));
+    productParams.put("count", "10");
+    productParams.put("code", "1");
+    productParams.put("order_by", "1");
+
+    subscription =
+        HomeRetrofit.getInstance()
+            .getProductByXxx(productParams)
+            .doOnSubscribe(new Action0() {
+              @Override public void call() {
+                /*正在加载*/
+                HomeActivity.this.isLoading = true;
+                /*加载数据，显示进度条*/
+                if (progressDialog == null) {
+                  progressDialog = DialogManager.getInstance()
+                      .showSimpleProgressDialog(HomeActivity.this, cancelListener);
+                } else {
+                  progressDialog.show();
+                }
+              }
+            })
+            .doOnTerminate(new Action0() {
+              @Override public void call() {
+                /*加载完毕*/
+                HomeActivity.this.isLoading = false;
+                progressDialog.dismiss();
+              }
+            })
+            .filter(new Func1<List<ProductEntity>, Boolean>() {
+              @Override public Boolean call(List<ProductEntity> productEntities) {
+                return !subscription.isUnsubscribed();
+              }
+            })
+            .compose(HomeActivity.this.<List<ProductEntity>>bindUntilEvent(ActivityEvent.DESTROY))
+            .subscribe(productAdapter);
   }
 
   private void startEnterAnim() {
@@ -321,14 +521,6 @@ public class HomeActivity extends BaseActivity {
     overridePendingTransition(0, 0);
   }
 
-  /**
-   * 全部商品
-   *//*
-  @Nullable @OnClick(R.id.home_layout_all_product_ib) void onAllProductClick() {
-    //ProductKeyListActivity.navigateToProductKeyList(HomeActivity.this, "手表","手表");
-    AllProductListActivity.navigateToAllProductList(HomeActivity.this, "手表", "手表");
-    overridePendingTransition(0, 0);
-  }*/
   @Override public boolean onCreateOptionsMenu(Menu menu) {
 
     DrawableCompat.setTint(DrawableCompat.wrap(homeIv.getDrawable().mutate()),
@@ -348,8 +540,12 @@ public class HomeActivity extends BaseActivity {
     searchButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_search_icon));
     searchItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        SearchActivity.navigateToSearch(HomeActivity.this);
+
+        ProductKeyListActivity.navigateToProductKeyList(HomeActivity.this, "手表", "手表");
         overridePendingTransition(0, 0);
+
+       /* SearchActivity.navigateToSearch(HomeActivity.this);
+        overridePendingTransition(0, 0);*/
       }
     });
 
@@ -383,8 +579,56 @@ public class HomeActivity extends BaseActivity {
   @Override protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
     HomeActivity.this.setIntent(intent);
-
     /*刷新*/
     HomeActivity.this.loadData();
+  }
+
+  /**
+   * 分类条目被点击
+   */
+  @Override public void onCategoryItemClick(CategoryEntity entity) {
+    ProductCatIdListActivity.navigateToProductKeyList(HomeActivity.this, entity.getCatId(),
+        entity.getCatName());
+    overridePendingTransition(0, 0);
+  }
+
+  /**
+   * 新品条目被点击
+   */
+  @Override public void onDiscountItemClick(FashionEntity entity) {
+    DetailActivity.navigateToDetail(HomeActivity.this, entity.getGoodId());
+    overridePendingTransition(0, 0);
+  }
+
+  /**
+   * 商品Adapter回调
+   */
+  @Override public void onProductItemClick(String productId) {
+    DetailActivity.navigateToDetail(HomeActivity.this, productId);
+    overridePendingTransition(0, 0);
+  }
+
+  @Override public void onNoData() {
+    this.isEndless = false;
+
+    if (count != 2) {
+      toast = DialogManager.getInstance().showNoMoreDialog(HomeActivity.this, Gravity.TOP, null);
+    }
+  }
+
+  @Override public void onError(Throwable error) {
+    toast = DialogManager.getInstance()
+        .showNoMoreDialog(HomeActivity.this, Gravity.TOP, "加载更多失败，请重试,/(ㄒoㄒ)/~~");
+  }
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
+
+    if (toast != null && toast.getParent() != null) {
+      getWindowManager().removeViewImmediate(toast);
+    }
+    this.toast = null;
+    this.progressDialog = null;
+    if (!subscription.isUnsubscribed()) subscription.unsubscribe();
   }
 }

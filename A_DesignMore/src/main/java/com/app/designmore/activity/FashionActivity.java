@@ -44,6 +44,7 @@ import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.utils.DensityUtil;
+import com.app.designmore.utils.MarginDecoration;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.MaterialRippleLayout;
 import com.app.designmore.view.ProgressLayout;
@@ -160,7 +161,6 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
     recyclerView.setHasFixedSize(true);
     recyclerView.setAdapter(fashionAdapter);
     recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-    recyclerView.setItemAnimator(new DefaultItemAnimator());
 
     RxRecyclerView.scrollEvents(recyclerView)
         .skip(1)
