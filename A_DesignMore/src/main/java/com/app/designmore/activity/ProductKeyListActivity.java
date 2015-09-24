@@ -176,7 +176,7 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
 
     subscription =
         ProductRetrofit.getInstance()
-            .getProductByKey(params)
+            .getProductByXxx(params)
             .doOnSubscribe(new Action0() {
               @Override public void call() {
 
@@ -306,7 +306,7 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
 
     subscription =
         ProductRetrofit.getInstance()
-            .getProductByKey(params)
+            .getProductByXxx(params)
             .doOnSubscribe(new Action0() {
               @Override public void call() {
                 /*正在加载*/

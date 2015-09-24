@@ -59,7 +59,7 @@ public class TrolleyResponse extends BaseResponse {
           ", goodAttrId='" + goodAttrId + '\'' +
           ", goodCount='" + goodCount + '\'' +
           ", goodPrice='" + goodPrice + '\'' +
-          ", goodThumb='" + goodThumb + '\'' +
+          ", goodThumbUrl='" + goodThumb + '\'' +
           ", goodAttrValue='" + goodAttrValue + '\'' +
           '}';
     }

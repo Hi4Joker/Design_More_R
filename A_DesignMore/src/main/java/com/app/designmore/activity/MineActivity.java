@@ -76,7 +76,6 @@ public class MineActivity extends BaseActivity {
 
   @Nullable @Bind(R.id.mine_layout_root_view) RevealFrameLayout rootView;
   @Nullable @Bind(R.id.transparent_toolbar_root) Toolbar toolbar;
-  //@Nullable @Bind(R.id.mine_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.mine_layout_srl) SwipeRefreshLayout swipeRefreshLayout;
   @Nullable @Bind(R.id.mine_layout_avatar_iv) ImageView avatarIv;
   @Nullable @Bind(R.id.mine_layout_nickname_tv) TextView nickNameTv;
@@ -194,21 +193,15 @@ public class MineActivity extends BaseActivity {
     params.put("Action", "GetUserInfo");
     params.put("uid", DBHelper.getInstance(getApplicationContext()).getUserID(MineActivity.this));
 
-    LoginRetrofit.getInstance().requestUserInfo(params)
-        /*.doOnSubscribe(new Action0() {
-          @Override public void call() {
-            *//*加载数据，显示进度条*//*
-            if (!swipeRefreshLayout.isRefreshing()) progressLayout.showLoading();
-          }
-        })*/.compose(MineActivity.this.<UserInfoEntity>bindUntilEvent(ActivityEvent.DESTROY))
+    LoginRetrofit.getInstance()
+        .requestUserInfo(params)
+        .compose(MineActivity.this.<UserInfoEntity>bindUntilEvent(ActivityEvent.DESTROY))
         .subscribe(new Subscriber<UserInfoEntity>() {
           @Override public void onCompleted() {
 
             if (swipeRefreshLayout.isRefreshing()) {
               swipeRefreshLayout.setRefreshing(false);
-            } /*else if (!progressLayout.isContent()) {
-              progressLayout.showContent();
-            }*/
+            }
           }
 
           @Override public void onError(Throwable error) {
@@ -216,8 +209,6 @@ public class MineActivity extends BaseActivity {
             /*加载失败，显示错误界面*/
             toast = DialogManager.getInstance()
                 .showNoMoreDialog(MineActivity.this, Gravity.TOP, "加载失败，请重试,/(ㄒoㄒ)/~~");
-
-           /* MineActivity.this.showErrorLayout(error);*/
           }
 
           @Override public void onNext(UserInfoEntity userInfoEntity) {
@@ -236,29 +227,6 @@ public class MineActivity extends BaseActivity {
                 .into(avatarIv);
           }
         });
-  }
-
-  private void showErrorLayout(Throwable error) {
-    if (error instanceof TimeoutException) {
-      MineActivity.this.showError(getResources().getString(R.string.timeout_title),
-          getResources().getString(R.string.timeout_content));
-    } else if (error instanceof RetrofitError) {
-      Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
-      MineActivity.this.showError(getResources().getString(R.string.six_word_title),
-          getResources().getString(R.string.six_word_content));
-    } else if (error instanceof WebServiceException) {
-      MineActivity.this.showError(getResources().getString(R.string.service_exception_title),
-          getResources().getString(R.string.service_exception_content));
-    } else {
-      Log.e(TAG, error.getMessage());
-      error.printStackTrace();
-      throw new RuntimeException("See inner exception");
-    }
-  }
-
-  private void showError(String errorTitle, String errorContent) {
-   /* progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon), errorTitle,
-        errorContent, getResources().getString(R.string.retry_button_text), retryClickListener);*/
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {

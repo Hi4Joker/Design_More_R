@@ -38,6 +38,7 @@ import com.app.designmore.manager.CropCircleTransformation;
 import com.app.designmore.retrofit.LoginRetrofit;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.retrofit.response.UserInfoEntity;
+import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.app.designmore.rxAndroid.SimpleObserver;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.view.ProgressLayout;
@@ -354,11 +355,8 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
           }
         })
         .compose(ProfileActivity.this.<Boolean>bindUntilEvent(ActivityEvent.DESTROY))
-        .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new SimpleObserver<Boolean>() {
           @Override public void onError(Throwable e) {
-
-            e.printStackTrace();
 
             toast = DialogManager.getInstance()
                 .showNoMoreDialog(ProfileActivity.this, Gravity.TOP, "操作失败，请重试，O__O …");
@@ -369,7 +367,6 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
             Toast.makeText(ProfileActivity.this, "操作成功", Toast.LENGTH_LONG).show();
 
             Intent intent = new Intent();
-
             if (avatarFile != null) {
               intent.putExtra(MineActivity.FILE_URL, Uri.fromFile(avatarFile));
             }

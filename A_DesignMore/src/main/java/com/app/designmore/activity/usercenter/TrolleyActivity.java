@@ -29,8 +29,6 @@ import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.activity.HomeActivity;
 import com.app.designmore.adapter.TrolleyAdapter;
-import com.app.designmore.event.RefreshAddressEvent;
-import com.app.designmore.event.RefreshTrolleyEvent;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.helper.DBHelper;
 import com.app.designmore.retrofit.TrolleyRetrofit;
@@ -269,7 +267,8 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
           getResources().getString(R.string.timeout_content));
     } else if (error instanceof RetrofitError) {
       Log.e(TAG, "Kind:  " + ((RetrofitError) error).getKind());
-      TrolleyActivity.this.showError("网络连接异常", "请点击重试");
+      TrolleyActivity.this.showError(getResources().getString(R.string.six_word_title),
+          getResources().getString(R.string.six_word_content));
     } else if (error instanceof WebServiceException) {
       TrolleyActivity.this.showError(getResources().getString(R.string.service_exception_title),
           getResources().getString(R.string.service_exception_content));
@@ -393,11 +392,12 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
         });
   }
 
-  /**
-   * 修改购物车 -> 刷新界面
-   */
-  public void onEventMainThread(RefreshTrolleyEvent event) {
-    TrolleyActivity.this.loadData();
+  @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+    if (requestCode == Constants.ACTIVITY_CODE && resultCode == RESULT_OK) {
+      TrolleyActivity.this.loadData();
+    }
+    super.onActivityResult(requestCode, resultCode, data);
   }
 
   @Override protected void onDestroy() {

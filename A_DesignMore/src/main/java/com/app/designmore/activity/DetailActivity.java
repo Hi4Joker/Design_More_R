@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -301,6 +302,9 @@ public class DetailActivity extends BaseActivity
               }
 
               @Override public void onError(Throwable e) {
+
+                Log.e(TAG, e.getMessage());
+
                 toast = DialogManager.getInstance()
                     .showNoMoreDialog(DetailActivity.this, Gravity.TOP, "收藏失败，请重试，O__O …");
               }

@@ -27,11 +27,9 @@ import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.adapter.TrolleyEditorAdapter;
-import com.app.designmore.event.RefreshTrolleyEvent;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.helper.DBHelper;
 import com.app.designmore.manager.DialogManager;
-import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.retrofit.TrolleyRetrofit;
 import com.app.designmore.retrofit.entity.ProductAttrEntity;
 import com.app.designmore.retrofit.entity.SimpleTrolleyEntity;
@@ -107,7 +105,7 @@ public class TrolleyEditorActivity extends BaseActivity
 
     Intent intent = new Intent(startingActivity, TrolleyEditorActivity.class);
     intent.putParcelableArrayListExtra(ITEMS, trolleyEntities);
-    startingActivity.startActivity(intent);
+    startingActivity.startActivityForResult(intent, Constants.ACTIVITY_CODE);
   }
 
   @Override protected void onCreate(Bundle savedInstanceState) {
@@ -520,11 +518,9 @@ public class TrolleyEditorActivity extends BaseActivity
       revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
 
         @Override public void onAnimationEnd() {
-          if (EventBusInstance.getDefault().hasSubscriberForEvent(RefreshTrolleyEvent.class)) {
-            EventBusInstance.getDefault().post(new RefreshTrolleyEvent());
-          }
 
           rootView.setVisibility(View.GONE);
+          TrolleyEditorActivity.this.setResult(RESULT_OK, null);
           TrolleyEditorActivity.this.finish();
         }
 

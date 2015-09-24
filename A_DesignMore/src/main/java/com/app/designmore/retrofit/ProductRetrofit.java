@@ -34,7 +34,7 @@ public class ProductRetrofit {
 
     //@Headers("Accept-Encoding: application/json")
     @FormUrlEncoded @POST("/mobile/api/client/interface.php")
-    Observable<ProductResponse> getProductByKey(@FieldMap Map<String, String> params);
+    Observable<ProductResponse> getProductByXxx(@FieldMap Map<String, String> params);
   }
 
   private final ProductService productService;
@@ -74,11 +74,11 @@ public class ProductRetrofit {
   /**
    * 搜索分类
    */
-  public Observable<List<ProductEntity>> getProductByKey(final Map<String, String> params) {
+  public Observable<List<ProductEntity>> getProductByXxx(final Map<String, String> params) {
 
     return Observable.defer(new Func0<Observable<ProductResponse>>() {
       @Override public Observable<ProductResponse> call() {
-        return productService.getProductByKey(params)
+        return productService.getProductByXxx(params)
             .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
       }
     }).retry(new Func2<Integer, Throwable, Boolean>() {

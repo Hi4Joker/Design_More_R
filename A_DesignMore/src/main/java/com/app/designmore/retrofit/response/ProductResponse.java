@@ -93,7 +93,7 @@ public class ProductResponse extends BaseResponse {
           "goodId='" + goodId + '\'' +
           ", goodPrice='" + goodPrice + '\'' +
           ", goodDes='" + goodDes + '\'' +
-          ", goodThumb='" + goodThumb + '\'' +
+          ", goodThumbUrl='" + goodThumb + '\'' +
           '}';
     }
   }

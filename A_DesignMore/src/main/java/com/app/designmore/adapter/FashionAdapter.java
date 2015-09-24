@@ -46,7 +46,7 @@ public class FashionAdapter extends RecyclerView.Adapter<FashionAdapter.ViewHold
 
     holder.rootView.setTag(items.get(position));
     holder.titleTv.setText(items.get(position).getGoodName());
-    holder.contentTv.setText(items.get(position).getDiscount());
+    holder.contentTv.setText(items.get(position).getGoodDiscount());
 
     Glide.with(context)
         .load(items.get(position).getGoodThumbUrl())

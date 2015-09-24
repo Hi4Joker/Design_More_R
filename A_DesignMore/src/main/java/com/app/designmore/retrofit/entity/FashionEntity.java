@@ -7,8 +7,8 @@ public class FashionEntity implements Cloneable {
 
   private String goodId;
   private String goodName;
+  private String goodDiscount;
   private String goodThumbUrl;
-  private String discount;
 
   public String getGoodId() {
     return goodId;
@@ -26,20 +26,20 @@ public class FashionEntity implements Cloneable {
     this.goodName = goodName;
   }
 
+  public String getGoodDiscount() {
+    return goodDiscount;
+  }
+
+  public void setGoodDiscount(String goodDiscount) {
+    this.goodDiscount = goodDiscount;
+  }
+
   public String getGoodThumbUrl() {
     return goodThumbUrl;
   }
 
   public void setGoodThumbUrl(String goodThumbUrl) {
     this.goodThumbUrl = goodThumbUrl;
-  }
-
-  public String getDiscount() {
-    return discount;
-  }
-
-  public void setDiscount(String discount) {
-    this.discount = discount;
   }
 
   public FashionEntity newInstance() {
@@ -61,6 +61,7 @@ public class FashionEntity implements Cloneable {
     return "FashionEntity{" +
         "goodId='" + goodId + '\'' +
         ", goodName='" + goodName + '\'' +
+        ", goodDiscount='" + goodDiscount + '\'' +
         ", goodThumbUrl='" + goodThumbUrl + '\'' +
         '}';
   }

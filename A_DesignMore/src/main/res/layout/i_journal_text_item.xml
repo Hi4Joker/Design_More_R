@@ -9,7 +9,7 @@
 
   <ImageView
       android:layout_width="@dimen/material_4dp"
-      android:layout_height="@dimen/material_32dp"
+      android:layout_height="@dimen/material_24dp"
       android:layout_marginTop="@dimen/material_2dp"
       android:layout_marginBottom="@dimen/material_2dp"
       android:layout_marginLeft="@dimen/material_24dp"
@@ -25,6 +25,5 @@
       android:textSize="@dimen/material_13sp"
       android:textColor="@color/darker_gray"
       />
-
 
 </LinearLayout>

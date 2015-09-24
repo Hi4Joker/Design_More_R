@@ -92,7 +92,7 @@ public class CollectionResponse extends BaseResponse {
             "goodId='" + goodId + '\'' +
             ", goodName='" + goodName + '\'' +
             ", goodPrice='" + goodPrice + '\'' +
-            ", goodThumb='" + goodThumb + '\'' +
+            ", goodThumbUrl='" + goodThumb + '\'' +
             ", goodImage='" + goodImage + '\'' +
             '}';
       }

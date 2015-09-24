@@ -213,7 +213,7 @@ public class AllProductListActivity extends BaseActivity
     productParams.put("order_by", String.valueOf(order_by));
 
     Observable.zip(SearchRetrofit.getInstance().getHotSearchList(keywordParams),
-        ProductRetrofit.getInstance().getProductByKey(productParams),
+        ProductRetrofit.getInstance().getProductByXxx(productParams),
         new Func2<List<SearchItemEntity>, List<ProductEntity>, Map>() {
           @Override public Map call(List<SearchItemEntity> searchItemEntities,
               List<ProductEntity> productEntities) {
@@ -297,7 +297,7 @@ public class AllProductListActivity extends BaseActivity
 
     subscription =
         ProductRetrofit.getInstance()
-            .getProductByKey(params)
+            .getProductByXxx(params)
             .doOnSubscribe(new Action0() {
               @Override public void call() {
 
@@ -440,7 +440,7 @@ public class AllProductListActivity extends BaseActivity
 
     subscription =
         ProductRetrofit.getInstance()
-            .getProductByKey(params)
+            .getProductByXxx(params)
             .doOnSubscribe(new Action0() {
               @Override public void call() {
                 /*正在加载*/

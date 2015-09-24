@@ -10,11 +10,24 @@ import java.util.List;
 public class FashionResponse extends BaseResponse {
 
 
-  /*"goods_id": "9",//产品id
-     "goods_name": "设计猫 台湾抽取式垃圾桶 ", //产品名字
-     "goods_img": "",//产品图片
-     "zhekou":"8.5折起"
-     */
+   /*result": [
+        {
+            "goods_id": "52",
+            "goods_name": "轮播图",
+            "goods_img": "images/201508/source_img/51_G_1440926083659.gif",
+            "goods_sn": "E900001109",
+            "original_img": "images/201508/source_img/51_G_1440926083659.gif",
+            "zhekou": "8.5折起"
+        },
+        {
+            "goods_id": "59",
+            "goods_name": "123445",
+            "goods_img": "images/201509/source_img/59_G_1441759271860.png",
+            "goods_sn": "E9000012",
+            "original_img": "images/201509/source_img/59_G_1441759271860.png",
+            "zhekou": "8.5折起"
+        }
+    ]*/
 
   @Expose @SerializedName("result") private List<Fashion> fashions;
 
@@ -26,15 +39,15 @@ public class FashionResponse extends BaseResponse {
 
     @Expose @SerializedName("goods_id") public String goodId;
     @Expose @SerializedName("goods_name") public String goodName;
-    @Expose @SerializedName("goods_img") public String goodThumb;
-    @Expose @SerializedName("zhekou") public String discount;
+    @Expose @SerializedName("zhekou") public String goodDiscount;
+    @Expose @SerializedName("original_img") public String goodThumbUrl;
 
     @Override public String toString() {
       return "Fashion{" +
           "goodId='" + goodId + '\'' +
           ", goodName='" + goodName + '\'' +
-          ", goodThumb='" + goodThumb + '\'' +
-          ", discount='" + discount + '\'' +
+          ", goodDiscount='" + goodDiscount + '\'' +
+          ", goodThumbUrl='" + goodThumbUrl + '\'' +
           '}';
     }
   }

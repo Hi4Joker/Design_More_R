@@ -100,8 +100,8 @@ public class FashionRetrofit {
         FashionEntity clone = instance.newInstance();
         clone.setGoodId(fashion.goodId);
         clone.setGoodName(fashion.goodName);
-        clone.setGoodThumbUrl(fashion.goodThumb);
-        clone.setDiscount(fashion.discount);
+        clone.setGoodDiscount(fashion.goodDiscount);
+        clone.setGoodThumbUrl(fashion.goodThumbUrl);
 
         return clone;
       }

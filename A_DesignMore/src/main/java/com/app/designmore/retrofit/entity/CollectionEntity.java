@@ -84,7 +84,7 @@ public class CollectionEntity implements Cloneable {
         "goodId='" + goodId + '\'' +
         ", goodName='" + goodName + '\'' +
         ", goodPrice='" + goodPrice + '\'' +
-        ", goodThumb='" + goodThumb + '\'' +
+        ", goodThumbUrl='" + goodThumb + '\'' +
         ", goodImage='" + goodImage + '\'' +
         '}';
   }
