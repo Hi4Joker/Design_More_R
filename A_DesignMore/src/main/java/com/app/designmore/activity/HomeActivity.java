@@ -20,7 +20,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -45,7 +44,6 @@ import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.manager.WrappingGridLayoutManager;
 import com.app.designmore.retrofit.HomeRetrofit;
-import com.app.designmore.retrofit.ProductRetrofit;
 import com.app.designmore.retrofit.entity.CategoryEntity;
 import com.app.designmore.retrofit.entity.FashionEntity;
 import com.app.designmore.retrofit.entity.ProductEntity;
@@ -59,9 +57,6 @@ import com.app.designmore.view.MaterialRippleLayout;
 import com.app.designmore.view.ProgressLayout;
 import com.app.designmore.manager.WrappingLinearLayoutManager;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
-import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollEvent;
-import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
-import com.jakewharton.rxbinding.view.RxView;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -143,6 +138,13 @@ public class HomeActivity extends BaseActivity
       subscription.unsubscribe();
     }
   };
+
+  private ViewPager.OnPageChangeListener simpleOnPageChangeListener =
+      new ViewPager.SimpleOnPageChangeListener() {
+        @Override public void onPageScrollStateChanged(int state) {
+          swipeRefreshLayout.setEnabled(state == ViewPager.SCROLL_STATE_IDLE);
+        }
+      };
 
   public static void navigateToHome(AppCompatActivity startingActivity) {
     Intent intent = new Intent(startingActivity, HomeActivity.class);
@@ -392,8 +394,6 @@ public class HomeActivity extends BaseActivity
         .rippleColor(getResources().getColor(android.R.color.darker_gray))
         .create();
 
-    swipeRefreshLayout.setEnabled(false);
-
     this.nestedScrollView.getViewTreeObserver()
         .addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
           @Override public void onScrollChanged() {
@@ -422,17 +422,7 @@ public class HomeActivity extends BaseActivity
           }
         });
 
-    viewPager.setOnTouchListener(new View.OnTouchListener() {
-      @Override public boolean onTouch(View v, MotionEvent event) {
-        swipeRefreshLayout.setEnabled(false);
-        switch (event.getAction()) {
-          case MotionEvent.ACTION_UP:
-            swipeRefreshLayout.setEnabled(true);
-            break;
-        }
-        return false;
-      }
-    });
+    this.viewPager.addOnPageChangeListener(simpleOnPageChangeListener);
   }
 
   private void loadDataMore() {
@@ -622,8 +612,8 @@ public class HomeActivity extends BaseActivity
   }
 
   @Override protected void onDestroy() {
+    this.viewPager.removeOnPageChangeListener(simpleOnPageChangeListener);
     super.onDestroy();
-
     if (toast != null && toast.getParent() != null) {
       getWindowManager().removeViewImmediate(toast);
     }
