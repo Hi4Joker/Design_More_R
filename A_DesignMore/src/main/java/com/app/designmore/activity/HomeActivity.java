@@ -3,8 +3,8 @@ package com.app.designmore.activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -21,7 +21,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -59,7 +58,6 @@ import com.app.designmore.view.MaterialRippleLayout;
 import com.app.designmore.view.ProgressLayout;
 import com.app.designmore.manager.WrappingLinearLayoutManager;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
-import com.jakewharton.rxbinding.view.RxView;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -134,6 +132,8 @@ public class HomeActivity extends BaseActivity
   private volatile int count = 1;
 
   private ImageView[] bannerIndicators;
+  private Drawable indicatorNormal;
+  private Drawable indicatorSelected;
 
   private Subscription subscription = Subscriptions.empty();
 
@@ -179,6 +179,8 @@ public class HomeActivity extends BaseActivity
     bannerIndicators = new ImageView[] {
         bannerIndicator1, bannerIndicator2, bannerIndicator3
     };
+    indicatorNormal = getResources().getDrawable(R.drawable.home_indicator_normal_background);
+    indicatorSelected = getResources().getDrawable(R.drawable.home_indicator_selected_background);
 
     if (savedInstanceState == null) {
       rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -605,12 +607,10 @@ public class HomeActivity extends BaseActivity
   @Override public void changeIndicator(int position) {
 
     for (ImageView indicator : bannerIndicators) {
-      indicator.setBackground(
-          getResources().getDrawable(R.drawable.home_indicator_normal_background));
+      indicator.setBackground(indicatorNormal);
     }
 
-    bannerIndicators[position].setBackground(
-        getResources().getDrawable(R.drawable.home_indicator_selectded_background));
+    bannerIndicators[position].setBackground(indicatorSelected);
   }
 
   /**
