@@ -3,6 +3,7 @@ package com.app.designmore.activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,6 +21,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -57,6 +59,7 @@ import com.app.designmore.view.MaterialRippleLayout;
 import com.app.designmore.view.ProgressLayout;
 import com.app.designmore.manager.WrappingLinearLayoutManager;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
+import com.jakewharton.rxbinding.view.RxView;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,7 +79,7 @@ import rx.subscriptions.Subscriptions;
 
 public class HomeActivity extends BaseActivity
     implements HomeCategoryAdapter.Callback, HomeDiscountAdapter.Callback,
-    HomeProductAdapter.Callback {
+    HomeProductAdapter.Callback, HomeBannerAdapter.Callback {
 
   private static final String TAG = HomeActivity.class.getSimpleName();
   private static final String BANNER = "BANNER";
@@ -102,6 +105,10 @@ public class HomeActivity extends BaseActivity
   @Nullable @Bind(R.id.bottom_bar_journal_rl) RelativeLayout bottomBarJournalRl;
   @Nullable @Bind(R.id.bottom_bar_mine_rl) RelativeLayout bottomBarMineRl;
 
+  @Nullable @Bind(R.id.home_layout_banner_indicator1) ImageView bannerIndicator1;
+  @Nullable @Bind(R.id.home_layout_banner_indicator2) ImageView bannerIndicator2;
+  @Nullable @Bind(R.id.home_layout_banner_indicator3) ImageView bannerIndicator3;
+
   private SupportAnimator revealAnimator;
   private ProgressDialog progressDialog;
   private ViewGroup toast;
@@ -111,6 +118,7 @@ public class HomeActivity extends BaseActivity
   private List<FashionEntity> discountItems = new ArrayList<>();
   private List<ProductEntity> productItems = new ArrayList<>();
 
+  private HomeBannerAdapter bannerAdapter;
   private HomeCategoryAdapter categoryAdapter;
   private HomeDiscountAdapter discountAdapter;
   private HomeProductAdapter productAdapter;
@@ -124,6 +132,8 @@ public class HomeActivity extends BaseActivity
   private volatile boolean isLoading = false;
   private volatile boolean isEndless = true;
   private volatile int count = 1;
+
+  private ImageView[] bannerIndicators;
 
   private Subscription subscription = Subscriptions.empty();
 
@@ -142,7 +152,7 @@ public class HomeActivity extends BaseActivity
   private ViewPager.OnPageChangeListener simpleOnPageChangeListener =
       new ViewPager.SimpleOnPageChangeListener() {
         @Override public void onPageScrollStateChanged(int state) {
-          swipeRefreshLayout.setEnabled(state == ViewPager.SCROLL_STATE_IDLE);
+          HomeActivity.this.swipeRefreshLayout.setEnabled(state == ViewPager.SCROLL_STATE_IDLE);
         }
       };
 
@@ -165,6 +175,10 @@ public class HomeActivity extends BaseActivity
     //toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
 
     HomeActivity.this.setupRecyclerAdapter();
+
+    bannerIndicators = new ImageView[] {
+        bannerIndicator1, bannerIndicator2, bannerIndicator3
+    };
 
     if (savedInstanceState == null) {
       rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -332,8 +346,10 @@ public class HomeActivity extends BaseActivity
 
   private void setupViewPager() {
 
-    HomeBannerAdapter homeBannerAdapter = new HomeBannerAdapter(HomeActivity.this, bannerItems);
-    viewPager.setAdapter(homeBannerAdapter);
+    bannerAdapter = new HomeBannerAdapter(HomeActivity.this, bannerItems);
+    viewPager.setAdapter(bannerAdapter);
+    viewPager.addOnPageChangeListener(bannerAdapter);
+    bannerAdapter.setCallback(HomeActivity.this);
   }
 
   private void showErrorLayout(Throwable error) {
@@ -531,6 +547,7 @@ public class HomeActivity extends BaseActivity
     searchItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
 
+        //AllProductListActivity.navigateToAllProductList(HomeActivity.this, "手表", "手表");
         ProductKeyListActivity.navigateToProductKeyList(HomeActivity.this, "手表", "手表");
         overridePendingTransition(0, 0);
 
@@ -574,6 +591,29 @@ public class HomeActivity extends BaseActivity
   }
 
   /**
+   * BannerAdapter 回调
+   */
+  @Override public void onItemClick(ProductEntity entity) {
+    DetailActivity.navigateToDetail(HomeActivity.this, entity.getGoodId());
+    overridePendingTransition(0, 0);
+  }
+
+  @Override public void onRecycling(int position, boolean smoothScroll) {
+    this.viewPager.setCurrentItem(position, smoothScroll);
+  }
+
+  @Override public void changeIndicator(int position) {
+
+    for (ImageView indicator : bannerIndicators) {
+      indicator.setBackground(
+          getResources().getDrawable(R.drawable.home_indicator_normal_background));
+    }
+
+    bannerIndicators[position].setBackground(
+        getResources().getDrawable(R.drawable.home_indicator_selectded_background));
+  }
+
+  /**
    * 分类条目被点击
    */
   @Override public void onCategoryItemClick(CategoryEntity entity) {
@@ -600,7 +640,6 @@ public class HomeActivity extends BaseActivity
 
   @Override public void onNoData() {
     this.isEndless = false;
-
     if (count != 2) {
       toast = DialogManager.getInstance().showNoMoreDialog(HomeActivity.this, Gravity.TOP, null);
     }
@@ -612,6 +651,8 @@ public class HomeActivity extends BaseActivity
   }
 
   @Override protected void onDestroy() {
+
+    this.viewPager.removeOnPageChangeListener(bannerAdapter);
     this.viewPager.removeOnPageChangeListener(simpleOnPageChangeListener);
     super.onDestroy();
     if (toast != null && toast.getParent() != null) {

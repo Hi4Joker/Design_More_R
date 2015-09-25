@@ -409,12 +409,14 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
         this.collectionTv.setTextColor(redTextColor);
         break;
       case price:
-        this.currentCode = price;
-        if (this.currentOrderBy == 1) {
-          this.currentOrderBy = 0;
-        } else {
-          this.currentOrderBy = 1;
+        if (currentCode == price) {
+          if (this.currentOrderBy == 1) {
+            this.currentOrderBy = 0;
+          } else {
+            this.currentOrderBy = 1;
+          }
         }
+        this.currentCode = price;
         this.priceTv.setTextColor(redTextColor);
         break;
     }
@@ -460,6 +462,7 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
 
     if (currentCode != 4) {
       this.code = 4;
+      this.order_by = 1;
     } else {
       if (this.currentOrderBy == 1) {
         this.order_by = 0;

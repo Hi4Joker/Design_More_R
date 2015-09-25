@@ -20,7 +20,7 @@ public class Constants {
   public static final int MILLISECONDS_300 = 300;
   public static final int MILLISECONDS_400 = 400;
   public static final int MILLISECONDS_2000 = 2 * 1000;
-
+  public static final int MILLISECONDS_4000 = 4 * 1000;
 
   public static final int ACTIVITY_CODE = 4;
 

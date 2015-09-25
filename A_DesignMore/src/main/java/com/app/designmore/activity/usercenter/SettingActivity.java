@@ -6,6 +6,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
@@ -26,6 +27,8 @@ import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.utils.Utils;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.cache.MemorySizeCalculator;
+import com.bumptech.glide.signature.StringSignature;
 
 /**
  * Created by Joker on 2015/8/26.
@@ -77,6 +80,13 @@ public class SettingActivity extends BaseActivity {
 
   private void getCache() {
     cacheTv.setText(Utils.FormetFileSize(Glide.getPhotoCacheDir(SettingActivity.this).length()));
+
+    /*MemorySizeCalculator calculator = new MemorySizeCalculator(SettingActivity.this);
+    int defaultMemoryCacheSize = calculator.getMemoryCacheSize();
+    int defaultBitmapPoolSize = calculator.getBitmapPoolSize();
+
+    Log.e(TAG, "defaultMemoryCacheSize:  " + defaultMemoryCacheSize);
+    Log.e(TAG, "defaultBitmapPoolSize: " + defaultBitmapPoolSize);*/
   }
 
   @Nullable @OnClick(R.id.setting_layout_about_ll) void onAboutClick(View view) {

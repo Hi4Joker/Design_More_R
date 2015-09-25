@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/material_32dp"
+    android:layout_marginTop="@dimen/material_1dp"
     android:orientation="horizontal"
     android:background="@color/white"
     tools:showIn="@layout/product_layout"
