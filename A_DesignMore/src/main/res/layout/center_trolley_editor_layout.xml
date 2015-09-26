@@ -6,7 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/white"
     >
+
   <include layout="@layout/include_white_toolbar_layout"/>
 
   <com.app.designmore.revealLib.widget.RevealFrameLayout
@@ -62,7 +64,7 @@
 
         <!--删除按钮-->
         <com.app.designmore.view.MaterialRippleLayout
-            android:layout_width="@dimen/material_100dp"
+            android:layout_width="@dimen/material_128dp"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             app:mrl_rippleDimension="4dip"

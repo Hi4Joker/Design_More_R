@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -121,7 +122,7 @@ public class TrolleyEditorActivity extends BaseActivity
     toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_icon));
 
     TrolleyEditorActivity.this.toolbarTitleTv.setVisibility(View.VISIBLE);
-    TrolleyEditorActivity.this.toolbarTitleTv.setText("购物车");
+    TrolleyEditorActivity.this.toolbarTitleTv.setText("我的购物车");
 
     this.items.clear();
     this.items.addAll(getIntent().getExtras().<TrolleyEntity>getParcelableArrayList(ITEMS));
@@ -341,6 +342,11 @@ public class TrolleyEditorActivity extends BaseActivity
 
   @Override public void onArrowClick(TrolleyEntity trolleyEntity) {
 
+    ViewCompat.animate(recyclerView)
+        .scaleX(0.96f)
+        .scaleY(0.96f)
+        .setDuration(Constants.MILLISECONDS_300);
+
     this.currentChangeEntity = trolleyEntity;
 
     /*Action=GetProductByAttr&gid=59*/
@@ -408,8 +414,14 @@ public class TrolleyEditorActivity extends BaseActivity
    * 选择属窗口，回调
    */
   @Override public void onConfirmClick(ProductAttrEntity productAttrEntity) {
-
     TrolleyEditorActivity.this.upDateEntity(this.currentChangeEntity, productAttrEntity, Type.ATTR);
+  }
+
+  @Override public void onDialogDismiss() {
+    ViewCompat.animate(recyclerView)
+        .scaleX(1.0f)
+        .scaleY(1.0f)
+        .setDuration(Constants.MILLISECONDS_300);
   }
 
   /**

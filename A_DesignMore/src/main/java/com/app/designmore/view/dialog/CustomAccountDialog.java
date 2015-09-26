@@ -2,6 +2,7 @@ package com.app.designmore.view.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.Nullable;
@@ -32,7 +33,8 @@ import java.util.Map;
 /**
  * Created by Joker on 2015/9/20.
  */
-public class CustomAccountDialog extends Dialog implements ProductAttrAdapter.Callback {
+public class CustomAccountDialog extends Dialog
+    implements ProductAttrAdapter.Callback, DialogInterface.OnDismissListener {
 
   public static final String PRICE = "PRICE";
   public static final String DES = "VALUE";
@@ -71,8 +73,8 @@ public class CustomAccountDialog extends Dialog implements ProductAttrAdapter.Ca
 
     this.activity = activity;
     this.callback = callback;
-    CustomAccountDialog.this.setCancelable(false);
-    CustomAccountDialog.this.setCanceledOnTouchOutside(false);
+    //CustomAccountDialog.this.setCancelable(false);
+    CustomAccountDialog.this.setCanceledOnTouchOutside(true);
 
     this.price = (String) map.get(PRICE);
     this.des = (String) map.get(DES);
@@ -142,13 +144,11 @@ public class CustomAccountDialog extends Dialog implements ProductAttrAdapter.Ca
 
   @Nullable @OnClick(R.id.custom_account_cancel_btn) void onCancelClick() {
     CustomAccountDialog.this.dismiss();
-    if (callback != null) callback.onDialogDismiss();
   }
 
   @Nullable @OnClick(R.id.custom_account_confirm_btn) void onAccountClick() {
     CustomAccountDialog.this.dismiss();
     if (callback != null) {
-      callback.onDialogDismiss();
       callback.onConfirmClick(currentProductAttrEntity, count);
     }
   }
@@ -187,11 +187,20 @@ public class CustomAccountDialog extends Dialog implements ProductAttrAdapter.Ca
     super.onAttachedToWindow();
     ButterKnife.bind(CustomAccountDialog.this);
     CustomAccountDialog.this.bindValue();
+    CustomAccountDialog.this.setOnDismissListener(CustomAccountDialog.this);
   }
 
   @Override public void onDetachedFromWindow() {
     super.onDetachedFromWindow();
     ButterKnife.unbind(CustomAccountDialog.this);
+  }
+
+  @Override public void onBackPressed() {
+    /*do nothing*/
+  }
+
+  @Override public void onDismiss(DialogInterface dialog) {
+    if (callback != null) callback.onDialogDismiss();
   }
 
   public interface Callback {

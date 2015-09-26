@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -13,6 +12,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StrikethroughSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -221,10 +225,38 @@ public class DetailActivity extends BaseActivity
             DetailActivity.this.currentEntity = detailEntity;
 
             titleTv.setText(detailEntity.getGoodName());
-            priceTv.setText("设计猫价格："
-                + detailEntity.getShopPrice()
-                + "    市场价格："
-                + detailEntity.getMarketPrice());
+
+            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+            spannableStringBuilder.append("￥");
+            spannableStringBuilder.append(detailEntity.getShopPrice());
+            spannableStringBuilder.append("  ￥");
+            spannableStringBuilder.append(detailEntity.getMarketPrice());
+
+            /*店价*/
+            spannableStringBuilder.setSpan(
+                new AbsoluteSizeSpan(DensityUtil.sp2px(DetailActivity.this, Constants.SP_13)), 0, 1,
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            spannableStringBuilder.setSpan(
+                new AbsoluteSizeSpan(DensityUtil.sp2px(DetailActivity.this, Constants.SP_18)), 1,
+                detailEntity.getShopPrice().length() + 1, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            spannableStringBuilder.setSpan(
+                new ForegroundColorSpan(getResources().getColor(R.color.design_more_red)), 0,
+                detailEntity.getShopPrice().length() + 1, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
+            /*较价*/
+            spannableStringBuilder.setSpan(
+                new AbsoluteSizeSpan(DensityUtil.sp2px(DetailActivity.this, Constants.SP_13)),
+                detailEntity.getShopPrice().length() + 3, spannableStringBuilder.length(),
+                Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            spannableStringBuilder.setSpan(
+                new ForegroundColorSpan(getResources().getColor(R.color.darker_gray)),
+                detailEntity.getShopPrice().length() + 3, spannableStringBuilder.length(),
+                Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            spannableStringBuilder.setSpan(new StrikethroughSpan(),
+                detailEntity.getShopPrice().length() + 3, spannableStringBuilder.length(),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            priceTv.setText(spannableStringBuilder);
             discountTv.setText(detailEntity.getGoodDes());
 
             Glide.with(DetailActivity.this)

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.view.MaterialRippleLayout;
@@ -15,7 +16,7 @@ import com.app.designmore.view.MaterialRippleLayout;
  */
 public class BottomDependBehavior extends CoordinatorLayout.Behavior<MaterialRippleLayout> {
 
-  private static final String TAG = BottomDependBehavior.class.getCanonicalName();
+  private static final String TAG = BottomDependBehavior.class.getSimpleName();
   private float actionBarSize;
 
   public BottomDependBehavior(Context context, AttributeSet attrs) {
@@ -23,12 +24,14 @@ public class BottomDependBehavior extends CoordinatorLayout.Behavior<MaterialRip
     this.actionBarSize = DensityUtil.getActionBarSize(context);
   }
 
-  @Override public boolean layoutDependsOn(CoordinatorLayout parent, MaterialRippleLayout child, View dependency) {
+  @Override public boolean layoutDependsOn(CoordinatorLayout parent, MaterialRippleLayout child,
+      View dependency) {
     return dependency instanceof AppBarLayout;
   }
 
   @Override
-  public boolean onDependentViewChanged(CoordinatorLayout parent, MaterialRippleLayout child, View dependency) {
+  public boolean onDependentViewChanged(CoordinatorLayout parent, MaterialRippleLayout child,
+      View dependency) {
 
     boolean returnValue = super.onDependentViewChanged(parent, child, dependency);
     if (dependency instanceof AppBarLayout) {
@@ -36,6 +39,8 @@ public class BottomDependBehavior extends CoordinatorLayout.Behavior<MaterialRip
           (CoordinatorLayout.LayoutParams) child.getLayoutParams();
       int distanceToScroll = child.getHeight() + layoutParams.bottomMargin;
       float ratio = dependency.getY() / actionBarSize;
+
+      child.setAlpha(1.0f - Math.abs(ratio));
       child.setTranslationY(-distanceToScroll * ratio);
     }
     return returnValue;

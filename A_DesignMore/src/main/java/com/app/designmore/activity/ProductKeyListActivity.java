@@ -227,7 +227,7 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
                   }
                 } else if (items != null && items.size() == 0) {
                   progressLayout.showEmpty(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
-                      "空空如也", null);
+                      "没有对应商品", null);
                 }
               }
 

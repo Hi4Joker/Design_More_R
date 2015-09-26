@@ -22,6 +22,13 @@ public class Constants {
   public static final int MILLISECONDS_2000 = 2 * 1000;
   public static final int MILLISECONDS_4000 = 4 * 1000;
 
+  public static final float SP_6 = 6.0f;
+  public static final float SP_8 = 8.0f;
+  public static final float SP_11 = 11.0f;
+  public static final float SP_13 = 13.0f;
+  public static final float SP_16 = 16.0f;
+  public static final float SP_18 = 18.0f;
+
   public static final int ACTIVITY_CODE = 4;
 
   public static int[] colors = new int[] {

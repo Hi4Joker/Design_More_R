@@ -2,6 +2,7 @@ package com.app.designmore.view.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.Nullable;
@@ -29,7 +30,8 @@ import java.util.Map;
 /**
  * Created by Joker on 2015/9/20.
  */
-public class CustomTrolleyDialog extends Dialog implements ProductAttrAdapter.Callback {
+public class CustomTrolleyDialog extends Dialog
+    implements ProductAttrAdapter.Callback, DialogInterface.OnDismissListener {
 
   public static final String PRICE = "PRICE";
   public static final String VALUE = "VALUE";
@@ -62,8 +64,8 @@ public class CustomTrolleyDialog extends Dialog implements ProductAttrAdapter.Ca
 
     this.activity = activity;
     this.callback = callback;
-    CustomTrolleyDialog.this.setCancelable(false);
-    CustomTrolleyDialog.this.setCanceledOnTouchOutside(false);
+    //CustomTrolleyDialog.this.setCancelable(false);
+    CustomTrolleyDialog.this.setCanceledOnTouchOutside(true);
 
     this.price = (String) map.get(PRICE);
     this.value = (String) map.get(VALUE);
@@ -151,6 +153,7 @@ public class CustomTrolleyDialog extends Dialog implements ProductAttrAdapter.Ca
     super.onAttachedToWindow();
     ButterKnife.bind(CustomTrolleyDialog.this);
     CustomTrolleyDialog.this.bindValue();
+    CustomTrolleyDialog.this.setOnDismissListener(CustomTrolleyDialog.this);
   }
 
   @Override public void onDetachedFromWindow() {
@@ -158,8 +161,19 @@ public class CustomTrolleyDialog extends Dialog implements ProductAttrAdapter.Ca
     ButterKnife.unbind(CustomTrolleyDialog.this);
   }
 
+  @Override public void onBackPressed() {
+    /*do nothing*/
+  }
+
+  @Override public void onDismiss(DialogInterface dialog) {
+    if (callback != null) callback.onDialogDismiss();
+  }
+
   public interface Callback {
     /*点击确定回调*/
     void onConfirmClick(ProductAttrEntity productAttrEntity);
+
+    /*dismiss dialog*/
+    void onDialogDismiss();
   }
 }

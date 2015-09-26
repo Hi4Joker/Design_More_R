@@ -10,6 +10,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -166,8 +170,36 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
         .compose(TrolleyActivity.this.<TrolleyEntity>bindUntilEvent(ActivityEvent.DESTROY))
         .subscribe(new Subscriber<TrolleyEntity>() {
           @Override public void onCompleted() {
+
             /*计算总价钱*/
-            payBtn.setText(String.valueOf(accountEntities.size()));
+            float totalPrice = 0;
+            for (TrolleyEntity trolleyEntity : accountEntities) {
+              totalPrice += Float.parseFloat(trolleyEntity.getGoodPrice());
+            }
+
+            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+            spannableStringBuilder.append("合计: ");
+            spannableStringBuilder.append("￥");
+            spannableStringBuilder.append(totalPrice + "");
+
+            spannableStringBuilder.setSpan(
+                new AbsoluteSizeSpan(DensityUtil.sp2px(TrolleyActivity.this, Constants.SP_11)), 0,
+                2, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            spannableStringBuilder.setSpan(
+                new AbsoluteSizeSpan(DensityUtil.sp2px(TrolleyActivity.this, Constants.SP_8)), 3, 3,
+                Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            spannableStringBuilder.setSpan(
+                new ForegroundColorSpan(getResources().getColor(R.color.design_more_red)), 3, 3,
+                Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            spannableStringBuilder.setSpan(
+                new AbsoluteSizeSpan(DensityUtil.sp2px(TrolleyActivity.this, Constants.SP_16)), 4,
+                spannableStringBuilder.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            spannableStringBuilder.setSpan(
+                new ForegroundColorSpan(getResources().getColor(R.color.design_more_red)), 4,
+                spannableStringBuilder.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
+            totalTv.setText(spannableStringBuilder);
+            payBtn.setText("结算 ( " + String.valueOf(accountEntities.size()) + " )");
 
             if (accountEntities.size() == items.size()) {
               radioBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_selected));
@@ -242,7 +274,7 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
               }
             } else if (items != null && items.size() == 0) {
               progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
-                  "您的购物车空空如也，快去购物吧", null, "去首页看看", goHomeClickListener);
+                  "您的购物车空空如也，快去购物吧", null, "去首页逛逛", goHomeClickListener);
             }
           }
 

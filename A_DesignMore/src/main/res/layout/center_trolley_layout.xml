@@ -87,7 +87,7 @@
       <!--结算按钮-->
       <com.app.designmore.view.MaterialRippleLayout
           android:id="@+id/order_item_pay_btn_parent"
-          android:layout_width="@dimen/material_100dp"
+          android:layout_width="@dimen/material_128dp"
           android:layout_height="match_parent"
           app:mrl_rippleDimension="4dip"
           app:mrl_rippleFadeDuration="100"
@@ -106,7 +106,8 @@
             android:gravity="center"
             android:textColor="@color/white"
             android:text="结算"
-            android:background="@drawable/red_corner_button_selector"
+            android:textSize="@dimen/material_16sp"
+            android:background="@drawable/red_button_selector"
             />
       </com.app.designmore.view.MaterialRippleLayout>
     </LinearLayout>
