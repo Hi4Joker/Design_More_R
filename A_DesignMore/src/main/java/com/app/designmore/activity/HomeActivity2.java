@@ -552,7 +552,7 @@ public class HomeActivity2 extends BaseActivity
     trolleyItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         TrolleyActivity.startFromLocation(HomeActivity2.this,
-            DensityUtil.getActionBarSize(HomeActivity2.this), TrolleyActivity.Type.UP);
+            0, TrolleyActivity.Type.UP);
         overridePendingTransition(0, 0);
       }
     });

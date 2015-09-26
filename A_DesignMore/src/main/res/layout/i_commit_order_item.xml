@@ -2,36 +2,23 @@
 
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/trolley_item_root_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:padding="@dimen/material_8dp"
     android:background="@color/white"
     >
 
   <ImageView
-      android:id="@+id/trolley_item_radio_iv"
-      android:layout_width="@dimen/material_32dp"
-      android:layout_height="@dimen/material_32dp"
-      android:layout_alignParentLeft="true"
-      android:layout_centerVertical="true"
-      android:scaleType="center"
-      android:src="@drawable/ic_radio_normal_icon"
-      android:background="@drawable/transparent_background"
-      />
-
-  <ImageView
-      android:layout_toRightOf="@id/trolley_item_radio_iv"
-      android:id="@+id/trolley_item_good_iv"
+      android:id="@+id/commit_order_item_good_iv"
       android:layout_width="@dimen/material_100dp"
       android:layout_height="@dimen/material_100dp"
       android:layout_marginTop="@dimen/material_8dp"
       android:layout_marginBottom="@dimen/material_8dp"
-      android:layout_centerInParent="true"
       android:scaleType="centerCrop"
       />
 
   <RelativeLayout
-      android:layout_toRightOf="@+id/trolley_item_good_iv"
+      android:layout_toRightOf="@+id/commit_order_item_good_iv"
       android:layout_width="match_parent"
       android:layout_height="@dimen/material_100dp"
       android:layout_marginRight="@dimen/material_56dp"
@@ -40,7 +27,7 @@
       >
 
     <TextView
-        android:id="@+id/trolley_item_good_name_tv"
+        android:id="@+id/commit_order_item_good_name_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -61,7 +48,7 @@
 
       <!--颜色-->
       <TextView
-          android:id="@+id/trolley_item_good_attr_tv"
+          android:id="@+id/commit_order_item_good_attr_tv"
           android:layout_width="wrap_content"
           android:layout_height="match_parent"
           android:layout_marginLeft="@dimen/material_8dp"
@@ -74,7 +61,7 @@
           />
 
       <TextView
-          android:id="@+id/trolley_item_good_count_tv"
+          android:id="@+id/commit_order_item_good_count_tv"
           android:layout_width="wrap_content"
           android:layout_height="match_parent"
           android:layout_marginLeft="@dimen/material_8dp"
@@ -89,7 +76,7 @@
   </RelativeLayout>
 
   <TextView
-      android:id="@+id/trolley_item_price_tv"
+      android:id="@+id/commit_order_item_price_tv"
       android:layout_width="@dimen/material_56dp"
       android:layout_height="@dimen/material_100dp"
       android:layout_marginTop="@dimen/material_8dp"

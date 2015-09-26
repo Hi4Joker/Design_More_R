@@ -42,7 +42,7 @@
           android:layout_height="@dimen/material_32dp"
           android:layout_gravity="left|center_vertical"
           android:scaleType="center"
-          android:src="@drawable/ic_radio_normal_icon_icon"
+          android:src="@drawable/ic_radio_normal_icon"
           android:background="@drawable/transparent_background"
           />
 
@@ -70,16 +70,17 @@
             android:layout_marginTop="@dimen/material_8dp"
             android:gravity="right|center"
             android:textSize="@dimen/material_14sp"
-            android:text="合计"
+            android:text=""
             />
 
         <TextView
+            android:id="@+id/trolley_layout_freight_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/material_1dp"
             android:gravity="right|center"
             android:textSize="@dimen/material_11sp"
-            android:text="不含运费"
+            android:text=""
             />
       </LinearLayout>
 
@@ -105,7 +106,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:textColor="@color/white"
-            android:text="结算"
+            android:text="结算 ( 0 )"
             android:textSize="@dimen/material_16sp"
             android:background="@drawable/red_button_selector"
             />

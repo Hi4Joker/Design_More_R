@@ -37,17 +37,7 @@
           android:paddingTop="@dimen/material_24dp"
           />
 
-     <!-- <TextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:textColor="@color/darker_gray"
-          android:text="——————无更多收藏——————"
-          android:textSize="@dimen/material_13sp"
-          />-->
     </android.support.v4.widget.SwipeRefreshLayout>
-
-
-
   </com.app.designmore.view.ProgressLayout>
 
 </LinearLayout>

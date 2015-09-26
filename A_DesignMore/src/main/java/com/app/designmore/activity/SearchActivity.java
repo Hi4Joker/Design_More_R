@@ -267,7 +267,9 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
   }
 
   @Override public void onItemClick(int position) {
-    // TODO: 2015/9/4 跳转搜索
 
+    ProductKeyListActivity.navigateToProductKeyList(SearchActivity.this,
+        items.get(position).getText(), items.get(position).getText());
+    overridePendingTransition(0, 0);
   }
 }

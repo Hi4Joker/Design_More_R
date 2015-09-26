@@ -184,6 +184,24 @@
         >
     </activity>
 
+    <!--用户中心ACT -> 购物车ACT -> 提交ACT-->
+    <activity
+        android:name=".activity.usercenter.OrderCommitActivity"
+        android:screenOrientation="portrait"
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.TransparentActivity"
+        >
+    </activity>
+
+    <!--用户中心ACT -> 购物车ACT -> 选择地址ACT-->
+    <activity
+        android:name=".activity.usercenter.OrderAddressActivity"
+        android:screenOrientation="portrait"
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.TransparentActivity"
+        >
+    </activity>
+
     <!--用户中心ACT -> 我的收藏ACT-->
     <activity
         android:name=".activity.usercenter.CollectionActivity"
@@ -219,6 +237,7 @@
         android:theme="@style/AppTheme.TransparentActivity"
         >
     </activity>
+
     <!--用户中心ACT -> 前置拍照ACT-->
     <activity
         android:name=".activity.usercenter.CameraFrontActivity"

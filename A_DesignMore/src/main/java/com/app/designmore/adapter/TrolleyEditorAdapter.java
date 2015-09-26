@@ -15,7 +15,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.R;
-import com.app.designmore.activity.usercenter.TrolleyActivity;
 import com.app.designmore.retrofit.entity.TrolleyEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.bumptech.glide.Glide;
@@ -67,7 +66,7 @@ public class TrolleyEditorAdapter extends RecyclerView.Adapter<TrolleyEditorAdap
     holder.goodAttrTv.setText("颜色分类: " + trolleyEntity.getGoodAttrValue());
 
     holder.radioBtn.setImageDrawable(
-        context.getResources().getDrawable(R.drawable.ic_radio_normal_icon_icon));
+        context.getResources().getDrawable(R.drawable.ic_radio_normal_icon));
 
     holder.rootView.setTag(trolleyEntity);
     holder.addCountIb.setTag(trolleyEntity);

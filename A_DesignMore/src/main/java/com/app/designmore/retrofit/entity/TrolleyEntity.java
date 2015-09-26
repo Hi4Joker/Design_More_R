@@ -17,8 +17,6 @@ public class TrolleyEntity implements Cloneable, Parcelable {
   private String goodThumb;
   private String goodAttrValue;
 
-  /*private String goodMaxCount;
-
   /*标记是否选择状态*/
   public boolean isChecked = false;
 

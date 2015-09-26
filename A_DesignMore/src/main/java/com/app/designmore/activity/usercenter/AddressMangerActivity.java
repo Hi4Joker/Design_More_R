@@ -22,6 +22,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,13 +30,14 @@ import butterknife.Bind;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
-import com.app.designmore.activity.MineActivity;
 import com.app.designmore.adapter.AddressAdapter;
 import com.app.designmore.event.EditorAddressEvent;
-import com.app.designmore.event.RefreshAddressEvent;
+import com.app.designmore.event.RefreshAddressManagerEvent;
+import com.app.designmore.event.RefreshOrderAddressEvent;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.helper.DBHelper;
 import com.app.designmore.manager.DialogManager;
+import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.retrofit.AddressRetrofit;
 import com.app.designmore.retrofit.entity.AddressEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
@@ -100,10 +102,18 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
     }
   };
 
-  public static void startFromLocation(MineActivity startingActivity, int startingLocationY) {
+  public enum Type {
+    EXTEND,
+    UP
+  }
+
+  public static void startFromLocation(BaseActivity startingActivity, int startingLocationY,
+      Type type) {
 
     Intent intent = new Intent(startingActivity, AddressMangerActivity.class);
-    intent.putExtra(START_LOCATION_Y, startingLocationY);
+    if (type == Type.EXTEND) {
+      intent.putExtra(START_LOCATION_Y, startingLocationY);
+    }
     startingActivity.startActivity(intent);
   }
 
@@ -174,19 +184,30 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
 
   private void startEnterAnim(int startLocationY) {
 
-    ViewCompat.setLayerType(rootView, ViewCompat.LAYER_TYPE_HARDWARE, null);
-    rootView.setPivotY(startLocationY);
-    ViewCompat.setScaleY(rootView, 0.0f);
-
-    ViewCompat.animate(rootView)
-        .scaleY(1.0f)
-        .setDuration(Constants.MILLISECONDS_400 / 2)
-        .setInterpolator(new AccelerateInterpolator())
-        .setListener(new ViewPropertyAnimatorListenerAdapter() {
-          @Override public void onAnimationEnd(View view) {
-            AddressMangerActivity.this.loadData();
-          }
-        });
+    if (startLocationY != 0) {
+      rootView.setPivotY(startLocationY);
+      rootView.setScaleY(0.0f);
+      ViewCompat.animate(rootView)
+          .scaleY(1.0f)
+          .setDuration(Constants.MILLISECONDS_400 / 2)
+          .setInterpolator(new AccelerateInterpolator())
+          .setListener(new ViewPropertyAnimatorListenerAdapter() {
+            @Override public void onAnimationEnd(View view) {
+              AddressMangerActivity.this.loadData();
+            }
+          });
+    } else {
+      ViewCompat.setTranslationY(rootView, rootView.getHeight());
+      ViewCompat.animate(rootView)
+          .translationY(0.0f)
+          .setDuration(Constants.MILLISECONDS_400)
+          .setInterpolator(new LinearInterpolator())
+          .setListener(new ViewPropertyAnimatorListenerAdapter() {
+            @Override public void onAnimationEnd(View view) {
+              AddressMangerActivity.this.loadData();
+            }
+          });
+    }
   }
 
   /**
@@ -221,6 +242,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
             AddressMangerActivity.this.<List<AddressEntity>>bindUntilEvent(ActivityEvent.DESTROY))
         .subscribe(new Subscriber<List<AddressEntity>>() {
           @Override public void onCompleted() {
+
             /*加载完毕，显示内容界面*/
             if (items != null && items.size() != 0) {
               if (swipeRefreshLayout.isRefreshing()) {
@@ -248,75 +270,12 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
         });
   }
 
-  private void showError(String errorTitle, String errorContent) {
-    progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon), errorTitle,
-        errorContent, getResources().getString(R.string.retry_button_text), retryClickListener);
-  }
-
-  /**
-   * 设置默认地址
-   */
-  private void requestSetDefaultAddress(final AddressEntity addressEntity) {
-
-    /* Action=SetDefaultAddress&uid=2&address_id=113*/
-    Map<String, String> params = new HashMap<>(3);
-    params.put("Action", "SetDefaultAddress");
-    params.put("address_id", addressEntity.getAddressId());
-    params.put("uid",
-        DBHelper.getInstance(getApplicationContext()).getUserID(AddressMangerActivity.this));
-
-    subscription =
-        AddressRetrofit.getInstance()
-            .requestSetDefaultAddress(params)
-            .doOnSubscribe(new Action0() {
-              @Override public void call() {
-                /*加载数据，显示进度条*/
-                if (progressDialog == null) {
-                  progressDialog = DialogManager.
-                      getInstance()
-                      .showCancelableProgressDialog(AddressMangerActivity.this, null,
-                          cancelListener, false);
-                } else {
-                  progressDialog.show();
-                }
-              }
-            })
-            .doOnTerminate(new Action0() {
-              @Override public void call() {
-                /*隐藏进度条*/
-                if (progressDialog != null && progressDialog.isShowing()) {
-                  progressDialog.dismiss();
-                }
-              }
-            })
-            .filter(new Func1<BaseResponse, Boolean>() {
-              @Override public Boolean call(BaseResponse baseResponse) {
-                return !subscription.isUnsubscribed();
-              }
-            })
-            .compose(AddressMangerActivity.this.<BaseResponse>bindUntilEvent(ActivityEvent.DESTROY))
-            .subscribe(new SimpleObserver<BaseResponse>() {
-
-              @Override public void onCompleted() {
-                AddressMangerActivity.this.defaultAddress = addressEntity;
-              }
-
-              @Override public void onError(Throwable e) {
-                DialogManager.getInstance()
-                    .showConfirmDialog(AddressMangerActivity.this, "设置失败，请重试");
-              }
-
-              @Override public void onNext(BaseResponse baseResponse) {
-                Toast.makeText(AddressMangerActivity.this, "设置成功", Toast.LENGTH_LONG).show();
-              }
-            });
-  }
-
   /**
    * ************************************** AddressAdapter回调
    */
   /*点击删除按钮*/
   @Override public void onDeleteClick(final AddressEntity addressEntity) {
+
     DialogManager.getInstance()
         .showNormalDialog(AddressMangerActivity.this, "确认删除地址",
             new DialogInterface.OnClickListener() {
@@ -398,7 +357,86 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
 
   /*点击RadioButton*/
   @Override public void onDefaultChange(AddressEntity addressEntity) {
+
+    if (defaultAddress == addressEntity) return;
+
     AddressMangerActivity.this.requestSetDefaultAddress(addressEntity);
+  }
+
+  /**
+   * 设置默认地址
+   */
+  private void requestSetDefaultAddress(final AddressEntity addressEntity) {
+
+    /* Action=SetDefaultAddress&uid=2&address_id=113*/
+    Map<String, String> params = new HashMap<>(3);
+    params.put("Action", "SetDefaultAddress");
+    params.put("address_id", addressEntity.getAddressId());
+    params.put("uid",
+        DBHelper.getInstance(getApplicationContext()).getUserID(AddressMangerActivity.this));
+
+    subscription =
+        AddressRetrofit.getInstance()
+            .requestSetDefaultAddress(params)
+            .doOnSubscribe(new Action0() {
+              @Override public void call() {
+                /*加载数据，显示进度条*/
+                if (progressDialog == null) {
+                  progressDialog = DialogManager.
+                      getInstance()
+                      .showCancelableProgressDialog(AddressMangerActivity.this, null,
+                          cancelListener, false);
+                } else {
+                  progressDialog.show();
+                }
+              }
+            })
+            .doOnTerminate(new Action0() {
+              @Override public void call() {
+                /*隐藏进度条*/
+                if (progressDialog != null && progressDialog.isShowing()) {
+                  progressDialog.dismiss();
+                }
+              }
+            })
+            .filter(new Func1<BaseResponse, Boolean>() {
+              @Override public Boolean call(BaseResponse baseResponse) {
+                return !subscription.isUnsubscribed();
+              }
+            })
+            .compose(AddressMangerActivity.this.<BaseResponse>bindUntilEvent(ActivityEvent.DESTROY))
+            .subscribe(new SimpleObserver<BaseResponse>() {
+
+              @Override public void onCompleted() {
+
+                toast = DialogManager.getInstance()
+                    .showNoMoreDialog(AddressMangerActivity.this, Gravity.TOP, "设置成功，O(∩_∩)O~~");
+              }
+
+              @Override public void onError(Throwable e) {
+
+                toast = DialogManager.getInstance()
+                    .showNoMoreDialog(AddressMangerActivity.this, Gravity.TOP, "设置失败，请重试，O__O …");
+              }
+
+              @Override public void onNext(BaseResponse baseResponse) {
+
+                int oldIndex = items.indexOf(defaultAddress);
+                int newIndex = items.indexOf(addressEntity);
+
+                AddressMangerActivity.this.defaultAddress = addressEntity;
+
+                ((ImageButton) recyclerView.getLayoutManager()
+                    .findViewByPosition(oldIndex)
+                    .findViewById(R.id.address_manager_item_radio_btn)).setImageDrawable(
+                    getResources().getDrawable(R.drawable.ic_radio_normal_icon));
+
+                ((ImageButton) recyclerView.getLayoutManager()
+                    .findViewByPosition(newIndex)
+                    .findViewById(R.id.address_manager_item_radio_btn)).setImageDrawable(
+                    getResources().getDrawable(R.drawable.ic_radio_selected_icon));
+              }
+            });
   }
 
   /*发生错误回调*/
@@ -430,10 +468,15 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
     }
   }
 
+  private void showError(String errorTitle, String errorContent) {
+    progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon), errorTitle,
+        errorContent, getResources().getString(R.string.retry_button_text), retryClickListener);
+  }
+
   /**
    * 新增地址 -> 刷新界面
    */
-  public void onEventMainThread(RefreshAddressEvent event) {
+  public void onEventMainThread(RefreshAddressManagerEvent event) {
     AddressMangerActivity.this.loadData();
   }
 
@@ -477,6 +520,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
   }
 
   private void checkAddress() {
+
     if (items != null && items.size() == 0) {
       AddressMangerActivity.this.exitWithoutDialog();
     } else {
@@ -496,6 +540,12 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
         .setInterpolator(new LinearInterpolator())
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
+
+            if (EventBusInstance.getDefault()
+                .hasSubscriberForEvent(RefreshOrderAddressEvent.class)) {
+              EventBusInstance.getDefault().post(new RefreshOrderAddressEvent());
+            }
+
             AddressMangerActivity.this.finish();
           }
         });

@@ -2,7 +2,7 @@ package com.app.designmore.retrofit;
 
 import com.app.designmore.Constants;
 import com.app.designmore.event.EditorAddressEvent;
-import com.app.designmore.event.RefreshAddressEvent;
+import com.app.designmore.event.RefreshAddressManagerEvent;
 import com.app.designmore.manager.OkClientInstance;
 import com.app.designmore.retrofit.entity.AddressEntity;
 import com.app.designmore.retrofit.response.AddressResponse;
@@ -10,7 +10,6 @@ import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -18,13 +17,11 @@ import java.util.concurrent.TimeoutException;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.android.AndroidLog;
-import retrofit.client.OkClient;
 import retrofit.converter.GsonConverter;
 import retrofit.http.FieldMap;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.POST;
 import rx.Observable;
-import rx.functions.Action1;
 import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.functions.Func2;
@@ -163,7 +160,7 @@ public class AddressRetrofit {
   /**
    * 添加地址
    */
-  public Observable<RefreshAddressEvent> requestAddAddress(final Map<String, String> params) {
+  public Observable<RefreshAddressManagerEvent> requestAddAddress(final Map<String, String> params) {
     return Observable.defer(new Func0<Observable<BaseResponse>>() {
       @Override public Observable<BaseResponse> call() {
         return addressService.requestAddAddress(params)
@@ -177,12 +174,12 @@ public class AddressRetrofit {
       @Override public Observable<BaseResponse> call(BaseResponse baseResponse) {
         return baseResponse.filterWebServiceErrors();
       }
-    }).map(new Func1<BaseResponse, RefreshAddressEvent>() {
-      @Override public RefreshAddressEvent call(BaseResponse baseResponse) {
+    }).map(new Func1<BaseResponse, RefreshAddressManagerEvent>() {
+      @Override public RefreshAddressManagerEvent call(BaseResponse baseResponse) {
         /*添加成功*/
-        return new RefreshAddressEvent();
+        return new RefreshAddressManagerEvent();
       }
-    }).compose(SchedulersCompat.<RefreshAddressEvent>applyExecutorSchedulers());
+    }).compose(SchedulersCompat.<RefreshAddressManagerEvent>applyExecutorSchedulers());
   }
 
   /**

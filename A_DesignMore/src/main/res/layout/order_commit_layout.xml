@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/order_commit_layout_root_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+  <include layout="@layout/include_white_toolbar_layout"/>
+
+  <com.app.designmore.revealLib.widget.RevealFrameLayout
+      android:id="@+id/order_commit_layout_rfl"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      >
+
+    <com.app.designmore.view.ProgressLayout
+        android:id="@+id/order_commit_layout_pl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:progressEmptyStateBackgroundColor="@color/primary_background_color"
+        app:progressEmptyStateTitleTextColor="@color/black"
+        app:progressEmptyStateContentTextColor="@color/black"
+        app:progressErrorStateBackgroundColor="@color/primary_background_color"
+        app:progressErrorStateTitleTextColor="@color/black"
+        app:progressErrorStateContentTextColor="@color/black"
+        app:progressErrorStateButtonTextColor="@color/white"
+        android:background="@color/primary_background_color"
+        >
+
+
+      <android.support.v4.widget.NestedScrollView
+          android:id="@+id/order_commit_layout_nest_view"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_marginBottom="?attr/actionBarSize"
+          android:fillViewport="true"
+          >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_gravity="fill_vertical"
+            >
+
+          <com.app.designmore.view.MaterialRippleLayout
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/material_80dp"
+              android:layout_marginTop="@dimen/material_24dp"
+              android:layout_marginBottom="1dip"
+              app:mrl_rippleDimension="20dip"
+              app:mrl_rippleFadeDuration="100"
+              app:mrl_rippleAlpha="0.4"
+              app:mrl_rippleDuration="600"
+              app:mrl_rippleHover="true"
+              app:mrl_rippleOverlay="true"
+              app:mrl_rippleDelayClick="true"
+              app:mrl_rippleColor="@color/darker_gray"
+              >
+
+            <LinearLayout
+                android:id="@+id/order_commit_layout_address_ll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:background="@color/white"
+                >
+
+              <TextView
+                  android:id="@+id/order_commit_layout_address_tv"
+                  android:layout_width="0dip"
+                  android:layout_weight="1"
+                  android:layout_height="match_parent"
+                  android:padding="@dimen/material_16dp"
+                  android:gravity="start|center_vertical"
+                  android:text=""
+                  android:textSize="@dimen/material_13sp"
+                  android:textColor="@color/black"
+                  />
+
+              <ImageView
+                  style="@style/center_navigate_iv_style"
+                  android:layout_gravity="right|center_vertical"
+                  />
+            </LinearLayout>
+          </com.app.designmore.view.MaterialRippleLayout>
+
+          <android.support.v7.widget.RecyclerView
+              android:id="@+id/order_commit_layout_rl"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="@dimen/material_24dp"
+              android:background="@color/primary_background_color"
+              />
+
+          <!--配送方式-->
+          <com.app.designmore.view.MaterialRippleLayout
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/material_48dp"
+              android:layout_marginTop="@dimen/material_24dp"
+              app:mrl_rippleDimension="20dip"
+              app:mrl_rippleFadeDuration="100"
+              app:mrl_rippleAlpha="0.4"
+              app:mrl_rippleDuration="600"
+              app:mrl_rippleHover="true"
+              app:mrl_rippleOverlay="true"
+              app:mrl_rippleDelayClick="true"
+              app:mrl_rippleColor="@color/darker_gray"
+              >
+            <RelativeLayout
+                android:id="@+id/order_commit_layout_delivery_rl"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/material_48dp"
+                android:layout_marginBottom="1dip"
+                android:orientation="horizontal"
+                android:background="@color/white"
+                >
+              <TextView
+                  android:layout_width="wrap_content"
+                  android:layout_height="match_parent"
+                  android:layout_alignParentLeft="true"
+                  android:layout_marginLeft="@dimen/material_24dp"
+                  android:text="配送方式"
+                  android:gravity="center"
+                  android:textSize="@dimen/material_13sp"
+                  android:textColor="@color/black"
+                  />
+
+              <TextView
+                  android:id="@+id/order_commit_layout_delivery_tv"
+                  android:layout_width="wrap_content"
+                  android:layout_height="match_parent"
+                  android:layout_alignParentRight="true"
+                  android:layout_marginRight="@dimen/material_48dp"
+                  android:text="快递包邮"
+                  android:gravity="center"
+                  android:textSize="@dimen/material_13sp"
+                  android:textColor="@color/black"
+                  />
+
+              <ImageView
+                  style="@style/center_navigate_iv_style"
+                  android:layout_gravity="right|center_vertical"
+                  />
+            </RelativeLayout>
+          </com.app.designmore.view.MaterialRippleLayout>
+
+          <!-- 运费险-->
+          <com.app.designmore.view.MaterialRippleLayout
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/material_48dp"
+              android:layout_marginTop="@dimen/material_1dp"
+              app:mrl_rippleDimension="20dip"
+              app:mrl_rippleFadeDuration="100"
+              app:mrl_rippleAlpha="0.4"
+              app:mrl_rippleDuration="600"
+              app:mrl_rippleHover="true"
+              app:mrl_rippleOverlay="true"
+              app:mrl_rippleDelayClick="true"
+              app:mrl_rippleColor="@color/darker_gray"
+              >
+            <RelativeLayout
+                android:id="@+id/order_commit_layout_insurance_rl"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/material_48dp"
+                android:layout_marginBottom="1dip"
+                android:orientation="horizontal"
+                android:background="@color/white"
+                >
+              <TextView
+                  android:layout_width="wrap_content"
+                  android:layout_height="match_parent"
+                  android:layout_alignParentLeft="true"
+                  android:layout_marginLeft="@dimen/material_24dp"
+                  android:text="运费险"
+                  android:gravity="center"
+                  android:textSize="@dimen/material_13sp"
+                  android:textColor="@color/black"
+                  />
+
+              <TextView
+                  android:id="@+id/order_commit_layout_insurance_tv"
+                  android:layout_width="wrap_content"
+                  android:layout_height="match_parent"
+                  android:layout_alignParentRight="true"
+                  android:layout_marginRight="@dimen/material_48dp"
+                  android:text="请选择"
+                  android:gravity="center"
+                  android:textSize="@dimen/material_13sp"
+                  android:textColor="@color/black"
+                  />
+
+              <ImageView
+                  style="@style/center_navigate_iv_style"
+                  android:layout_gravity="right|center_vertical"
+                  />
+            </RelativeLayout>
+          </com.app.designmore.view.MaterialRippleLayout>
+
+          <!--给设计猫留言-->
+          <LinearLayout
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/material_114dp"
+              android:layout_marginTop="@dimen/material_1dp"
+              android:layout_marginBottom="@dimen/material_24dp"
+              android:orientation="vertical"
+              android:background="@color/white"
+              >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/material_24dp"
+                android:paddingTop="@dimen/material_16dp"
+                android:text="给设计猫留言"
+                android:gravity="top|center_vertical"
+                android:textSize="@dimen/material_16sp"
+                android:textColor="@color/black"
+                />
+
+            <EditText
+                android:id="@+id/order_commit_layout_message_et"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/material_24dp"
+                android:paddingRight="@dimen/material_24dp"
+                android:paddingTop="@dimen/material_8dp"
+                android:hint="请输入......"
+                android:gravity="start"
+                android:textSize="@dimen/material_16sp"
+                android:textColor="@color/black"
+                android:background="@drawable/white_background"
+                />
+
+          </LinearLayout>
+        </LinearLayout>
+      </android.support.v4.widget.NestedScrollView>
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="@dimen/material_56dp"
+          android:layout_alignParentBottom="true"
+          android:layout_marginTop="@dimen/material_24dp"
+          android:orientation="horizontal"
+          android:background="@color/white"
+          >
+
+        <LinearLayout
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            >
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:paddingLeft="@dimen/material_8dp"
+              android:gravity="start|center"
+              android:textSize="@dimen/material_14sp"
+              android:text="共"
+              />
+
+          <TextView
+              android:id="@+id/order_commit_layout_total_count_tv"
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:gravity="start|center"
+              android:textSize="@dimen/material_14sp"
+              android:textColor="@color/design_more_red"
+              android:text=""
+              />
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:gravity="start|center"
+              android:textSize="@dimen/material_14sp"
+              android:text="件商品，合计: "
+              />
+
+          <TextView
+              android:id="@+id/order_commit_layout_total_price_tv"
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:gravity="start|center"
+              android:textSize="@dimen/material_14sp"
+              android:textColor="@color/design_more_red"
+              android:text=""
+              />
+        </LinearLayout>
+
+        <!--结算按钮-->
+        <com.app.designmore.view.MaterialRippleLayout
+            android:layout_width="@dimen/material_128dp"
+            android:layout_height="match_parent"
+            app:mrl_rippleDimension="4dip"
+            app:mrl_rippleFadeDuration="100"
+            app:mrl_rippleAlpha="0.4"
+            app:mrl_rippleDuration="600"
+            app:mrl_rippleHover="true"
+            app:mrl_rippleOverlay="true"
+            app:mrl_rippleDelayClick="true"
+            app:mrl_rippleColor="@color/darker_gray"
+            >
+          <Button
+              android:id="@+id/order_commit_layout_commit_btn"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_gravity="center"
+              android:gravity="center"
+              android:textColor="@color/white"
+              android:text="提交订单"
+              android:textSize="@dimen/material_16sp"
+              android:background="@drawable/red_button_selector"
+              />
+        </com.app.designmore.view.MaterialRippleLayout>
+      </LinearLayout>
+
+    </com.app.designmore.view.ProgressLayout>
+  </com.app.designmore.revealLib.widget.RevealFrameLayout>
+
+</LinearLayout>

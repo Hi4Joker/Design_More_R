@@ -398,7 +398,7 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
     trolleyItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         TrolleyActivity.startFromLocation(JournalActivity.this,
-            DensityUtil.getActionBarSize(JournalActivity.this), TrolleyActivity.Type.UP);
+            0, TrolleyActivity.Type.UP);
         overridePendingTransition(0, 0);
       }
     });

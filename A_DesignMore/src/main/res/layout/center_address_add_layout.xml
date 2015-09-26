@@ -263,7 +263,6 @@
             android:textColor="@color/black"
             android:background="@drawable/white_background"
             />
-
       </LinearLayout>
     </LinearLayout>
   </com.app.designmore.revealLib.widget.RevealFrameLayout>

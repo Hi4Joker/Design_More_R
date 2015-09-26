@@ -26,7 +26,7 @@ import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
-import com.app.designmore.event.RefreshAddressEvent;
+import com.app.designmore.event.RefreshAddressManagerEvent;
 import com.app.designmore.helper.DBHelper;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
@@ -305,14 +305,14 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
                 }
               }
             })
-            .filter(new Func1<RefreshAddressEvent, Boolean>() {
-              @Override public Boolean call(RefreshAddressEvent refreshAddressEvent) {
+            .filter(new Func1<RefreshAddressManagerEvent, Boolean>() {
+              @Override public Boolean call(RefreshAddressManagerEvent refreshAddressEvent) {
                 return !subscription.isUnsubscribed();
               }
             })
             .compose(
-                AddressAddActivity.this.<RefreshAddressEvent>bindUntilEvent(ActivityEvent.DESTROY))
-            .subscribe(new Subscriber<RefreshAddressEvent>() {
+                AddressAddActivity.this.<RefreshAddressManagerEvent>bindUntilEvent(ActivityEvent.DESTROY))
+            .subscribe(new Subscriber<RefreshAddressManagerEvent>() {
               @Override public void onCompleted() {
                 /*增加成功，返回，刷新*/
                 AddressAddActivity.this.exit();
@@ -323,7 +323,7 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
                     .showNoMoreDialog(AddressAddActivity.this, Gravity.TOP, "操作失败，请重试，O__O …");
               }
 
-              @Override public void onNext(RefreshAddressEvent refreshAddressEvent) {
+              @Override public void onNext(RefreshAddressManagerEvent refreshAddressEvent) {
 
                 Toast.makeText(AddressAddActivity.this, "操作成功", Toast.LENGTH_LONG).show();
                 /*通过eventBus发送通知，刷新地址列表*/

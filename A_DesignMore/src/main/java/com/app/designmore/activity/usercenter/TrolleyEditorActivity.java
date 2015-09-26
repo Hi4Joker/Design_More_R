@@ -1,6 +1,7 @@
 package com.app.designmore.activity.usercenter;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -45,10 +46,8 @@ import com.app.designmore.utils.Utils;
 import com.app.designmore.view.ProgressLayout;
 import com.app.designmore.view.dialog.CustomAccountDialog;
 import com.app.designmore.view.dialog.CustomTrolleyDialog;
-import com.google.gson.Gson;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -187,10 +186,10 @@ public class TrolleyEditorActivity extends BaseActivity
           @Override public void onCompleted() {
 
             if (deleteEntities.size() == items.size()) {
-              radioBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_selected));
+              radioBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_selected_icon));
             } else {
               radioBtn.setImageDrawable(
-                  getResources().getDrawable(R.drawable.ic_radio_normal_icon_icon));
+                  getResources().getDrawable(R.drawable.ic_radio_normal_icon));
             }
 
             if (deleteEntities.size() != 0) {
@@ -213,11 +212,11 @@ public class TrolleyEditorActivity extends BaseActivity
                 .findViewById(R.id.trolley_editor_item_radio_iv);
 
             if (trolleyEntity.isChecked) {
-              radioIv.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_selected));
+              radioIv.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_selected_icon));
               deleteEntities.add(trolleyEntity);
             } else {
               radioIv.setImageDrawable(
-                  getResources().getDrawable(R.drawable.ic_radio_normal_icon_icon));
+                  getResources().getDrawable(R.drawable.ic_radio_normal_icon));
               deleteEntities.remove(trolleyEntity);
             }
           }
@@ -267,6 +266,19 @@ public class TrolleyEditorActivity extends BaseActivity
 
   @Nullable @OnClick(R.id.trolley_editor_layout_delete_btn) void onDeletdClick() {
 
+    DialogManager.getInstance()
+        .showNormalDialog(TrolleyEditorActivity.this, "确认删除商品",
+            new DialogInterface.OnClickListener() {
+              @Override public void onClick(DialogInterface dialog, int which) {
+                if (which == DialogInterface.BUTTON_POSITIVE) {
+                  TrolleyEditorActivity.this.requestDeleteEntities();
+                }
+              }
+            });
+  }
+
+  private void requestDeleteEntities() {
+
     /* Action=DelCart&uid=10&item_list=[1,2,3]*/
     Map<String, String> params = new HashMap<>(3);
     params.put("Action", "DelCart");
@@ -277,7 +289,7 @@ public class TrolleyEditorActivity extends BaseActivity
           @Override public String call(TrolleyEntity trolleyEntity) {
             return trolleyEntity.getRecId();
           }
-        }).toList().toBlocking().first();
+        }).toList().toBlocking().single();
     params.put("item_list", itemList.toString());
 
     Log.e(TAG, params.toString());

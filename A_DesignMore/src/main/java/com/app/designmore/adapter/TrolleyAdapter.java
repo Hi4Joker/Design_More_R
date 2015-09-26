@@ -3,7 +3,6 @@ package com.app.designmore.adapter;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,10 +61,10 @@ public class TrolleyAdapter extends RecyclerView.Adapter<TrolleyAdapter.ViewHold
     holder.goodNameTv.setText(trolleyEntity.getGoodName());
     holder.goodAttrTv.setText("颜色分类：" + trolleyEntity.getGoodAttrValue());
     holder.goodCountTv.setText("数量：X" + trolleyEntity.getGoodCount());
-    holder.goodPriceTv.setText(trolleyEntity.getGoodPrice());
+    holder.goodPriceTv.setText("￥"+trolleyEntity.getGoodPrice());
 
     holder.radioBtn.setImageDrawable(
-        context.getResources().getDrawable(R.drawable.ic_radio_normal_icon_icon));
+        context.getResources().getDrawable(R.drawable.ic_radio_normal_icon));
   }
 
   @Override public int getItemCount() {

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/order_address_layout_root_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+
+  <include layout="@layout/include_white_toolbar_layout"/>
+
+  <com.app.designmore.revealLib.widget.RevealFrameLayout
+      android:id="@+id/order_address_layout_rfl"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      >
+
+    <com.app.designmore.view.ProgressLayout
+        android:id="@+id/order_address_layout_pl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:progressEmptyStateBackgroundColor="@color/primary_background_color"
+        app:progressEmptyStateTitleTextColor="@color/black"
+        app:progressEmptyStateContentTextColor="@color/black"
+        app:progressErrorStateBackgroundColor="@color/primary_background_color"
+        app:progressErrorStateTitleTextColor="@color/black"
+        app:progressErrorStateContentTextColor="@color/black"
+        app:progressErrorStateButtonTextColor="@color/white"
+        android:background="@color/primary_background_color"
+        >
+
+      <android.support.v4.widget.SwipeRefreshLayout
+          android:id="@+id/order_address_layout_srl"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_marginTop="@dimen/material_24dp"
+          android:background="@color/primary_background_color"
+          >
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/order_address_layout_rl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/material_24dp"
+            android:background="@color/primary_background_color"
+            />
+      </android.support.v4.widget.SwipeRefreshLayout>
+
+    </com.app.designmore.view.ProgressLayout>
+  </com.app.designmore.revealLib.widget.RevealFrameLayout>
+
+</LinearLayout>

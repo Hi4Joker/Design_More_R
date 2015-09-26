@@ -441,8 +441,7 @@ public class DetailActivity extends BaseActivity
 
     trolleyItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        TrolleyActivity.startFromLocation(DetailActivity.this,
-            DensityUtil.getActionBarSize(DetailActivity.this), TrolleyActivity.Type.UP);
+        TrolleyActivity.startFromLocation(DetailActivity.this, 0, TrolleyActivity.Type.UP);
         overridePendingTransition(0, 0);
       }
     });

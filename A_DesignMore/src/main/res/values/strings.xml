@@ -6,6 +6,7 @@
   <string name="action_settings">设置</string>
   <string name="action_submit">提交</string>
   <string name="action_editor">编辑</string>
+  <string name="action_manager">管理</string>
   <string name="action_add">新增</string>
   <string name="action_done">完成</string>
   <string name="pass_word_hint">密码</string>

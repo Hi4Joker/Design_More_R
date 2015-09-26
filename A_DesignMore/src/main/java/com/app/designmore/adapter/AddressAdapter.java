@@ -31,7 +31,6 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
   private boolean animationsLocked = false;
   private Callback callback;
   private Context context;
-  private AddressEntity defaultAddress;
 
   /*数据*/
   private List<AddressEntity> items;
@@ -67,13 +66,16 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
 
     if ("1".equals(address.isDefault())) {
       /*当前默认地址*/
-      this.defaultAddress = address;
       holder.radioBtn.setImageDrawable(
-          context.getResources().getDrawable(R.drawable.ic_radio_selected));
+          context.getResources().getDrawable(R.drawable.ic_radio_selected_icon));
     } else {
       holder.radioBtn.setImageDrawable(
-          context.getResources().getDrawable(R.drawable.ic_radio_normal_icon_icon));
+          context.getResources().getDrawable(R.drawable.ic_radio_normal_icon));
     }
+  }
+
+  @Override public long getItemId(int position) {
+    return super.getItemId(position);
   }
 
   private void runEnterAnimation(View itemView, int position) {
@@ -168,24 +170,9 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
 
     @Nullable @OnClick(R.id.address_manager_item_radio_btn) void onRadionClick(ImageButton button) {
 
-      AddressEntity newDefaultEntity = (AddressEntity) button.getTag();
-      if (callback != null && newDefaultEntity != defaultAddress) {
-
-        int oldPos = items.indexOf(defaultAddress);
-        int newPos = items.indexOf(newDefaultEntity);
-
-        if (oldPos != -1) {
-          /*default -> unDefault*/
-          defaultAddress.setDefault("0");
-          AddressAdapter.this.notifyItemChanged(oldPos);
-        }
-
-        /*unDefault -> default*/
-        newDefaultEntity.setDefault("1");
-        AddressAdapter.this.notifyItemChanged(newPos);
-
-        AddressAdapter.this.defaultAddress = newDefaultEntity;
-        callback.onDefaultChange(AddressAdapter.this.defaultAddress);
+      AddressEntity entity = (AddressEntity) button.getTag();
+      if (callback != null ) {
+        callback.onDefaultChange(entity);
       }
     }
   }

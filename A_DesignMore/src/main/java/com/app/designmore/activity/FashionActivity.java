@@ -409,8 +409,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
 
     trolleyItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        TrolleyActivity.startFromLocation(FashionActivity.this,
-            DensityUtil.getActionBarSize(FashionActivity.this), TrolleyActivity.Type.UP);
+        TrolleyActivity.startFromLocation(FashionActivity.this, 0, TrolleyActivity.Type.UP);
         overridePendingTransition(0, 0);
       }
     });

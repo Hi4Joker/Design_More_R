@@ -73,12 +73,13 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
   @Nullable @Bind(R.id.trolley_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.trolley_layout_radio_btn) ImageButton radioBtn;
   @Nullable @Bind(R.id.trolley_layout_total_tv) TextView totalTv;
+  @Nullable @Bind(R.id.trolley_layout_freight_tv) TextView freightTv;
   @Nullable @Bind(R.id.trolley_layout_pay_btn) Button payBtn;
 
   private Button actionButton;
   private TrolleyAdapter trolleyAdapter;
   private List<TrolleyEntity> items = new ArrayList<>();
-  private List<TrolleyEntity> accountEntities = new ArrayList<>();
+  private List<TrolleyEntity> orderEntities = new ArrayList<>();
 
   private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
@@ -124,6 +125,7 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
 
     TrolleyActivity.this.toolbarTitleTv.setVisibility(View.VISIBLE);
     TrolleyActivity.this.toolbarTitleTv.setText("我的购物车");
+    TrolleyActivity.this.payBtn.setEnabled(false);
 
     /*创建Adapter*/
     TrolleyActivity.this.setupAdapter();
@@ -171,46 +173,51 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
         .subscribe(new Subscriber<TrolleyEntity>() {
           @Override public void onCompleted() {
 
-            /*计算总价钱*/
-            float totalPrice = 0;
-            for (TrolleyEntity trolleyEntity : accountEntities) {
-              totalPrice += Float.parseFloat(trolleyEntity.getGoodPrice());
-            }
-
-            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-            spannableStringBuilder.append("合计: ");
-            spannableStringBuilder.append("￥");
-            spannableStringBuilder.append(totalPrice + "");
-
-            spannableStringBuilder.setSpan(
-                new AbsoluteSizeSpan(DensityUtil.sp2px(TrolleyActivity.this, Constants.SP_11)), 0,
-                2, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-            spannableStringBuilder.setSpan(
-                new AbsoluteSizeSpan(DensityUtil.sp2px(TrolleyActivity.this, Constants.SP_8)), 3, 3,
-                Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-            spannableStringBuilder.setSpan(
-                new ForegroundColorSpan(getResources().getColor(R.color.design_more_red)), 3, 3,
-                Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-            spannableStringBuilder.setSpan(
-                new AbsoluteSizeSpan(DensityUtil.sp2px(TrolleyActivity.this, Constants.SP_16)), 4,
-                spannableStringBuilder.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-            spannableStringBuilder.setSpan(
-                new ForegroundColorSpan(getResources().getColor(R.color.design_more_red)), 4,
-                spannableStringBuilder.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-
-            totalTv.setText(spannableStringBuilder);
-            payBtn.setText("结算 ( " + String.valueOf(accountEntities.size()) + " )");
-
-            if (accountEntities.size() == items.size()) {
-              radioBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_selected));
+            if (orderEntities.size() == items.size()) {
+              radioBtn.setImageDrawable(
+                  getResources().getDrawable(R.drawable.ic_radio_selected_icon));
             } else {
               radioBtn.setImageDrawable(
-                  getResources().getDrawable(R.drawable.ic_radio_normal_icon_icon));
+                  getResources().getDrawable(R.drawable.ic_radio_normal_icon));
             }
 
-            if (accountEntities.size() != 0) {
+            if (orderEntities.size() != 0) {//has trolley
+              freightTv.setText("不含运费");
+              /*计算总价钱*/
+              float totalPrice = 0;
+              for (TrolleyEntity trolleyEntity : orderEntities) {
+                totalPrice += Float.parseFloat(trolleyEntity.getGoodPrice());
+              }
+
+              SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+              spannableStringBuilder.append("合计: ");
+              spannableStringBuilder.append("￥");
+              spannableStringBuilder.append(totalPrice + "");
+
+              spannableStringBuilder.setSpan(
+                  new AbsoluteSizeSpan(DensityUtil.sp2px(TrolleyActivity.this, Constants.SP_11)), 0,
+                  2, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+              spannableStringBuilder.setSpan(
+                  new AbsoluteSizeSpan(DensityUtil.sp2px(TrolleyActivity.this, Constants.SP_8)), 3,
+                  3, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+              spannableStringBuilder.setSpan(
+                  new ForegroundColorSpan(getResources().getColor(R.color.design_more_red)), 3, 3,
+                  Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+              spannableStringBuilder.setSpan(
+                  new AbsoluteSizeSpan(DensityUtil.sp2px(TrolleyActivity.this, Constants.SP_16)), 4,
+                  spannableStringBuilder.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+              spannableStringBuilder.setSpan(
+                  new ForegroundColorSpan(getResources().getColor(R.color.design_more_red)), 4,
+                  spannableStringBuilder.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
+              totalTv.setText(spannableStringBuilder);
+              payBtn.setText("结算 ( " + String.valueOf(orderEntities.size()) + " )");
+              totalTv.setText(spannableStringBuilder);
               TrolleyActivity.this.payBtn.setEnabled(true);
-            } else {
+            } else {//no trolley
+              totalTv.setText("");
+              payBtn.setText("结算 ( 0 )");
+              freightTv.setText("");
               TrolleyActivity.this.payBtn.setEnabled(false);
             }
 
@@ -228,12 +235,12 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
                 .findViewById(R.id.trolley_item_radio_iv);
 
             if (trolleyEntity.isChecked) {
-              radioIv.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_selected));
-              accountEntities.add(trolleyEntity);
-            } else {
               radioIv.setImageDrawable(
-                  getResources().getDrawable(R.drawable.ic_radio_normal_icon_icon));
-              accountEntities.remove(trolleyEntity);
+                  getResources().getDrawable(R.drawable.ic_radio_selected_icon));
+              orderEntities.add(trolleyEntity);
+            } else {
+              radioIv.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_normal_icon));
+              orderEntities.remove(trolleyEntity);
             }
           }
         }));
@@ -327,7 +334,10 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
     actionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
 
-        TrolleyActivity.this.payBtn.setText(null);
+        TrolleyActivity.this.totalTv.setText("");
+        TrolleyActivity.this.freightTv.setText("");
+        TrolleyActivity.this.payBtn.setText("结算 ( 0 )");
+
         TrolleyEditorActivity.navigateToTrolleyEditor(TrolleyActivity.this,
             (ArrayList<TrolleyEntity>) items);
         overridePendingTransition(0, 0);
@@ -338,7 +348,7 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
 
   @Nullable @OnClick(R.id.trolley_layout_radio_btn) void onRadioClick(ImageButton imageButton) {
 
-    if (accountEntities.size() == items.size()) {/*全选 -> 清空*/
+    if (orderEntities.size() == items.size()) {/*全选 -> 清空*/
       TrolleyActivity.this.observableListenerWrapper(
           Observable.defer(new Func0<Observable<TrolleyEntity>>() {
             @Override public Observable<TrolleyEntity> call() {
@@ -370,9 +380,17 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
     }
   }
 
+  @Nullable @OnClick(R.id.trolley_layout_pay_btn) void onPayClick() {
+
+    OrderCommitActivity.navigateToOrderCommit(TrolleyActivity.this,
+        (ArrayList<TrolleyEntity>) orderEntities);
+    overridePendingTransition(0, 0);
+  }
+
   private void startEnterAnim(int startLocationY) {
 
     rootView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
     if (startLocationY != 0) {
       rootView.setPivotY(startLocationY);
       rootView.setScaleY(0.0f);

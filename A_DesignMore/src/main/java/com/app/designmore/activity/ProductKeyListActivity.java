@@ -508,8 +508,7 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
 
     trolleyItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        TrolleyActivity.startFromLocation(ProductKeyListActivity.this,
-            DensityUtil.getActionBarSize(ProductKeyListActivity.this), TrolleyActivity.Type.UP);
+        TrolleyActivity.startFromLocation(ProductKeyListActivity.this, 0, TrolleyActivity.Type.UP);
         overridePendingTransition(0, 0);
       }
     });

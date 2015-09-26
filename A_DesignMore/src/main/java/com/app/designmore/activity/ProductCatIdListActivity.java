@@ -506,7 +506,7 @@ public class ProductCatIdListActivity extends BaseActivity implements ProductAda
     trolleyItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         TrolleyActivity.startFromLocation(ProductCatIdListActivity.this,
-            DensityUtil.getActionBarSize(ProductCatIdListActivity.this), TrolleyActivity.Type.UP);
+            0, TrolleyActivity.Type.UP);
         overridePendingTransition(0, 0);
       }
     });

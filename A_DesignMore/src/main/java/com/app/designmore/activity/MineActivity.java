@@ -288,7 +288,8 @@ public class MineActivity extends BaseActivity {
    * 地址管理
    */
   @Nullable @OnClick(R.id.mine_layout_address_ll) void onAddressClick(View view) {
-    AddressMangerActivity.startFromLocation(MineActivity.this, DensityUtil.getLocationY(view));
+    AddressMangerActivity.startFromLocation(MineActivity.this, DensityUtil.getLocationY(view),
+        AddressMangerActivity.Type.EXTEND);
     overridePendingTransition(0, 0);
   }
 

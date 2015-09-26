@@ -46,7 +46,7 @@
           android:layout_marginLeft="@dimen/material_16dp"
           android:layout_marginRight="@dimen/material_16dp"
           android:textColor="@color/black"
-          android:textSize="@dimen/material_13sp"
+          android:textSize="@dimen/material_14sp"
           android:text="这是商品名称这是商品名称这是商品名称"
           />
 
@@ -68,7 +68,7 @@
             android:layout_marginBottom="@dimen/material_8dp"
             android:textColor="@color/design_more_red"
             android:textSize="@dimen/material_14sp"
-            android:text="¥ 100"
+            android:text=""
             />
 
         <com.app.designmore.view.MaterialRippleLayout

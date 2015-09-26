@@ -17,7 +17,7 @@ public class BaseResponse {
     "message": ""
   */
 
-  @Expose @SerializedName("code") public int resultCode;
+  @Expose @SerializedName("code") public Integer resultCode;
   @Expose public String message;
 
   public Observable filterWebServiceErrors() {

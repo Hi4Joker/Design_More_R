@@ -550,11 +550,11 @@ public class HomeActivity extends BaseActivity
       @Override public void onClick(View v) {
 
         //AllProductListActivity.navigateToAllProductList(HomeActivity.this, "手表", "手表");
-        ProductKeyListActivity.navigateToProductKeyList(HomeActivity.this, "手表", "手表");
-        overridePendingTransition(0, 0);
+        //ProductKeyListActivity.navigateToProductKeyList(HomeActivity.this, "手表", "手表");
+        //overridePendingTransition(0, 0);
 
-       /* SearchActivity.navigateToSearch(HomeActivity.this);
-        overridePendingTransition(0, 0);*/
+        SearchActivity.navigateToSearch(HomeActivity.this);
+        overridePendingTransition(0, 0);
       }
     });
 
@@ -567,7 +567,7 @@ public class HomeActivity extends BaseActivity
     trolleyItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         TrolleyActivity.startFromLocation(HomeActivity.this,
-            DensityUtil.getActionBarSize(HomeActivity.this), TrolleyActivity.Type.UP);
+            0, TrolleyActivity.Type.UP);
         overridePendingTransition(0, 0);
       }
     });
@@ -589,7 +589,7 @@ public class HomeActivity extends BaseActivity
     super.onNewIntent(intent);
     HomeActivity.this.setIntent(intent);
     /*刷新*/
-    HomeActivity.this.loadData();
+    //HomeActivity.this.loadData();
   }
 
   /**
