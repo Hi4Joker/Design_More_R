@@ -1,6 +1,7 @@
 package com.app.designmore.retrofit;
 
 import com.app.designmore.Constants;
+import com.app.designmore.manager.OkClientInstance;
 import com.app.designmore.retrofit.entity.JournalEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.retrofit.response.JournalResponse;
@@ -55,12 +56,11 @@ public class JournalRetrofit {
         .enableComplexMapKeySerialization() //支持Map的key为复杂对象的形式
         .serializeNulls().create();
 
-    // TODO: 2015/9/1  每次创建OkHttp，待优化
     RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(Constants.BASE_URL)
         .setRequestInterceptor(requestInterceptor)
         .setLogLevel(RestAdapter.LogLevel.FULL)
         .setLog(new AndroidLog("Joker_DesignMore"))
-        .setClient(new OkClient())
+        .setClient(OkClientInstance.getInstance())
         .setConverter(new GsonConverter(gson))
         .build();
 

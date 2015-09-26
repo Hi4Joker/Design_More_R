@@ -116,7 +116,7 @@ public class AddressPresenterImp implements AddressPresenter, ExecutorCallback {
       @Override public void call(List<Province> provinces) {
 
         AddressPresenterImp.this.provinces.clear();
-        AddressPresenterImp.this.provinces = provinces;
+        AddressPresenterImp.this.provinces.addAll(provinces);
         addressView.onInflateFinish(provinces);
       }
     }, new Action1<Throwable>() {

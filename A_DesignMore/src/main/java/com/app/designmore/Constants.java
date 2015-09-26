@@ -30,6 +30,8 @@ public class Constants {
   public static final float SP_18 = 18.0f;
 
   public static final int ACTIVITY_CODE = 4;
+  public static final long HTTP_CONNECT_TIMEOUT = 8 * 1000;
+  public static final long HTTP_READ_TIMEOUT = 8 * 1000;
 
   public static int[] colors = new int[] {
       R.color.design_more_red, R.color.accent_material_light, R.color.design_more_red,
