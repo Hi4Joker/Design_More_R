@@ -10,8 +10,6 @@
   <com.app.designmore.view.MaterialRippleLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:padding="@dimen/material_8dp"
-      android:layout_marginBottom="1dip"
       app:mrl_rippleDimension="20dip"
       app:mrl_rippleFadeDuration="100"
       app:mrl_rippleAlpha="0.4"
@@ -26,7 +24,7 @@
         android:id="@+id/order_address_item_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/material_72dp"
+        android:minHeight="@dimen/material_80dp"
         android:orientation="horizontal"
         android:background="@color/white"
         >
@@ -37,8 +35,8 @@
           android:layout_weight="1"
           android:layout_height="match_parent"
           android:padding="@dimen/material_16dp"
-          android:gravity="start|center_vertical"
-          android:text=""
+          android:gravity="start|top"
+          android:text="ssssss \n ssss"
           android:textSize="@dimen/material_13sp"
           android:textColor="@color/black"
           />
@@ -47,6 +45,7 @@
           android:id="@+id/order_address_item_radio_btn"
           android:layout_width="@dimen/material_32dp"
           android:layout_height="@dimen/material_32dp"
+          android:layout_marginRight="@dimen/material_24dp"
           android:layout_gravity="center_vertical"
           android:scaleType="center"
           android:background="@drawable/transparent_background"

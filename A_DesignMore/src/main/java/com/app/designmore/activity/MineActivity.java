@@ -77,6 +77,7 @@ public class MineActivity extends BaseActivity {
 
   @Nullable @Bind(R.id.mine_layout_root_view) RevealFrameLayout rootView;
   @Nullable @Bind(R.id.transparent_toolbar_root) Toolbar toolbar;
+
   @Nullable @Bind(R.id.mine_layout_srl) SwipeRefreshLayout swipeRefreshLayout;
   @Nullable @Bind(R.id.mine_layout_avatar_iv) ImageView avatarIv;
   @Nullable @Bind(R.id.mine_layout_nickname_tv) TextView nickNameTv;
