@@ -173,7 +173,6 @@ public class RegisterActivity extends BaseActivity {
         .subscribe(new Action1<LoginCodeEntity>() {
           @Override public void call(LoginCodeEntity loginCodeEntity) {
             RegisterActivity.this.code = loginCodeEntity.getCode();
-            codeEt.setText(code);
           }
         });
   }
@@ -212,6 +211,12 @@ public class RegisterActivity extends BaseActivity {
   }
 
   @Nullable @OnClick(R.id.register_layout_register_btn) void onRegisterClick() {
+
+    if (!RegisterActivity.this.code.equals(codeEt.getText().toString())) {
+      toast = DialogManager.getInstance()
+          .showNoMoreDialog(RegisterActivity.this, Gravity.TOP, "验证码错误，请重新输入，O__O …");
+      return;
+    }
 
     /* Username=linuxlan22221&Password=lanlan1111&Action=RegisterUser&Mobile_phone=18622816322&Email=adsfasdf%40aaa.com*/
     Map<String, String> params = new HashMap<>(4);
@@ -271,7 +276,6 @@ public class RegisterActivity extends BaseActivity {
 
   @Override protected void onDestroy() {
     super.onDestroy();
-
     if (toast != null && toast.getParent() != null) {
       getWindowManager().removeViewImmediate(toast);
     }

@@ -8,13 +8,13 @@
     android:orientation="vertical"
     >
 
-
   <include layout="@layout/include_white_toolbar_layout"/>
 
   <com.app.designmore.revealLib.widget.RevealFrameLayout
       android:id="@+id/order_address_layout_rfl"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
+      android:background="@color/white"
       >
 
     <com.app.designmore.view.ProgressLayout

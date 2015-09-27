@@ -32,6 +32,7 @@ import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.usercenter.AddressMangerActivity;
 import com.app.designmore.activity.usercenter.CollectionActivity;
+import com.app.designmore.activity.usercenter.OrderActivity;
 import com.app.designmore.activity.usercenter.ProfileActivity;
 import com.app.designmore.activity.usercenter.SettingActivity;
 import com.app.designmore.activity.usercenter.TrolleyActivity;
@@ -265,7 +266,8 @@ public class MineActivity extends BaseActivity {
    * 我的订单
    */
   @Nullable @OnClick(R.id.mine_layout_order_ll) void onOrderClick(View view) {
-
+    OrderActivity.startFromLocation(MineActivity.this, DensityUtil.getLocationY(view));
+    overridePendingTransition(0, 0);
   }
 
   /**

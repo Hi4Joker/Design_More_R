@@ -205,7 +205,6 @@ public class RetrieveActivity extends BaseActivity {
         .subscribe(new Action1<LoginCodeEntity>() {
           @Override public void call(LoginCodeEntity loginCodeEntity) {
             RetrieveActivity.this.code = loginCodeEntity.getCode();
-            codeEt.setText(code);
           }
         });
   }
@@ -214,6 +213,12 @@ public class RetrieveActivity extends BaseActivity {
 
     if (!password.equals(confirmPassword)) {
       Toast.makeText(RetrieveActivity.this, "两次密码不一致", Toast.LENGTH_LONG).show();
+      return;
+    }
+
+    if(!RetrieveActivity.this.code.equals(codeEt.getText().toString())){
+      toast = DialogManager.getInstance()
+          .showNoMoreDialog(RetrieveActivity.this, Gravity.TOP, "验证码错误，请重新输入，O__O …");
       return;
     }
 

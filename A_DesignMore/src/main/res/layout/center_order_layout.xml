@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/collection_layout_root_view"
+    android:id="@+id/order_layout_root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/transparent"
     >
 
   <include layout="@layout/include_white_toolbar_layout"/>
 
   <com.app.designmore.view.ProgressLayout
-      android:id="@+id/collection_layout_pl"
+      android:id="@+id/order_layout_pl"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       app:progressEmptyStateBackgroundColor="@color/primary_background_color"
@@ -25,18 +24,22 @@
       >
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/collection_layout_srl"
+        android:id="@+id/order_layout_srl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
       <android.support.v7.widget.RecyclerView
-          android:id="@+id/collection_layout_rv"
+          android:id="@+id/order_layout_rv"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
           android:paddingTop="@dimen/material_24dp"
           />
     </android.support.v4.widget.SwipeRefreshLayout>
 
+
+
+
   </com.app.designmore.view.ProgressLayout>
+
 
 </LinearLayout>

@@ -72,6 +72,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
   @Nullable @Bind(R.id.address_manager_layout_root_view) LinearLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
+
   @Nullable @Bind(R.id.address_manager_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.address_manager_layout_srl) SwipeRefreshLayout swipeRefreshLayout;
   @Nullable @Bind(R.id.address_manager_layout_rv) RecyclerView recyclerView;
@@ -421,20 +422,21 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
 
               @Override public void onNext(BaseResponse baseResponse) {
 
-                int oldIndex = items.indexOf(defaultAddress);
+                if (defaultAddress != null) {
+                  int oldIndex = items.indexOf(defaultAddress);
+                  ((ImageButton) recyclerView.getLayoutManager()
+                      .findViewByPosition(oldIndex)
+                      .findViewById(R.id.address_manager_item_radio_btn)).setImageDrawable(
+                      getResources().getDrawable(R.drawable.ic_radio_normal_icon));
+                }
+
                 int newIndex = items.indexOf(addressEntity);
-
-                AddressMangerActivity.this.defaultAddress = addressEntity;
-
-                ((ImageButton) recyclerView.getLayoutManager()
-                    .findViewByPosition(oldIndex)
-                    .findViewById(R.id.address_manager_item_radio_btn)).setImageDrawable(
-                    getResources().getDrawable(R.drawable.ic_radio_normal_icon));
-
                 ((ImageButton) recyclerView.getLayoutManager()
                     .findViewByPosition(newIndex)
                     .findViewById(R.id.address_manager_item_radio_btn)).setImageDrawable(
                     getResources().getDrawable(R.drawable.ic_radio_selected_icon));
+
+                AddressMangerActivity.this.defaultAddress = addressEntity;
               }
             });
   }

@@ -292,6 +292,8 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
 
           @Override public void onNext(List<TrolleyEntity> trolleyEntities) {
 
+            TrolleyActivity.this.orderEntities.clear();
+
             TrolleyActivity.this.items.clear();
             TrolleyActivity.this.items.addAll(trolleyEntities);
             trolleyAdapter.updateItems(items);

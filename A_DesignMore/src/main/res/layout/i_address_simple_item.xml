@@ -26,7 +26,7 @@
         android:id="@+id/order_address_item_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/material_80dp"
+        android:minHeight="@dimen/material_72dp"
         android:orientation="horizontal"
         android:background="@color/white"
         >
