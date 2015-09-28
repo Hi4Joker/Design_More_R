@@ -152,6 +152,15 @@ public class HomeActivity extends BaseActivity
   private ViewPager.OnPageChangeListener simpleOnPageChangeListener =
       new ViewPager.SimpleOnPageChangeListener() {
         @Override public void onPageScrollStateChanged(int state) {
+
+          /*http://blog.udinic.com/2013/09/16/viewpager-and-hardware-acceleration*/
+          if (state != ViewPager.SCROLL_STATE_IDLE) {
+            final int childCount = viewPager.getChildCount();
+            for (int i = 0; i < childCount; i++) {
+              viewPager.getChildAt(i).setLayerType(View.LAYER_TYPE_NONE, null);
+            }
+          }
+
           HomeActivity.this.swipeRefreshLayout.setEnabled(state == ViewPager.SCROLL_STATE_IDLE);
         }
       };
@@ -174,7 +183,7 @@ public class HomeActivity extends BaseActivity
     HomeActivity.this.setSupportActionBar(toolbar);
     //toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
 
-    HomeActivity.this.setupRecyclerAdapter();
+    HomeActivity.this.setupAdapter();
 
     bannerIndicators = new ImageView[] {
         bannerIndicator1, bannerIndicator2, bannerIndicator3
@@ -195,7 +204,7 @@ public class HomeActivity extends BaseActivity
     }
   }
 
-  private void setupRecyclerAdapter() {
+  private void setupAdapter() {
 
     swipeRefreshLayout.setColorSchemeResources(Constants.colors);
     RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
@@ -203,6 +212,11 @@ public class HomeActivity extends BaseActivity
         HomeActivity.this.loadData();
       }
     });
+    bannerAdapter = new HomeBannerAdapter(HomeActivity.this, viewPager);
+
+    bannerAdapter.setCallback(HomeActivity.this);
+    viewPager.setAdapter(bannerAdapter);
+    viewPager.addOnPageChangeListener(bannerAdapter);
 
     LinearLayoutManager categoryLayoutManager = new LinearLayoutManager(HomeActivity.this);
     categoryLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -259,7 +273,6 @@ public class HomeActivity extends BaseActivity
      /*分类： Action=GetIndexCatList*/
     final Map<String, String> catParams = new HashMap<>(1);
     catParams.put("Action", "GetIndexCatList");
-
 
     /*打折：Action: GetProductByStar count:2 page:1*/
     final Map<String, String> discountParams = new HashMap<>(3);
@@ -348,10 +361,7 @@ public class HomeActivity extends BaseActivity
 
   private void setupViewPager() {
 
-    bannerAdapter = new HomeBannerAdapter(HomeActivity.this, bannerItems);
-    viewPager.setAdapter(bannerAdapter);
-    viewPager.addOnPageChangeListener(bannerAdapter);
-    bannerAdapter.setCallback(HomeActivity.this);
+    bannerAdapter.updateItems(bannerItems);
   }
 
   private void showErrorLayout(Throwable error) {
@@ -434,7 +444,7 @@ public class HomeActivity extends BaseActivity
               if ((visibleItemCount + pastVisibleItems) >= totalItemCount && isEndless) {
 
                 /*加载更多*/
-                HomeActivity.this.loadDataMore();
+                //HomeActivity.this.loadDataMore();
               }
             }
           }
@@ -566,8 +576,7 @@ public class HomeActivity extends BaseActivity
 
     trolleyItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        TrolleyActivity.startFromLocation(HomeActivity.this,
-            0, TrolleyActivity.Type.UP);
+        TrolleyActivity.startFromLocation(HomeActivity.this, 0, TrolleyActivity.Type.UP);
         overridePendingTransition(0, 0);
       }
     });
@@ -598,10 +607,6 @@ public class HomeActivity extends BaseActivity
   @Override public void onItemClick(ProductEntity entity) {
     DetailActivity.navigateToDetail(HomeActivity.this, entity.getGoodId());
     overridePendingTransition(0, 0);
-  }
-
-  @Override public void onRecycling(int position, boolean smoothScroll) {
-    this.viewPager.setCurrentItem(position, smoothScroll);
   }
 
   @Override public void changeIndicator(int position) {
@@ -660,6 +665,8 @@ public class HomeActivity extends BaseActivity
     }
     this.toast = null;
     this.progressDialog = null;
+
+    this.bannerAdapter.detach();
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();
   }
 }

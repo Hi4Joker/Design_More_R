@@ -152,6 +152,9 @@ public class AllProductListActivity extends BaseActivity
     intent.putExtra(KEYWORD, keyword);
     intent.putExtra(TITLE, title);
     startingActivity.startActivity(intent);
+
+
+
   }
 
   @Override protected void onCreate(Bundle savedInstanceState) {

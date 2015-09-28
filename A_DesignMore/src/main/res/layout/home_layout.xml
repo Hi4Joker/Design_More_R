@@ -100,7 +100,7 @@
                       android:layout_height="@dimen/material_160dp"
                       android:layout_gravity="top"
                       android:background="@color/white"
-                      app:layout_scrollFlags="scroll"
+                      android:overScrollMode="never"
                       />
 
                   <LinearLayout

@@ -423,7 +423,6 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
    * ********************Adapter回调
    */
   @Override public void onRadioClick(final TrolleyEntity trolleyEntity) {
-
     TrolleyActivity.this.observableListenerWrapper(
         Observable.defer(new Func0<Observable<TrolleyEntity>>() {
           @Override public Observable<TrolleyEntity> call() {

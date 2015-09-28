@@ -3,6 +3,7 @@ package com.app.designmore.view.dialog;
 import android.app.Activity;
 import android.app.Dialog;
 import android.graphics.Color;
+import android.graphics.Outline;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
@@ -12,8 +13,10 @@ import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.view.Window;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -65,6 +68,8 @@ public class CustomShareDialog extends Dialog {
   @Override public void onAttachedToWindow() {
     super.onAttachedToWindow();
     ButterKnife.bind(CustomShareDialog.this);
+
+    //weiboBtn.setOutlineProvider(viewOutlineProvider);
   }
 
   @Override public void onDetachedFromWindow() {

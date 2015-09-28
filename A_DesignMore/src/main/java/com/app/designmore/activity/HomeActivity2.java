@@ -125,6 +125,8 @@ public class HomeActivity2 extends BaseActivity
   private volatile boolean isEndless = true;
   private volatile int count = 1;
 
+  private HomeBannerAdapter bannerAdapter;
+
   private Subscription subscription = Subscriptions.empty();
 
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
@@ -187,6 +189,7 @@ public class HomeActivity2 extends BaseActivity
         HomeActivity2.this.loadData();
       }
     });
+
 
     LinearLayoutManager categoryLayoutManager = new LinearLayoutManager(HomeActivity2.this);
     categoryLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -334,7 +337,7 @@ public class HomeActivity2 extends BaseActivity
 
   private void setupViewPager() {
 
-    HomeBannerAdapter homeBannerAdapter = new HomeBannerAdapter(HomeActivity2.this, bannerItems);
+    HomeBannerAdapter homeBannerAdapter = new HomeBannerAdapter(HomeActivity2.this, viewPager);
     viewPager.setAdapter(homeBannerAdapter);
   }
 
@@ -551,8 +554,7 @@ public class HomeActivity2 extends BaseActivity
 
     trolleyItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        TrolleyActivity.startFromLocation(HomeActivity2.this,
-            0, TrolleyActivity.Type.UP);
+        TrolleyActivity.startFromLocation(HomeActivity2.this, 0, TrolleyActivity.Type.UP);
         overridePendingTransition(0, 0);
       }
     });

@@ -203,6 +203,13 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
                 ProductKeyListActivity.this.updateTextColor();
               }
             })
+            .doOnTerminate(new Action0() {
+              @Override public void call() {
+                if (progressDialog != null && progressDialog.isShowing()) {
+                  progressDialog.dismiss();
+                }
+              }
+            })
             .filter(new Func1<List<ProductEntity>, Boolean>() {
               @Override public Boolean call(List<ProductEntity> productEntities) {
                 return !subscription.isUnsubscribed();
@@ -222,8 +229,6 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
                     swipeRefreshLayout.setRefreshing(false);
                   } else if (!progressLayout.isContent()) {
                     progressLayout.showContent();
-                  } else if (progressDialog != null && progressDialog.isShowing()) {
-                    progressDialog.dismiss();
                   }
                 } else if (items != null && items.size() == 0) {
                   progressLayout.showEmpty(getResources().getDrawable(R.drawable.ic_grey_logo_icon),

@@ -104,7 +104,6 @@ public class DetailActivity extends BaseActivity
   private CustomAccountDialog customAccountDialog;
   private ViewGroup toast;
 
-  //private ViewPager viewPager;
   private List<DetailResponse.Detail.ProductImage> productImages;
   private DetailEntity currentEntity;
 
@@ -126,6 +125,17 @@ public class DetailActivity extends BaseActivity
       new ViewPager.SimpleOnPageChangeListener() {
         @Override public void onPageSelected(int position) {
           DetailActivity.this.bannerPageTv.setText(++position + "/" + productImages.size());
+        }
+
+        @Override public void onPageScrollStateChanged(int state) {
+
+          /*http://blog.udinic.com/2013/09/16/viewpager-and-hardware-acceleration*/
+          if (state != ViewPager.SCROLL_STATE_IDLE) {
+            final int childCount = viewPager.getChildCount();
+            for (int i = 0; i < childCount; i++) {
+              viewPager.getChildAt(i).setLayerType(View.LAYER_TYPE_NONE, null);
+            }
+          }
         }
       };
 

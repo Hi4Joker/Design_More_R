@@ -71,18 +71,10 @@ public class JournalDetailActivity extends BaseActivity implements CustomShareDi
       super.onPageFinished(view, url);
     }
 
-    @Override public void onReceivedHttpError(WebView view, WebResourceRequest request,
-        WebResourceResponse errorResponse) {
-
-      //Log.e(TAG, "onReceivedHttpError: " + errorResponse);
-      super.onReceivedHttpError(view, request, errorResponse);
-    }
-
-    @Override
-    public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-
-      //Log.e(TAG, "error: " + error.getErrorCode());
-      super.onReceivedError(view, request, error);
+    @Override public void onReceivedError(WebView view, int errorCode, String description,
+        String failingUrl) {
+      if (errorCode == WebViewClient.ERROR_FILE_NOT_FOUND) {
+      }
     }
   }
 
@@ -117,9 +109,6 @@ public class JournalDetailActivity extends BaseActivity implements CustomShareDi
     // 获取webView设置
     webSettings = webView.getSettings();
 
-    // 支持缩放
-    webSettings.setSupportZoom(true);
-
     // 设置默认缩放级别
     webSettings.setDefaultZoom(WebSettings.ZoomDensity.FAR);
 
@@ -132,7 +121,6 @@ public class JournalDetailActivity extends BaseActivity implements CustomShareDi
     //设置默认显示编码
     webSettings.setDefaultTextEncodingName("UTF-8");
 
-    webView.setWebChromeClient(new WebChromeClient());
     webView.setWebViewClient(new MyWebViewClient());
 
     /*屏蔽掉长按事件，因为webView长按时将会调用系统的复制控件*/
@@ -149,7 +137,6 @@ public class JournalDetailActivity extends BaseActivity implements CustomShareDi
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
-
     getMenuInflater().inflate(R.menu.menu_single, menu);
 
     MenuItem shareItem = menu.findItem(R.id.action_inbox);

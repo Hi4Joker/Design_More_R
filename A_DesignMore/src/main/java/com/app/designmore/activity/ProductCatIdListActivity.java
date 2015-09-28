@@ -203,6 +203,13 @@ public class ProductCatIdListActivity extends BaseActivity implements ProductAda
                 ProductCatIdListActivity.this.updateTextColor();
               }
             })
+            .doOnTerminate(new Action0() {
+              @Override public void call() {
+                if (progressDialog != null && progressDialog.isShowing()) {
+                  progressDialog.dismiss();
+                }
+              }
+            })
             .filter(new Func1<List<ProductEntity>, Boolean>() {
               @Override public Boolean call(List<ProductEntity> productEntities) {
                 return !subscription.isUnsubscribed();
@@ -222,8 +229,6 @@ public class ProductCatIdListActivity extends BaseActivity implements ProductAda
                     swipeRefreshLayout.setRefreshing(false);
                   } else if (!progressLayout.isContent()) {
                     progressLayout.showContent();
-                  } else if (progressDialog != null && progressDialog.isShowing()) {
-                    progressDialog.dismiss();
                   }
                 } else if (items != null && items.size() == 0) {
                   progressLayout.showEmpty(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
@@ -460,6 +465,7 @@ public class ProductCatIdListActivity extends BaseActivity implements ProductAda
 
     if (currentCode != 4) {
       this.code = 4;
+      this.order_by = 0;
     } else {
       if (this.currentOrderBy == 1) {
         this.order_by = 0;
@@ -505,8 +511,8 @@ public class ProductCatIdListActivity extends BaseActivity implements ProductAda
 
     trolleyItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        TrolleyActivity.startFromLocation(ProductCatIdListActivity.this,
-            0, TrolleyActivity.Type.UP);
+        TrolleyActivity.startFromLocation(ProductCatIdListActivity.this, 0,
+            TrolleyActivity.Type.UP);
         overridePendingTransition(0, 0);
       }
     });
