@@ -51,7 +51,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
 
   @Override public void finish() {
     super.finish();
-    overridePendingTransition(0, R.anim.sacle_out);
+    overridePendingTransition(0, 0);
   }
 
   public abstract void exit();
