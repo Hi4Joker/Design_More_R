@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import butterknife.ButterKnife;
+import com.app.designmore.R;
 import com.app.designmore.event.FinishEvent;
 import com.app.designmore.helper.MyApplication;
 import com.app.designmore.manager.EventBusInstance;
@@ -50,7 +51,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
 
   @Override public void finish() {
     super.finish();
-    overridePendingTransition(0, 0);
+    overridePendingTransition(0, R.anim.sacle_out);
   }
 
   public abstract void exit();

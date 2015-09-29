@@ -272,6 +272,7 @@ public class RegisterActivity extends BaseActivity {
 
   @Override public void exit() {
     RegisterActivity.this.finish();
+    overridePendingTransition(0, android.R.anim.slide_out_right);
   }
 
   @Override protected void onDestroy() {
@@ -281,7 +282,7 @@ public class RegisterActivity extends BaseActivity {
     }
     this.toast = null;
     this.progressDialog = null;
-    if (!subscription.isUnsubscribed()) subscription.unsubscribe();
+    if (subscription != null && !subscription.isUnsubscribed()) subscription.unsubscribe();
     if (compositeSubscription.hasSubscriptions()) compositeSubscription.clear();
   }
 }

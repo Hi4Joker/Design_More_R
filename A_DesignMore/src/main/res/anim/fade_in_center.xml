@@ -3,8 +3,7 @@
     android:shareInterpolator="false"
     android:duration="@android:integer/config_mediumAnimTime"
     >
-  <!--DialogPlus-->
-    <!--CENTER-->
+
   <scale
       android:fromXScale="95%"
       android:toXScale="100%"
@@ -15,8 +14,8 @@
       />
 
   <alpha
-      android:fromAlpha="0"
-      android:toAlpha="1"
+      android:fromAlpha="0.0"
+      android:toAlpha="1.0"
       />
 
 </set>

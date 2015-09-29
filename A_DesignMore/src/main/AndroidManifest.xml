@@ -54,7 +54,7 @@
         android:name=".activity.LoginActivity"
         android:screenOrientation="portrait"
         android:launchMode="singleTop"
-        android:theme="@style/AppTheme.TransparentActivity"
+        android:theme="@style/AppTheme.WhiteActivity"
         >
     </activity>
 

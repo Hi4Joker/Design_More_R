@@ -166,13 +166,14 @@ public class LoginActivity extends BaseActivity {
   }
 
   @Nullable @OnClick(R.id.login_layout_register_tv) void onRegisterClick() {
+
     LoginActivity.this.startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
-    overridePendingTransition(0, 0);
+    overridePendingTransition(android.R.anim.slide_in_left, 0);
   }
 
   @Nullable @OnClick(R.id.login_layout_retrieve_password_tv) void onRetrieveClick() {
     LoginActivity.this.startActivity(new Intent(LoginActivity.this, RetrieveActivity.class));
-    overridePendingTransition(0, 0);
+    overridePendingTransition(android.R.anim.slide_in_left, 0);
   }
 
   @Nullable @OnClick(R.id.login_layout_login_btn) void onLoginClick() {
