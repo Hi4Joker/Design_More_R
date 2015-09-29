@@ -397,8 +397,7 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
 
     trolleyItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        TrolleyActivity.startFromLocation(JournalActivity.this,
-            0, TrolleyActivity.Type.UP);
+        TrolleyActivity.startFromLocation(JournalActivity.this, 0, TrolleyActivity.Type.UP);
         overridePendingTransition(0, 0);
       }
     });
@@ -416,8 +415,7 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
 
   @Override public void onNoData() {
     isEndless = false;
-    toast =
-        DialogManager.getInstance().showNoMoreDialog(JournalActivity.this, Gravity.TOP, null);
+    toast = DialogManager.getInstance().showNoMoreDialog(JournalActivity.this, Gravity.TOP, null);
   }
 
   @Override public void onError(Throwable error) {

@@ -2,19 +2,13 @@ package com.app.designmore.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.BitmapFactory;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,7 +31,6 @@ import com.app.designmore.activity.usercenter.ProfileActivity;
 import com.app.designmore.activity.usercenter.SettingActivity;
 import com.app.designmore.activity.usercenter.TrolleyActivity;
 import com.app.designmore.event.FinishEvent;
-import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.helper.DBHelper;
 import com.app.designmore.manager.CropCircleTransformation;
 import com.app.designmore.manager.DialogManager;
@@ -50,20 +43,14 @@ import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.MaterialRippleLayout;
-import com.app.designmore.view.ProgressLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.trello.rxlifecycle.ActivityEvent;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeoutException;
-import retrofit.RetrofitError;
 import rx.Subscriber;
-import rx.functions.Action0;
 import rx.functions.Action1;
 
 /**
@@ -89,12 +76,6 @@ public class MineActivity extends BaseActivity {
 
   private SupportAnimator revealAnimator;
   private ViewGroup toast;
-
-  private View.OnClickListener retryClickListener = new View.OnClickListener() {
-    @Override public void onClick(View v) {
-      MineActivity.this.loadData();
-    }
-  };
 
   public static void navigateToUserCenter(AppCompatActivity startingActivity) {
     Intent intent = new Intent(startingActivity, MineActivity.class);

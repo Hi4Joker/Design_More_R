@@ -519,6 +519,7 @@ public class HomeActivity extends BaseActivity
    * 上新
    */
   @Nullable @OnClick(R.id.bottom_bar_fashion_rl) void onFashionClick() {
+
     FashionActivity.navigateToFashion(HomeActivity.this);
     overridePendingTransition(0, 0);
   }

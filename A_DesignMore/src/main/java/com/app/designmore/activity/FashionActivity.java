@@ -44,7 +44,6 @@ import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.utils.DensityUtil;
-import com.app.designmore.utils.MarginDecoration;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.MaterialRippleLayout;
 import com.app.designmore.view.ProgressLayout;
@@ -108,6 +107,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
   };
 
   public static void navigateToFashion(AppCompatActivity startingActivity) {
+
     Intent intent = new Intent(startingActivity, FashionActivity.class);
     startingActivity.startActivity(intent);
   }

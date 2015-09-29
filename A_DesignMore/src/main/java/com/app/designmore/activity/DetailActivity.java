@@ -104,6 +104,7 @@ public class DetailActivity extends BaseActivity
   private CustomAccountDialog customAccountDialog;
   private ViewGroup toast;
 
+  //private ViewPager viewPager;
   private List<DetailResponse.Detail.ProductImage> productImages;
   private DetailEntity currentEntity;
 
@@ -125,17 +126,6 @@ public class DetailActivity extends BaseActivity
       new ViewPager.SimpleOnPageChangeListener() {
         @Override public void onPageSelected(int position) {
           DetailActivity.this.bannerPageTv.setText(++position + "/" + productImages.size());
-        }
-
-        @Override public void onPageScrollStateChanged(int state) {
-
-          /*http://blog.udinic.com/2013/09/16/viewpager-and-hardware-acceleration*/
-          if (state != ViewPager.SCROLL_STATE_IDLE) {
-            final int childCount = viewPager.getChildCount();
-            for (int i = 0; i < childCount; i++) {
-              viewPager.getChildAt(i).setLayerType(View.LAYER_TYPE_NONE, null);
-            }
-          }
         }
       };
 
@@ -467,9 +457,12 @@ public class DetailActivity extends BaseActivity
   }
 
   private void showAnim() {
-    ObjectAnimator scaleXAnim = ObjectAnimator.ofFloat(revealFrameLayout, "scaleX", 1.0f, 0.8f);
+
+    this.revealFrameLayout.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
+    ObjectAnimator scaleXAnim = ObjectAnimator.ofFloat(revealFrameLayout, "scaleX", 1.0f, 0.9f);
     scaleXAnim.setDuration(Constants.MILLISECONDS_400);
-    ObjectAnimator scaleYAnim = ObjectAnimator.ofFloat(revealFrameLayout, "scaleY", 1.0f, 0.8f);
+    ObjectAnimator scaleYAnim = ObjectAnimator.ofFloat(revealFrameLayout, "scaleY", 1.0f, 0.9f);
     scaleYAnim.setDuration(Constants.MILLISECONDS_400);
 
     ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(revealFrameLayout, "alpha", 1.0f, 0.5f);
@@ -477,14 +470,14 @@ public class DetailActivity extends BaseActivity
 
     ObjectAnimator rotationXAnim =
         ObjectAnimator.ofFloat(revealFrameLayout, "rotationX", 0.0f, 10.0f);
-    rotationXAnim.setDuration(Constants.MILLISECONDS_400);
+    rotationXAnim.setDuration(Constants.MILLISECONDS_300);
 
     ObjectAnimator resumeAnim = ObjectAnimator.ofFloat(revealFrameLayout, "rotationX", 10.0f, 0.0f);
     resumeAnim.setDuration(Constants.MILLISECONDS_400);
     resumeAnim.setStartDelay(Constants.MILLISECONDS_300);
 
     ObjectAnimator transYAnim = ObjectAnimator.ofFloat(revealFrameLayout, "translationY", 0.0f,
-        -0.1f * revealFrameLayout.getHeight(), 0.0f);
+        -0.05f * revealFrameLayout.getHeight());
     transYAnim.setDuration(Constants.MILLISECONDS_400);
 
     AnimatorSet showAnim = new AnimatorSet();
@@ -493,15 +486,21 @@ public class DetailActivity extends BaseActivity
       @Override public void onAnimationStart(Animator animation) {
         DetailActivity.this.customAccountDialog.show();
       }
+
+      @Override public void onAnimationEnd(Animator animation) {
+        DetailActivity.this.revealFrameLayout.setLayerType(View.LAYER_TYPE_NONE, null);
+      }
     });
     showAnim.start();
   }
 
   private void hiddenAnim() {
 
-    ObjectAnimator scaleXAnim = ObjectAnimator.ofFloat(revealFrameLayout, "scaleX", 0.8f, 1.0f);
+    this.revealFrameLayout.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
+    ObjectAnimator scaleXAnim = ObjectAnimator.ofFloat(revealFrameLayout, "scaleX", 0.9f, 1.0f);
     scaleXAnim.setDuration(Constants.MILLISECONDS_400);
-    ObjectAnimator scaleYAnim = ObjectAnimator.ofFloat(revealFrameLayout, "scaleY", 0.8f, 1.0f);
+    ObjectAnimator scaleYAnim = ObjectAnimator.ofFloat(revealFrameLayout, "scaleY", 0.9f, 1.0f);
     scaleYAnim.setDuration(Constants.MILLISECONDS_400);
 
     ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(revealFrameLayout, "alpha", 0.5f, 1.0f);
@@ -512,16 +511,22 @@ public class DetailActivity extends BaseActivity
     rotationXAnim.setDuration(Constants.MILLISECONDS_200);
 
     ObjectAnimator resumeAnim = ObjectAnimator.ofFloat(revealFrameLayout, "rotationX", 10.0f, 0.0f);
-    resumeAnim.setDuration(Constants.MILLISECONDS_200);
+    resumeAnim.setDuration(Constants.MILLISECONDS_300);
     resumeAnim.setStartDelay(Constants.MILLISECONDS_200);
 
     ObjectAnimator transYAnim = ObjectAnimator.ofFloat(revealFrameLayout, "translationY",
-        -0.1f * revealFrameLayout.getHeight(), 0.0f);
+        -0.05f * revealFrameLayout.getHeight(), 0.0f);
     transYAnim.setDuration(Constants.MILLISECONDS_400);
 
-    AnimatorSet showAnim = new AnimatorSet();
-    showAnim.playTogether(scaleXAnim, rotationXAnim, resumeAnim, transYAnim, alphaAnim, scaleYAnim);
-    showAnim.start();
+    AnimatorSet hideAnim = new AnimatorSet();
+    hideAnim.playTogether(scaleXAnim, rotationXAnim, resumeAnim, transYAnim, alphaAnim, scaleYAnim);
+    hideAnim.addListener(new AnimatorListenerAdapter() {
+      @Override public void onAnimationEnd(Animator animation) {
+        DetailActivity.this.revealFrameLayout.setLayerType(View.LAYER_TYPE_NONE, null);
+      }
+    });
+
+    hideAnim.start();
   }
 
   @Override public void exit() {
