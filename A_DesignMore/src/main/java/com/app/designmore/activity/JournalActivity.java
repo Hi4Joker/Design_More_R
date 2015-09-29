@@ -49,6 +49,7 @@ import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollEvent;
 import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
 import com.trello.rxlifecycle.ActivityEvent;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +63,7 @@ import rx.functions.Action1;
 public class JournalActivity extends BaseActivity implements JournalAdapter.Callback {
 
   private static final String TAG = JournalActivity.class.getSimpleName();
+  private static WeakReference<AppCompatActivity> weakReference;
 
   @Nullable @Bind(R.id.journal_layout_root_view) RevealFrameLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
@@ -105,6 +107,11 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
   };
 
   public static void navigateToJournal(AppCompatActivity startingActivity) {
+
+    if (!(startingActivity instanceof HomeActivity)) {
+      weakReference = new WeakReference<>(startingActivity);
+    }
+
     Intent intent = new Intent(startingActivity, JournalActivity.class);
     startingActivity.startActivity(intent);
   }
@@ -331,6 +338,13 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
       @Override public void onAnimationEnd() {
+
+        if (weakReference!=null&&weakReference.get() != null) {
+          weakReference.get().finish();
+          weakReference.clear();
+          weakReference = null;
+        }
+
         if (progressLayout != null) JournalActivity.this.loadData();
       }
     });
@@ -342,7 +356,7 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
    */
   @Nullable @OnClick(R.id.bottom_bar_home_rl) void onFashionClick() {
     HomeActivity.navigateToHome(JournalActivity.this);
-    JournalActivity.this.finish();
+    //JournalActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -351,7 +365,7 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
    */
   @Nullable @OnClick(R.id.bottom_bar_fashion_rl) void onJournalClick() {
     FashionActivity.navigateToFashion(JournalActivity.this);
-    JournalActivity.this.finish();
+    //JournalActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -360,7 +374,7 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
    */
   @Nullable @OnClick(R.id.bottom_bar_mine_rl) void onMineClick() {
     MineActivity.navigateToUserCenter(JournalActivity.this);
-    JournalActivity.this.finish();
+    //JournalActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 

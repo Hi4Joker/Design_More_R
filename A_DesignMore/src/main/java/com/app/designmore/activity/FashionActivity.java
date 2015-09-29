@@ -51,6 +51,7 @@ import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollEvent;
 import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
 import com.trello.rxlifecycle.ActivityEvent;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,6 +65,7 @@ import rx.functions.Action1;
 public class FashionActivity extends BaseActivity implements FashionAdapter.Callback {
 
   private static final String TAG = FashionActivity.class.getSimpleName();
+  private static WeakReference<AppCompatActivity> weakReference;
 
   @Nullable @Bind(R.id.fashion_layout_root_view) RevealFrameLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
@@ -107,6 +109,10 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
   };
 
   public static void navigateToFashion(AppCompatActivity startingActivity) {
+
+    if (!(startingActivity instanceof HomeActivity)) {
+      weakReference = new WeakReference<>(startingActivity);
+    }
 
     Intent intent = new Intent(startingActivity, FashionActivity.class);
     startingActivity.startActivity(intent);
@@ -341,6 +347,13 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
       @Override public void onAnimationEnd() {
+
+        if (weakReference!=null&&weakReference.get() != null) {
+          weakReference.get().finish();
+          weakReference.clear();
+          weakReference = null;
+        }
+
         if (progressLayout != null) FashionActivity.this.loadData();
       }
     });
@@ -352,7 +365,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
    */
   @Nullable @OnClick(R.id.bottom_bar_home_rl) void onHomeClick() {
     HomeActivity.navigateToHome(FashionActivity.this);
-    FashionActivity.this.finish();
+    //FashionActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -361,7 +374,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
    */
   @Nullable @OnClick(R.id.bottom_bar_journal_rl) void onJournalClick() {
     JournalActivity.navigateToJournal(FashionActivity.this);
-    FashionActivity.this.finish();
+    //FashionActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -371,7 +384,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
   @Nullable @OnClick(R.id.bottom_bar_mine_rl) void onMineClick() {
 
     MineActivity.navigateToUserCenter(FashionActivity.this);
-    FashionActivity.this.finish();
+    //FashionActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 

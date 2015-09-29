@@ -48,6 +48,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.trello.rxlifecycle.ActivityEvent;
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 import rx.Subscriber;
@@ -59,6 +60,7 @@ import rx.functions.Action1;
 public class MineActivity extends BaseActivity {
 
   private static final String TAG = MineActivity.class.getSimpleName();
+  private static WeakReference<AppCompatActivity> weakReference;
   public static final String FILE_URL = "FILE_URL";
   public static final String NICKNAME = "NICKNAME";
 
@@ -78,6 +80,11 @@ public class MineActivity extends BaseActivity {
   private ViewGroup toast;
 
   public static void navigateToUserCenter(AppCompatActivity startingActivity) {
+
+    if (!(startingActivity instanceof HomeActivity)) {
+      weakReference = new WeakReference<>(startingActivity);
+    }
+
     Intent intent = new Intent(startingActivity, MineActivity.class);
     startingActivity.startActivity(intent);
   }
@@ -127,7 +134,14 @@ public class MineActivity extends BaseActivity {
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
       @Override public void onAnimationEnd() {
-        MineActivity.this.loadData();
+
+        if (weakReference != null && weakReference.get() != null) {
+          weakReference.get().finish();
+          weakReference.clear();
+          weakReference = null;
+        }
+
+        if (swipeRefreshLayout != null) MineActivity.this.loadData();
       }
     });
     revealAnimator.start();
@@ -282,7 +296,7 @@ public class MineActivity extends BaseActivity {
    */
   @Nullable @OnClick(R.id.bottom_bar_home_rl) void onMineClick() {
     HomeActivity.navigateToHome(MineActivity.this);
-    MineActivity.this.finish();
+    //MineActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -291,7 +305,7 @@ public class MineActivity extends BaseActivity {
    */
   @Nullable @OnClick(R.id.bottom_bar_fashion_rl) void onFashionClick() {
     FashionActivity.navigateToFashion(MineActivity.this);
-    MineActivity.this.finish();
+    //MineActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -300,7 +314,7 @@ public class MineActivity extends BaseActivity {
    */
   @Nullable @OnClick(R.id.bottom_bar_journal_rl) void onJournalClick() {
     JournalActivity.navigateToJournal(MineActivity.this);
-    MineActivity.this.finish();
+    //MineActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
