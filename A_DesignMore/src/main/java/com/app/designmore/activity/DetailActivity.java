@@ -141,19 +141,19 @@ public class DetailActivity extends BaseActivity
         }
       };
 
+  private PhotoViewAttacher.OnPhotoTapListener photoTapListener =
+      new PhotoViewAttacher.OnPhotoTapListener() {
+        @Override public void onPhotoTap(View view, float x, float y) {
+          DetailActivity.this.collapsingThumb();
+        }
+      };
 
-  private PhotoViewAttacher.OnPhotoTapListener photoTapListener = new PhotoViewAttacher.OnPhotoTapListener() {
-    @Override public void onPhotoTap(View view, float x, float y) {
-      DetailActivity.this.collapsingThumb();
-    }
-  };
-
-
-  private PhotoViewAttacher.OnViewTapListener viewTapListener = new PhotoViewAttacher.OnViewTapListener() {
-    @Override public void onViewTap(View view, float x, float y) {
-      DetailActivity.this.collapsingThumb();
-    }
-  };
+  private PhotoViewAttacher.OnViewTapListener viewTapListener =
+      new PhotoViewAttacher.OnViewTapListener() {
+        @Override public void onViewTap(View view, float x, float y) {
+          DetailActivity.this.collapsingThumb();
+        }
+      };
 
   public static void navigateToDetail(AppCompatActivity startingActivity, String goodId) {
     Intent intent = new Intent(startingActivity, DetailActivity.class);
@@ -177,7 +177,8 @@ public class DetailActivity extends BaseActivity
     this.goodId = getIntent().getStringExtra(GOOD_ID);
 
     this.photoViewAttacher = new PhotoViewAttacher(expandedIv);
-    this.photoViewAttacher.setAllowParentInterceptOnEdge(true);
+    this.photoViewAttacher.setAllowParentInterceptOnEdge(false);
+    this.photoViewAttacher.setScaleType(ImageView.ScaleType.FIT_CENTER);
     this.photoViewAttacher.setOnViewTapListener(viewTapListener);
     this.photoViewAttacher.setOnPhotoTapListener(photoTapListener);
 
