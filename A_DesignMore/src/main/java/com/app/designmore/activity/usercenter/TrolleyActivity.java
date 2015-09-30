@@ -195,16 +195,16 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
               spannableStringBuilder.append(totalPrice + "");
 
               spannableStringBuilder.setSpan(
-                  new AbsoluteSizeSpan(DensityUtil.sp2px(TrolleyActivity.this, Constants.SP_11)), 0,
+                  new AbsoluteSizeSpan(DensityUtil.sp2px( Constants.SP_11)), 0,
                   2, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
               spannableStringBuilder.setSpan(
-                  new AbsoluteSizeSpan(DensityUtil.sp2px(TrolleyActivity.this, Constants.SP_8)), 3,
+                  new AbsoluteSizeSpan(DensityUtil.sp2px( Constants.SP_8)), 3,
                   3, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
               spannableStringBuilder.setSpan(
                   new ForegroundColorSpan(getResources().getColor(R.color.design_more_red)), 3, 3,
                   Spanned.SPAN_INCLUSIVE_INCLUSIVE);
               spannableStringBuilder.setSpan(
-                  new AbsoluteSizeSpan(DensityUtil.sp2px(TrolleyActivity.this, Constants.SP_16)), 4,
+                  new AbsoluteSizeSpan(DensityUtil.sp2px( Constants.SP_16)), 4,
                   spannableStringBuilder.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
               spannableStringBuilder.setSpan(
                   new ForegroundColorSpan(getResources().getColor(R.color.design_more_red)), 4,

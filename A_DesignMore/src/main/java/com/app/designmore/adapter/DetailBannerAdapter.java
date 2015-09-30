@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.app.designmore.R;
+import com.app.designmore.retrofit.entity.ProductEntity;
 import com.app.designmore.retrofit.response.DetailResponse;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -21,6 +22,7 @@ public class DetailBannerAdapter extends PagerAdapter {
   private Context context;
   private List<DetailResponse.Detail.ProductImage> thumbUrls;
   private LayoutInflater layoutInflater;
+  private Callback callback;
 
   public DetailBannerAdapter(Context context, List<DetailResponse.Detail.ProductImage> thumbUrls) {
     this.context = context;
@@ -36,7 +38,7 @@ public class DetailBannerAdapter extends PagerAdapter {
     return view == object;
   }
 
-  @Override public Object instantiateItem(ViewGroup container, int position) {
+  @Override public Object instantiateItem(ViewGroup container, final int position) {
 
     View view = layoutInflater.inflate(R.layout.i_banner_item, container, false);
     ImageView imageView = (ImageView) view.findViewById(R.id.banner_item_iv);
@@ -50,6 +52,12 @@ public class DetailBannerAdapter extends PagerAdapter {
         .diskCacheStrategy(DiskCacheStrategy.RESULT)
         .into(imageView);
 
+    imageView.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        if (callback != null) callback.onItemClick(thumbUrls.get(position).thumbUrl);
+      }
+    });
+
     container.addView(view);
     return view;
   }
@@ -58,7 +66,12 @@ public class DetailBannerAdapter extends PagerAdapter {
     container.removeView((View) object);
   }
 
-  @Override public void finishUpdate(ViewGroup container) {
-    super.finishUpdate(container);
+  public void setCallback(Callback callback) {
+    this.callback = callback;
+  }
+
+  public interface Callback {
+
+    void onItemClick(String thumbUrl);
   }
 }

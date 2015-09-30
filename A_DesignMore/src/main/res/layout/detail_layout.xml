@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -345,5 +344,11 @@
     </com.app.designmore.view.ProgressLayout>
   </com.app.designmore.revealLib.widget.RevealFrameLayout>
 
+  <uk.co.senab.photoview.PhotoView
+      android:id="@+id/detail_layout_trolley_expanded_iv"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:visibility="invisible"
+      />
 
 </FrameLayout>

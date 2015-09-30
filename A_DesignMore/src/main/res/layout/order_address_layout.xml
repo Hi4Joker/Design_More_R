@@ -35,14 +35,12 @@
           android:id="@+id/order_address_layout_srl"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
-          android:layout_marginTop="@dimen/material_24dp"
-          android:background="@color/primary_background_color"
           >
         <android.support.v7.widget.RecyclerView
             android:id="@+id/order_address_layout_rl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/material_24dp"
+            android:paddingTop="@dimen/material_24dp"
             android:background="@color/primary_background_color"
             />
       </android.support.v4.widget.SwipeRefreshLayout>

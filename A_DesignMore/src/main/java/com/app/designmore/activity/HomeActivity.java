@@ -107,7 +107,6 @@ public class HomeActivity extends BaseActivity
   @Nullable @Bind(R.id.home_layout_banner_indicator2) ImageView bannerIndicator2;
   @Nullable @Bind(R.id.home_layout_banner_indicator3) ImageView bannerIndicator3;
 
-  private SupportAnimator revealAnimator;
   private ProgressDialog progressDialog;
   private ViewGroup toast;
 
@@ -212,8 +211,8 @@ public class HomeActivity extends BaseActivity
         HomeActivity.this.loadData();
       }
     });
-    bannerAdapter = new HomeBannerAdapter(HomeActivity.this, viewPager);
 
+    bannerAdapter = new HomeBannerAdapter(HomeActivity.this, viewPager);
     bannerAdapter.setCallback(HomeActivity.this);
     viewPager.setAdapter(bannerAdapter);
     viewPager.addOnPageChangeListener(bannerAdapter);
@@ -502,7 +501,7 @@ public class HomeActivity extends BaseActivity
     final Rect bounds = new Rect();
     rootView.getHitRect(bounds);
 
-    revealAnimator =
+    SupportAnimator revealAnimator =
         ViewAnimationUtils.createCircularReveal(rootView.getChildAt(0), 0, bounds.left, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
     revealAnimator.setDuration(Constants.MILLISECONDS_400);

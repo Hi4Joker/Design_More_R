@@ -81,5 +81,8 @@ dependencies {
   /*Greenrobot Library*/
   compile 'de.greenrobot:eventbus:2.4.0'
   compile 'de.greenrobot:greendao:2.0.0'
+
+  
   compile 'com.commonsware.cwac:camera:0.6.12'
+  compile 'com.commit451:PhotoView:1.2.4'
 }

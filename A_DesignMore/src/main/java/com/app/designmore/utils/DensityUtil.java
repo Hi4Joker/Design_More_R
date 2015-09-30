@@ -41,7 +41,7 @@ public class DensityUtil {
   /**
    * 将px值转换为sp值
    */
-  public static int px2sp(Context context, float pxValue) {
+  public static int px2sp(float pxValue) {
     final float fontScale = Resources.getSystem().getDisplayMetrics().scaledDensity;
     return (int) (pxValue / fontScale + 0.5f);
   }
@@ -49,7 +49,7 @@ public class DensityUtil {
   /**
    * 将sp值转换为px值
    */
-  public static int sp2px(Context context, float spValue) {
+  public static int sp2px(float spValue) {
     final float fontScale = Resources.getSystem().getDisplayMetrics().scaledDensity;
     return (int) (spValue * fontScale + 0.5f);
   }
@@ -129,6 +129,28 @@ public class DensityUtil {
             - DensityUtil.getStatusBarHeight(item.getContext()));
 
     return startingLocation[0] / 2;
+  }
+
+  public static float calculateScale(Rect startBounds, Rect finalBounds) {
+    float scale;
+    if ((float) finalBounds.width() / finalBounds.height()
+        > (float) startBounds.width() / startBounds.height()) {
+      /* Extend start bounds horizontally*/
+      scale = (float) startBounds.height() / finalBounds.height();
+      float startWidth = scale * finalBounds.width();
+      float deltaWidth = (startWidth - startBounds.width()) / 2;
+      startBounds.left -= deltaWidth;
+      startBounds.right += deltaWidth;
+    } else {
+      /* Extend start bounds vertically*/
+      scale = (float) startBounds.width() / finalBounds.width();
+      float startHeight = scale * finalBounds.height();
+      float deltaHeight = (startHeight - startBounds.height()) / 2;
+      startBounds.top -= deltaHeight;
+      startBounds.bottom += deltaHeight;
+    }
+
+    return scale;
   }
 
   public static int hideFromBottom(View view) {

@@ -1,5 +1,9 @@
 package com.app.designmore.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,12 +23,14 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.StrikethroughSpan;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -56,10 +62,6 @@ import com.app.designmore.view.dialog.CustomAccountDialog;
 import com.app.designmore.view.dialog.CustomShareDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.AnimatorListenerAdapter;
-import com.nineoldandroids.animation.AnimatorSet;
-import com.nineoldandroids.animation.ObjectAnimator;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.HashMap;
 import java.util.List;
@@ -71,12 +73,14 @@ import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Func1;
 import rx.subscriptions.Subscriptions;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * Created by Joker on 2015/9/19.
  */
 public class DetailActivity extends BaseActivity
-    implements CustomShareDialog.Callback, CustomAccountDialog.Callback {
+    implements CustomShareDialog.Callback, CustomAccountDialog.Callback,
+    DetailBannerAdapter.Callback {
 
   private static final String TAG = DetailActivity.class.getCanonicalName();
   private static final String GOOD_ID = "GOOD_ID";
@@ -97,12 +101,20 @@ public class DetailActivity extends BaseActivity
   @Nullable @Bind(R.id.detail_layout_collection_count_tv) TextView collectionCountTv;
   @Nullable @Bind(R.id.detail_layout_iv) ImageView detailIv;
 
+  @Nullable @Bind(R.id.detail_layout_trolley_expanded_iv) ImageView expandedIv;
+
   private SupportAnimator revealAnimator;
   private String goodId;
   private ProgressDialog progressDialog;
   private CustomShareDialog customShareDialog;
   private CustomAccountDialog customAccountDialog;
   private ViewGroup toast;
+
+  private Animator expandAnimator;
+  private Rect startBounds;
+  private float thumbScale;
+
+  private PhotoViewAttacher photoViewAttacher;
 
   //private ViewPager viewPager;
   private List<DetailResponse.Detail.ProductImage> productImages;
@@ -129,6 +141,20 @@ public class DetailActivity extends BaseActivity
         }
       };
 
+
+  private PhotoViewAttacher.OnPhotoTapListener photoTapListener = new PhotoViewAttacher.OnPhotoTapListener() {
+    @Override public void onPhotoTap(View view, float x, float y) {
+      DetailActivity.this.collapsingThumb();
+    }
+  };
+
+
+  private PhotoViewAttacher.OnViewTapListener viewTapListener = new PhotoViewAttacher.OnViewTapListener() {
+    @Override public void onViewTap(View view, float x, float y) {
+      DetailActivity.this.collapsingThumb();
+    }
+  };
+
   public static void navigateToDetail(AppCompatActivity startingActivity, String goodId) {
     Intent intent = new Intent(startingActivity, DetailActivity.class);
     intent.putExtra(GOOD_ID, goodId);
@@ -150,6 +176,11 @@ public class DetailActivity extends BaseActivity
 
     this.goodId = getIntent().getStringExtra(GOOD_ID);
 
+    this.photoViewAttacher = new PhotoViewAttacher(expandedIv);
+    this.photoViewAttacher.setAllowParentInterceptOnEdge(true);
+    this.photoViewAttacher.setOnViewTapListener(viewTapListener);
+    this.photoViewAttacher.setOnPhotoTapListener(photoTapListener);
+
     if (savedInstanceState == null) {
       revealFrameLayout.getViewTreeObserver()
           .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -168,6 +199,7 @@ public class DetailActivity extends BaseActivity
 
     DetailBannerAdapter detailBannerAdapter =
         new DetailBannerAdapter(DetailActivity.this, productImages);
+    detailBannerAdapter.setCallback(DetailActivity.this);
     viewPager.setAdapter(detailBannerAdapter);
     viewPager.addOnPageChangeListener(simpleOnPageChangeListener);
   }
@@ -233,19 +265,16 @@ public class DetailActivity extends BaseActivity
             spannableStringBuilder.append(detailEntity.getMarketPrice());
 
             /*店价*/
-            spannableStringBuilder.setSpan(
-                new AbsoluteSizeSpan(DensityUtil.sp2px(DetailActivity.this, Constants.SP_13)), 0, 1,
-                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-            spannableStringBuilder.setSpan(
-                new AbsoluteSizeSpan(DensityUtil.sp2px(DetailActivity.this, Constants.SP_18)), 1,
-                detailEntity.getShopPrice().length() + 1, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            spannableStringBuilder.setSpan(new AbsoluteSizeSpan(DensityUtil.sp2px(Constants.SP_13)),
+                0, 1, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            spannableStringBuilder.setSpan(new AbsoluteSizeSpan(DensityUtil.sp2px(Constants.SP_18)),
+                1, detailEntity.getShopPrice().length() + 1, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
             spannableStringBuilder.setSpan(
                 new ForegroundColorSpan(getResources().getColor(R.color.design_more_red)), 0,
                 detailEntity.getShopPrice().length() + 1, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
             /*较价*/
-            spannableStringBuilder.setSpan(
-                new AbsoluteSizeSpan(DensityUtil.sp2px(DetailActivity.this, Constants.SP_13)),
+            spannableStringBuilder.setSpan(new AbsoluteSizeSpan(DensityUtil.sp2px(Constants.SP_13)),
                 detailEntity.getShopPrice().length() + 3, spannableStringBuilder.length(),
                 Spanned.SPAN_INCLUSIVE_INCLUSIVE);
             spannableStringBuilder.setSpan(
@@ -456,27 +485,110 @@ public class DetailActivity extends BaseActivity
 
   }
 
+  @Override public void onItemClick(String thumbUrl) {
+
+    /*expand  thumb*/
+    if (expandAnimator != null) {
+      expandAnimator.cancel();
+    }
+
+    Glide.with(DetailActivity.this)
+        .load(thumbUrl)
+        .centerCrop()
+        .crossFade()
+        .placeholder(R.drawable.ic_default_1080_icon)
+        .error(R.drawable.ic_default_1080_icon)
+        .diskCacheStrategy(DiskCacheStrategy.RESULT)
+        .into(expandedIv);
+
+    startBounds = new Rect();
+    final Rect finalBounds = new Rect();
+    viewPager.getGlobalVisibleRect(startBounds);
+    rootView.getGlobalVisibleRect(finalBounds);
+
+    thumbScale = DensityUtil.calculateScale(startBounds, finalBounds);
+
+    this.expandedIv.setVisibility(View.VISIBLE);
+    this.expandedIv.setPivotX(0.0f);
+    this.expandedIv.setPivotY(0.0f);
+
+    AnimatorSet set = new AnimatorSet();
+    set.play(ObjectAnimator.ofFloat(this.expandedIv, View.X, startBounds.left, finalBounds.left))
+        .with(ObjectAnimator.ofFloat(this.expandedIv, View.Y, startBounds.top, finalBounds.top))
+        .with(ObjectAnimator.ofFloat(this.expandedIv, View.SCALE_X, thumbScale, 1.0f))
+        .with(ObjectAnimator.ofFloat(this.expandedIv, View.SCALE_Y, thumbScale, 1.0f))
+        .with(ObjectAnimator.ofFloat(this.viewPager, View.ALPHA, 0.8f, 0.1f));
+    set.setDuration(Constants.MILLISECONDS_400);
+    set.setInterpolator(new DecelerateInterpolator());
+    set.addListener(new AnimatorListenerAdapter() {
+      @Override public void onAnimationEnd(Animator animation) {
+        DetailActivity.this.expandAnimator = null;
+      }
+
+      @Override public void onAnimationCancel(Animator animation) {
+        DetailActivity.this.expandAnimator = null;
+      }
+    });
+    set.start();
+    DetailActivity.this.expandAnimator = set;
+  }
+
+  private void collapsingThumb() {
+
+    final float startScaleFinal = thumbScale;
+    if (expandAnimator != null) {
+      expandAnimator.cancel();
+    }
+
+    AnimatorSet set = new AnimatorSet();
+    set.play(ObjectAnimator.ofFloat(this.expandedIv, View.X, startBounds.left))
+        .with(ObjectAnimator.ofFloat(this.expandedIv, View.Y, startBounds.top))
+        .with(ObjectAnimator.ofFloat(this.expandedIv, View.SCALE_X, startScaleFinal))
+        .with(ObjectAnimator.ofFloat(this.expandedIv, View.SCALE_Y, startScaleFinal))
+        .with(ObjectAnimator.ofFloat(this.viewPager, View.ALPHA, 1.0f));
+    set.setDuration(Constants.MILLISECONDS_300);
+    set.setInterpolator(new DecelerateInterpolator());
+    set.addListener(new AnimatorListenerAdapter() {
+      @Override public void onAnimationEnd(Animator animation) {
+
+        ViewCompat.animate(viewPager).alpha(1.0f);
+        DetailActivity.this.expandedIv.setVisibility(View.GONE);
+        DetailActivity.this.expandAnimator = null;
+      }
+
+      @Override public void onAnimationCancel(Animator animation) {
+
+        ViewCompat.animate(viewPager).alpha(1.0f);
+        DetailActivity.this.expandedIv.setVisibility(View.GONE);
+        DetailActivity.this.expandAnimator = null;
+      }
+    });
+    set.start();
+    DetailActivity.this.expandAnimator = set;
+  }
+
   private void showAnim() {
 
     this.revealFrameLayout.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-    ObjectAnimator scaleXAnim = ObjectAnimator.ofFloat(revealFrameLayout, "scaleX", 1.0f, 0.9f);
+    ObjectAnimator scaleXAnim = ObjectAnimator.ofFloat(revealFrameLayout, View.SCALE_X, 1.0f, 0.9f);
     scaleXAnim.setDuration(Constants.MILLISECONDS_400);
-    ObjectAnimator scaleYAnim = ObjectAnimator.ofFloat(revealFrameLayout, "scaleY", 1.0f, 0.9f);
+    ObjectAnimator scaleYAnim = ObjectAnimator.ofFloat(revealFrameLayout, View.SCALE_Y, 1.0f, 0.9f);
     scaleYAnim.setDuration(Constants.MILLISECONDS_400);
 
-    ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(revealFrameLayout, "alpha", 1.0f, 0.5f);
+    ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(revealFrameLayout, View.ALPHA, 1.0f, 0.5f);
     alphaAnim.setDuration(Constants.MILLISECONDS_400);
 
     ObjectAnimator rotationXAnim =
-        ObjectAnimator.ofFloat(revealFrameLayout, "rotationX", 0.0f, 10.0f);
+        ObjectAnimator.ofFloat(revealFrameLayout, View.ROTATION_X, 0.0f, 10.0f);
     rotationXAnim.setDuration(Constants.MILLISECONDS_300);
 
-    ObjectAnimator resumeAnim = ObjectAnimator.ofFloat(revealFrameLayout, "rotationX", 10.0f, 0.0f);
+    ObjectAnimator resumeAnim =
+        ObjectAnimator.ofFloat(revealFrameLayout, View.ROTATION_X, 10.0f, 0.0f);
     resumeAnim.setDuration(Constants.MILLISECONDS_400);
     resumeAnim.setStartDelay(Constants.MILLISECONDS_300);
 
-    ObjectAnimator transYAnim = ObjectAnimator.ofFloat(revealFrameLayout, "translationY", 0.0f,
+    ObjectAnimator transYAnim = ObjectAnimator.ofFloat(revealFrameLayout, View.TRANSLATION_Y, 0.0f,
         -0.05f * revealFrameLayout.getHeight());
     transYAnim.setDuration(Constants.MILLISECONDS_400);
 
@@ -498,23 +610,24 @@ public class DetailActivity extends BaseActivity
 
     this.revealFrameLayout.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-    ObjectAnimator scaleXAnim = ObjectAnimator.ofFloat(revealFrameLayout, "scaleX", 0.9f, 1.0f);
+    ObjectAnimator scaleXAnim = ObjectAnimator.ofFloat(revealFrameLayout, View.SCALE_X, 0.9f, 1.0f);
     scaleXAnim.setDuration(Constants.MILLISECONDS_400);
-    ObjectAnimator scaleYAnim = ObjectAnimator.ofFloat(revealFrameLayout, "scaleY", 0.9f, 1.0f);
+    ObjectAnimator scaleYAnim = ObjectAnimator.ofFloat(revealFrameLayout, View.SCALE_Y, 0.9f, 1.0f);
     scaleYAnim.setDuration(Constants.MILLISECONDS_400);
 
-    ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(revealFrameLayout, "alpha", 0.5f, 1.0f);
+    ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(revealFrameLayout, View.ALPHA, 0.5f, 1.0f);
     alphaAnim.setDuration(Constants.MILLISECONDS_400);
 
     ObjectAnimator rotationXAnim =
-        ObjectAnimator.ofFloat(revealFrameLayout, "rotationX", 0.0f, 10.0f);
+        ObjectAnimator.ofFloat(revealFrameLayout, View.ROTATION_X, 0.0f, 10.0f);
     rotationXAnim.setDuration(Constants.MILLISECONDS_200);
 
-    ObjectAnimator resumeAnim = ObjectAnimator.ofFloat(revealFrameLayout, "rotationX", 10.0f, 0.0f);
+    ObjectAnimator resumeAnim =
+        ObjectAnimator.ofFloat(revealFrameLayout, View.ROTATION_X, 10.0f, 0.0f);
     resumeAnim.setDuration(Constants.MILLISECONDS_300);
     resumeAnim.setStartDelay(Constants.MILLISECONDS_200);
 
-    ObjectAnimator transYAnim = ObjectAnimator.ofFloat(revealFrameLayout, "translationY",
+    ObjectAnimator transYAnim = ObjectAnimator.ofFloat(revealFrameLayout, View.TRANSLATION_Y,
         -0.05f * revealFrameLayout.getHeight(), 0.0f);
     transYAnim.setDuration(Constants.MILLISECONDS_400);
 
@@ -527,6 +640,18 @@ public class DetailActivity extends BaseActivity
     });
 
     hideAnim.start();
+  }
+
+  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+    if (keyCode == KeyEvent.KEYCODE_BACK
+        && event.getRepeatCount() == 0
+        && this.expandedIv.getVisibility() == View.VISIBLE) {
+      DetailActivity.this.collapsingThumb();
+      return false;
+    }
+
+    return super.onKeyDown(keyCode, event);
   }
 
   @Override public void exit() {
@@ -552,6 +677,7 @@ public class DetailActivity extends BaseActivity
     this.progressDialog = null;
     this.customShareDialog = null;
     this.customAccountDialog = null;
+    this.photoViewAttacher.cleanup();
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();
   }
 }

@@ -43,6 +43,7 @@ import com.app.designmore.retrofit.entity.AddressEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.rxAndroid.SimpleObserver;
 import com.app.designmore.utils.DensityUtil;
+import com.app.designmore.utils.MarginDecoration;
 import com.app.designmore.view.ProgressLayout;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollStateChangeEvent;
@@ -170,6 +171,8 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
     recyclerView.setAdapter(addressAdapter);
     recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
     recyclerView.setItemAnimator(new DefaultItemAnimator());
+    recyclerView.addItemDecoration(
+        new MarginDecoration(AddressMangerActivity.this, R.dimen.material_16dp));
 
     RxRecyclerView.scrollStateChangeEvents(recyclerView)
         .forEach(new Action1<RecyclerViewScrollStateChangeEvent>() {

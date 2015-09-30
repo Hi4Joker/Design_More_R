@@ -129,28 +129,30 @@ public class HomeBannerAdapter extends PagerAdapter implements ViewPager.OnPageC
    * 更新整张列表
    */
   public void updateItems(List<ProductEntity> productEntities) {
-    this.items = productEntities;
-    HomeBannerAdapter.this.notifyDataSetChanged();
-
-    this.lastPosition = productEntities.size() - 1;
 
     if (worker != null && !worker.isUnsubscribed()) {
       worker.unsubscribe();
     }
     worker = HandlerScheduler.from(new Handler(Looper.getMainLooper())).createWorker();
-    viewPager.setCurrentItem(currentPosition = 0, false);
 
-    worker.schedulePeriodically(new Action0() {
-                                  @Override public void call() {
+    this.items = productEntities;
+    this.lastPosition = productEntities.size() - 1;
+    HomeBannerAdapter.this.notifyDataSetChanged();
+    this.viewPager.setCurrentItem(currentPosition = 0, false);
 
-                                    if (currentPosition != lastPosition) {
-                                      viewPager.setCurrentItem(++currentPosition, true);
-                                    } else {
-                                      viewPager.setCurrentItem(currentPosition = 0, true);
+    if (items.size() != 0) {
+      worker.schedulePeriodically(new Action0() {
+                                    @Override public void call() {
+
+                                      if (currentPosition != lastPosition) {
+                                        viewPager.setCurrentItem(++currentPosition, true);
+                                      } else {
+                                        viewPager.setCurrentItem(currentPosition = 0, true);
+                                      }
                                     }
-                                  }
-                                }, Constants.MILLISECONDS_4000, Constants.MILLISECONDS_4000,
-        TimeUnit.MILLISECONDS);
+                                  }, Constants.MILLISECONDS_4000, Constants.MILLISECONDS_4000,
+          TimeUnit.MILLISECONDS);
+    }
   }
 
   public void detach() {

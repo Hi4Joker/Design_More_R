@@ -130,6 +130,16 @@
         >
     </activity>
 
+
+    <!--商品详情ACT-->
+    <activity
+        android:name=".activity.DetailThumbActivity"
+        android:screenOrientation="portrait"
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.TransparentActivity"
+        >
+    </activity>
+
     <!--杂志ACT-->
     <activity
         android:name=".activity.JournalActivity"

@@ -27,12 +27,13 @@
         android:id="@+id/address_manager_layout_srl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/primary_background_color"
         >
       <android.support.v7.widget.RecyclerView
           android:id="@+id/address_manager_layout_rv"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
+          android:paddingTop="@dimen/material_16dp"
+          android:background="@color/primary_background_color"
           />
     </android.support.v4.widget.SwipeRefreshLayout>
 

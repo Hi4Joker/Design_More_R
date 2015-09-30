@@ -51,6 +51,8 @@ import com.app.designmore.utils.MarginDecoration;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.ProgressLayout;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
+import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollStateChangeEvent;
+import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -167,6 +169,17 @@ public class OrderAddressActivity extends BaseActivity implements SimpleAddressA
     recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
     recyclerView.addItemDecoration(
         new MarginDecoration(OrderAddressActivity.this, R.dimen.material_1dp));
+
+    RxRecyclerView.scrollStateChangeEvents(recyclerView)
+        .forEach(new Action1<RecyclerViewScrollStateChangeEvent>() {
+          @Override
+          public void call(RecyclerViewScrollStateChangeEvent recyclerViewScrollStateChangeEvent) {
+            if (recyclerViewScrollStateChangeEvent.newState()
+                == RecyclerView.SCROLL_STATE_DRAGGING) {
+              simpleAddressAdapter.setAnimationsLocked(true);
+            }
+          }
+        });
   }
 
   private void loadData() {
