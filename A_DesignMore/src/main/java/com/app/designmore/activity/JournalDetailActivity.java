@@ -163,6 +163,7 @@ public class JournalDetailActivity extends BaseActivity implements CustomShareDi
         .translationY(DensityUtil.getScreenHeight(JournalDetailActivity.this))
         .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())
+        .withLayer()
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
             JournalDetailActivity.this.finish();

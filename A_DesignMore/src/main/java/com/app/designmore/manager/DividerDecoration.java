@@ -1,4 +1,4 @@
-package com.app.designmore.utils;
+package com.app.designmore.manager;
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -8,10 +8,10 @@ import android.view.View;
 
 import com.app.designmore.R;
 
-public class MarginDecoration extends RecyclerView.ItemDecoration {
+public class DividerDecoration extends RecyclerView.ItemDecoration {
   private int margin;
 
-  public MarginDecoration(Context context, @DimenRes int dimen) {
+  public DividerDecoration(Context context, @DimenRes int dimen) {
     margin = context.getResources().getDimensionPixelSize(dimen);
   }
 

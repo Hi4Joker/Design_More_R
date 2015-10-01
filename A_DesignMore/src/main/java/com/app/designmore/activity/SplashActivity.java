@@ -8,11 +8,6 @@ import com.app.designmore.helper.DBHelper;
 
 public class SplashActivity extends AppCompatActivity {
 
-  public static void navigateToSplash(AppCompatActivity startingActivity) {
-    Intent intent = new Intent(startingActivity, LoginActivity.class);
-    startingActivity.startActivity(intent);
-  }
-
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     if (DBHelper.getInstance(getApplicationContext()).getCurrentUser(SplashActivity.this) != null) {

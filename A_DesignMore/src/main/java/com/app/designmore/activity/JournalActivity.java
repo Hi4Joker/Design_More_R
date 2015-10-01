@@ -331,6 +331,8 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
     final Rect bounds = new Rect();
     rootView.getHitRect(bounds);
 
+    JournalActivity.this.rootView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
     revealAnimator =
         ViewAnimationUtils.createCircularReveal(rootView.getChildAt(0), 0, bounds.left, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
@@ -339,7 +341,9 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
     revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
       @Override public void onAnimationEnd() {
 
-        if (weakReference!=null&&weakReference.get() != null) {
+        JournalActivity.this.rootView.setLayerType(View.LAYER_TYPE_NONE, null);
+
+        if (weakReference != null && weakReference.get() != null) {
           weakReference.get().finish();
           weakReference.clear();
           weakReference = null;

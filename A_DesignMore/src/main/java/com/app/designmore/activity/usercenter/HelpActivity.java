@@ -156,7 +156,7 @@ public class HelpActivity extends BaseActivity implements HelpAdapter.Callback {
     ViewCompat.animate(rootView)
         .scaleY(1.0f)
         .setDuration(Constants.MILLISECONDS_400 / 2)
-        .setInterpolator(new AccelerateInterpolator())
+        .setInterpolator(new AccelerateInterpolator()) .withLayer()
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
             HelpActivity.this.loadData();
@@ -175,7 +175,7 @@ public class HelpActivity extends BaseActivity implements HelpAdapter.Callback {
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(HelpActivity.this))
         .setDuration(Constants.MILLISECONDS_400)
-        .setInterpolator(new LinearInterpolator())
+        .setInterpolator(new LinearInterpolator()) .withLayer()
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
             HelpActivity.this.finish();

@@ -148,7 +148,8 @@ public class CameraFrontActivity extends BaseActivity implements CameraHostProvi
     switchMenuItem.setActionView(R.layout.menu_inbox_btn_item);
     switchActionButton =
         (ImageButton) switchMenuItem.getActionView().findViewById(R.id.action_inbox_btn);
-    switchActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_camera_black_icon));
+    switchActionButton.setImageDrawable(
+        getResources().getDrawable(R.drawable.ic_camera_black_icon));
     switchActionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         /*切换至后置摄像头*/
@@ -307,7 +308,8 @@ public class CameraFrontActivity extends BaseActivity implements CameraHostProvi
 
       ViewCompat.animate(floatingActionButton)
           .translationY(0.0f)
-          .setDuration(Constants.MILLISECONDS_300);
+          .setDuration(Constants.MILLISECONDS_300)
+          .withLayer();
 
       this.floatingActionButton.setEnabled(true);
       if (switchActionButton != null) this.switchActionButton.setEnabled(true);
@@ -317,7 +319,8 @@ public class CameraFrontActivity extends BaseActivity implements CameraHostProvi
 
       ViewCompat.animate(floatingActionButton)
           .translationY(DensityUtil.hideFromBottom(floatingActionButton))
-          .setDuration(Constants.MILLISECONDS_300);
+          .setDuration(Constants.MILLISECONDS_300)
+          .withLayer();
 
       this.floatingActionButton.setEnabled(false);
       this.switchActionButton.setEnabled(false);
@@ -336,6 +339,8 @@ public class CameraFrontActivity extends BaseActivity implements CameraHostProvi
     shutter.setVisibility(View.VISIBLE);
     shutter.setAlpha(0.0f);
 
+    shutter.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
     ObjectAnimator alphaInAnim = ObjectAnimator.ofFloat(shutter, "alpha", 0f, 0.8f);
     alphaInAnim.setDuration(Constants.MILLISECONDS_100);
     alphaInAnim.setStartDelay(Constants.MILLISECONDS_100);
@@ -349,6 +354,8 @@ public class CameraFrontActivity extends BaseActivity implements CameraHostProvi
     animatorSet.playSequentially(alphaInAnim, alphaOutAnim);
     animatorSet.addListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
+
+        shutter.setLayerType(View.LAYER_TYPE_NONE, null);
         shutter.setVisibility(View.GONE);
       }
     });
@@ -368,6 +375,7 @@ public class CameraFrontActivity extends BaseActivity implements CameraHostProvi
         .translationY(DensityUtil.getScreenHeight(CameraFrontActivity.this))
         .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())
+        .withLayer()
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
             CameraFrontActivity.this.finish();

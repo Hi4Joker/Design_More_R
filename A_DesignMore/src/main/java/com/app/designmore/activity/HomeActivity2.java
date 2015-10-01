@@ -42,6 +42,7 @@ import com.app.designmore.event.FinishEvent;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
+import com.app.designmore.manager.MarginDecoration;
 import com.app.designmore.manager.WrappingGridLayoutManager;
 import com.app.designmore.manager.WrappingLinearLayoutManager;
 import com.app.designmore.retrofit.HomeRetrofit;
@@ -52,7 +53,7 @@ import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.utils.DensityUtil;
-import com.app.designmore.utils.MarginDecoration;
+import com.app.designmore.manager.DividerDecoration;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.MaterialRippleLayout;
 import com.app.designmore.view.ProgressLayout;
@@ -201,7 +202,7 @@ public class HomeActivity2 extends BaseActivity
     categoryRecyclerView.setAdapter(categoryAdapter);
     categoryRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
     categoryRecyclerView.addItemDecoration(
-        new MarginDecoration(HomeActivity2.this, R.dimen.material_1dp));
+        new DividerDecoration(HomeActivity2.this, R.dimen.material_1dp));
 
     discountLayoutManager = new WrappingLinearLayoutManager(HomeActivity2.this);
     discountLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -213,7 +214,7 @@ public class HomeActivity2 extends BaseActivity
     fashionRecyclerView.setAdapter(discountAdapter);
     fashionRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
     fashionRecyclerView.addItemDecoration(
-        new MarginDecoration(HomeActivity2.this, R.dimen.material_1dp));
+        new DividerDecoration(HomeActivity2.this, R.dimen.material_1dp));
 
     productLayoutManager = new WrappingGridLayoutManager(HomeActivity2.this, 2);
     productLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);

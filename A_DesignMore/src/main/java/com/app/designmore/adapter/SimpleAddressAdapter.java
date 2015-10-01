@@ -93,6 +93,7 @@ public class SimpleAddressAdapter extends RecyclerView.Adapter<SimpleAddressAdap
           .setStartDelay(position * 20)
           .setInterpolator(new DecelerateInterpolator(2.0f))
           .setDuration(Constants.MILLISECONDS_400)
+          .withLayer()
           .setListener(new ViewPropertyAnimatorListenerAdapter() {
             @Override public void onAnimationEnd(View view) {
               SimpleAddressAdapter.this.animationsLocked = true;

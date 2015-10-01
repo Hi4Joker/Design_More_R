@@ -38,7 +38,7 @@ import com.app.designmore.helper.DBHelper;
 import com.app.designmore.retrofit.TrolleyRetrofit;
 import com.app.designmore.retrofit.entity.TrolleyEntity;
 import com.app.designmore.utils.DensityUtil;
-import com.app.designmore.utils.MarginDecoration;
+import com.app.designmore.manager.DividerDecoration;
 import com.app.designmore.view.ProgressLayout;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.trello.rxlifecycle.ActivityEvent;
@@ -162,7 +162,7 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
     recyclerView.setLayoutManager(linearLayoutManager);
     recyclerView.setHasFixedSize(true);
     recyclerView.addItemDecoration(
-        new MarginDecoration(TrolleyActivity.this, R.dimen.material_1dp));
+        new DividerDecoration(TrolleyActivity.this, R.dimen.material_1dp));
     recyclerView.setAdapter(trolleyAdapter);
   }
 
@@ -195,16 +195,16 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
               spannableStringBuilder.append(totalPrice + "");
 
               spannableStringBuilder.setSpan(
-                  new AbsoluteSizeSpan(DensityUtil.sp2px( Constants.SP_11)), 0,
-                  2, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                  new AbsoluteSizeSpan(DensityUtil.sp2px(Constants.SP_11)), 0, 2,
+                  Spanned.SPAN_INCLUSIVE_INCLUSIVE);
               spannableStringBuilder.setSpan(
-                  new AbsoluteSizeSpan(DensityUtil.sp2px( Constants.SP_8)), 3,
-                  3, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                  new AbsoluteSizeSpan(DensityUtil.sp2px(Constants.SP_8)), 3, 3,
+                  Spanned.SPAN_INCLUSIVE_INCLUSIVE);
               spannableStringBuilder.setSpan(
                   new ForegroundColorSpan(getResources().getColor(R.color.design_more_red)), 3, 3,
                   Spanned.SPAN_INCLUSIVE_INCLUSIVE);
               spannableStringBuilder.setSpan(
-                  new AbsoluteSizeSpan(DensityUtil.sp2px( Constants.SP_16)), 4,
+                  new AbsoluteSizeSpan(DensityUtil.sp2px(Constants.SP_16)), 4,
                   spannableStringBuilder.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
               spannableStringBuilder.setSpan(
                   new ForegroundColorSpan(getResources().getColor(R.color.design_more_red)), 4,
@@ -400,6 +400,7 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
           .scaleY(1.0f)
           .setDuration(Constants.MILLISECONDS_400 / 2)
           .setInterpolator(new AccelerateInterpolator())
+          .withLayer()
           .setListener(new ViewPropertyAnimatorListenerAdapter() {
             @Override public void onAnimationEnd(View view) {
               TrolleyActivity.this.loadData();
@@ -411,6 +412,7 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
           .translationY(0.0f)
           .setDuration(Constants.MILLISECONDS_400)
           .setInterpolator(new LinearInterpolator())
+          .withLayer()
           .setListener(new ViewPropertyAnimatorListenerAdapter() {
             @Override public void onAnimationEnd(View view) {
               TrolleyActivity.this.loadData();
@@ -436,6 +438,7 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
         .translationY(DensityUtil.getScreenHeight(TrolleyActivity.this))
         .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())
+        .withLayer()
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
             TrolleyActivity.this.finish();

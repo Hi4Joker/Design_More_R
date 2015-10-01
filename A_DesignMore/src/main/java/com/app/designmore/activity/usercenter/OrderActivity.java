@@ -92,6 +92,7 @@ public class OrderActivity extends BaseActivity {
         .scaleY(1.0f)
         .setDuration(Constants.MILLISECONDS_400 / 2)
         .setInterpolator(new AccelerateInterpolator())
+        .withLayer()
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
             if (progressLayout != null) OrderActivity.this.loadData();
@@ -105,6 +106,7 @@ public class OrderActivity extends BaseActivity {
         .translationY(DensityUtil.getScreenHeight(OrderActivity.this))
         .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())
+        .withLayer()
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
             OrderActivity.this.finish();

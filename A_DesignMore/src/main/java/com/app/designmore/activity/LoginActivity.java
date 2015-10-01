@@ -117,9 +117,6 @@ public class LoginActivity extends BaseActivity {
             userName = userNameEvent.text().toString();
             password = passwordEvent.text().toString();
 
-           /* Log.e(TAG, "userName: " + userName);
-            Log.e(TAG, "password: " + password);*/
-
             boolean userNameValid = !TextUtils.isEmpty(userName);
             boolean passwordValid = !TextUtils.isEmpty(password);
 
@@ -133,7 +130,6 @@ public class LoginActivity extends BaseActivity {
         .subscribe(new Action1<Boolean>() {
           @Override public void call(Boolean aBoolean) {
 
-            //Log.e(TAG, "call() called with: " + "aBoolean = [" + aBoolean + "]");
             loginBtn.setEnabled(aBoolean);
           }
         });
@@ -144,7 +140,6 @@ public class LoginActivity extends BaseActivity {
     int startY = DensityUtil.getScreenHeight(LoginActivity.this) + DensityUtil.getStatusBarHeight(
         LoginActivity.this) - loginLogoIv.getHeight();
 
-    ViewCompat.setLayerType(loginLogoIv, ViewCompat.LAYER_TYPE_HARDWARE, null);
     ViewCompat.setY(loginLogoIv, startY / 2);
     ViewCompat.setAlpha(loginLogoIv, 0);
 
@@ -154,9 +149,13 @@ public class LoginActivity extends BaseActivity {
         .setStartDelay(Constants.MILLISECONDS_300)
         .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())
+        .withLayer()
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
-            if (animRootView != null) animRootView.setVisibility(View.VISIBLE);
+
+            if (animRootView != null) {
+              animRootView.setVisibility(View.VISIBLE);
+            }
           }
         });
   }

@@ -10,7 +10,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -33,7 +32,6 @@ import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.adapter.SimpleAddressAdapter;
-import com.app.designmore.event.RefreshAddressManagerEvent;
 import com.app.designmore.event.RefreshOrderAddressEvent;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.helper.DBHelper;
@@ -47,7 +45,7 @@ import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.rxAndroid.SimpleObserver;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.utils.DensityUtil;
-import com.app.designmore.utils.MarginDecoration;
+import com.app.designmore.manager.DividerDecoration;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.ProgressLayout;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
@@ -168,7 +166,7 @@ public class OrderAddressActivity extends BaseActivity implements SimpleAddressA
     recyclerView.setAdapter(simpleAddressAdapter);
     recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
     recyclerView.addItemDecoration(
-        new MarginDecoration(OrderAddressActivity.this, R.dimen.material_1dp));
+        new DividerDecoration(OrderAddressActivity.this, R.dimen.material_1dp));
 
     RxRecyclerView.scrollStateChangeEvents(recyclerView)
         .forEach(new Action1<RecyclerViewScrollStateChangeEvent>() {
@@ -376,6 +374,8 @@ public class OrderAddressActivity extends BaseActivity implements SimpleAddressA
     final Rect bounds = new Rect();
     revealFrameLayout.getHitRect(bounds);
 
+    OrderAddressActivity.this.revealFrameLayout.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
     revealAnimator =
         ViewAnimationUtils.createCircularReveal(revealFrameLayout.getChildAt(0), 0, bounds.left, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
@@ -383,7 +383,11 @@ public class OrderAddressActivity extends BaseActivity implements SimpleAddressA
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
       @Override public void onAnimationEnd() {
-        if (progressLayout != null) OrderAddressActivity.this.loadData();
+
+        if (progressLayout != null) {
+          OrderAddressActivity.this.revealFrameLayout.setLayerType(View.LAYER_TYPE_NONE, null);
+          OrderAddressActivity.this.loadData();
+        }
       }
     });
     revealAnimator.start();
@@ -402,6 +406,7 @@ public class OrderAddressActivity extends BaseActivity implements SimpleAddressA
         .translationY(DensityUtil.getScreenHeight(OrderAddressActivity.this))
         .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())
+        .withLayer()
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
             OrderAddressActivity.this.finish();

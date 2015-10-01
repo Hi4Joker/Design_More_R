@@ -211,6 +211,7 @@ public class ProfileGalleryActivity extends BaseActivity {
         .translationY(DensityUtil.getScreenHeight(ProfileGalleryActivity.this))
         .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())
+        .withLayer()
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
             ProfileGalleryActivity.this.finish();

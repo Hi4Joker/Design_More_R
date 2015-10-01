@@ -122,7 +122,7 @@ public class SafetyActivity extends BaseActivity {
     ViewCompat.animate(rootView)
         .scaleY(1.0f)
         .setDuration(Constants.MILLISECONDS_400 / 2)
-        .setInterpolator(new AccelerateInterpolator());
+        .setInterpolator(new AccelerateInterpolator()) .withLayer();
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -242,7 +242,7 @@ public class SafetyActivity extends BaseActivity {
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(SafetyActivity.this))
         .setDuration(Constants.MILLISECONDS_400)
-        .setInterpolator(new LinearInterpolator())
+        .setInterpolator(new LinearInterpolator()) .withLayer()
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
             SafetyActivity.this.finish();

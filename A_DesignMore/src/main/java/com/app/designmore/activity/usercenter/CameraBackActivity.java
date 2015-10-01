@@ -73,7 +73,7 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
   private static final Interpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
   private static final Interpolator DECELERATE_INTERPOLATOR = new DecelerateInterpolator();
   private static final String IS_ANIM = "IS_ANIM";
-  
+
   @Nullable @Bind(R.id.profile_camera_layout_root_view) RelativeLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
   @Nullable @Bind(R.id.profile_camera_layout_camera_view) CameraView cameraView;
@@ -321,7 +321,8 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
 
       ViewCompat.animate(floatingActionButton)
           .translationY(0.0f)
-          .setDuration(Constants.MILLISECONDS_300);
+          .setDuration(Constants.MILLISECONDS_300)
+          .withLayer();
 
       this.floatingActionButton.setEnabled(true);
       if (switchActionButton != null) this.switchActionButton.setEnabled(true);
@@ -331,7 +332,8 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
 
       ViewCompat.animate(floatingActionButton)
           .translationY(DensityUtil.hideFromBottom(floatingActionButton))
-          .setDuration(Constants.MILLISECONDS_300);
+          .setDuration(Constants.MILLISECONDS_300)
+          .withLayer();
 
       this.floatingActionButton.setEnabled(false);
       this.switchActionButton.setEnabled(false);
@@ -350,6 +352,8 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
     shutter.setVisibility(View.VISIBLE);
     shutter.setAlpha(0.0f);
 
+    shutter.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
     ObjectAnimator alphaInAnim = ObjectAnimator.ofFloat(shutter, "alpha", 0f, 0.8f);
     alphaInAnim.setDuration(Constants.MILLISECONDS_100);
     alphaInAnim.setStartDelay(Constants.MILLISECONDS_100);
@@ -363,6 +367,8 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
     animatorSet.playSequentially(alphaInAnim, alphaOutAnim);
     animatorSet.addListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
+
+        shutter.setLayerType(View.LAYER_TYPE_NONE, null);
         shutter.setVisibility(View.GONE);
       }
     });
@@ -374,7 +380,8 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
     ViewCompat.animate(rootView)
         .translationY(0.0f)
         .setDuration(Constants.MILLISECONDS_400)
-        .setInterpolator(new LinearInterpolator());
+        .setInterpolator(new LinearInterpolator())
+        .withLayer();
   }
 
   @Override public void exit() {
@@ -390,6 +397,7 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
         .translationY(DensityUtil.getScreenHeight(CameraBackActivity.this))
         .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())
+        .withLayer()
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
             CameraBackActivity.this.finish();

@@ -25,7 +25,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import butterknife.Bind;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
@@ -43,7 +42,7 @@ import com.app.designmore.retrofit.entity.AddressEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.rxAndroid.SimpleObserver;
 import com.app.designmore.utils.DensityUtil;
-import com.app.designmore.utils.MarginDecoration;
+import com.app.designmore.manager.DividerDecoration;
 import com.app.designmore.view.ProgressLayout;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollStateChangeEvent;
@@ -172,7 +171,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
     recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
     recyclerView.setItemAnimator(new DefaultItemAnimator());
     recyclerView.addItemDecoration(
-        new MarginDecoration(AddressMangerActivity.this, R.dimen.material_16dp));
+        new DividerDecoration(AddressMangerActivity.this, R.dimen.material_16dp));
 
     RxRecyclerView.scrollStateChangeEvents(recyclerView)
         .forEach(new Action1<RecyclerViewScrollStateChangeEvent>() {
@@ -195,6 +194,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
           .scaleY(1.0f)
           .setDuration(Constants.MILLISECONDS_400 / 2)
           .setInterpolator(new AccelerateInterpolator())
+          .withLayer()
           .setListener(new ViewPropertyAnimatorListenerAdapter() {
             @Override public void onAnimationEnd(View view) {
               AddressMangerActivity.this.loadData();
@@ -206,6 +206,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
           .translationY(0.0f)
           .setDuration(Constants.MILLISECONDS_400)
           .setInterpolator(new LinearInterpolator())
+          .withLayer()
           .setListener(new ViewPropertyAnimatorListenerAdapter() {
             @Override public void onAnimationEnd(View view) {
               AddressMangerActivity.this.loadData();
@@ -543,17 +544,16 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
         .translationY(DensityUtil.getScreenHeight(AddressMangerActivity.this))
         .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())
-        .setListener(new ViewPropertyAnimatorListenerAdapter() {
-          @Override public void onAnimationEnd(View view) {
+        .withLayer().setListener(new ViewPropertyAnimatorListenerAdapter() {
+      @Override public void onAnimationEnd(View view) {
 
-            if (EventBusInstance.getDefault()
-                .hasSubscriberForEvent(RefreshOrderAddressEvent.class)) {
-              EventBusInstance.getDefault().post(new RefreshOrderAddressEvent());
-            }
+        if (EventBusInstance.getDefault().hasSubscriberForEvent(RefreshOrderAddressEvent.class)) {
+          EventBusInstance.getDefault().post(new RefreshOrderAddressEvent());
+        }
 
-            AddressMangerActivity.this.finish();
-          }
-        });
+        AddressMangerActivity.this.finish();
+      }
+    });
   }
 
   @Override protected void onDestroy() {

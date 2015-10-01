@@ -202,13 +202,6 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
             city = cityEvent.text().toString();
             address = addressEvent.text().toString();
 
-           /* Log.e(TAG, "userName: " + userName);
-            Log.e(TAG, "mobile: " + mobile);
-            Log.e(TAG, "zipCode: " + zipCode);
-            Log.e(TAG, "province: " + province);
-            Log.e(TAG, "city: " + city);
-            Log.e(TAG, "address: " + address);*/
-
             boolean userNameValid = !TextUtils.isEmpty(userName);
             boolean mobileValid = !TextUtils.isEmpty(mobile);
             boolean zipCodeValid = !TextUtils.isEmpty(zipCode);
@@ -231,7 +224,6 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
         .subscribe(new Action1<Boolean>() {
           @Override public void call(Boolean aBoolean) {
 
-            //Log.e(TAG, "call() called with: " + "aBoolean = [" + aBoolean + "]");
             actionButton.setEnabled(aBoolean);
           }
         });

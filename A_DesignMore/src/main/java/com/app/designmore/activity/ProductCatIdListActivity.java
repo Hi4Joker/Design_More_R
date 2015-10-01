@@ -35,13 +35,13 @@ import com.app.designmore.activity.usercenter.TrolleyActivity;
 import com.app.designmore.adapter.ProductAdapter;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
+import com.app.designmore.manager.MarginDecoration;
 import com.app.designmore.retrofit.ProductRetrofit;
 import com.app.designmore.retrofit.entity.ProductEntity;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.utils.DensityUtil;
-import com.app.designmore.utils.MarginDecoration;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.ProgressLayout;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
@@ -388,7 +388,10 @@ public class ProductCatIdListActivity extends BaseActivity implements ProductAda
     this.priceTv.setTextColor(greyTextColor);
 
     if (code != price) {
-      ViewCompat.animate(priceArrowIv).rotation(0.0f).setDuration(Constants.MILLISECONDS_300);
+      ViewCompat.animate(priceArrowIv)
+          .rotation(0.0f)
+          .setDuration(Constants.MILLISECONDS_300)
+          .withLayer();
     }
 
     switch (code) {
@@ -469,10 +472,16 @@ public class ProductCatIdListActivity extends BaseActivity implements ProductAda
     } else {
       if (this.currentOrderBy == 1) {
         this.order_by = 0;
-        ViewCompat.animate(priceArrowIv).rotation(180.0f).setDuration(Constants.MILLISECONDS_300);
+        ViewCompat.animate(priceArrowIv)
+            .rotation(180.0f)
+            .setDuration(Constants.MILLISECONDS_300)
+            .withLayer();
       } else {
         this.order_by = 1;
-        ViewCompat.animate(priceArrowIv).rotation(0.0f).setDuration(Constants.MILLISECONDS_300);
+        ViewCompat.animate(priceArrowIv)
+            .rotation(0.0f)
+            .setDuration(Constants.MILLISECONDS_300)
+            .withLayer();
       }
     }
     ProductCatIdListActivity.this.loadData();
@@ -523,6 +532,8 @@ public class ProductCatIdListActivity extends BaseActivity implements ProductAda
     final Rect bounds = new Rect();
     revealFrameLayout.getHitRect(bounds);
 
+    ProductCatIdListActivity.this.rootView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
     revealAnimator =
         ViewAnimationUtils.createCircularReveal(revealFrameLayout.getChildAt(0), 0, bounds.left, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
@@ -530,7 +541,11 @@ public class ProductCatIdListActivity extends BaseActivity implements ProductAda
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
       @Override public void onAnimationEnd() {
-        if (progressLayout != null) ProductCatIdListActivity.this.loadData();
+
+        if (progressLayout != null) {
+          ProductCatIdListActivity.this.rootView.setLayerType(View.LAYER_TYPE_NONE, null);
+          ProductCatIdListActivity.this.loadData();
+        }
       }
     });
     revealAnimator.start();
@@ -541,6 +556,7 @@ public class ProductCatIdListActivity extends BaseActivity implements ProductAda
         .translationY(DensityUtil.getScreenHeight(ProductCatIdListActivity.this))
         .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())
+        .withLayer()
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
             ProductCatIdListActivity.this.finish();

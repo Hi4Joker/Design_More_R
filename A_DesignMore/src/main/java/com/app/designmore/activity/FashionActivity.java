@@ -340,6 +340,8 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
     final Rect bounds = new Rect();
     rootView.getHitRect(bounds);
 
+    FashionActivity.this.rootView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
     revealAnimator =
         ViewAnimationUtils.createCircularReveal(rootView.getChildAt(0), 0, bounds.left, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
@@ -347,6 +349,8 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
       @Override public void onAnimationEnd() {
+
+        FashionActivity.this.rootView.setLayerType(View.LAYER_TYPE_NONE, null);
 
         if (weakReference!=null&&weakReference.get() != null) {
           weakReference.get().finish();

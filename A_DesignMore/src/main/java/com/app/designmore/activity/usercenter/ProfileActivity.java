@@ -488,7 +488,7 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
     ViewCompat.animate(rootView)
         .scaleY(1.0f)
         .setDuration(Constants.MILLISECONDS_400 / 2)
-        .setInterpolator(new AccelerateInterpolator())
+        .setInterpolator(new AccelerateInterpolator()) .withLayer()
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
             if (progressLayout != null) ProfileActivity.this.loadData();
@@ -501,7 +501,7 @@ public class ProfileActivity extends BaseActivity implements CustomCameraDialog.
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(ProfileActivity.this))
         .setDuration(Constants.MILLISECONDS_400)
-        .setInterpolator(new LinearInterpolator())
+        .setInterpolator(new LinearInterpolator()) .withLayer()
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
             ProfileActivity.this.finish();

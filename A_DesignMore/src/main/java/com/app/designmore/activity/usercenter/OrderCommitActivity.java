@@ -37,7 +37,7 @@ import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.utils.DensityUtil;
-import com.app.designmore.utils.MarginDecoration;
+import com.app.designmore.manager.DividerDecoration;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.ProgressLayout;
 import com.trello.rxlifecycle.ActivityEvent;
@@ -120,13 +120,14 @@ public class OrderCommitActivity extends BaseActivity {
     OrderCommitActivity.this.setupAdapter();
 
     if (savedInstanceState == null) {
-      revealFrameLayout.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-        @Override public boolean onPreDraw() {
-          revealFrameLayout.getViewTreeObserver().removeOnPreDrawListener(this);
-          OrderCommitActivity.this.startEnterAnim();
-          return true;
-        }
-      });
+      revealFrameLayout.getViewTreeObserver()
+          .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override public boolean onPreDraw() {
+              revealFrameLayout.getViewTreeObserver().removeOnPreDrawListener(this);
+              OrderCommitActivity.this.startEnterAnim();
+              return true;
+            }
+          });
     } else {
       OrderCommitActivity.this.loadData();
     }
@@ -146,7 +147,7 @@ public class OrderCommitActivity extends BaseActivity {
     recyclerView.setAdapter(commitOrderAdapter);
     recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
     recyclerView.addItemDecoration(
-        new MarginDecoration(OrderCommitActivity.this, R.dimen.material_1dp));
+        new DividerDecoration(OrderCommitActivity.this, R.dimen.material_1dp));
 
     /*计算总价钱*/
     float totalPrice = 0;
@@ -264,6 +265,8 @@ public class OrderCommitActivity extends BaseActivity {
     final Rect bounds = new Rect();
     revealFrameLayout.getHitRect(bounds);
 
+    OrderCommitActivity.this.revealFrameLayout.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
     revealAnimator =
         ViewAnimationUtils.createCircularReveal(revealFrameLayout.getChildAt(0), 0, bounds.left, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
@@ -271,7 +274,11 @@ public class OrderCommitActivity extends BaseActivity {
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
       @Override public void onAnimationEnd() {
-        if (progressLayout != null) OrderCommitActivity.this.loadData();
+
+        if (progressLayout != null) {
+          OrderCommitActivity.this.revealFrameLayout.setLayerType(View.LAYER_TYPE_NONE, null);
+          OrderCommitActivity.this.loadData();
+        }
       }
     });
     revealAnimator.start();
@@ -282,7 +289,7 @@ public class OrderCommitActivity extends BaseActivity {
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(OrderCommitActivity.this))
         .setDuration(Constants.MILLISECONDS_400)
-        .setInterpolator(new LinearInterpolator())
+        .setInterpolator(new LinearInterpolator()) .withLayer()
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
             OrderCommitActivity.this.finish();

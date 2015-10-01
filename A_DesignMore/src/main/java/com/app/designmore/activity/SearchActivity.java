@@ -30,16 +30,15 @@ import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.adapter.SearchAdapter;
 import com.app.designmore.exception.WebServiceException;
+import com.app.designmore.manager.MarginDecoration;
 import com.app.designmore.retrofit.SearchRetrofit;
 import com.app.designmore.retrofit.entity.SearchItemEntity;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.utils.DensityUtil;
-import com.app.designmore.utils.MarginDecoration;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.ProgressLayout;
-import com.jakewharton.rxbinding.view.RxView;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.HashMap;
 import java.util.List;
@@ -59,6 +58,7 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
   @Nullable @Bind(R.id.search_layout_root_view) LinearLayout rootView;
   @Nullable @Bind(R.id.search_layout_toolbar) Toolbar toolbar;
   @Nullable @Bind(R.id.search_layout_toolbar_rfl) RevealFrameLayout revealRootView;
+
   @Nullable @Bind(R.id.search_layout_et) AppCompatEditText searchEt;
   @Nullable @Bind(R.id.search_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.search_layout_recycler_root_view) LinearLayout recyclerRootView;
@@ -158,6 +158,8 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
     final Rect bounds = new Rect();
     revealRootView.getHitRect(bounds);
 
+    SearchActivity.this.rootView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
     revealAnimator = ViewAnimationUtils.createCircularReveal(revealRootView.getChildAt(0),
         bounds.right - bounds.left, 0, 0, Utils.pythagorean(bounds.width(), bounds.height()));
     revealAnimator.setDuration(Constants.MILLISECONDS_400);
@@ -168,12 +170,17 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
         if (progressLayout != null) {
           ViewCompat.animate(progressLayout)
               .translationY(0.0f)
-              .setDuration(Constants.MILLISECONDS_400);
+              .setDuration(Constants.MILLISECONDS_400)
+              .withLayer();
         }
       }
 
       @Override public void onAnimationEnd() {
-        if (progressLayout != null) SearchActivity.this.loadData();
+
+        if (progressLayout != null) {
+          SearchActivity.this.rootView.setLayerType(View.LAYER_TYPE_NONE, null);
+          SearchActivity.this.loadData();
+        }
       }
     });
     revealAnimator.start();
@@ -254,6 +261,7 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
         .translationY(DensityUtil.getScreenHeight(SearchActivity.this))
         .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())
+        .withLayer()
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
             SearchActivity.this.finish();

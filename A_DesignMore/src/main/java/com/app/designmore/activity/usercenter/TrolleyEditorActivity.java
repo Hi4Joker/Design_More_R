@@ -41,7 +41,7 @@ import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.rxAndroid.SimpleObserver;
-import com.app.designmore.utils.MarginDecoration;
+import com.app.designmore.manager.DividerDecoration;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.ProgressLayout;
 import com.app.designmore.view.dialog.CustomAccountDialog;
@@ -73,6 +73,7 @@ public class TrolleyEditorActivity extends BaseActivity
 
   @Nullable @Bind(R.id.trolley_editor_layout_root_view) LinearLayout rootView;
   @Nullable @Bind(R.id.trolley_editor_layout_rfl) RevealFrameLayout revealFrameLayout;
+
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
 
@@ -149,6 +150,8 @@ public class TrolleyEditorActivity extends BaseActivity
     final Rect bounds = new Rect();
     rootView.getHitRect(bounds);
 
+    TrolleyEditorActivity.this.revealFrameLayout.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
     revealAnimator =
         ViewAnimationUtils.createCircularReveal(revealFrameLayout.getChildAt(0), bounds.right, 0, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
@@ -156,7 +159,11 @@ public class TrolleyEditorActivity extends BaseActivity
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
       @Override public void onAnimationEnd() {
-        TrolleyEditorActivity.this.loadData();
+
+        if (revealFrameLayout != null) {
+          TrolleyEditorActivity.this.revealFrameLayout.setLayerType(View.LAYER_TYPE_NONE, null);
+          TrolleyEditorActivity.this.loadData();
+        }
       }
     });
     revealAnimator.start();
@@ -175,7 +182,7 @@ public class TrolleyEditorActivity extends BaseActivity
     recyclerView.setLayoutManager(linearLayoutManager);
     recyclerView.setHasFixedSize(true);
     recyclerView.addItemDecoration(
-        new MarginDecoration(TrolleyEditorActivity.this, R.dimen.material_1dp));
+        new DividerDecoration(TrolleyEditorActivity.this, R.dimen.material_1dp));
   }
 
   private void observableListenerWrapper(Observable<TrolleyEntity> observable) {
@@ -186,7 +193,8 @@ public class TrolleyEditorActivity extends BaseActivity
           @Override public void onCompleted() {
 
             if (deleteEntities.size() == items.size()) {
-              radioBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_selected_icon));
+              radioBtn.setImageDrawable(
+                  getResources().getDrawable(R.drawable.ic_radio_selected_icon));
             } else {
               radioBtn.setImageDrawable(
                   getResources().getDrawable(R.drawable.ic_radio_normal_icon));
@@ -212,11 +220,11 @@ public class TrolleyEditorActivity extends BaseActivity
                 .findViewById(R.id.trolley_editor_item_radio_iv);
 
             if (trolleyEntity.isChecked) {
-              radioIv.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_selected_icon));
+              radioIv.setImageDrawable(
+                  getResources().getDrawable(R.drawable.ic_radio_selected_icon));
               deleteEntities.add(trolleyEntity);
             } else {
-              radioIv.setImageDrawable(
-                  getResources().getDrawable(R.drawable.ic_radio_normal_icon));
+              radioIv.setImageDrawable(getResources().getDrawable(R.drawable.ic_radio_normal_icon));
               deleteEntities.remove(trolleyEntity);
             }
           }

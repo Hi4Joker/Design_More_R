@@ -7,6 +7,7 @@ import android.animation.ObjectAnimator;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -111,7 +112,9 @@ public class DetailActivity extends BaseActivity
   private ViewGroup toast;
 
   private Animator expandAnimator;
-  private Rect startBounds;
+  private final Rect startBounds = new Rect();
+  private final Rect finalBounds = new Rect();
+  private final Point globalOffset = new Point();/* e.g.StatusBar Height*/
   private float thumbScale;
 
   private PhotoViewAttacher photoViewAttacher;
@@ -178,7 +181,7 @@ public class DetailActivity extends BaseActivity
 
     this.photoViewAttacher = new PhotoViewAttacher(expandedIv);
     this.photoViewAttacher.setAllowParentInterceptOnEdge(false);
-    this.photoViewAttacher.setScaleType(ImageView.ScaleType.FIT_CENTER);
+    this.photoViewAttacher.setScaleType(ImageView.ScaleType.FIT_XY);
     this.photoViewAttacher.setOnViewTapListener(viewTapListener);
     this.photoViewAttacher.setOnPhotoTapListener(photoTapListener);
 
@@ -210,6 +213,8 @@ public class DetailActivity extends BaseActivity
     final Rect bounds = new Rect();
     revealFrameLayout.getHitRect(bounds);
 
+    DetailActivity.this.revealFrameLayout.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
     revealAnimator =
         ViewAnimationUtils.createCircularReveal(revealFrameLayout.getChildAt(0), 0, bounds.left, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
@@ -217,7 +222,11 @@ public class DetailActivity extends BaseActivity
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
       @Override public void onAnimationEnd() {
-        if (progressLayout != null) DetailActivity.this.loadData();
+
+        if (progressLayout != null) {
+          DetailActivity.this.revealFrameLayout.setLayerType(View.LAYER_TYPE_NONE, null);
+          DetailActivity.this.loadData();
+        }
       }
     });
     revealAnimator.start();
@@ -502,12 +511,12 @@ public class DetailActivity extends BaseActivity
         .diskCacheStrategy(DiskCacheStrategy.RESULT)
         .into(expandedIv);
 
-    startBounds = new Rect();
-    final Rect finalBounds = new Rect();
     viewPager.getGlobalVisibleRect(startBounds);
-    rootView.getGlobalVisibleRect(finalBounds);
+    rootView.getGlobalVisibleRect(finalBounds, globalOffset);
+    startBounds.offset(-globalOffset.x, -globalOffset.y);
+    finalBounds.offset(-globalOffset.x, -globalOffset.y);
 
-    thumbScale = DensityUtil.calculateScale(startBounds, finalBounds);
+    this.thumbScale = DensityUtil.calculateScale(startBounds, finalBounds);
 
     this.expandedIv.setVisibility(View.VISIBLE);
     this.expandedIv.setPivotX(0.0f);
@@ -518,6 +527,7 @@ public class DetailActivity extends BaseActivity
         .with(ObjectAnimator.ofFloat(this.expandedIv, View.Y, startBounds.top, finalBounds.top))
         .with(ObjectAnimator.ofFloat(this.expandedIv, View.SCALE_X, thumbScale, 1.0f))
         .with(ObjectAnimator.ofFloat(this.expandedIv, View.SCALE_Y, thumbScale, 1.0f))
+        .with(ObjectAnimator.ofFloat(this.expandedIv, View.ALPHA, 0.4f, 1.0f))
         .with(ObjectAnimator.ofFloat(this.viewPager, View.ALPHA, 0.8f, 0.1f));
     set.setDuration(Constants.MILLISECONDS_400);
     set.setInterpolator(new DecelerateInterpolator());
@@ -536,7 +546,6 @@ public class DetailActivity extends BaseActivity
 
   private void collapsingThumb() {
 
-    final float startScaleFinal = thumbScale;
     if (expandAnimator != null) {
       expandAnimator.cancel();
     }
@@ -544,9 +553,10 @@ public class DetailActivity extends BaseActivity
     AnimatorSet set = new AnimatorSet();
     set.play(ObjectAnimator.ofFloat(this.expandedIv, View.X, startBounds.left))
         .with(ObjectAnimator.ofFloat(this.expandedIv, View.Y, startBounds.top))
-        .with(ObjectAnimator.ofFloat(this.expandedIv, View.SCALE_X, startScaleFinal))
-        .with(ObjectAnimator.ofFloat(this.expandedIv, View.SCALE_Y, startScaleFinal))
-        .with(ObjectAnimator.ofFloat(this.viewPager, View.ALPHA, 1.0f));
+        .with(ObjectAnimator.ofFloat(this.expandedIv, View.SCALE_X, thumbScale))
+        .with(ObjectAnimator.ofFloat(this.expandedIv, View.SCALE_Y, thumbScale))
+        .with(ObjectAnimator.ofFloat(this.expandedIv, View.ALPHA, 0.1f))
+        .before(ObjectAnimator.ofFloat(this.viewPager, View.ALPHA, 1.0f));
     set.setDuration(Constants.MILLISECONDS_300);
     set.setInterpolator(new DecelerateInterpolator());
     set.addListener(new AnimatorListenerAdapter() {

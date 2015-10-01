@@ -43,6 +43,7 @@ import com.app.designmore.event.FinishEvent;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
+import com.app.designmore.manager.MarginDecoration;
 import com.app.designmore.manager.WrappingGridLayoutManager;
 import com.app.designmore.retrofit.HomeRetrofit;
 import com.app.designmore.retrofit.entity.CategoryEntity;
@@ -52,7 +53,7 @@ import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.utils.DensityUtil;
-import com.app.designmore.utils.MarginDecoration;
+import com.app.designmore.manager.DividerDecoration;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.MaterialRippleLayout;
 import com.app.designmore.view.ProgressLayout;
@@ -227,7 +228,7 @@ public class HomeActivity extends BaseActivity
     categoryRecyclerView.setAdapter(categoryAdapter);
     categoryRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
     categoryRecyclerView.addItemDecoration(
-        new MarginDecoration(HomeActivity.this, R.dimen.material_1dp));
+        new DividerDecoration(HomeActivity.this, R.dimen.material_1dp));
 
     discountLayoutManager = new WrappingLinearLayoutManager(HomeActivity.this);
     discountLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -239,7 +240,7 @@ public class HomeActivity extends BaseActivity
     fashionRecyclerView.setAdapter(discountAdapter);
     fashionRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
     fashionRecyclerView.addItemDecoration(
-        new MarginDecoration(HomeActivity.this, R.dimen.material_1dp));
+        new DividerDecoration(HomeActivity.this, R.dimen.material_1dp));
 
     productLayoutManager = new WrappingGridLayoutManager(HomeActivity.this, 2);
     productLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -501,6 +502,8 @@ public class HomeActivity extends BaseActivity
     final Rect bounds = new Rect();
     rootView.getHitRect(bounds);
 
+    HomeActivity.this.rootView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
     SupportAnimator revealAnimator =
         ViewAnimationUtils.createCircularReveal(rootView.getChildAt(0), 0, bounds.left, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
@@ -508,6 +511,8 @@ public class HomeActivity extends BaseActivity
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
       @Override public void onAnimationEnd() {
+
+        HomeActivity.this.rootView.setLayerType(View.LAYER_TYPE_NONE, null);
         HomeActivity.this.loadData();
       }
     });

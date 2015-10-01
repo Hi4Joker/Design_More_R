@@ -39,6 +39,7 @@ import com.app.designmore.adapter.ProductAdapter;
 import com.app.designmore.adapter.SearchAdapter;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
+import com.app.designmore.manager.MarginDecoration;
 import com.app.designmore.retrofit.ProductRetrofit;
 import com.app.designmore.retrofit.SearchRetrofit;
 import com.app.designmore.retrofit.entity.ProductEntity;
@@ -47,7 +48,6 @@ import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.utils.DensityUtil;
-import com.app.designmore.utils.MarginDecoration;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.ProgressLayout;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
@@ -152,9 +152,6 @@ public class AllProductListActivity extends BaseActivity
     intent.putExtra(KEYWORD, keyword);
     intent.putExtra(TITLE, title);
     startingActivity.startActivity(intent);
-
-
-
   }
 
   @Override protected void onCreate(Bundle savedInstanceState) {
@@ -660,6 +657,8 @@ public class AllProductListActivity extends BaseActivity
     final Rect bounds = new Rect();
     rootView.getHitRect(bounds);
 
+    AllProductListActivity.this.rootView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
     revealAnimator =
         ViewAnimationUtils.createCircularReveal(rootView.getChildAt(0), 0, bounds.left, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
@@ -667,7 +666,10 @@ public class AllProductListActivity extends BaseActivity
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
       @Override public void onAnimationEnd() {
-        if (progressLayout != null) AllProductListActivity.this.initData();
+        if (progressLayout != null) {
+          AllProductListActivity.this.rootView.setLayerType(View.LAYER_TYPE_NONE, null);
+          AllProductListActivity.this.initData();
+        }
       }
     });
     revealAnimator.start();

@@ -127,6 +127,8 @@ public class MineActivity extends BaseActivity {
     final Rect bounds = new Rect();
     rootView.getHitRect(bounds);
 
+    MineActivity.this.rootView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
     revealAnimator =
         ViewAnimationUtils.createCircularReveal(rootView.getChildAt(0), bounds.left, bounds.top, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
@@ -134,6 +136,8 @@ public class MineActivity extends BaseActivity {
     revealAnimator.setInterpolator(new AccelerateInterpolator());
     revealAnimator.addListener(new SupportAnimator.SimpleAnimatorListener() {
       @Override public void onAnimationEnd() {
+
+        MineActivity.this.rootView.setLayerType(View.LAYER_TYPE_NONE, null);
 
         if (weakReference != null && weakReference.get() != null) {
           weakReference.get().finish();

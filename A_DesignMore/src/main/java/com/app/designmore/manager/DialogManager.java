@@ -1,6 +1,7 @@
 package com.app.designmore.manager;
 
 import android.app.Activity;
+import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,6 +21,7 @@ import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.activity.FashionActivity;
+import com.app.designmore.helper.MyApplication;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.rxAndroid.schedulers.HandlerScheduler;
@@ -220,6 +222,9 @@ public class DialogManager {
         (LinearLayout) LayoutInflater.from(activity).inflate(R.layout.custom_toast_layout, null);
     TextView toast = (TextView) parent.findViewById(R.id.custom_toast_content_tv);
     if (!TextUtils.isEmpty(content)) toast.setText(content);
+
+     /*final WindowManager windowManager =
+        (WindowManager) MyApplication.get().getSystemService(Context.WINDOW_SERVICE);*/
 
     final WindowManager windowManager =
         (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);

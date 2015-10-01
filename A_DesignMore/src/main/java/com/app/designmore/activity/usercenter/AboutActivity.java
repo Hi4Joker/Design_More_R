@@ -79,7 +79,8 @@ public class AboutActivity extends BaseActivity {
     ViewCompat.animate(rootView)
         .scaleY(1.0f)
         .setDuration(Constants.MILLISECONDS_400 / 2)
-        .setInterpolator(new AccelerateInterpolator());
+        .setInterpolator(new AccelerateInterpolator())
+        .withLayer();
   }
 
   @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -95,11 +96,11 @@ public class AboutActivity extends BaseActivity {
         .translationY(DensityUtil.getScreenHeight(AboutActivity.this))
         .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())
-        .setListener(new ViewPropertyAnimatorListenerAdapter() {
-          @Override public void onAnimationEnd(View view) {
-            AboutActivity.this.finish();
-            overridePendingTransition(0, 0);
-          }
+        .withLayer().setListener(new ViewPropertyAnimatorListenerAdapter() {
+      @Override public void onAnimationEnd(View view) {
+        AboutActivity.this.finish();
+        overridePendingTransition(0, 0);
+      }
         });
   }
 }
