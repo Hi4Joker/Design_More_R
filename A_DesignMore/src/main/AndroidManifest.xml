@@ -212,7 +212,6 @@
         >
     </activity>
 
-
     <!--用户中心ACT -> 我的订单ACT-->
     <activity
         android:name=".activity.usercenter.OrderActivity"
@@ -267,7 +266,7 @@
         >
     </activity>
 
-    <!--用户中心ACT -> 前置拍照ACT-->
+    <!--用户中心ACT -> 本地选照片ACT-->
     <activity
         android:name=".activity.usercenter.ProfileGalleryActivity"
         android:screenOrientation="portrait"
@@ -320,7 +319,7 @@
         >
     </activity>
 
-    <!-- 用户中心 -> 地址管理 -> 新增地址-->
+    <!-- 用户中心 -> 地址管理 -> 编辑地址-->
     <activity
         android:name=".activity.usercenter.AddressEditorActivity"
         android:screenOrientation="portrait"

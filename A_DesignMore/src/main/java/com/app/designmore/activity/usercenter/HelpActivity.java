@@ -156,7 +156,8 @@ public class HelpActivity extends BaseActivity implements HelpAdapter.Callback {
     ViewCompat.animate(rootView)
         .scaleY(1.0f)
         .setDuration(Constants.MILLISECONDS_400 / 2)
-        .setInterpolator(new AccelerateInterpolator()) .withLayer()
+        .setInterpolator(new AccelerateInterpolator())
+        .withLayer()
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
             HelpActivity.this.loadData();
@@ -166,8 +167,10 @@ public class HelpActivity extends BaseActivity implements HelpAdapter.Callback {
   }
 
   @Override public void onError(Throwable error) {
-    progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon), "网络连接异常",
-        null, "请重试", retryClickListener);
+    progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
+        getResources().getString(R.string.six_word_title),
+        getResources().getString(R.string.six_word_content),
+        getResources().getString(R.string.retry_button_text), retryClickListener);
   }
 
   @Override public void exit() {
@@ -175,11 +178,11 @@ public class HelpActivity extends BaseActivity implements HelpAdapter.Callback {
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(HelpActivity.this))
         .setDuration(Constants.MILLISECONDS_400)
-        .setInterpolator(new LinearInterpolator()) .withLayer()
+        .setInterpolator(new LinearInterpolator())
+        .withLayer()
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
             HelpActivity.this.finish();
-            overridePendingTransition(0, 0);
           }
         });
   }

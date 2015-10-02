@@ -14,7 +14,6 @@
       android:id="@+id/address_add_layout_rfl"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:layout_alignParentTop="true"
       >
 
     <LinearLayout

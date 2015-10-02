@@ -84,7 +84,6 @@ public class OrderAddressActivity extends BaseActivity implements SimpleAddressA
   @Nullable @Bind(R.id.order_address_layout_srl) SwipeRefreshLayout swipeRefreshLayout;
   @Nullable @Bind(R.id.order_address_layout_rl) RecyclerView recyclerView;
 
-  private SupportAnimator revealAnimator;
   private List<AddressEntity> items = new ArrayList<>();
   private AddressEntity defaultAddress;
 
@@ -376,7 +375,7 @@ public class OrderAddressActivity extends BaseActivity implements SimpleAddressA
 
     OrderAddressActivity.this.revealFrameLayout.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-    revealAnimator =
+    SupportAnimator revealAnimator =
         ViewAnimationUtils.createCircularReveal(revealFrameLayout.getChildAt(0), 0, bounds.left, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
     revealAnimator.setDuration(Constants.MILLISECONDS_400);
