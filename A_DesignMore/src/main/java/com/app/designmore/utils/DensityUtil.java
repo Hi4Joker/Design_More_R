@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,8 @@ import android.view.WindowManager;
  */
 
 public class DensityUtil {
+
+  private static final String TAG = DensityUtil.class.getSimpleName();
 
   private static int screenHeight;
   private static int screenWidth;
@@ -58,6 +61,7 @@ public class DensityUtil {
    * 获取屏幕高度
    */
   public static int getScreenHeight(Context context) {
+
     if (screenHeight == 0) {
       WindowManager wm =
           (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
@@ -74,6 +78,7 @@ public class DensityUtil {
    * 获取屏幕宽度
    */
   public static int getScreenWidth(Context context) {
+
     if (screenWidth == 0) {
       WindowManager wm =
           (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
@@ -120,15 +125,13 @@ public class DensityUtil {
   public static int getLocationY(View item) {
 
     int[] startingLocation = new int[1];
-    // 得到相对于整个屏幕的区域坐标（左上角坐标——右下角坐标）
+    /* 得到相对于整个屏幕的区域坐标（左上角坐标——右下角坐标）*/
     Rect viewRect = new Rect();
     item.getGlobalVisibleRect(viewRect);
 
-    startingLocation[0] = (viewRect.top - DensityUtil.getStatusBarHeight(item.getContext())) + (
-        viewRect.bottom
-            - DensityUtil.getStatusBarHeight(item.getContext()));
+    startingLocation[0] = viewRect.top + viewRect.bottom;
 
-    return startingLocation[0] / 2;
+    return startingLocation[0] / 2 - DensityUtil.getStatusBarHeight(item.getContext());
   }
 
   public static float calculateScale(Rect startBounds, Rect finalBounds) {
