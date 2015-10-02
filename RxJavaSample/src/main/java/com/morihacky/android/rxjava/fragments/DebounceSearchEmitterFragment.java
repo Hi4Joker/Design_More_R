@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.functions.Func1;
 import timber.log.Timber;
 
@@ -74,7 +76,8 @@ public class DebounceSearchEmitterFragment extends BaseFragment {
     _adapter.clear();
   }
 
-  @TargetApi(Build.VERSION_CODES.LOLLIPOP) @Override public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+  @TargetApi(Build.VERSION_CODES.LOLLIPOP) @Override
+  public void onActivityCreated(@Nullable Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
     _setupLogger();
 
@@ -136,13 +139,14 @@ public class DebounceSearchEmitterFragment extends BaseFragment {
 
 
 
-
-
-
-      /**/
-
+    /**/
     _subscription = RxTextView.textChangeEvents(_inputSearchText)//
-        .debounce(400, TimeUnit.MILLISECONDS)// default Scheduler is Computation
+        .doOnNext(new Action1<TextViewTextChangeEvent>() {
+          @Override public void call(TextViewTextChangeEvent textViewTextChangeEvent) {
+
+            Log.e("joker", textViewTextChangeEvent.text().toString());
+          }
+        }).debounce(400, TimeUnit.MILLISECONDS)// default Scheduler is Computation
         .observeOn(AndroidSchedulers.mainThread())//
         .subscribe(_getSearchObserver());
   }

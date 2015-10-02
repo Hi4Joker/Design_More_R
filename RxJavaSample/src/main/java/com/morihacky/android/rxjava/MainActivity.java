@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentActivity;
 import com.morihacky.android.rxjava.fragments.RotationPersist1WorkerFragment;
 import com.morihacky.android.rxjava.fragments.RotationPersist2WorkerFragment;
 import com.morihacky.android.rxjava.rxbus.RxBus;
+import com.morihacky.android.rxjava.rxbus.RxBusDemoFragment;
 
 public class MainActivity
       extends FragmentActivity {
