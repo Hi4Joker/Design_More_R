@@ -114,9 +114,14 @@ public class DensityUtil {
   public static int getActionBarSize(Context context) {
 
     if (actionBarSize == 0) {
-      TypedArray actionbarSizeTypedArray =
-          context.obtainStyledAttributes(new int[] { android.R.attr.actionBarSize });
-      actionBarSize = (int) actionbarSizeTypedArray.getDimension(0, 0);
+      TypedArray actionbarSizeTypedArray = null;
+      try {
+        actionbarSizeTypedArray =
+            context.obtainStyledAttributes(new int[] { android.R.attr.actionBarSize });
+        actionBarSize = (int) actionbarSizeTypedArray.getDimension(0, 0);
+      } finally {
+        actionbarSizeTypedArray.recycle();
+      }
     }
 
     return actionBarSize;
