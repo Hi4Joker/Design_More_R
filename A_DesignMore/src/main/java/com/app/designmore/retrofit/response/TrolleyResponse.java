@@ -45,7 +45,7 @@ public class TrolleyResponse extends BaseResponse {
     @Expose @SerializedName("rec_id") public String recId;
     @Expose @SerializedName("goods_id") public String goodId;
     @Expose @SerializedName("goods_name") public String goodName;
-    @Expose @SerializedName("goods_attr") public String goodAttrId;
+    @Expose @SerializedName("goods_attr_id") public String goodAttrId;
     @Expose @SerializedName("goods_number") public String goodCount;
     @Expose @SerializedName("goods_price") public String goodPrice;
     @Expose @SerializedName("goods_img") public String goodThumb;

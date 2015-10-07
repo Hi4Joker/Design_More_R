@@ -82,7 +82,6 @@ public class TrolleyEditorActivity extends BaseActivity
   @Nullable @Bind(R.id.trolley_editor_layout_radio_btn) ImageButton radioBtn;
   @Nullable @Bind(R.id.trolley_editor_layout_delete_btn) Button deleteBtn;
 
-  private Button actionButton;
   private SupportAnimator revealAnimator;
   private TrolleyEditorAdapter trolleyEditorAdapter;
   private List<TrolleyEntity> items = new ArrayList<>();
@@ -299,8 +298,9 @@ public class TrolleyEditorActivity extends BaseActivity
           }
         }).toList().toBlocking().single();
     params.put("item_list", itemList.toString());
+    //params.put("item_list", "[101]");
 
-    Log.e(TAG, params.toString());
+    Log.e("joker", params.toString());
 
     subscription =
         TrolleyRetrofit.getInstance()
@@ -379,7 +379,7 @@ public class TrolleyEditorActivity extends BaseActivity
             .getTrolleyAttrList(params)
             .doOnSubscribe(new Action0() {
               @Override public void call() {
-            /*显示加载进度条*/
+                /*显示加载进度条*/
                 if (progressDialog == null) {
                   progressDialog = DialogManager.getInstance()
                       .showSimpleProgressDialog(TrolleyEditorActivity.this, null);
@@ -532,7 +532,7 @@ public class TrolleyEditorActivity extends BaseActivity
 
     MenuItem menuItem = menu.findItem(R.id.action_inbox);
     menuItem.setActionView(R.layout.menu_inbox_tv_item);
-    actionButton = (Button) menuItem.getActionView().findViewById(R.id.action_inbox_btn);
+    Button actionButton = (Button) menuItem.getActionView().findViewById(R.id.action_inbox_btn);
     actionButton.setText(getText(R.string.action_done));
     actionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {

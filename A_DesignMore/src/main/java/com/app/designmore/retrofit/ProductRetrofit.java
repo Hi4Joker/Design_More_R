@@ -76,35 +76,38 @@ public class ProductRetrofit {
    */
   public Observable<List<ProductEntity>> getProductByXxx(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<ProductResponse>>() {
-      @Override public Observable<ProductResponse> call() {
-        return productService.getProductByXxx(params)
-            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<ProductResponse, Observable<ProductResponse>>() {
-      @Override public Observable<ProductResponse> call(ProductResponse productResponse) {
-        return productResponse.filterWebServiceErrors();
-      }
-    }).flatMap(new Func1<ProductResponse, Observable<ProductResponse.Product>>() {
-      @Override public Observable<ProductResponse.Product> call(ProductResponse productResponse) {
-        return Observable.from(productResponse.getProducts());
-      }
-    }).map(new Func1<ProductResponse.Product, ProductEntity>() {
-      @Override public ProductEntity call(ProductResponse.Product product) {
+    return productService.getProductByXxx(params)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<ProductResponse, Observable<ProductResponse>>() {
+          @Override public Observable<ProductResponse> call(ProductResponse productResponse) {
+            return productResponse.filterWebServiceErrors();
+          }
+        })
+        .flatMap(new Func1<ProductResponse, Observable<ProductResponse.Product>>() {
+          @Override
+          public Observable<ProductResponse.Product> call(ProductResponse productResponse) {
+            return Observable.from(productResponse.getProducts());
+          }
+        })
+        .map(new Func1<ProductResponse.Product, ProductEntity>() {
+          @Override public ProductEntity call(ProductResponse.Product product) {
 
-        ProductEntity clone = instance.newInstance();
+            ProductEntity clone = instance.newInstance();
 
-        clone.setGoodId(product.goodId);
-        clone.setGoodThumbUrl(product.goodThumb);
-        clone.setGoodPrice(product.goodPrice);
-        clone.setGoodDes(product.goodDes);
+            clone.setGoodId(product.goodId);
+            clone.setGoodThumbUrl(product.goodThumb);
+            clone.setGoodPrice(product.goodPrice);
+            clone.setGoodDes(product.goodDes);
 
-        return clone;
-      }
-    }).toList().compose(SchedulersCompat.<List<ProductEntity>>applyExecutorSchedulers());
+            return clone;
+          }
+        })
+        .toList()
+        .compose(SchedulersCompat.<List<ProductEntity>>applyExecutorSchedulers());
   }
 }

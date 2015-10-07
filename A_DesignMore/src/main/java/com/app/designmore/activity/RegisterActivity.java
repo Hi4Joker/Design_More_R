@@ -32,6 +32,7 @@ import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import rx.Observable;
 import rx.Subscription;
@@ -70,6 +71,8 @@ public class RegisterActivity extends BaseActivity {
   private String password;
   private String mobile;
   private String code;
+
+  private String security = "";
 
   private ProgressDialog progressDialog;
   private ViewGroup toast;
@@ -172,7 +175,7 @@ public class RegisterActivity extends BaseActivity {
         .compose(RegisterActivity.this.<LoginCodeEntity>bindUntilEvent(ActivityEvent.DESTROY))
         .subscribe(new Action1<LoginCodeEntity>() {
           @Override public void call(LoginCodeEntity loginCodeEntity) {
-            RegisterActivity.this.code = loginCodeEntity.getCode();
+            RegisterActivity.this.security = loginCodeEntity.getCode();
           }
         });
   }
@@ -183,7 +186,7 @@ public class RegisterActivity extends BaseActivity {
         .take(10)
         .map(new Func1<Long, Long>() {
           @Override public Long call(Long aLong) {
-            return 10 - aLong;
+            return 9 - aLong;
           }
         })
         .doOnSubscribe(new Action0() {
@@ -212,7 +215,7 @@ public class RegisterActivity extends BaseActivity {
 
   @Nullable @OnClick(R.id.register_layout_register_btn) void onRegisterClick() {
 
-    if (!RegisterActivity.this.code.equals(codeEt.getText().toString())) {
+    if (!RegisterActivity.this.security.equals(code)) {
       toast = DialogManager.getInstance()
           .showNoMoreDialog(RegisterActivity.this, Gravity.TOP, "验证码错误，请重新输入，O__O …");
       return;

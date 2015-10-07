@@ -336,13 +336,13 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
     actionButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
 
-        TrolleyActivity.this.totalTv.setText("");
-        TrolleyActivity.this.freightTv.setText("");
-        TrolleyActivity.this.payBtn.setText("结算 ( 0 )");
-
         TrolleyEditorActivity.navigateToTrolleyEditor(TrolleyActivity.this,
             (ArrayList<TrolleyEntity>) items);
         overridePendingTransition(0, 0);
+
+        TrolleyActivity.this.totalTv.setText("");
+        TrolleyActivity.this.freightTv.setText("");
+        TrolleyActivity.this.payBtn.setText("结算 ( 0 )");
       }
     });
     return true;
@@ -449,6 +449,9 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
     if (requestCode == Constants.ACTIVITY_CODE && resultCode == RESULT_OK) {
+
+      TrolleyActivity.this.items.clear();
+      TrolleyActivity.this.orderEntities.clear();
       TrolleyActivity.this.loadData();
     }
     super.onActivityResult(requestCode, resultCode, data);

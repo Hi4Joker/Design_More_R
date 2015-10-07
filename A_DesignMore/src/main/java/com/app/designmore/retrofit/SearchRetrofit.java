@@ -75,35 +75,35 @@ public class SearchRetrofit {
    */
   public Observable<List<SearchItemEntity>> getHotSearchList(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<SearchListResponse>>() {
-      @Override public Observable<SearchListResponse> call() {
-             /*获取热搜列表，超时8秒*/
-        return searchService.getHotSearchList(params)
-            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<SearchListResponse, Observable<SearchListResponse>>() {
-      @Override public Observable<SearchListResponse> call(SearchListResponse searchListResponse) {
-        return searchListResponse.filterWebServiceErrors();
-      }
-    }).map(new Func1<SearchListResponse, List<SearchItemEntity>>() {
-      @Override public List<SearchItemEntity> call(SearchListResponse searchListResponse) {
+    return searchService.getHotSearchList(params)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<SearchListResponse, Observable<SearchListResponse>>() {
+          @Override
+          public Observable<SearchListResponse> call(SearchListResponse searchListResponse) {
+            return searchListResponse.filterWebServiceErrors();
+          }
+        })
+        .map(new Func1<SearchListResponse, List<SearchItemEntity>>() {
+          @Override public List<SearchItemEntity> call(SearchListResponse searchListResponse) {
 
-        final ArrayList<SearchItemEntity> searchItemEntities = new ArrayList<>();
-        SearchItemEntity instance = new SearchItemEntity();
+            final ArrayList<SearchItemEntity> searchItemEntities = new ArrayList<>();
+            SearchItemEntity instance = new SearchItemEntity();
 
-        for (String text : searchListResponse.getResult()) {
+            for (String text : searchListResponse.getResult()) {
 
-          SearchItemEntity clone = instance.newInstance();
-          clone.setText(text);
-          searchItemEntities.add(clone);
-        }
+              SearchItemEntity clone = instance.newInstance();
+              clone.setText(text);
+              searchItemEntities.add(clone);
+            }
 
-        return searchItemEntities;
-      }
-    }).compose(SchedulersCompat.<List<SearchItemEntity>>applyExecutorSchedulers());
+            return searchItemEntities;
+          }
+        })
+        .compose(SchedulersCompat.<List<SearchItemEntity>>applyExecutorSchedulers());
   }
 }

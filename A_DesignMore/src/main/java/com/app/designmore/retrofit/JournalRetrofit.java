@@ -80,37 +80,39 @@ public class JournalRetrofit {
    */
   public Observable<List<JournalEntity>> getJournalList(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<JournalResponse>>() {
-      @Override public Observable<JournalResponse> call() {
-        /*获取杂志列表，超时8秒*/
-        return collectionService.getJournalList(params)
-            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<JournalResponse, Observable<JournalResponse>>() {
-      @Override public Observable<JournalResponse> call(JournalResponse journalResponse) {
-        return journalResponse.filterWebServiceErrors();
-      }
-    }).flatMap(new Func1<JournalResponse, Observable<JournalResponse.Journal>>() {
-      @Override public Observable<JournalResponse.Journal> call(JournalResponse journalResponse) {
-        return Observable.from(journalResponse.getJournals());
-      }
-    }).map(new Func1<JournalResponse.Journal, JournalEntity>() {
-      @Override public JournalEntity call(JournalResponse.Journal journal) {
+    return collectionService.getJournalList(params)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<JournalResponse, Observable<JournalResponse>>() {
+          @Override public Observable<JournalResponse> call(JournalResponse journalResponse) {
+            return journalResponse.filterWebServiceErrors();
+          }
+        })
+        .flatMap(new Func1<JournalResponse, Observable<JournalResponse.Journal>>() {
+          @Override
+          public Observable<JournalResponse.Journal> call(JournalResponse journalResponse) {
+            return Observable.from(journalResponse.getJournals());
+          }
+        })
+        .map(new Func1<JournalResponse.Journal, JournalEntity>() {
+          @Override public JournalEntity call(JournalResponse.Journal journal) {
 
-        JournalEntity clone = instance.newInstance();
+            JournalEntity clone = instance.newInstance();
 
-        clone.setJournalId(journal.journalId);
-        clone.setJournalThumbUrl(journal.journalThumb);
-        clone.setJournalTitle(journal.journalTitle);
-        clone.setJournalContent(journal.journalContent);
-        clone.setJournalUrl(journal.journalUrl);
+            clone.setJournalId(journal.journalId);
+            clone.setJournalThumbUrl(journal.journalThumb);
+            clone.setJournalTitle(journal.journalTitle);
+            clone.setJournalContent(journal.journalContent);
+            clone.setJournalUrl(journal.journalUrl);
 
-        return clone;
-      }
-    }).toList().compose(SchedulersCompat.<List<JournalEntity>>applyExecutorSchedulers());
+            return clone;
+          }
+        })
+        .toList()
+        .compose(SchedulersCompat.<List<JournalEntity>>applyExecutorSchedulers());
   }
 }

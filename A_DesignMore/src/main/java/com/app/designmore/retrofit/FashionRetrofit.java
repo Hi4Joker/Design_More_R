@@ -76,35 +76,37 @@ public class FashionRetrofit {
    */
   public Observable<List<FashionEntity>> getFashionList(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<FashionResponse>>() {
-      @Override public Observable<FashionResponse> call() {
-        /*获取新品列表，超时8秒*/
-        return collectionService.getFashionList(params)
-            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<FashionResponse, Observable<FashionResponse>>() {
-      @Override public Observable<FashionResponse> call(FashionResponse fashionResponse) {
-        return fashionResponse.filterWebServiceErrors();
-      }
-    }).flatMap(new Func1<FashionResponse, Observable<FashionResponse.Fashion>>() {
-      @Override public Observable<FashionResponse.Fashion> call(FashionResponse fashionResponse) {
-        return Observable.from(fashionResponse.getFashions());
-      }
-    }).map(new Func1<FashionResponse.Fashion, FashionEntity>() {
-      @Override public FashionEntity call(FashionResponse.Fashion fashion) {
+    return collectionService.getFashionList(params)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<FashionResponse, Observable<FashionResponse>>() {
+          @Override public Observable<FashionResponse> call(FashionResponse fashionResponse) {
+            return fashionResponse.filterWebServiceErrors();
+          }
+        })
+        .flatMap(new Func1<FashionResponse, Observable<FashionResponse.Fashion>>() {
+          @Override
+          public Observable<FashionResponse.Fashion> call(FashionResponse fashionResponse) {
+            return Observable.from(fashionResponse.getFashions());
+          }
+        })
+        .map(new Func1<FashionResponse.Fashion, FashionEntity>() {
+          @Override public FashionEntity call(FashionResponse.Fashion fashion) {
 
-        FashionEntity clone = instance.newInstance();
-        clone.setGoodId(fashion.goodId);
-        clone.setGoodName(fashion.goodName);
-        clone.setGoodDiscount(fashion.goodDiscount);
-        clone.setGoodThumbUrl(fashion.goodThumbUrl);
+            FashionEntity clone = instance.newInstance();
+            clone.setGoodId(fashion.goodId);
+            clone.setGoodName(fashion.goodName);
+            clone.setGoodDiscount(fashion.goodDiscount);
+            clone.setGoodThumbUrl(fashion.goodThumbUrl);
 
-        return clone;
-      }
-    }).toList().compose(SchedulersCompat.<List<FashionEntity>>applyExecutorSchedulers());
+            return clone;
+          }
+        })
+        .toList()
+        .compose(SchedulersCompat.<List<FashionEntity>>applyExecutorSchedulers());
   }
 }

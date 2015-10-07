@@ -106,24 +106,32 @@ public class AddressPresenterImp implements AddressPresenter, ExecutorCallback {
 
     subscribe = observable.doOnSubscribe(new Action0() {
       @Override public void call() {
+
+        Log.e(TAG, "doOnSubscribe run on the " + Thread.currentThread().getName());
         addressView.showProgress();
       }
-    }).finallyDo(new Action0() {
-      @Override public void call() {
-        addressView.hideProgress();
-      }
-    }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<Province>>() {
-      @Override public void call(List<Province> provinces) {
+    })
+        .finallyDo(new Action0() {
+          @Override public void call() {
 
-        AddressPresenterImp.this.provinces.clear();
-        AddressPresenterImp.this.provinces.addAll(provinces);
-        addressView.onInflateFinish(provinces);
-      }
-    }, new Action1<Throwable>() {
-      @Override public void call(Throwable throwable) {
-        addressView.showError();
-      }
-    });
+            Log.e(TAG, "finallyDo run on the " + Thread.currentThread().getName());
+            addressView.hideProgress();
+          }
+        })
+        .subscribeOn(AndroidSchedulers.mainThread())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Action1<List<Province>>() {
+          @Override public void call(List<Province> provinces) {
+
+            AddressPresenterImp.this.provinces.clear();
+            AddressPresenterImp.this.provinces.addAll(provinces);
+            addressView.onInflateFinish(provinces);
+          }
+        }, new Action1<Throwable>() {
+          @Override public void call(Throwable throwable) {
+            addressView.showError();
+          }
+        });
   }
 
   @Override public void detach() {

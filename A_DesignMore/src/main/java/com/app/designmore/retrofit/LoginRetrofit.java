@@ -120,26 +120,27 @@ public class LoginRetrofit {
    */
   public Observable<LoginCodeEntity> getAuthCode(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<LoginCodeResponse>>() {
-      @Override public Observable<LoginCodeResponse> call() {
-        return loginService.getLoginCode(params).timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<LoginCodeResponse, Observable<LoginCodeResponse>>() {
-      @Override public Observable<LoginCodeResponse> call(LoginCodeResponse loginCodeResponse) {
-        return loginCodeResponse.filterWebServiceErrors();
-      }
-    }).map(new Func1<LoginCodeResponse, LoginCodeEntity>() {
-      @Override public LoginCodeEntity call(LoginCodeResponse loginCodeResponse) {
+    return loginService.getLoginCode(params)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<LoginCodeResponse, Observable<LoginCodeResponse>>() {
+          @Override public Observable<LoginCodeResponse> call(LoginCodeResponse loginCodeResponse) {
+            return loginCodeResponse.filterWebServiceErrors();
+          }
+        })
+        .map(new Func1<LoginCodeResponse, LoginCodeEntity>() {
+          @Override public LoginCodeEntity call(LoginCodeResponse loginCodeResponse) {
 
-        LoginCodeEntity loginCodeEntity = new LoginCodeEntity(loginCodeResponse.getCode());
+            LoginCodeEntity loginCodeEntity = new LoginCodeEntity(loginCodeResponse.getCode());
 
-        return loginCodeEntity;
-      }
-    }).compose(SchedulersCompat.<LoginCodeEntity>applyExecutorSchedulers());
+            return loginCodeEntity;
+          }
+        })
+        .compose(SchedulersCompat.<LoginCodeEntity>applyExecutorSchedulers());
   }
 
   /**
@@ -147,33 +148,33 @@ public class LoginRetrofit {
    */
   public Observable<RegisterEntity> requestRegister(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call() {
-        return loginService.requestRegister(params)
-            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call(final BaseResponse baseResponse) {
-        return baseResponse.filterWebServiceErrors()
-            .onErrorResumeNext(new Func1<Throwable, Observable>() {
-              @Override public Observable call(Throwable throwable) {
-                if (throwable instanceof WebServiceException
-                    && baseResponse.resultCode == Constants.RESULT_FAIL) {
-                  return Observable.just(baseResponse);
-                }
-                return Observable.error(throwable);
-              }
-            });
-      }
-    }).map(new Func1<BaseResponse, RegisterEntity>() {
-      @Override public RegisterEntity call(BaseResponse baseResponse) {
-        return new RegisterEntity(baseResponse.resultCode, baseResponse.message);
-      }
-    }).compose(SchedulersCompat.<RegisterEntity>applyExecutorSchedulers());
+    return loginService.requestRegister(params)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
+          @Override public Observable<BaseResponse> call(final BaseResponse baseResponse) {
+            return baseResponse.filterWebServiceErrors()
+                .onErrorResumeNext(new Func1<Throwable, Observable>() {
+                  @Override public Observable call(Throwable throwable) {
+                    if (throwable instanceof WebServiceException
+                        && baseResponse.resultCode == Constants.RESULT_FAIL) {
+                      return Observable.just(baseResponse);
+                    }
+                    return Observable.error(throwable);
+                  }
+                });
+          }
+        })
+        .map(new Func1<BaseResponse, RegisterEntity>() {
+          @Override public RegisterEntity call(BaseResponse baseResponse) {
+            return new RegisterEntity(baseResponse.resultCode, baseResponse.message);
+          }
+        })
+        .compose(SchedulersCompat.<RegisterEntity>applyExecutorSchedulers());
   }
 
   /**
@@ -181,33 +182,33 @@ public class LoginRetrofit {
    */
   public Observable<RetrieveEntity> requestRetrieve(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call() {
-        return loginService.requestRetrieve(params)
-            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call(final BaseResponse baseResponse) {
-        return baseResponse.filterWebServiceErrors()
-            .onErrorResumeNext(new Func1<Throwable, Observable>() {
-              @Override public Observable call(Throwable throwable) {
-                if (throwable instanceof WebServiceException
-                    && baseResponse.resultCode == Constants.RESULT_FAIL) {
-                  return Observable.just(baseResponse);
-                }
-                return Observable.error(throwable);
-              }
-            });
-      }
-    }).map(new Func1<BaseResponse, RetrieveEntity>() {
-      @Override public RetrieveEntity call(BaseResponse baseResponse) {
-        return new RetrieveEntity(baseResponse.resultCode, baseResponse.message);
-      }
-    }).compose(SchedulersCompat.<RetrieveEntity>applyExecutorSchedulers());
+    return loginService.requestRetrieve(params)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
+          @Override public Observable<BaseResponse> call(final BaseResponse baseResponse) {
+            return baseResponse.filterWebServiceErrors()
+                .onErrorResumeNext(new Func1<Throwable, Observable>() {
+                  @Override public Observable call(Throwable throwable) {
+                    if (throwable instanceof WebServiceException
+                        && baseResponse.resultCode == Constants.RESULT_FAIL) {
+                      return Observable.just(baseResponse);
+                    }
+                    return Observable.error(throwable);
+                  }
+                });
+          }
+        })
+        .map(new Func1<BaseResponse, RetrieveEntity>() {
+          @Override public RetrieveEntity call(BaseResponse baseResponse) {
+            return new RetrieveEntity(baseResponse.resultCode, baseResponse.message);
+          }
+        })
+        .compose(SchedulersCompat.<RetrieveEntity>applyExecutorSchedulers());
   }
 
   /**
@@ -215,24 +216,25 @@ public class LoginRetrofit {
    */
   public Observable<LoginEntity> requestLogin(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<LoginResponse>>() {
-      @Override public Observable<LoginResponse> call() {
-        return loginService.requestLogin(params).timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<BaseResponse, Observable<LoginResponse>>() {
-      @Override public Observable<LoginResponse> call(BaseResponse baseResponse) {
-        return baseResponse.filterWebServiceErrors();
-      }
-    }).map(new Func1<LoginResponse, LoginEntity>() {
-      @Override public LoginEntity call(LoginResponse loginResponse) {
-        return new LoginEntity(loginResponse.getLoginInfo().userId,
-            loginResponse.getLoginInfo().addressId);
-      }
-    }).compose(SchedulersCompat.<LoginEntity>applyExecutorSchedulers());
+    return loginService.requestLogin(params)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<BaseResponse, Observable<LoginResponse>>() {
+          @Override public Observable<LoginResponse> call(BaseResponse baseResponse) {
+            return baseResponse.filterWebServiceErrors();
+          }
+        })
+        .map(new Func1<LoginResponse, LoginEntity>() {
+          @Override public LoginEntity call(LoginResponse loginResponse) {
+            return new LoginEntity(loginResponse.getLoginInfo().userId,
+                loginResponse.getLoginInfo().addressId);
+          }
+        })
+        .compose(SchedulersCompat.<LoginEntity>applyExecutorSchedulers());
   }
 
   /**
@@ -240,30 +242,32 @@ public class LoginRetrofit {
    */
   public Observable<UserInfoEntity> requestUserInfo(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<UserInfoResponse>>() {
-      @Override public Observable<UserInfoResponse> call() {
-        return loginService.requestUserInfo(params)
-            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<UserInfoResponse, Observable<UserInfoResponse>>() {
-      @Override public Observable<UserInfoResponse> call(final UserInfoResponse userInfoResponse) {
-        return userInfoResponse.filterWebServiceErrors();
-      }
-    }).map(new Func1<UserInfoResponse, UserInfoResponse.UserInfo>() {
-      @Override public UserInfoResponse.UserInfo call(UserInfoResponse userInfoResponse) {
-        return userInfoResponse.getUserInfo();
-      }
-    }).map(new Func1<UserInfoResponse.UserInfo, UserInfoEntity>() {
-      @Override public UserInfoEntity call(UserInfoResponse.UserInfo userInfo) {
+    return loginService.requestUserInfo(params)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<UserInfoResponse, Observable<UserInfoResponse>>() {
+          @Override
+          public Observable<UserInfoResponse> call(final UserInfoResponse userInfoResponse) {
+            return userInfoResponse.filterWebServiceErrors();
+          }
+        })
+        .map(new Func1<UserInfoResponse, UserInfoResponse.UserInfo>() {
+          @Override public UserInfoResponse.UserInfo call(UserInfoResponse userInfoResponse) {
+            return userInfoResponse.getUserInfo();
+          }
+        })
+        .map(new Func1<UserInfoResponse.UserInfo, UserInfoEntity>() {
+          @Override public UserInfoEntity call(UserInfoResponse.UserInfo userInfo) {
 
-        return new UserInfoEntity(userInfo.userName, userInfo.nickname, userInfo.gender,
-            userInfo.birthday, userInfo.headerUrl);
-      }
-    }).compose(SchedulersCompat.<UserInfoEntity>applyExecutorSchedulers());
+            return new UserInfoEntity(userInfo.userName, userInfo.nickname, userInfo.gender,
+                userInfo.birthday, userInfo.headerUrl);
+          }
+        })
+        .compose(SchedulersCompat.<UserInfoEntity>applyExecutorSchedulers());
   }
 
   /**
@@ -271,20 +275,19 @@ public class LoginRetrofit {
    */
   public Observable<BaseResponse> requestChangePassword(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call() {
-        return loginService.requestChangePassword(params)
-            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call(final BaseResponse baseResponse) {
-        return baseResponse.filterWebServiceErrors();
-      }
-    }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
+    return loginService.requestChangePassword(params)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
+          @Override public Observable<BaseResponse> call(final BaseResponse baseResponse) {
+            return baseResponse.filterWebServiceErrors();
+          }
+        })
+        .compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
   }
 
   /**
@@ -303,7 +306,8 @@ public class LoginRetrofit {
           @Override public Observable<BaseResponse> call(final BaseResponse baseResponse) {
             return baseResponse.filterWebServiceErrors();
           }
-        }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
+        })
+        .compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
   }
 
   /**
@@ -312,20 +316,19 @@ public class LoginRetrofit {
   public Observable<BaseResponse> uploadProfileHeader(final Map<String, TypedString> params,
       final TypedFile avatarFile) {
 
-    return Observable.defer(new Func0<Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call() {
-        return loginService.uploadProfileHeader(params, avatarFile)
-            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call(final BaseResponse baseResponse) {
-        return baseResponse.filterWebServiceErrors();
-      }
-    }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
+    return loginService.uploadProfileHeader(params, avatarFile)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
+          @Override public Observable<BaseResponse> call(final BaseResponse baseResponse) {
+            return baseResponse.filterWebServiceErrors();
+          }
+        })
+        .compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
   }
 
   /**
@@ -333,32 +336,34 @@ public class LoginRetrofit {
    */
   public Observable<List<HelpEntity>> getHelpList(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<HelpResponse>>() {
-      @Override public Observable<HelpResponse> call() {
-        /*获取帮助列表，超时8秒*/
-        return loginService.getHelpList(params).timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<HelpResponse, Observable<HelpResponse>>() {
-      @Override public Observable<HelpResponse> call(HelpResponse helpResponse) {
-        return helpResponse.filterWebServiceErrors();
-      }
-    }).flatMap(new Func1<HelpResponse, Observable<HelpResponse.Help>>() {
-      @Override public Observable<HelpResponse.Help> call(HelpResponse helpResponse) {
-        return Observable.from(helpResponse.getHelpList());
-      }
-    }).map(new Func1<HelpResponse.Help, HelpEntity>() {
-      @Override public HelpEntity call(HelpResponse.Help help) {
+    return loginService.getHelpList(params)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<HelpResponse, Observable<HelpResponse>>() {
+          @Override public Observable<HelpResponse> call(HelpResponse helpResponse) {
+            return helpResponse.filterWebServiceErrors();
+          }
+        })
+        .flatMap(new Func1<HelpResponse, Observable<HelpResponse.Help>>() {
+          @Override public Observable<HelpResponse.Help> call(HelpResponse helpResponse) {
+            return Observable.from(helpResponse.getHelpList());
+          }
+        })
+        .map(new Func1<HelpResponse.Help, HelpEntity>() {
+          @Override public HelpEntity call(HelpResponse.Help help) {
 
-        HelpEntity helpEntity = helpInstance.newInstance();
-        helpEntity.setTitle(help.title);
-        helpEntity.setContent(help.content);
+            HelpEntity helpEntity = helpInstance.newInstance();
+            helpEntity.setTitle(help.title);
+            helpEntity.setContent(help.content);
 
-        return helpEntity;
-      }
-    }).toList().compose(SchedulersCompat.<List<HelpEntity>>applyExecutorSchedulers());
+            return helpEntity;
+          }
+        })
+        .toList()
+        .compose(SchedulersCompat.<List<HelpEntity>>applyExecutorSchedulers());
   }
 }

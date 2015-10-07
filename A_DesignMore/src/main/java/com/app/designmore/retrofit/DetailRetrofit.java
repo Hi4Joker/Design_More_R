@@ -77,31 +77,32 @@ public class DetailRetrofit {
    */
   public Observable<DetailEntity> getGoodDetail(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<DetailResponse>>() {
-      @Override public Observable<DetailResponse> call() {
-        return detailService.getGoodDetail(params)
-            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<DetailResponse, Observable<DetailResponse>>() {
-      @Override public Observable<DetailResponse> call(DetailResponse detailResponse) {
-        return detailResponse.filterWebServiceErrors();
-      }
-    }).map(new Func1<DetailResponse, DetailResponse.Detail>() {
-      @Override public DetailResponse.Detail call(DetailResponse detailResponse) {
-        return detailResponse.getDetail();
-      }
-    }).map(new Func1<DetailResponse.Detail, DetailEntity>() {
-      @Override public DetailEntity call(DetailResponse.Detail detail) {
+    return detailService.getGoodDetail(params)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<DetailResponse, Observable<DetailResponse>>() {
+          @Override public Observable<DetailResponse> call(DetailResponse detailResponse) {
+            return detailResponse.filterWebServiceErrors();
+          }
+        })
+        .map(new Func1<DetailResponse, DetailResponse.Detail>() {
+          @Override public DetailResponse.Detail call(DetailResponse detailResponse) {
+            return detailResponse.getDetail();
+          }
+        })
+        .map(new Func1<DetailResponse.Detail, DetailEntity>() {
+          @Override public DetailEntity call(DetailResponse.Detail detail) {
 
-        return new DetailEntity(detail.goodId, detail.goodName, detail.goodMarketPrice,
-            detail.goodShopPrice, detail.goodDes, detail.goodDesUrl, detail.goodRepertory,
-            detail.productImages, detail.productAttrs);
-      }
-    }).compose(SchedulersCompat.<DetailEntity>applyExecutorSchedulers());
+            return new DetailEntity(detail.goodId, detail.goodName, detail.goodMarketPrice,
+                detail.goodShopPrice, detail.goodDes, detail.goodDesUrl, detail.goodRepertory,
+                detail.productImages, detail.productAttrs);
+          }
+        })
+        .compose(SchedulersCompat.<DetailEntity>applyExecutorSchedulers());
   }
 
   /**
@@ -109,19 +110,18 @@ public class DetailRetrofit {
    */
   public Observable<BaseResponse> requestBuyGood(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call() {
-        return detailService.requestBuyGood(params)
-            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call(BaseResponse BaseResponse) {
-        return BaseResponse.filterWebServiceErrors();
-      }
-    }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
+    return detailService.requestBuyGood(params)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
+          @Override public Observable<BaseResponse> call(BaseResponse BaseResponse) {
+            return BaseResponse.filterWebServiceErrors();
+          }
+        })
+        .compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
   }
 }

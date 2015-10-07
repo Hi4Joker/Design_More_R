@@ -1,5 +1,6 @@
 package com.app.designmore.retrofit;
 
+import android.util.Log;
 import com.app.designmore.Constants;
 import com.app.designmore.manager.OkClientInstance;
 import com.app.designmore.retrofit.entity.CollectionEntity;
@@ -94,40 +95,43 @@ public class TrolleyRetrofit {
    */
   public Observable<List<TrolleyEntity>> getTrolleyList(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<TrolleyResponse>>() {
-      @Override public Observable<TrolleyResponse> call() {
-        return trolleyService.getTrolleyList(params)
-            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<TrolleyResponse, Observable<TrolleyResponse>>() {
-      @Override public Observable<TrolleyResponse> call(TrolleyResponse trolleyResponse) {
-        return trolleyResponse.filterWebServiceErrors();
-      }
-    }).flatMap(new Func1<TrolleyResponse, Observable<TrolleyResponse.Trolley>>() {
-      @Override public Observable<TrolleyResponse.Trolley> call(TrolleyResponse trolleyResponse) {
-        return Observable.from(trolleyResponse.getTrolleyList());
-      }
-    }).map(new Func1<TrolleyResponse.Trolley, TrolleyEntity>() {
-      @Override public TrolleyEntity call(TrolleyResponse.Trolley trolley) {
+    return trolleyService.getTrolleyList(params)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<TrolleyResponse, Observable<TrolleyResponse>>() {
+          @Override public Observable<TrolleyResponse> call(TrolleyResponse trolleyResponse) {
+            return trolleyResponse.filterWebServiceErrors();
+          }
+        })
+        .flatMap(new Func1<TrolleyResponse, Observable<TrolleyResponse.Trolley>>() {
+          @Override
+          public Observable<TrolleyResponse.Trolley> call(TrolleyResponse trolleyResponse) {
+            return Observable.from(trolleyResponse.getTrolleyList());
+          }
+        })
+        .map(new Func1<TrolleyResponse.Trolley, TrolleyEntity>() {
+          @Override public TrolleyEntity call(TrolleyResponse.Trolley trolley) {
 
-        TrolleyEntity clone = trolleyEntityInstance.newInstance();
+            TrolleyEntity clone = trolleyEntityInstance.newInstance();
 
-        clone.setRecId(trolley.recId);
-        clone.setGoodId(trolley.goodId);
-        clone.setGoodName(trolley.goodName);
-        clone.setGoodAttrId(trolley.goodAttrId);
-        clone.setGoodCount(trolley.goodCount);
-        clone.setGoodPrice(trolley.goodPrice);
-        clone.setGoodThumb(trolley.goodThumb);
-        clone.setGoodAttrValue(trolley.goodAttrValue);
+            clone.setRecId(trolley.recId);
+            clone.setGoodId(trolley.goodId);
+            clone.setGoodName(trolley.goodName);
+            clone.setGoodAttrId(trolley.goodAttrId);
+            clone.setGoodCount(trolley.goodCount);
+            clone.setGoodPrice(trolley.goodPrice);
+            clone.setGoodThumb(trolley.goodThumb);
+            clone.setGoodAttrValue(trolley.goodAttrValue);
 
-        return clone;
-      }
-    }).toList().compose(SchedulersCompat.<List<TrolleyEntity>>applyExecutorSchedulers());
+            return clone;
+          }
+        })
+        .toList()
+        .compose(SchedulersCompat.<List<TrolleyEntity>>applyExecutorSchedulers());
   }
 
   /**
@@ -140,20 +144,21 @@ public class TrolleyRetrofit {
     list.add(simpleTrolleyEntity);
     params.put("item_list", URLDecoder.decode(gson.toJson(list)));
 
-    return Observable.defer(new Func0<Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call() {
-        return trolleyService.requestChangeTrolley(params)
-            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call(BaseResponse baseResponse) {
-        return baseResponse.filterWebServiceErrors();
-      }
-    }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
+    Log.e("joker", params.toString());
+
+    return trolleyService.requestChangeTrolley(params)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
+          @Override public Observable<BaseResponse> call(BaseResponse baseResponse) {
+            return baseResponse.filterWebServiceErrors();
+          }
+        })
+        .compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
   }
 
   /**
@@ -161,20 +166,19 @@ public class TrolleyRetrofit {
    */
   public Observable<BaseResponse> requestDeleteTrolley(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call() {
-        return trolleyService.requestDeleteTrolley(params)
-            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call(BaseResponse baseResponse) {
-        return baseResponse.filterWebServiceErrors();
-      }
-    }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
+    return trolleyService.requestDeleteTrolley(params)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
+          @Override public Observable<BaseResponse> call(BaseResponse baseResponse) {
+            return baseResponse.filterWebServiceErrors();
+          }
+        })
+        .compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
   }
 
   /**
@@ -182,38 +186,40 @@ public class TrolleyRetrofit {
    */
   public Observable<List<ProductAttrEntity>> getTrolleyAttrList(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<ProductAttrResponse>>() {
-      @Override public Observable<ProductAttrResponse> call() {
-        return trolleyService.getTrolleyAttrList(params)
-            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<ProductAttrResponse, Observable<ProductAttrResponse>>() {
-      @Override
-      public Observable<ProductAttrResponse> call(ProductAttrResponse productAttrResponse) {
-        return productAttrResponse.filterWebServiceErrors();
-      }
-    }).flatMap(new Func1<ProductAttrResponse, Observable<ProductAttrResponse.Attr>>() {
-      @Override
-      public Observable<ProductAttrResponse.Attr> call(ProductAttrResponse productAttrResponse) {
-        return Observable.from(productAttrResponse.getAttrs());
-      }
-    }).map(new Func1<ProductAttrResponse.Attr, ProductAttrEntity>() {
-      @Override public ProductAttrEntity call(ProductAttrResponse.Attr attr) {
+    return trolleyService.getTrolleyAttrList(params)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<ProductAttrResponse, Observable<ProductAttrResponse>>() {
+          @Override
+          public Observable<ProductAttrResponse> call(ProductAttrResponse productAttrResponse) {
+            return productAttrResponse.filterWebServiceErrors();
+          }
+        })
+        .flatMap(new Func1<ProductAttrResponse, Observable<ProductAttrResponse.Attr>>() {
+          @Override public Observable<ProductAttrResponse.Attr> call(
+              ProductAttrResponse productAttrResponse) {
+            return Observable.from(productAttrResponse.getAttrs());
+          }
+        })
+        .map(new Func1<ProductAttrResponse.Attr, ProductAttrEntity>() {
+          @Override public ProductAttrEntity call(ProductAttrResponse.Attr attr) {
 
-        ProductAttrEntity clone = productAttrInstance.newInstance();
+            ProductAttrEntity clone = productAttrInstance.newInstance();
 
-        clone.setAttrId(attr.goodsAttrId);
-        clone.setAttrValue(attr.goodsAttrValue);
-        clone.setAttrPrice(attr.goodsAttrPrice);
-        clone.setAttrThumbUrl(attr.goodsAttrThumb);
-        clone.setIsChecked(false);
+            clone.setAttrId(attr.goodsAttrId);
+            clone.setAttrValue(attr.goodsAttrValue);
+            clone.setAttrPrice(attr.goodsAttrPrice);
+            clone.setAttrThumbUrl(attr.goodsAttrThumb);
+            clone.setIsChecked(false);
 
-        return clone;
-      }
-    }).toList().compose(SchedulersCompat.<List<ProductAttrEntity>>applyExecutorSchedulers());
+            return clone;
+          }
+        })
+        .toList()
+        .compose(SchedulersCompat.<List<ProductAttrEntity>>applyExecutorSchedulers());
   }
 }

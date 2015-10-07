@@ -49,6 +49,9 @@ public class AddressRetrofit {
 
     @FormUrlEncoded @POST("/mobile/api/client/interface.php")
     Observable<BaseResponse> requestDeleteAddress(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded @POST("/mobile/api/client/interface.php")
+    Observable<BaseResponse> requestSetDefaultAddress(@FieldMap Map<String, String> params);
   }
 
   private final AddressService addressService;
@@ -89,43 +92,45 @@ public class AddressRetrofit {
    */
   public Observable<List<AddressEntity>> getAddressList(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<AddressResponse>>() {
-      @Override public Observable<AddressResponse> call() {
-             /*获取地址列表，超时8秒*/
-        return addressService.getAddressList(params)
-            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<AddressResponse, Observable<AddressResponse>>() {
-      @Override public Observable<AddressResponse> call(AddressResponse addressResponse) {
-        return addressResponse.filterWebServiceErrors();
-      }
-    }).flatMap(new Func1<AddressResponse, Observable<AddressResponse.Address>>() {
-      @Override public Observable<AddressResponse.Address> call(AddressResponse addressResponse) {
-        return Observable.from(addressResponse.getAddressList());
-      }
-    }).map(new Func1<AddressResponse.Address, AddressEntity>() {
-      @Override public AddressEntity call(AddressResponse.Address address) {
+    return addressService.getAddressList(params)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<AddressResponse, Observable<AddressResponse>>() {
+          @Override public Observable<AddressResponse> call(AddressResponse addressResponse) {
+            return addressResponse.filterWebServiceErrors();
+          }
+        })
+        .flatMap(new Func1<AddressResponse, Observable<AddressResponse.Address>>() {
+          @Override
+          public Observable<AddressResponse.Address> call(AddressResponse addressResponse) {
+            return Observable.from(addressResponse.getAddressList());
+          }
+        })
+        .map(new Func1<AddressResponse.Address, AddressEntity>() {
+          @Override public AddressEntity call(AddressResponse.Address address) {
 
-        AddressEntity addressEntity = addressInstance.newInstance();
-        addressEntity.setAddressId(address.addressId);
-        addressEntity.setUserName(address.userName);
-        addressEntity.setMobile(address.mobile);
-        addressEntity.setZipcode(address.zipcode);
+            AddressEntity addressEntity = addressInstance.newInstance();
+            addressEntity.setAddressId(address.addressId);
+            addressEntity.setUserName(address.userName);
+            addressEntity.setMobile(address.mobile);
+            addressEntity.setZipcode(address.zipcode);
 
-        addressEntity.setProvince(address.province);
-        addressEntity.setCity(address.city);
-        addressEntity.setAddress(address.address);
+            addressEntity.setProvince(address.province);
+            addressEntity.setCity(address.city);
+            addressEntity.setAddress(address.address);
 
-        /*默认选项*/
-        addressEntity.setDefault(address.isDefault);
+            /*默认选项*/
+            addressEntity.setDefault(address.isDefault);
 
-        return addressEntity;
-      }
-    }).toList().compose(SchedulersCompat.<List<AddressEntity>>applyExecutorSchedulers());
+            return addressEntity;
+          }
+        })
+        .toList()
+        .compose(SchedulersCompat.<List<AddressEntity>>applyExecutorSchedulers());
   }
 
   /**
@@ -133,92 +138,95 @@ public class AddressRetrofit {
    */
   public Observable<EditorAddressEvent> requestEditorAddress(final Map<String, String> params) {
 
-    return Observable.defer(new Func0<Observable<AddressResponse>>() {
-      @Override public Observable<AddressResponse> call() {
-        return addressService.requestEditorAddress(params)
-            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<AddressResponse, Observable<AddressResponse>>() {
-      @Override public Observable<AddressResponse> call(AddressResponse addressResponse) {
-        return addressResponse.filterWebServiceErrors();
-      }
-    }).map(new Func1<AddressResponse, EditorAddressEvent>() {
-      @Override public EditorAddressEvent call(AddressResponse addressResponse) {
-        AddressResponse.Address address = addressResponse.getAddressList().get(0);
-        EditorAddressEvent editorAddressEvent =
-            new EditorAddressEvent(address.addressId, address.userName, address.province,
-                address.city, address.address, address.mobile, address.zipcode, address.isDefault);
-        return editorAddressEvent;
-      }
-    }).compose(SchedulersCompat.<EditorAddressEvent>applyExecutorSchedulers());
+    return addressService.requestEditorAddress(params)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<AddressResponse, Observable<AddressResponse>>() {
+          @Override public Observable<AddressResponse> call(AddressResponse addressResponse) {
+            return addressResponse.filterWebServiceErrors();
+          }
+        })
+        .map(new Func1<AddressResponse, EditorAddressEvent>() {
+          @Override public EditorAddressEvent call(AddressResponse addressResponse) {
+            AddressResponse.Address address = addressResponse.getAddressList().get(0);
+            EditorAddressEvent editorAddressEvent =
+                new EditorAddressEvent(address.addressId, address.userName, address.province,
+                    address.city, address.address, address.mobile, address.zipcode,
+                    address.isDefault);
+            return editorAddressEvent;
+          }
+        })
+        .compose(SchedulersCompat.<EditorAddressEvent>applyExecutorSchedulers());
   }
 
   /**
    * 添加地址
    */
-  public Observable<RefreshAddressManagerEvent> requestAddAddress(final Map<String, String> params) {
-    return Observable.defer(new Func0<Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call() {
-        return addressService.requestAddAddress(params)
-            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call(BaseResponse baseResponse) {
-        return baseResponse.filterWebServiceErrors();
-      }
-    }).map(new Func1<BaseResponse, RefreshAddressManagerEvent>() {
-      @Override public RefreshAddressManagerEvent call(BaseResponse baseResponse) {
-        /*添加成功*/
-        return new RefreshAddressManagerEvent();
-      }
-    }).compose(SchedulersCompat.<RefreshAddressManagerEvent>applyExecutorSchedulers());
+  public Observable<RefreshAddressManagerEvent> requestAddAddress(
+      final Map<String, String> params) {
+
+    return addressService.requestAddAddress(params)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
+          @Override public Observable<BaseResponse> call(BaseResponse baseResponse) {
+            return baseResponse.filterWebServiceErrors();
+          }
+        })
+        .map(new Func1<BaseResponse, RefreshAddressManagerEvent>() {
+          @Override public RefreshAddressManagerEvent call(BaseResponse baseResponse) {
+            /*添加成功*/
+            return new RefreshAddressManagerEvent();
+          }
+        })
+        .compose(SchedulersCompat.<RefreshAddressManagerEvent>applyExecutorSchedulers());
   }
 
   /**
    * 删除地址
    */
   public Observable<BaseResponse> requestDeleteAddress(final Map<String, String> params) {
-    return Observable.defer(new Func0<Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call() {
-        return addressService.requestDeleteAddress(params)
-            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call(BaseResponse baseResponse) {
-        return baseResponse.filterWebServiceErrors();
-      }
-    }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
+
+    return addressService.requestDeleteAddress(params)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
+          @Override public Observable<BaseResponse> call(BaseResponse baseResponse) {
+            return baseResponse.filterWebServiceErrors();
+          }
+        })
+        .compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
   }
 
   /**
    * 设置默认地址
    */
   public Observable<BaseResponse> requestSetDefaultAddress(final Map<String, String> params) {
-    return Observable.defer(new Func0<Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call() {
-        return addressService.requestDeleteAddress(params)
-            .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS);
-      }
-    }).retry(new Func2<Integer, Throwable, Boolean>() {
-      @Override public Boolean call(Integer integer, Throwable throwable) {
-        return throwable instanceof TimeoutException && integer < 1;
-      }
-    }).concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
-      @Override public Observable<BaseResponse> call(BaseResponse baseResponse) {
-        return baseResponse.filterWebServiceErrors();
-      }
-    }).compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
+
+    return addressService.requestSetDefaultAddress(params)
+        .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
+        .retry(new Func2<Integer, Throwable, Boolean>() {
+          @Override public Boolean call(Integer integer, Throwable throwable) {
+            return throwable instanceof TimeoutException && integer < 1;
+          }
+        })
+        .concatMap(new Func1<BaseResponse, Observable<BaseResponse>>() {
+          @Override public Observable<BaseResponse> call(BaseResponse baseResponse) {
+            return baseResponse.filterWebServiceErrors();
+          }
+        })
+        .compose(SchedulersCompat.<BaseResponse>applyExecutorSchedulers());
   }
 }
