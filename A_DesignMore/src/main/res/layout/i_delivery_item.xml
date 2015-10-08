@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/white"
     >
 
@@ -21,28 +21,27 @@
       >
 
     <LinearLayout
-        android:id="@+id/order_address_item_ll"
+        android:id="@+id/order_delivery_item_ll"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/material_80dp"
+        android:layout_height="@dimen/material_56dp"
         android:orientation="horizontal"
         android:background="@color/white"
         >
 
       <TextView
-          android:id="@+id/order_address_item_tv"
+          android:id="@+id/order_delivery_item_tv"
           android:layout_width="0dip"
           android:layout_weight="1"
           android:layout_height="match_parent"
-          android:padding="@dimen/material_16dp"
-          android:gravity="start|top"
-          android:text="ssssss \n ssss"
+          android:paddingLeft="@dimen/material_24dp"
+          android:gravity="center_vertical"
+          android:text=""
           android:textSize="@dimen/material_13sp"
           android:textColor="@color/black"
           />
 
       <ImageView
-          android:id="@+id/order_address_item_radio_iv"
+          android:id="@+id/order_delivery_item_radio_btn"
           android:layout_width="@dimen/material_32dp"
           android:layout_height="@dimen/material_32dp"
           android:layout_marginRight="@dimen/material_24dp"
@@ -52,5 +51,6 @@
           />
     </LinearLayout>
   </com.app.designmore.view.MaterialRippleLayout>
+
 
 </LinearLayout>

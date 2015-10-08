@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.retrofit.entity.ProductAttrEntity;
 import com.bumptech.glide.Glide;
@@ -44,7 +45,7 @@ public class TrolleyAttrAdapter extends RecyclerView.Adapter<TrolleyAttrAdapter.
   @Override public void onBindViewHolder(TrolleyAttrAdapter.ViewHolder holder, int position) {
 
     Glide.with(context)
-        .load(items.get(position).getAttrThumbUrl())
+        .load(Constants.THUMB_URL +items.get(position).getAttrThumbUrl())
         .centerCrop()
         .crossFade()
         .placeholder(R.drawable.ic_default_256_icon)

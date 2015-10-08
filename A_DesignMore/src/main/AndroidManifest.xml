@@ -212,6 +212,15 @@
         >
     </activity>
 
+    <!--用户中心ACT -> 购物车ACT -> 选择配送方式ACT-->
+    <activity
+        android:name=".activity.usercenter.OrderDeliveryActivity"
+        android:screenOrientation="portrait"
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.TransparentActivity"
+        >
+    </activity>
+
     <!--用户中心ACT -> 我的订单ACT-->
     <activity
         android:name=".activity.usercenter.OrderActivity"

@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.retrofit.entity.ProductAttrEntity;
 import com.bumptech.glide.Glide;
@@ -35,7 +36,8 @@ public class ProductAttrAdapter extends RecyclerView.Adapter<ProductAttrAdapter.
     this.backgroundColor = context.getResources().getColor(R.color.design_more_red);
   }
 
-  @Override public ProductAttrAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @Override
+  public ProductAttrAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
     return new ViewHolder(
         LayoutInflater.from(context).inflate(R.layout.i_product_attr_item, parent, false));
@@ -44,7 +46,7 @@ public class ProductAttrAdapter extends RecyclerView.Adapter<ProductAttrAdapter.
   @Override public void onBindViewHolder(ProductAttrAdapter.ViewHolder holder, int position) {
 
     Glide.with(context)
-        .load(items.get(position).getAttrThumbUrl())
+        .load(Constants.THUMB_URL + items.get(position).getAttrThumbUrl())
         .centerCrop()
         .crossFade()
         .placeholder(R.drawable.ic_default_256_icon)

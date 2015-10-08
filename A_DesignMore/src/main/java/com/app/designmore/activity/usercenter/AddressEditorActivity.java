@@ -58,9 +58,10 @@ public class AddressEditorActivity extends BaseActivity implements AddressView {
   private static final String TAG = AddressEditorActivity.class.getSimpleName();
   private static final String ADDRESS = "ADDRESS";
 
+  @Nullable @Bind(R.id.address_editor_layout_root_view) LinearLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
-  @Nullable @Bind(R.id.address_editor_layout_root_view) LinearLayout rootView;
+
   @Nullable @Bind(R.id.address_editor_layout_username_et) EditText usernameEt;
   @Nullable @Bind(R.id.address_editor_layout_mobile_et) EditText mobileEt;
   @Nullable @Bind(R.id.address_editor_layout_zipcode_et) EditText zipcodeEt;

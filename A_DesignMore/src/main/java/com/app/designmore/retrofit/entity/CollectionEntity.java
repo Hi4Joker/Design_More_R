@@ -12,7 +12,6 @@ public class CollectionEntity implements Cloneable {
   private String goodName;
   private String goodPrice;
   private String goodThumb;
-  private String goodImage;
 
   private String collectionId;
 
@@ -48,14 +47,6 @@ public class CollectionEntity implements Cloneable {
     this.goodThumb = goodThumb;
   }
 
-  public String getGoodImage() {
-    return goodImage;
-  }
-
-  public void setGoodImage(String goodImage) {
-    this.goodImage = goodImage;
-  }
-
   public String getCollectionId() {
     return collectionId;
   }
@@ -85,7 +76,6 @@ public class CollectionEntity implements Cloneable {
         ", goodName='" + goodName + '\'' +
         ", goodPrice='" + goodPrice + '\'' +
         ", goodThumbUrl='" + goodThumb + '\'' +
-        ", goodImage='" + goodImage + '\'' +
         '}';
   }
 }

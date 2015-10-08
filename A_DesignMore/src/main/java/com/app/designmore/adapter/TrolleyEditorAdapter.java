@@ -14,6 +14,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.retrofit.entity.TrolleyEntity;
 import com.app.designmore.retrofit.response.BaseResponse;
@@ -53,7 +54,7 @@ public class TrolleyEditorAdapter extends RecyclerView.Adapter<TrolleyEditorAdap
   private void bindToValue(ViewHolder holder, TrolleyEntity trolleyEntity) {
 
     Glide.with(context)
-        .load(trolleyEntity.getGoodThumb())
+        .load(Constants.THUMB_URL + trolleyEntity.getGoodThumb())
         .centerCrop()
         .crossFade()
         .placeholder(R.drawable.ic_default_256_icon)
@@ -127,7 +128,6 @@ public class TrolleyEditorAdapter extends RecyclerView.Adapter<TrolleyEditorAdap
     @Nullable @Bind(R.id.trolley_editor_item_count_add_ib) ImageButton addCountIb;
     @Nullable @Bind(R.id.trolley_editor_item_count_subtract_ib) ImageButton subtractCountIb;
     @Nullable @Bind(R.id.trolley_editor_fuck_attr_ll) LinearLayout arrowLl;
-
 
     public ViewHolder(View itemView) {
       super(itemView);

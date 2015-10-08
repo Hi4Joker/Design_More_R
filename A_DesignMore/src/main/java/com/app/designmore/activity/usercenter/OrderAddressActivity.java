@@ -24,6 +24,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
@@ -74,6 +75,7 @@ public class OrderAddressActivity extends BaseActivity implements SimpleAddressA
 
   private static final String TAG = OrderAddressActivity.class.getSimpleName();
   public static final String DEFAULT_ADDRESS = "DEFAULT_ADDRESS";
+  public static final int ACTIVITY_CODE = 1;
 
   @Nullable @Bind(R.id.order_address_layout_root_view) LinearLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
@@ -108,7 +110,7 @@ public class OrderAddressActivity extends BaseActivity implements SimpleAddressA
 
   public static void navigateToOrderAddress(AppCompatActivity startingActivity) {
     Intent intent = new Intent(startingActivity, OrderAddressActivity.class);
-    startingActivity.startActivityForResult(intent, Constants.ACTIVITY_CODE);
+    startingActivity.startActivityForResult(intent, OrderAddressActivity.ACTIVITY_CODE);
   }
 
   @Override protected void onCreate(Bundle savedInstanceState) {
@@ -197,6 +199,7 @@ public class OrderAddressActivity extends BaseActivity implements SimpleAddressA
         })
         .doOnCompleted(new Action0() {
           @Override public void call() {
+
             for (AddressEntity addressEntity : items) {
               if ("1".equals(addressEntity.isDefault())) {
                 OrderAddressActivity.this.defaultAddress = addressEntity;
@@ -229,6 +232,7 @@ public class OrderAddressActivity extends BaseActivity implements SimpleAddressA
 
           @Override public void onNext(List<AddressEntity> addresses) {
 
+            OrderAddressActivity.this.defaultAddress = null;
             OrderAddressActivity.this.items.clear();
             OrderAddressActivity.this.items.addAll(addresses);
             simpleAddressAdapter.updateItems(items);
@@ -263,9 +267,6 @@ public class OrderAddressActivity extends BaseActivity implements SimpleAddressA
   @Override public void onItemClick(final AddressEntity addressEntity) {
 
     if (defaultAddress == addressEntity) {
-      Intent intent = new Intent();
-      intent.putExtra(DEFAULT_ADDRESS, OrderAddressActivity.this.defaultAddress);
-      setResult(RESULT_OK, intent);
       OrderAddressActivity.this.exit();
     } else {
       OrderAddressActivity.this.requestSetDefaultAddress(addressEntity);
@@ -314,10 +315,6 @@ public class OrderAddressActivity extends BaseActivity implements SimpleAddressA
 
               @Override public void onCompleted() {
 
-                Intent intent = new Intent();
-                intent.putExtra(DEFAULT_ADDRESS, OrderAddressActivity.this.defaultAddress);
-                setResult(RESULT_OK, intent);
-
                 Observable.timer(Constants.MILLISECONDS_300, TimeUnit.MILLISECONDS,
                     AndroidSchedulers.mainThread()).forEach(new Action1<Long>() {
                   @Override public void call(Long aLong) {
@@ -339,11 +336,11 @@ public class OrderAddressActivity extends BaseActivity implements SimpleAddressA
 
                 OrderAddressActivity.this.defaultAddress = addressEntity;
 
-                ((ImageButton) linearLayoutManager.findViewByPosition(oldIndex)
-                    .findViewById(R.id.order_address_item_radio_btn)).setImageDrawable(null);
+                ((ImageView) linearLayoutManager.findViewByPosition(oldIndex)
+                    .findViewById(R.id.order_address_item_radio_iv)).setImageDrawable(null);
 
-                ((ImageButton) linearLayoutManager.findViewByPosition(newIndex)
-                    .findViewById(R.id.order_address_item_radio_btn)).setImageDrawable(
+                ((ImageView) linearLayoutManager.findViewByPosition(newIndex)
+                    .findViewById(R.id.order_address_item_radio_iv)).setImageDrawable(
                     getResources().getDrawable(R.drawable.ic_radio_selected_icon));
               }
             });
@@ -408,6 +405,13 @@ public class OrderAddressActivity extends BaseActivity implements SimpleAddressA
         .withLayer()
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
+
+            if (defaultAddress != null) {
+              Intent intent = new Intent();
+              intent.putExtra(DEFAULT_ADDRESS, OrderAddressActivity.this.defaultAddress);
+              setResult(RESULT_OK, intent);
+            }
+
             OrderAddressActivity.this.finish();
           }
         });

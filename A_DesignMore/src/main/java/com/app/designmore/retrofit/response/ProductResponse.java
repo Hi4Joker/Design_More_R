@@ -75,10 +75,10 @@ public class ProductResponse extends BaseResponse {
       "zhekou": "8.5折起"
   }*/
 
-  @Expose @SerializedName("result") private List<Product> product;
+  @Expose @SerializedName("result") private List<Product> products;
 
   public List<Product> getProducts() {
-    return product;
+    return products;
   }
 
   public class Product {
@@ -100,7 +100,7 @@ public class ProductResponse extends BaseResponse {
 
   @Override public String toString() {
     return "ProductEntity{" +
-        "product=" + product +
+        "products=" + products +
         '}';
   }
 }

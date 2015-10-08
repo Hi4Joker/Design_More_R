@@ -13,6 +13,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.retrofit.entity.CollectionEntity;
 import com.bumptech.glide.Glide;
@@ -53,7 +54,7 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
   private void bindToValue(ViewHolder holder, CollectionEntity collectionEntity) {
 
     Glide.with(context)
-        .load(collectionEntity.getGoodThumb())
+        .load(Constants.THUMB_URL + collectionEntity.getGoodThumb())
         .centerCrop()
         .crossFade()
         .placeholder(R.drawable.ic_default_256_icon)

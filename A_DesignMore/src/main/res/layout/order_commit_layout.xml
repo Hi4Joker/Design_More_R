@@ -135,59 +135,7 @@
                   android:layout_height="match_parent"
                   android:layout_alignParentRight="true"
                   android:layout_marginRight="@dimen/material_48dp"
-                  android:text="快递包邮"
-                  android:gravity="center"
-                  android:textSize="@dimen/material_13sp"
-                  android:textColor="@color/black"
-                  />
-
-              <ImageView
-                  style="@style/center_navigate_iv_style"
-                  android:layout_gravity="right|center_vertical"
-                  />
-            </RelativeLayout>
-          </com.app.designmore.view.MaterialRippleLayout>
-
-          <!-- 运费险-->
-          <com.app.designmore.view.MaterialRippleLayout
-              android:layout_width="match_parent"
-              android:layout_height="@dimen/material_48dp"
-              android:layout_marginTop="@dimen/material_1dp"
-              app:mrl_rippleDimension="20dip"
-              app:mrl_rippleFadeDuration="100"
-              app:mrl_rippleAlpha="0.4"
-              app:mrl_rippleDuration="600"
-              app:mrl_rippleHover="true"
-              app:mrl_rippleOverlay="true"
-              app:mrl_rippleDelayClick="true"
-              app:mrl_rippleColor="@color/darker_gray"
-              >
-            <RelativeLayout
-                android:id="@+id/order_commit_layout_insurance_rl"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/material_48dp"
-                android:layout_marginBottom="1dip"
-                android:orientation="horizontal"
-                android:background="@color/white"
-                >
-              <TextView
-                  android:layout_width="wrap_content"
-                  android:layout_height="match_parent"
-                  android:layout_alignParentLeft="true"
-                  android:layout_marginLeft="@dimen/material_24dp"
-                  android:text="运费险"
-                  android:gravity="center"
-                  android:textSize="@dimen/material_13sp"
-                  android:textColor="@color/black"
-                  />
-
-              <TextView
-                  android:id="@+id/order_commit_layout_insurance_tv"
-                  android:layout_width="wrap_content"
-                  android:layout_height="match_parent"
-                  android:layout_alignParentRight="true"
-                  android:layout_marginRight="@dimen/material_48dp"
-                  android:text="请选择"
+                  android:text="请选择...."
                   android:gravity="center"
                   android:textSize="@dimen/material_13sp"
                   android:textColor="@color/black"

@@ -48,7 +48,6 @@ public class OrderActivity extends BaseActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.center_order_layout);
-    ButterKnife.bind(this);
 
     OrderActivity.this.initView(savedInstanceState);
   }
@@ -84,6 +83,7 @@ public class OrderActivity extends BaseActivity {
   }
 
   private void startEnterAnim(int startLocationY) {
+
     ViewCompat.setLayerType(rootView, ViewCompat.LAYER_TYPE_HARDWARE, null);
     rootView.setPivotY(startLocationY);
     ViewCompat.setScaleY(rootView, 0.0f);

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.retrofit.entity.TrolleyEntity;
 import com.bumptech.glide.Glide;
@@ -45,7 +46,7 @@ public class CommitOrderAdapter extends RecyclerView.Adapter<CommitOrderAdapter.
   private void bindToValue(ViewHolder holder, TrolleyEntity trolleyEntity) {
 
     Glide.with(context)
-        .load(trolleyEntity.getGoodThumb())
+        .load(Constants.THUMB_URL + trolleyEntity.getGoodThumb())
         .centerCrop()
         .crossFade()
         .placeholder(R.drawable.ic_default_256_icon)

@@ -107,6 +107,7 @@ public class CollectionRetrofit {
           @Override public CollectionEntity call(CollectionResponse.Collect collect) {
 
             CollectionEntity clone = instance.newInstance();
+
             clone.setGoodId(collect.getGoodInfo().goodId);
             clone.setGoodName(collect.getGoodInfo().goodName);
             clone.setGoodPrice(collect.getGoodInfo().goodPrice);

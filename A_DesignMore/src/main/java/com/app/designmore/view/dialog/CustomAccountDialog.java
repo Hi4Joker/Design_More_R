@@ -19,6 +19,7 @@ import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.adapter.ProductAttrAdapter;
 import com.app.designmore.retrofit.entity.ProductAttrEntity;
@@ -95,7 +96,7 @@ public class CustomAccountDialog extends Dialog
   private void bindValue() {
 
     Glide.with(activity)
-        .load(currentProductAttrEntity.getAttrThumbUrl())
+        .load(Constants.THUMB_URL + currentProductAttrEntity.getAttrThumbUrl())
         .centerCrop()
         .crossFade()
         .placeholder(R.drawable.ic_default_1080_icon)
@@ -160,7 +161,7 @@ public class CustomAccountDialog extends Dialog
       CustomAccountDialog.this.priceTv.setText(productAttrEntity.getAttrPrice());
       priceTv.setText(productAttrEntity.getAttrPrice());
       Glide.with(activity)
-          .load(productAttrEntity.getAttrThumbUrl())
+          .load(Constants.THUMB_URL + productAttrEntity.getAttrThumbUrl())
           .centerCrop()
           .crossFade()
           .placeholder(R.drawable.ic_default_1080_icon)

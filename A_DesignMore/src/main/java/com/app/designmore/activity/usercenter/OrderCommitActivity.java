@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
@@ -19,6 +20,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -32,23 +34,32 @@ import com.app.designmore.helper.DBHelper;
 import com.app.designmore.manager.WrappingLinearLayoutManager;
 import com.app.designmore.retrofit.AddressRetrofit;
 import com.app.designmore.retrofit.entity.AddressEntity;
+import com.app.designmore.retrofit.entity.DeliveryEntity;
 import com.app.designmore.retrofit.entity.TrolleyEntity;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
+import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.manager.DividerDecoration;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.ProgressLayout;
+import com.jakewharton.rxbinding.widget.RxTextView;
+import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
+import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action0;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.functions.Func2;
 
 /**
  * Created by Joker on 2015/9/26.
@@ -68,17 +79,21 @@ public class OrderCommitActivity extends BaseActivity {
   @Nullable @Bind(R.id.order_commit_layout_address_tv) TextView addressTv;
   @Nullable @Bind(R.id.order_commit_layout_rl) RecyclerView recyclerView;
   @Nullable @Bind(R.id.order_commit_layout_delivery_tv) TextView deliveryTv;
-  @Nullable @Bind(R.id.order_commit_layout_insurance_tv) TextView insuranceTv;
   @Nullable @Bind(R.id.order_commit_layout_message_et) EditText messageEt;
+
   @Nullable @Bind(R.id.order_commit_layout_total_count_tv) TextView totalCountTv;
   @Nullable @Bind(R.id.order_commit_layout_total_price_tv) TextView totalPriceTv;
   @Nullable @Bind(R.id.order_commit_layout_commit_btn) Button commitBtn;
-  private SupportAnimator revealAnimator;
+
+  private float totalPrice;
+
+  private Observable<TextViewTextChangeEvent> addressChangeObservable;
+  private Observable<TextViewTextChangeEvent> deliveryChangeObservable;
 
   private List<TrolleyEntity> trolleyEntities = new ArrayList<>();
 
-  private LinearLayoutManager linearLayoutManager;
   private AddressEntity defaultAddress = null;
+  private DeliveryEntity defaultDelivery = null;
 
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
@@ -96,7 +111,6 @@ public class OrderCommitActivity extends BaseActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.order_commit_layout);
-    ButterKnife.bind(this);
 
     OrderCommitActivity.this.initView(savedInstanceState);
   }
@@ -135,7 +149,8 @@ public class OrderCommitActivity extends BaseActivity {
 
   private void setupAdapter() {
 
-    linearLayoutManager = new WrappingLinearLayoutManager(OrderCommitActivity.this);
+    LinearLayoutManager linearLayoutManager =
+        new WrappingLinearLayoutManager(OrderCommitActivity.this);
     linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
     linearLayoutManager.setSmoothScrollbarEnabled(true);
 
@@ -150,7 +165,7 @@ public class OrderCommitActivity extends BaseActivity {
         new DividerDecoration(OrderCommitActivity.this, R.dimen.material_1dp));
 
     /*计算总价钱*/
-    float totalPrice = 0;
+    totalPrice = 0;
     for (TrolleyEntity trolleyEntity : trolleyEntities) {
       totalPrice += Float.parseFloat(trolleyEntity.getGoodPrice());
     }
@@ -175,26 +190,24 @@ public class OrderCommitActivity extends BaseActivity {
             progressLayout.showLoading();
           }
         })
-        .compose(
-            OrderCommitActivity.this.<List<AddressEntity>>bindUntilEvent(ActivityEvent.DESTROY))
-        .subscribe(new Subscriber<List<AddressEntity>>() {
+        .map(new Func1<List<AddressEntity>, AddressEntity>() {
+          @Override public AddressEntity call(List<AddressEntity> addressEntities) {
+
+            for (AddressEntity addressEntity : addressEntities) {
+              if ("1".equals(addressEntity.isDefault())) {
+                OrderCommitActivity.this.defaultAddress = addressEntity;
+              }
+            }
+
+            return OrderCommitActivity.this.defaultAddress;
+          }
+        })
+        .compose(OrderCommitActivity.this.<AddressEntity>bindUntilEvent(ActivityEvent.DESTROY))
+        .subscribe(new Subscriber<AddressEntity>() {
           @Override public void onCompleted() {
 
             /*加载完毕，显示内容界面*/
             progressLayout.showContent();
-
-            if (OrderCommitActivity.this.defaultAddress != null) {
-
-              SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-              spannableStringBuilder.append(defaultAddress.getUserName());
-              spannableStringBuilder.append("   " + defaultAddress.getMobile() + "\n \n");
-              spannableStringBuilder.append(defaultAddress.getProvince()
-                  + defaultAddress.getCity()
-                  + defaultAddress.getAddress());
-              addressTv.setText(spannableStringBuilder);
-            } else {
-              addressTv.setText("请选择收货地址");
-            }
           }
 
           @Override public void onError(Throwable error) {
@@ -202,12 +215,18 @@ public class OrderCommitActivity extends BaseActivity {
             OrderCommitActivity.this.showErrorLayout(error);
           }
 
-          @Override public void onNext(List<AddressEntity> addresses) {
+          @Override public void onNext(AddressEntity addresses) {
 
-            for (AddressEntity addressEntity : addresses) {
-              if ("1".equals(addressEntity.isDefault())) {
-                OrderCommitActivity.this.defaultAddress = addressEntity;
-              }
+            if (addresses != null) {
+
+              SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+              spannableStringBuilder.append(addresses.getUserName());
+              spannableStringBuilder.append("   " + addresses.getMobile() + "\n \n");
+              spannableStringBuilder.append(
+                  addresses.getProvince() + addresses.getCity() + addresses.getAddress());
+              addressTv.setText(spannableStringBuilder);
+            } else {
+              addressTv.setText(getResources().getString(R.string.order_default_address));
             }
           }
         });
@@ -242,22 +261,80 @@ public class OrderCommitActivity extends BaseActivity {
     overridePendingTransition(0, 0);
   }
 
+  @Nullable @OnClick(R.id.order_commit_layout_delivery_rl) void onDeliveryClick(
+      RelativeLayout relativeLayout) {
+
+    OrderDeliveryActivity.startFromLocation(OrderCommitActivity.this, defaultDelivery,
+        DensityUtil.getLocationY(relativeLayout));
+    overridePendingTransition(0, 0);
+  }
+
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-    if (requestCode == Constants.ACTIVITY_CODE && resultCode == RESULT_OK && data != null) {
+    if (requestCode == OrderAddressActivity.ACTIVITY_CODE) {
 
-      defaultAddress =
-          (AddressEntity) data.getSerializableExtra(OrderAddressActivity.DEFAULT_ADDRESS);
+      if (resultCode == RESULT_OK && data != null) {
 
-      SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-      spannableStringBuilder.append(defaultAddress.getUserName());
-      spannableStringBuilder.append("   " + defaultAddress.getMobile() + "\n \n");
-      spannableStringBuilder.append(
-          defaultAddress.getProvince() + defaultAddress.getCity() + defaultAddress.getAddress());
-      addressTv.setText(spannableStringBuilder);
+        defaultAddress =
+            (AddressEntity) data.getSerializableExtra(OrderAddressActivity.DEFAULT_ADDRESS);
+
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+        spannableStringBuilder.append(defaultAddress.getUserName());
+        spannableStringBuilder.append("   " + defaultAddress.getMobile() + "\n \n");
+        spannableStringBuilder.append(
+            defaultAddress.getProvince() + defaultAddress.getCity() + defaultAddress.getAddress());
+        addressTv.setText(spannableStringBuilder);
+      } else {
+
+        OrderCommitActivity.this.defaultAddress = null;
+        addressTv.setText(getResources().getString(R.string.order_default_address));
+      }
+    } else if (requestCode == OrderDeliveryActivity.ACTIVITY_CODE
+        && resultCode == RESULT_OK
+        && data != null) {
+
+      defaultDelivery =
+          (DeliveryEntity) data.getSerializableExtra(OrderDeliveryActivity.DEFAULT_DELIVERY);
+
+      deliveryTv.setText(defaultDelivery.getDeliveryName());
+
+      totalPriceTv.setText(
+          "￥" + (totalPrice + Float.parseFloat(defaultDelivery.getDeliveryBaseFee())));
     }
-
     super.onActivityResult(requestCode, resultCode, data);
+  }
+
+  @Override public boolean onCreateOptionsMenu(Menu menu) {
+
+    /*创建联合observable*/
+    OrderCommitActivity.this.combineLatestEvents();
+
+    return true;
+  }
+
+  private void combineLatestEvents() {
+
+    addressChangeObservable = RxTextView.textChangeEvents(addressTv).skip(1);
+    deliveryChangeObservable = RxTextView.textChangeEvents(deliveryTv).skip(1);
+
+    Observable.combineLatest(addressChangeObservable, deliveryChangeObservable,
+        new Func2<TextViewTextChangeEvent, TextViewTextChangeEvent, Boolean>() {
+          @Override public Boolean call(TextViewTextChangeEvent textViewTextChangeEvent,
+              TextViewTextChangeEvent textViewTextChangeEvent2) {
+
+            return defaultAddress != null && defaultDelivery != null;
+          }
+        })
+        .debounce(Constants.MILLISECONDS_300, TimeUnit.MILLISECONDS)
+        .compose(OrderCommitActivity.this.<Boolean>bindUntilEvent(ActivityEvent.DESTROY))
+        .observeOn(AndroidSchedulers.mainThread())
+        .startWith(false)
+        .subscribe(new Action1<Boolean>() {
+          @Override public void call(Boolean aBoolean) {
+
+            commitBtn.setEnabled(aBoolean);
+          }
+        });
   }
 
   private void startEnterAnim() {
@@ -267,7 +344,7 @@ public class OrderCommitActivity extends BaseActivity {
 
     OrderCommitActivity.this.revealFrameLayout.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-    revealAnimator =
+    SupportAnimator revealAnimator =
         ViewAnimationUtils.createCircularReveal(revealFrameLayout.getChildAt(0), 0, bounds.left, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
     revealAnimator.setDuration(Constants.MILLISECONDS_400);
@@ -289,7 +366,8 @@ public class OrderCommitActivity extends BaseActivity {
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(OrderCommitActivity.this))
         .setDuration(Constants.MILLISECONDS_400)
-        .setInterpolator(new LinearInterpolator()) .withLayer()
+        .setInterpolator(new LinearInterpolator())
+        .withLayer()
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
             OrderCommitActivity.this.finish();
