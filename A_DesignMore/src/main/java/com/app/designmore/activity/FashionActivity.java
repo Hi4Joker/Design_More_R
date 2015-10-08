@@ -129,7 +129,6 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
   @Override public void initView(Bundle savedInstanceState) {
 
     FashionActivity.this.setSupportActionBar(toolbar);
-    //toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
 
     /*创建Adapter*/
     FashionActivity.this.setupAdapter();

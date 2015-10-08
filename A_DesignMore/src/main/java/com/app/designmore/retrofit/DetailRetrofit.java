@@ -14,13 +14,11 @@ import java.util.concurrent.TimeoutException;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.android.AndroidLog;
-import retrofit.client.OkClient;
 import retrofit.converter.GsonConverter;
 import retrofit.http.FieldMap;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.POST;
 import rx.Observable;
-import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.functions.Func2;
 
@@ -98,7 +96,7 @@ public class DetailRetrofit {
           @Override public DetailEntity call(DetailResponse.Detail detail) {
 
             return new DetailEntity(detail.goodId, detail.goodName, detail.goodMarketPrice,
-                detail.goodShopPrice, detail.goodDes, detail.goodDesUrl, detail.goodRepertory,
+                detail.goodShopPrice, detail.goodDes, detail.goodRepertory, detail.productBanners,
                 detail.productImages, detail.productAttrs);
           }
         })

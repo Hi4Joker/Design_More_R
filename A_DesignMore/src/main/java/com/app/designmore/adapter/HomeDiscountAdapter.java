@@ -12,6 +12,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.retrofit.entity.FashionEntity;
 import com.bumptech.glide.Glide;
@@ -47,7 +48,7 @@ public class HomeDiscountAdapter extends RecyclerView.Adapter<HomeDiscountAdapte
     holder.contentTv.setText(items.get(position).getGoodDiscount());
 
     Glide.with(context)
-        .load(items.get(position).getGoodThumbUrl())
+        .load(Constants.THUMB_URL + items.get(position).getGoodThumbUrl())
         .centerCrop()
         .crossFade()
         .placeholder(R.drawable.ic_default_1080_icon)

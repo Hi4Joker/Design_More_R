@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class JournalResponse extends BaseResponse {
 
-  /* "ad_id": "1",//广告ID
+  /*  "ad_id": "1",//广告ID
       "position_id": "0",//位置ID
       "media_type": "0",//广告类型
       "ad_name": "杂志001",//广告name

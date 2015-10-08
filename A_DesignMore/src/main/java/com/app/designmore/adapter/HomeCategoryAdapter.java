@@ -12,6 +12,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.manager.CropCircleTransformation;
 import com.app.designmore.retrofit.entity.CategoryEntity;
@@ -47,7 +48,7 @@ public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapte
 
     BitmapPool bitmapPool = Glide.get(activity).getBitmapPool();
     Glide.with(activity)
-        .load(items.get(position).getCatThumbUrl())
+        .load(Constants.THUMB_URL + items.get(position).getCatThumbUrl())
         .centerCrop()
         .crossFade()
         .bitmapTransform(new CropCircleTransformation(bitmapPool))

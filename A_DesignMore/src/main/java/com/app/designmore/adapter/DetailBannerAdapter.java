@@ -6,8 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import com.app.designmore.Constants;
 import com.app.designmore.R;
-import com.app.designmore.retrofit.entity.ProductEntity;
 import com.app.designmore.retrofit.response.DetailResponse;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -20,18 +20,19 @@ public class DetailBannerAdapter extends PagerAdapter {
 
   private static final String TAG = DetailBannerAdapter.class.getCanonicalName();
   private Context context;
-  private List<DetailResponse.Detail.ProductImage> thumbUrls;
+  private List<DetailResponse.Detail.ProductBanner> productBanners;
   private LayoutInflater layoutInflater;
   private Callback callback;
 
-  public DetailBannerAdapter(Context context, List<DetailResponse.Detail.ProductImage> thumbUrls) {
+  public DetailBannerAdapter(Context context,
+      List<DetailResponse.Detail.ProductBanner> productBanners) {
     this.context = context;
-    this.thumbUrls = thumbUrls;
+    this.productBanners = productBanners;
     this.layoutInflater = LayoutInflater.from(context);
   }
 
   @Override public int getCount() {
-    return (this.thumbUrls != null) ? this.thumbUrls.size() : 0;
+    return (this.productBanners != null) ? this.productBanners.size() : 0;
   }
 
   @Override public boolean isViewFromObject(View view, Object object) {
@@ -44,7 +45,7 @@ public class DetailBannerAdapter extends PagerAdapter {
     ImageView imageView = (ImageView) view.findViewById(R.id.banner_item_iv);
 
     Glide.with(context)
-        .load(thumbUrls.get(position).thumbUrl)
+        .load(Constants.THUMB_URL + productBanners.get(position).thumbUrl)
         .centerCrop()
         .crossFade()
         .placeholder(R.drawable.ic_default_1080_icon)
@@ -54,7 +55,7 @@ public class DetailBannerAdapter extends PagerAdapter {
 
     imageView.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        if (callback != null) callback.onItemClick(thumbUrls.get(position).thumbUrl);
+        if (callback != null) callback.onItemClick(productBanners.get(position).thumbUrl);
       }
     });
 

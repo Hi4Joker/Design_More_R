@@ -1,8 +1,6 @@
 package com.app.designmore.retrofit.entity;
 
 import com.app.designmore.retrofit.response.DetailResponse;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
@@ -15,23 +13,22 @@ public class DetailEntity {
   private String marketPrice;
   private String shopPrice;
   private String goodDes;
-  private String goodDesUrl;
   private String goodRepertory;
 
-  private List<DetailResponse.Detail.ProductImage> productImages;
+  private List<DetailResponse.Detail.ProductBanner> productBanners;
+  private List<String> productImages;
   private List<DetailResponse.Detail.ProductAttr> productAttrs;
 
   public DetailEntity(String goodId, String goodName, String marketPrice, String shopPrice,
-      String goodDes, String goodDesUrl, String goodRepertory,
-      List<DetailResponse.Detail.ProductImage> productImages,
-      List<DetailResponse.Detail.ProductAttr> productAttrs) {
+      String goodDes, String goodRepertory, List<DetailResponse.Detail.ProductBanner> productBanners,
+      List<String> productImages, List<DetailResponse.Detail.ProductAttr> productAttrs) {
     this.goodId = goodId;
     this.goodName = goodName;
     this.marketPrice = marketPrice;
     this.shopPrice = shopPrice;
     this.goodDes = goodDes;
-    this.goodDesUrl = goodDesUrl;
     this.goodRepertory = goodRepertory;
+    this.productBanners = productBanners;
     this.productImages = productImages;
     this.productAttrs = productAttrs;
   }
@@ -56,16 +53,16 @@ public class DetailEntity {
     return goodDes;
   }
 
-  public String getGoodDesUrl() {
-    return goodDesUrl;
+  public List<String> getProductImages() {
+    return productImages;
   }
 
   public String getGoodRepertory() {
     return goodRepertory;
   }
 
-  public List<DetailResponse.Detail.ProductImage> getProductImages() {
-    return productImages;
+  public List<DetailResponse.Detail.ProductBanner> getProductBanners() {
+    return productBanners;
   }
 
   public List<DetailResponse.Detail.ProductAttr> getProductAttrs() {
@@ -79,9 +76,9 @@ public class DetailEntity {
         ", goodMarketPrice='" + marketPrice + '\'' +
         ", goodShopPrice='" + shopPrice + '\'' +
         ", goodDes='" + goodDes + '\'' +
-        ", goodDesUrl='" + goodDesUrl + '\'' +
+        ", productImages='" + productImages + '\'' +
         ", goodRepertory='" + goodRepertory + '\'' +
-        ", productImages=" + productImages +
+        ", productBanners=" + productBanners +
         ", productAttrs=" + productAttrs +
         '}';
   }

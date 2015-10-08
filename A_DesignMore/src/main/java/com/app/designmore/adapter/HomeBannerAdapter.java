@@ -69,7 +69,7 @@ public class HomeBannerAdapter extends PagerAdapter implements ViewPager.OnPageC
     ImageView imageView = (ImageView) view.findViewById(R.id.banner_item_iv);
 
     Glide.with(context)
-        .load(items.get(position).getGoodThumbUrl())
+        .load(Constants.THUMB_URL +items.get(position).getGoodThumbUrl())
         .centerCrop()
         .crossFade()
         .placeholder(R.drawable.ic_default_1080_icon)

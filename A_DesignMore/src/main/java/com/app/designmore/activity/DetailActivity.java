@@ -16,6 +16,8 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -42,10 +44,14 @@ import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.usercenter.TrolleyActivity;
+import com.app.designmore.adapter.DetailAdapter;
 import com.app.designmore.adapter.DetailBannerAdapter;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.helper.DBHelper;
 import com.app.designmore.manager.DialogManager;
+import com.app.designmore.manager.DividerDecoration;
+import com.app.designmore.manager.MarginDecoration;
+import com.app.designmore.manager.WrappingLinearLayoutManager;
 import com.app.designmore.retrofit.CollectionRetrofit;
 import com.app.designmore.retrofit.DetailRetrofit;
 import com.app.designmore.retrofit.entity.DetailEntity;
@@ -100,11 +106,10 @@ public class DetailActivity extends BaseActivity
   @Nullable @Bind(R.id.detail_layout_discount_tv) TextView discountTv;
   @Nullable @Bind(R.id.detail_layout_heart_iv) ImageView heartIv;
   @Nullable @Bind(R.id.detail_layout_collection_count_tv) TextView collectionCountTv;
-  @Nullable @Bind(R.id.detail_layout_iv) ImageView detailIv;
+  @Nullable @Bind(R.id.detail_layout_rv) RecyclerView recyclerView;
 
   @Nullable @Bind(R.id.detail_layout_trolley_expanded_iv) ImageView expandedIv;
 
-  private SupportAnimator revealAnimator;
   private String goodId;
   private ProgressDialog progressDialog;
   private CustomShareDialog customShareDialog;
@@ -119,8 +124,8 @@ public class DetailActivity extends BaseActivity
 
   private PhotoViewAttacher photoViewAttacher;
 
-  //private ViewPager viewPager;
-  private List<DetailResponse.Detail.ProductImage> productImages;
+  private List<String> productImages;
+  private List<DetailResponse.Detail.ProductBanner> productBanners;
   private DetailEntity currentEntity;
 
   private Subscription subscription = Subscriptions.empty();
@@ -140,7 +145,7 @@ public class DetailActivity extends BaseActivity
   private ViewPager.SimpleOnPageChangeListener simpleOnPageChangeListener =
       new ViewPager.SimpleOnPageChangeListener() {
         @Override public void onPageSelected(int position) {
-          DetailActivity.this.bannerPageTv.setText(++position + "/" + productImages.size());
+          DetailActivity.this.bannerPageTv.setText(++position + "/" + productBanners.size());
         }
       };
 
@@ -168,7 +173,6 @@ public class DetailActivity extends BaseActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.detail_layout);
 
-    //viewPager = (ViewPager) findViewById(R.id.detail_layout_parallax_viewpager);
     DetailActivity.this.initView(savedInstanceState);
   }
 
@@ -181,7 +185,6 @@ public class DetailActivity extends BaseActivity
 
     this.photoViewAttacher = new PhotoViewAttacher(expandedIv);
     this.photoViewAttacher.setAllowParentInterceptOnEdge(false);
-    this.photoViewAttacher.setScaleType(ImageView.ScaleType.FIT_XY);
     this.photoViewAttacher.setOnViewTapListener(viewTapListener);
     this.photoViewAttacher.setOnPhotoTapListener(photoTapListener);
 
@@ -199,13 +202,26 @@ public class DetailActivity extends BaseActivity
     }
   }
 
-  private void setupViewpager() {
+  private void setupAdapter() {
 
     DetailBannerAdapter detailBannerAdapter =
-        new DetailBannerAdapter(DetailActivity.this, productImages);
+        new DetailBannerAdapter(DetailActivity.this, productBanners);
     detailBannerAdapter.setCallback(DetailActivity.this);
     viewPager.setAdapter(detailBannerAdapter);
     viewPager.addOnPageChangeListener(simpleOnPageChangeListener);
+
+    LinearLayoutManager layoutManager =
+        new LinearLayoutManager(DetailActivity.this);
+    layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+    layoutManager.setSmoothScrollbarEnabled(true);
+
+    DetailAdapter detailAdapter = new DetailAdapter(DetailActivity.this, productImages);
+    recyclerView.setLayoutManager(layoutManager);
+    recyclerView.setHasFixedSize(true);
+    recyclerView.setAdapter(detailAdapter);
+    recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+    recyclerView.addItemDecoration(
+        new DividerDecoration(DetailActivity.this, R.dimen.material_1dp));
   }
 
   private void startEnterAnim() {
@@ -215,7 +231,7 @@ public class DetailActivity extends BaseActivity
 
     DetailActivity.this.revealFrameLayout.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-    revealAnimator =
+    SupportAnimator revealAnimator =
         ViewAnimationUtils.createCircularReveal(revealFrameLayout.getChildAt(0), 0, bounds.left, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
     revealAnimator.setDuration(Constants.MILLISECONDS_400);
@@ -254,7 +270,7 @@ public class DetailActivity extends BaseActivity
             progressLayout.showContent();
 
             /*设置viewpager*/
-            DetailActivity.this.setupViewpager();
+            DetailActivity.this.setupAdapter();
           }
 
           @Override public void onError(Throwable error) {
@@ -297,16 +313,9 @@ public class DetailActivity extends BaseActivity
 
             priceTv.setText(spannableStringBuilder);
             discountTv.setText(detailEntity.getGoodDes());
+            bannerPageTv.setText("1/" + detailEntity.getProductBanners().size());
 
-            Glide.with(DetailActivity.this)
-                .load(detailEntity.getGoodDesUrl())
-                .centerCrop()
-                .crossFade()
-                .placeholder(R.drawable.ic_default_1080_icon)
-                .error(R.drawable.ic_default_1080_icon)
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                .into(detailIv);
-
+            DetailActivity.this.productBanners = detailEntity.getProductBanners();
             DetailActivity.this.productImages = detailEntity.getProductImages();
           }
         });
@@ -503,8 +512,8 @@ public class DetailActivity extends BaseActivity
     }
 
     Glide.with(DetailActivity.this)
-        .load(thumbUrl)
-        .centerCrop()
+        .load(Constants.THUMB_URL + thumbUrl)
+        .fitCenter()
         .crossFade()
         .placeholder(R.drawable.ic_default_1080_icon)
         .error(R.drawable.ic_default_1080_icon)

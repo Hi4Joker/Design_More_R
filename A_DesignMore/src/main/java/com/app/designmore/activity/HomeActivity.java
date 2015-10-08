@@ -181,7 +181,6 @@ public class HomeActivity extends BaseActivity
   @Override public void initView(Bundle savedInstanceState) {
 
     HomeActivity.this.setSupportActionBar(toolbar);
-    //toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
 
     HomeActivity.this.setupAdapter();
 

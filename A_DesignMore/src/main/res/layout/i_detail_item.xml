@@ -4,11 +4,10 @@
     android:layout_height="match_parent"
     >
 
-    <ImageView
-        android:id="@+id/banner_item_iv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="center"
-        />
+  <ImageView
+      android:id="@+id/detail_item_iv"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      />
 
 </FrameLayout>

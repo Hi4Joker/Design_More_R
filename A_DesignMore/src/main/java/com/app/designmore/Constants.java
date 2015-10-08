@@ -5,6 +5,7 @@ package com.app.designmore;
  */
 public class Constants {
   public static final String BASE_URL = "http://api.dmore.com.cn";
+  public static final String THUMB_URL = "http://api.dmore.com.cn/";
   /*测试*/
   public static final String TEST_BASE_URL = "http://zw2.huatu.com/skzwk";
 

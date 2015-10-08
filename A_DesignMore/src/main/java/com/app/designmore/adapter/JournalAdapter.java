@@ -12,6 +12,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.retrofit.entity.JournalEntity;
 import com.bumptech.glide.Glide;
@@ -70,7 +71,7 @@ public class JournalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     holder.content.setText(journalEntity.getJournalContent());
 
     Glide.with(context)
-        .load(journalEntity.getJournalThumbUrl())
+        .load(Constants.THUMB_URL + journalEntity.getJournalThumbUrl())
         .placeholder(R.drawable.ic_default_1080_icon)
         .error(R.drawable.ic_default_1080_icon)
         .diskCacheStrategy(DiskCacheStrategy.NONE)
