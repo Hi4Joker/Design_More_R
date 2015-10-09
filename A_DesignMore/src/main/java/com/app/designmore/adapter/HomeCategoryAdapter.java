@@ -48,7 +48,7 @@ public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapte
 
     BitmapPool bitmapPool = Glide.get(activity).getBitmapPool();
     Glide.with(activity)
-        .load(Constants.THUMB_URL + items.get(position).getCatThumbUrl())
+        .load(items.get(position).getCatThumbUrl())
         .centerCrop()
         .crossFade()
         .bitmapTransform(new CropCircleTransformation(bitmapPool))

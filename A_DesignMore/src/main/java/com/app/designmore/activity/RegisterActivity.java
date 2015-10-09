@@ -86,7 +86,6 @@ public class RegisterActivity extends BaseActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.register_layout);
-    ButterKnife.bind(RegisterActivity.this);
 
     RegisterActivity.this.initView(savedInstanceState);
   }
@@ -261,7 +260,7 @@ public class RegisterActivity extends BaseActivity {
             Toast.makeText(RegisterActivity.this, registerEntity.getRegisterMessage(),
                 Toast.LENGTH_LONG).show();
             if (registerEntity.getRegisterCode() == Constants.RESULT_OK) {
-              RegisterActivity.this.finish();
+              RegisterActivity.this.exit();
             }
           }
         }, new Action1<Throwable>() {

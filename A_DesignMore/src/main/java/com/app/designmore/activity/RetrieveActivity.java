@@ -32,16 +32,19 @@ import com.jakewharton.rxbinding.widget.RxTextView;
 import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
 import rx.Observable;
+import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.functions.Func4;
+import rx.observables.ConnectableObservable;
 import rx.subscriptions.CompositeSubscription;
 import rx.subscriptions.Subscriptions;
 
@@ -74,6 +77,8 @@ public class RetrieveActivity extends BaseActivity {
   private String confirmPassword;
   private ProgressDialog progressDialog;
   private ViewGroup toast;
+
+  private String security = "";
 
   private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
     @Override public void onCancel(DialogInterface dialog) {
@@ -108,7 +113,34 @@ public class RetrieveActivity extends BaseActivity {
     passwordChangeObservable = RxTextView.textChangeEvents(passwordEt).skip(1);
     confirmChangeObservable = RxTextView.textChangeEvents(confirmEt).skip(1);
 
-    compositeSubscription.add(mobileChangeObservable.doOnSubscribe(new Action0() {
+    Observable<TextViewTextChangeEvent> mobileChangeShareObservable = mobileChangeObservable.share();
+    //ConnectableObservable<TextViewTextChangeEvent> publish = mobileChangeObservable.publish();
+
+    compositeSubscription.add(mobileChangeShareObservable.publish(
+        new Func1<Observable<TextViewTextChangeEvent>, Observable<TextViewTextChangeEvent>>() {
+          @Override public Observable<TextViewTextChangeEvent> call(
+              Observable<TextViewTextChangeEvent> textChangeEventObservable) {
+            return textChangeEventObservable.debounce(Constants.MILLISECONDS_400,
+                TimeUnit.MILLISECONDS);
+          }
+        })
+        .doOnSubscribe(new Action0() {
+          @Override public void call() {
+            codeBtn.setEnabled(false);
+          }
+        })
+        .debounce(Constants.MILLISECONDS_300, TimeUnit.MILLISECONDS)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Action1<TextViewTextChangeEvent>() {
+          @Override public void call(TextViewTextChangeEvent textViewTextChangeEvents) {
+
+            codeBtn.setEnabled(!TextUtils.isEmpty(textViewTextChangeEvents.text().toString()));
+          }
+        }));
+
+    //publish.connect();
+
+   /* compositeSubscription.add(mobileChangeObservable.doOnSubscribe(new Action0() {
       @Override public void call() {
         codeBtn.setEnabled(false);
       }
@@ -119,7 +151,7 @@ public class RetrieveActivity extends BaseActivity {
           @Override public void call(TextViewTextChangeEvent textEvent) {
             codeBtn.setEnabled(!TextUtils.isEmpty(textEvent.text().toString()));
           }
-        }));
+        }));*/
 
     compositeSubscription.add(Observable.combineLatest(mobileChangeObservable, codeChangeObservable,
         passwordChangeObservable, confirmChangeObservable,
@@ -168,7 +200,7 @@ public class RetrieveActivity extends BaseActivity {
         .take(10)
         .map(new Func1<Long, Long>() {
           @Override public Long call(Long aLong) {
-            return 10 - aLong;
+            return 9 - aLong;
           }
         })
         .doOnSubscribe(new Action0() {
@@ -204,7 +236,7 @@ public class RetrieveActivity extends BaseActivity {
         .compose(RetrieveActivity.this.<LoginCodeEntity>bindUntilEvent(ActivityEvent.DESTROY))
         .subscribe(new Action1<LoginCodeEntity>() {
           @Override public void call(LoginCodeEntity loginCodeEntity) {
-            RetrieveActivity.this.code = loginCodeEntity.getCode();
+            RetrieveActivity.this.security = loginCodeEntity.getCode();
           }
         });
   }
@@ -216,7 +248,7 @@ public class RetrieveActivity extends BaseActivity {
       return;
     }
 
-    if (!RetrieveActivity.this.code.equals(codeEt.getText().toString())) {
+    if (!RetrieveActivity.this.security.equals(code)) {
       toast = DialogManager.getInstance()
           .showNoMoreDialog(RetrieveActivity.this, Gravity.TOP, "验证码错误，请重新输入，O__O …");
       return;
@@ -261,7 +293,7 @@ public class RetrieveActivity extends BaseActivity {
             Toast.makeText(RetrieveActivity.this, retrieveEntity.getRegisterMessage(),
                 Toast.LENGTH_LONG).show();
             if (retrieveEntity.getRegisterCode() == Constants.RESULT_OK) {
-              RetrieveActivity.this.finish();
+              RetrieveActivity.this.exit();
             }
           }
         }, new Action1<Throwable>() {
