@@ -191,7 +191,6 @@ public class HomeActivity2 extends BaseActivity
       }
     });
 
-
     LinearLayoutManager categoryLayoutManager = new LinearLayoutManager(HomeActivity2.this);
     categoryLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
     categoryLayoutManager.setSmoothScrollbarEnabled(true);
@@ -586,6 +585,12 @@ public class HomeActivity2 extends BaseActivity
   @Override public void onCategoryItemClick(CategoryEntity entity) {
     ProductCatIdListActivity.navigateToProductKeyList(HomeActivity2.this, entity.getCatId(),
         entity.getCatName());
+    overridePendingTransition(0, 0);
+  }
+
+  @Override public void onAllCategoryClick() {
+
+    AllProductListActivity.navigateToAllProductList(HomeActivity2.this, "手表", "手表");
     overridePendingTransition(0, 0);
   }
 

@@ -3,7 +3,7 @@
 <com.app.designmore.view.MaterialRippleLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="@dimen/material_120dp"
+    android:layout_width="@dimen/material_128dp"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     app:mrl_rippleDimension="10dip"
@@ -28,10 +28,9 @@
     <ImageView
         android:id="@+id/product_item_thumb_iv"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/material_100dp"
+        android:layout_height="@dimen/material_128dp"
         android:layout_gravity="center"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_default_300_icon"
         />
 
     <TextView
@@ -40,9 +39,9 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/material_8dp"
         android:textColor="@color/black"
-        android:textSize="@dimen/material_13sp"
+        android:textSize="@dimen/material_11sp"
         android:text=""
-        android:maxLength="3"
+        android:maxLines="3"
         android:ellipsize="end"
         />
 

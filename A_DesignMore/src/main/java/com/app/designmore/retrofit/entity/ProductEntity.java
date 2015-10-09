@@ -7,7 +7,7 @@ public class ProductEntity implements Cloneable {
 
   private String goodId;
   private String goodPrice;
-  private String goodDes;
+  private String goodName;
   private String goodThumbUrl;
 
   public String getGoodId() {
@@ -26,12 +26,12 @@ public class ProductEntity implements Cloneable {
     this.goodPrice = goodPrice;
   }
 
-  public String getGoodDes() {
-    return goodDes;
+  public String getGoodName() {
+    return goodName;
   }
 
-  public void setGoodDes(String goodDes) {
-    this.goodDes = goodDes;
+  public void setGoodName(String goodName) {
+    this.goodName = goodName;
   }
 
   public String getGoodThumbUrl() {
@@ -61,7 +61,7 @@ public class ProductEntity implements Cloneable {
     return "ProductEntity{" +
         "goodId='" + goodId + '\'' +
         ", goodPrice='" + goodPrice + '\'' +
-        ", goodDes='" + goodDes + '\'' +
+        ", goodName='" + goodName + '\'' +
         ", goodThumbUrl='" + goodThumbUrl + '\'' +
         '}';
   }

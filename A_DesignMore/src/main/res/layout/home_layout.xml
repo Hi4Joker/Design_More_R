@@ -138,14 +138,12 @@
                   </LinearLayout>
                 </RelativeLayout>
 
-
                 <!-- 分类-->
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/home_layout_category_rv"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/material_120dp"
-                    android:padding="@dimen/material_16dp"
-                    android:background="@color/white"
+                    android:layout_height="@dimen/material_128dp"
+                    android:layout_gravity="fill_horizontal"
                     />
 
                 <!--三包广告-->

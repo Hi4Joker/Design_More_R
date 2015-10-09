@@ -240,7 +240,21 @@ public class DialogManager {
     layoutParams.width = DensityUtil.getScreenWidth(activity);
     layoutParams.height = DensityUtil.dip2px(64.0f);
     layoutParams.gravity = gravity;
-    layoutParams.windowAnimations = R.style.AnimTop;
+
+    switch (gravity) {
+
+      case Gravity.TOP:
+        layoutParams.windowAnimations = R.style.AnimTop;
+        break;
+
+      case Gravity.CENTER:
+        layoutParams.windowAnimations = R.style.AnimCenter;
+        break;
+
+      case Gravity.BOTTOM:
+        layoutParams.windowAnimations = R.style.AnimBottom;
+        break;
+    }
 
     windowManager.addView(parent, layoutParams);
 

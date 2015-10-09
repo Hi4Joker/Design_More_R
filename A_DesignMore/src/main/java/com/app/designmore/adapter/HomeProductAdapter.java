@@ -14,7 +14,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
-import com.app.designmore.retrofit.entity.FashionEntity;
 import com.app.designmore.retrofit.entity.ProductEntity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -44,7 +43,7 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
 
     holder.rootView.setTag(items.get(position).getGoodId());
-    holder.desTv.setText(items.get(position).getGoodDes());
+    holder.desTv.setText(items.get(position).getGoodName());
     holder.priceTv.setText(items.get(position).getGoodPrice());
 
     Glide.with(context)

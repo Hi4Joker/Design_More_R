@@ -30,6 +30,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
@@ -47,11 +48,13 @@ import com.app.designmore.retrofit.entity.SearchItemEntity;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
+import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.ProgressLayout;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollEvent;
+import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollStateChangeEvent;
 import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.ArrayList;
@@ -59,6 +62,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
 import rx.Observable;
@@ -94,8 +98,6 @@ public class AllProductListActivity extends BaseActivity
   @Nullable @Bind(R.id.product_all_layout_srl) SwipeRefreshLayout swipeRefreshLayout;
   @Nullable @Bind(R.id.product_all_layout_rl) RecyclerView recyclerView;
 
-  private SupportAnimator revealAnimator;
-
   private int visibleItemCount;
   private int totalItemCount;
   private int pastVisibleItems;
@@ -105,8 +107,8 @@ public class AllProductListActivity extends BaseActivity
   private volatile int count = 1;
   private volatile int code = 0;
   private volatile int currentCode = 0;
-  private volatile int order_by = 1;/*1,降序 0,升序*/
-  private volatile int currentOrderBy = 1;/*1,降序 0,升序*/
+  private volatile int order_by = 1;/*1:降序; 0:升序*/
+  private volatile int currentOrderBy = 1;/*1:降序; 0:升序*/
   private volatile String keyword;
   private volatile String title;
 
@@ -213,7 +215,7 @@ public class AllProductListActivity extends BaseActivity
     productParams.put("order_by", String.valueOf(order_by));
 
     Observable.zip(SearchRetrofit.getInstance().getHotSearchList(keywordParams),
-        ProductRetrofit.getInstance().getProductByXxx(productParams),
+        ProductRetrofit.getInstance().getProductByCatId(productParams),
         new Func2<List<SearchItemEntity>, List<ProductEntity>, Map>() {
           @Override public Map call(List<SearchItemEntity> searchItemEntities,
               List<ProductEntity> productEntities) {
@@ -246,7 +248,8 @@ public class AllProductListActivity extends BaseActivity
               progressLayout.showContent();
               if (productItems != null && productItems.size() == 0) {
                 productProgressLayout.showEmpty(
-                    getResources().getDrawable(R.drawable.ic_grey_logo_icon), "空空如也", null);
+                    getResources().getDrawable(R.drawable.ic_grey_logo_icon), "很抱歉，没有搜索到相关商品",
+                    null);
               } else {
                 productProgressLayout.showContent();
               }
@@ -297,7 +300,7 @@ public class AllProductListActivity extends BaseActivity
 
     subscription =
         ProductRetrofit.getInstance()
-            .getProductByXxx(params)
+            .getProductByCatId(params)
             .doOnSubscribe(new Action0() {
               @Override public void call() {
 
@@ -305,6 +308,9 @@ public class AllProductListActivity extends BaseActivity
                 if (!swipeRefreshLayout.isRefreshing()) {
 
                   if (productProgressLayout.isContent()) {
+
+                    AllProductListActivity.this.recyclerView.smoothScrollToPosition(0);
+
                     if (progressDialog == null) {
                       progressDialog = DialogManager.getInstance()
                           .showSimpleProgressDialog(AllProductListActivity.this, cancelListener);
@@ -323,6 +329,19 @@ public class AllProductListActivity extends BaseActivity
                 AllProductListActivity.this.updateTextColor();
               }
             })
+            .doOnError(new Action1<Throwable>() {
+              @Override public void call(Throwable throwable) {
+                /*改变字体颜色*/
+                AllProductListActivity.this.updateTextColor();
+              }
+            })
+            .doOnTerminate(new Action0() {
+              @Override public void call() {
+                if (progressDialog != null && progressDialog.isShowing()) {
+                  progressDialog.dismiss();
+                }
+              }
+            })
             .filter(new Func1<List<ProductEntity>, Boolean>() {
               @Override public Boolean call(List<ProductEntity> productEntities) {
                 return !subscription.isUnsubscribed();
@@ -336,7 +355,12 @@ public class AllProductListActivity extends BaseActivity
                 /*加载完毕，显示内容界面*/
                 if (productItems != null && productItems.size() != 0) {
 
-                  AllProductListActivity.this.isEndless = true;
+                  Observable.timer(Constants.MILLISECONDS_300, TimeUnit.MILLISECONDS,
+                      AndroidSchedulers.mainThread()).forEach(new Action1<Long>() {
+                    @Override public void call(Long aLong) {
+                      AllProductListActivity.this.isEndless = true;
+                    }
+                  });
 
                   if (swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
@@ -345,7 +369,7 @@ public class AllProductListActivity extends BaseActivity
                   } else if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                   }
-                } else if (productItems != null && productItems.size() == 0) {
+                } else {
                   productProgressLayout.showEmpty(
                       getResources().getDrawable(R.drawable.ic_grey_logo_icon), "空空如也", null);
                 }
@@ -359,6 +383,8 @@ public class AllProductListActivity extends BaseActivity
               @Override public void onNext(List<ProductEntity> productEntities) {
 
                 AllProductListActivity.this.productItems.clear();
+                AllProductListActivity.this.productItems.addAll(productEntities);
+                AllProductListActivity.this.productItems.addAll(productEntities);
                 AllProductListActivity.this.productItems.addAll(productEntities);
                 productAdapter.updateItems(productItems);
               }
@@ -440,7 +466,7 @@ public class AllProductListActivity extends BaseActivity
 
     subscription =
         ProductRetrofit.getInstance()
-            .getProductByXxx(params)
+            .getProductByCatId(params)
             .doOnSubscribe(new Action0() {
               @Override public void call() {
                 /*正在加载*/
@@ -519,27 +545,35 @@ public class AllProductListActivity extends BaseActivity
     this.priceTv.setTextColor(greyTextColor);
 
     if (code != price) {
-      ViewCompat.animate(priceArrowIv).rotation(0.0f).setDuration(Constants.MILLISECONDS_300);
+      ViewCompat.animate(priceArrowIv)
+          .rotation(0.0f)
+          .setDuration(Constants.MILLISECONDS_300)
+          .withLayer();
     }
 
     switch (code) {
 
       case composite:
+
         this.currentCode = composite;
         this.currentOrderBy = 1;
         this.compositeTv.setTextColor(redTextColor);
         break;
       case sale:
+
         this.currentCode = sale;
         this.currentOrderBy = 1;
         this.saleTv.setTextColor(redTextColor);
+
         break;
       case fashion:
+
         this.currentCode = fashion;
         this.currentOrderBy = 1;
         this.fashionTv.setTextColor(redTextColor);
         break;
       case collection:
+
         this.currentCode = collection;
         this.currentOrderBy = 1;
         this.collectionTv.setTextColor(redTextColor);
@@ -553,6 +587,7 @@ public class AllProductListActivity extends BaseActivity
             this.currentOrderBy = 1;
           }
         }
+
         this.currentCode = price;
         this.priceTv.setTextColor(redTextColor);
         break;
@@ -599,14 +634,20 @@ public class AllProductListActivity extends BaseActivity
 
     if (currentCode != 4) {
       this.code = 4;
-      this.order_by = 1;
+      this.order_by = 0;
     } else {
       if (this.currentOrderBy == 1) {
         this.order_by = 0;
-        ViewCompat.animate(priceArrowIv).rotation(180.0f).setDuration(Constants.MILLISECONDS_300);
+        ViewCompat.animate(priceArrowIv)
+            .rotation(180.0f)
+            .setDuration(Constants.MILLISECONDS_300)
+            .withLayer();
       } else {
         this.order_by = 1;
-        ViewCompat.animate(priceArrowIv).rotation(0.0f).setDuration(Constants.MILLISECONDS_300);
+        ViewCompat.animate(priceArrowIv)
+            .rotation(0.0f)
+            .setDuration(Constants.MILLISECONDS_300)
+            .withLayer();
       }
     }
     AllProductListActivity.this.loadData();
@@ -659,7 +700,7 @@ public class AllProductListActivity extends BaseActivity
 
     AllProductListActivity.this.rootView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-    revealAnimator =
+    SupportAnimator revealAnimator =
         ViewAnimationUtils.createCircularReveal(rootView.getChildAt(0), 0, bounds.left, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
     revealAnimator.setDuration(Constants.MILLISECONDS_400);
@@ -705,8 +746,10 @@ public class AllProductListActivity extends BaseActivity
 
   /*keyword 回调*/
   @Override public void onItemClick(int position) {
-    // TODO: 2015/9/22  cat_id搜索
 
+    ProductKeyListActivity.navigateToProductKeyList(AllProductListActivity.this,
+        searchItems.get(position).getText(), searchItems.get(position).getText());
+    overridePendingTransition(0, 0);
   }
 
   @Override protected void onDestroy() {

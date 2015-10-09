@@ -75,7 +75,7 @@ public class DetailEntity {
         ", goodName='" + goodName + '\'' +
         ", goodMarketPrice='" + marketPrice + '\'' +
         ", goodShopPrice='" + shopPrice + '\'' +
-        ", goodDes='" + goodDes + '\'' +
+        ", goodName='" + goodDes + '\'' +
         ", productImages='" + productImages + '\'' +
         ", goodRepertory='" + goodRepertory + '\'' +
         ", productBanners=" + productBanners +

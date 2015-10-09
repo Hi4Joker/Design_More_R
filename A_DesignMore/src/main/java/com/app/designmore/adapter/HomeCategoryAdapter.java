@@ -1,7 +1,6 @@
 package com.app.designmore.adapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,7 +11,6 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.manager.CropCircleTransformation;
 import com.app.designmore.retrofit.entity.CategoryEntity;
@@ -44,24 +42,37 @@ public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapte
 
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
 
-    holder.categoryItemTv.setText(items.get(position).getCatName());
+    if (position == 0) {
 
-    BitmapPool bitmapPool = Glide.get(activity).getBitmapPool();
-    Glide.with(activity)
-        .load(items.get(position).getCatThumbUrl())
-        .centerCrop()
-        .crossFade()
-        .bitmapTransform(new CropCircleTransformation(bitmapPool))
-        .placeholder(R.drawable.center_profile_default_icon)
-        .error(R.drawable.center_profile_default_icon)
-        .diskCacheStrategy(DiskCacheStrategy.RESULT)
-        .into(holder.categoryItemIb);
+      holder.categoryItemTv.setText("全部商品");
+      Glide.with(activity)
+          .load(R.drawable.home_all_product_icon)
+          .centerCrop()
+          .crossFade()
+          .placeholder(R.drawable.center_profile_default_icon)
+          .error(R.drawable.center_profile_default_icon)
+          .diskCacheStrategy(DiskCacheStrategy.RESULT)
+          .into(holder.categoryItemIv);
+    } else {
 
-    ((MaterialRippleLayout) holder.categoryItemIb.getParent()).setTag(items.get(position));
+      holder.categoryItemTv.setText(items.get(position - 1).getCatName());
+      BitmapPool bitmapPool = Glide.get(activity).getBitmapPool();
+      Glide.with(activity)
+          .load(items.get(position - 1).getCatThumbUrl())
+          .centerCrop()
+          .crossFade()
+          .bitmapTransform(new CropCircleTransformation(bitmapPool))
+          .placeholder(R.drawable.center_profile_default_icon)
+          .error(R.drawable.center_profile_default_icon)
+          .diskCacheStrategy(DiskCacheStrategy.RESULT)
+          .into(holder.categoryItemIv);
+    }
+
+    ((MaterialRippleLayout) holder.categoryItemIv.getParent()).setTag(position);
   }
 
   @Override public int getItemCount() {
-    return (this.items != null) ? this.items.size() : 0;
+    return (this.items != null) ? this.items.size() + 1 : 0;
   }
 
   /**
@@ -74,7 +85,7 @@ public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapte
 
   public class ViewHolder extends RecyclerView.ViewHolder {
 
-    @Nullable @Bind(R.id.home_category_item_iv) ImageView categoryItemIb;
+    @Nullable @Bind(R.id.home_category_item_iv) ImageView categoryItemIv;
     @Nullable @Bind(R.id.home_category_item_tv) TextView categoryItemTv;
 
     public ViewHolder(View itemView) {
@@ -84,9 +95,15 @@ public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapte
 
     @Nullable @OnClick(R.id.home_category_item_iv) void onItemClick(ImageView imageView) {
 
-      CategoryEntity entity =
-          (CategoryEntity) ((MaterialRippleLayout) imageView.getParent()).getTag();
-      if (callback != null) callback.onCategoryItemClick(entity);
+      int position = (int) ((MaterialRippleLayout) imageView.getParent()).getTag();
+
+      if (callback != null) {
+        if (position == 0) {
+          callback.onAllCategoryClick();
+        } else {
+          callback.onCategoryItemClick(items.get(position - 1));
+        }
+      }
     }
   }
 
@@ -98,5 +115,8 @@ public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapte
 
     /*点击条目*/
     void onCategoryItemClick(CategoryEntity entity);
+
+    /*点击全部商品*/
+    void onAllCategoryClick();
   }
 }

@@ -14,13 +14,11 @@ import java.util.concurrent.TimeoutException;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.android.AndroidLog;
-import retrofit.client.OkClient;
 import retrofit.converter.GsonConverter;
 import retrofit.http.FieldMap;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.POST;
 import rx.Observable;
-import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.functions.Func2;
 
@@ -35,7 +33,7 @@ public class ProductRetrofit {
 
     //@Headers("Accept-Encoding: application/json")
     @FormUrlEncoded @POST("/mobile/api/client/interface.php")
-    Observable<ProductResponse> getProductByXxx(@FieldMap Map<String, String> params);
+    Observable<ProductResponse> getProductByCatId(@FieldMap Map<String, String> params);
   }
 
   private final ProductService productService;
@@ -74,9 +72,9 @@ public class ProductRetrofit {
   /**
    * 搜索分类
    */
-  public Observable<List<ProductEntity>> getProductByXxx(final Map<String, String> params) {
+  public Observable<List<ProductEntity>> getProductByCatId(final Map<String, String> params) {
 
-    return productService.getProductByXxx(params)
+    return productService.getProductByCatId(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
         .retry(new Func2<Integer, Throwable, Boolean>() {
           @Override public Boolean call(Integer integer, Throwable throwable) {
@@ -102,7 +100,7 @@ public class ProductRetrofit {
             clone.setGoodId(product.goodId);
             clone.setGoodThumbUrl(product.goodThumb);
             clone.setGoodPrice(product.goodPrice);
-            clone.setGoodDes(product.goodDes);
+            clone.setGoodName(product.goodName);
 
             return clone;
           }

@@ -41,6 +41,7 @@ import com.app.designmore.retrofit.entity.ProductEntity;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
+import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.ProgressLayout;
@@ -52,8 +53,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
+import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
@@ -176,7 +179,7 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
 
     subscription =
         ProductRetrofit.getInstance()
-            .getProductByXxx(params)
+            .getProductByCatId(params)
             .doOnSubscribe(new Action0() {
               @Override public void call() {
 
@@ -184,6 +187,8 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
                 if (!swipeRefreshLayout.isRefreshing()) {
 
                   if (progressLayout.isContent()) {
+
+                    ProductKeyListActivity.this.recyclerView.smoothScrollToPosition(0);
 
                     if (progressDialog == null) {
                       progressDialog = DialogManager.getInstance()
@@ -223,16 +228,21 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
                 /*加载完毕，显示内容界面*/
                 if (items != null && items.size() != 0) {
 
-                  ProductKeyListActivity.this.isEndless = true;
+                  Observable.timer(Constants.MILLISECONDS_300, TimeUnit.MILLISECONDS,
+                      AndroidSchedulers.mainThread()).forEach(new Action1<Long>() {
+                    @Override public void call(Long aLong) {
+                      ProductKeyListActivity.this.isEndless = true;
+                    }
+                  });
 
                   if (swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
                   } else if (!progressLayout.isContent()) {
                     progressLayout.showContent();
                   }
-                } else if (items != null && items.size() == 0) {
+                } else {
                   progressLayout.showEmpty(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
-                      "没有对应商品", null);
+                      "很抱歉，没有搜索到相关商品", null);
                 }
               }
 
@@ -311,7 +321,7 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
 
     subscription =
         ProductRetrofit.getInstance()
-            .getProductByXxx(params)
+            .getProductByCatId(params)
             .doOnSubscribe(new Action0() {
               @Override public void call() {
                 /*正在加载*/
@@ -397,26 +407,31 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
     switch (code) {
 
       case composite:
+
         this.currentCode = composite;
         this.currentOrderBy = 1;
         this.compositeTv.setTextColor(redTextColor);
         break;
       case sale:
+
         this.currentCode = sale;
         this.currentOrderBy = 1;
         this.saleTv.setTextColor(redTextColor);
         break;
       case fashion:
+
         this.currentCode = fashion;
         this.currentOrderBy = 1;
         this.fashionTv.setTextColor(redTextColor);
         break;
       case collection:
+
         this.currentCode = collection;
         this.currentOrderBy = 1;
         this.collectionTv.setTextColor(redTextColor);
         break;
       case price:
+
         if (currentCode == price) {
           if (this.currentOrderBy == 1) {
             this.currentOrderBy = 0;
@@ -424,6 +439,7 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
             this.currentOrderBy = 1;
           }
         }
+
         this.currentCode = price;
         this.priceTv.setTextColor(redTextColor);
         break;

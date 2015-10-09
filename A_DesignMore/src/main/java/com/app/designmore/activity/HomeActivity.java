@@ -227,7 +227,7 @@ public class HomeActivity extends BaseActivity
     categoryRecyclerView.setAdapter(categoryAdapter);
     categoryRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
     categoryRecyclerView.addItemDecoration(
-        new DividerDecoration(HomeActivity.this, R.dimen.material_1dp));
+        new MarginDecoration(HomeActivity.this, R.dimen.material_1dp));
 
     discountLayoutManager = new WrappingLinearLayoutManager(HomeActivity.this);
     discountLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -248,6 +248,7 @@ public class HomeActivity extends BaseActivity
     productAdapter.setCallback(HomeActivity.this);
     productRecyclerView.setLayoutManager(productLayoutManager);
     productRecyclerView.setHasFixedSize(true);
+    productRecyclerView.setNestedScrollingEnabled(false);
     productRecyclerView.setAdapter(productAdapter);
     productRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
     productRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -616,10 +617,10 @@ public class HomeActivity extends BaseActivity
   @Override public void changeIndicator(int position) {
 
     for (ImageView indicator : bannerIndicators) {
-      indicator.setBackground(indicatorNormal);
+      indicator.setBackgroundDrawable(indicatorNormal);
     }
 
-    bannerIndicators[position].setBackground(indicatorSelected);
+    bannerIndicators[position].setBackgroundDrawable(indicatorSelected);
   }
 
   /**
@@ -628,6 +629,11 @@ public class HomeActivity extends BaseActivity
   @Override public void onCategoryItemClick(CategoryEntity entity) {
     ProductCatIdListActivity.navigateToProductKeyList(HomeActivity.this, entity.getCatId(),
         entity.getCatName());
+    overridePendingTransition(0, 0);
+  }
+
+  @Override public void onAllCategoryClick() {
+    AllProductListActivity.navigateToAllProductList(HomeActivity.this, "精选", "精选");
     overridePendingTransition(0, 0);
   }
 

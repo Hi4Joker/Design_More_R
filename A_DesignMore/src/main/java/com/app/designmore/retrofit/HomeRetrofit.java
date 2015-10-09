@@ -18,13 +18,11 @@ import java.util.concurrent.TimeoutException;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.android.AndroidLog;
-import retrofit.client.OkClient;
 import retrofit.converter.GsonConverter;
 import retrofit.http.FieldMap;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.POST;
 import rx.Observable;
-import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.functions.Func2;
 
@@ -193,7 +191,7 @@ public class HomeRetrofit {
             clone.setGoodId(product.goodId);
             clone.setGoodThumbUrl(product.goodThumb);
             clone.setGoodPrice(product.goodPrice);
-            clone.setGoodDes(product.goodDes);
+            clone.setGoodName(product.goodName);
 
             return clone;
           }
