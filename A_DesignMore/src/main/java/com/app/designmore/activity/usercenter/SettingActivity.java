@@ -19,6 +19,7 @@ import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.activity.LoginActivity;
 import com.app.designmore.activity.MineActivity;
+import com.app.designmore.activity.SplashActivity;
 import com.app.designmore.helper.DBHelper;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.revealLib.animation.SupportAnimator;
@@ -110,12 +111,15 @@ public class SettingActivity extends BaseActivity {
   @Nullable @OnClick(R.id.setting_layout_unregister_btn) void onUnregisterClick() {
 
     DialogManager.getInstance()
-        .showNormalDialog(SettingActivity.this, "请确认退出", new DialogInterface.OnClickListener() {
+        .showNormalDialog(SettingActivity.this, "请确认退出登陆", new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {
             if (which == DialogInterface.BUTTON_POSITIVE) {
 
               DBHelper.getInstance(getApplicationContext()).deleteLoginInfo(SettingActivity.this);
-              LoginActivity.navigateToLogin(SettingActivity.this);
+
+              Intent intent = new Intent(SettingActivity.this, SplashActivity.class);
+              intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+              startActivity(intent);
               overridePendingTransition(0, 0);
             }
           }
@@ -156,5 +160,9 @@ public class SettingActivity extends BaseActivity {
     } else if (revealAnimator == null) {
       SettingActivity.this.finish();
     }
+  }
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
   }
 }

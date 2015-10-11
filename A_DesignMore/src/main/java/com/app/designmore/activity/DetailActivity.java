@@ -179,7 +179,9 @@ public class DetailActivity extends BaseActivity
   @Override public void initView(Bundle savedInstanceState) {
 
     DetailActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(R.drawable.ic_arrow_back_icon);
+    this.toolbar.setNavigationIcon(R.drawable.ic_arrow_back_icon);
+    this.toolbarTitleTv.setText("商品详情");
+    this.collapsingToolbar.setTitleEnabled(false);
 
     this.goodId = getIntent().getStringExtra(GOOD_ID);
 
@@ -210,8 +212,7 @@ public class DetailActivity extends BaseActivity
     viewPager.setAdapter(detailBannerAdapter);
     viewPager.addOnPageChangeListener(simpleOnPageChangeListener);
 
-    LinearLayoutManager layoutManager =
-        new LinearLayoutManager(DetailActivity.this);
+    LinearLayoutManager layoutManager = new LinearLayoutManager(DetailActivity.this);
     layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
     layoutManager.setSmoothScrollbarEnabled(true);
 
@@ -472,9 +473,6 @@ public class DetailActivity extends BaseActivity
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
-
-    this.toolbarTitleTv.setText("商品详情");
-    this.collapsingToolbar.setTitle("");
 
     /*collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
     collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);*/

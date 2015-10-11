@@ -171,11 +171,11 @@ public class AllProductListActivity extends BaseActivity
   @Override public void initView(Bundle savedInstanceState) {
 
     AllProductListActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(R.drawable.ic_arrow_back_icon);
+    this.toolbar.setNavigationIcon(R.drawable.ic_arrow_back_icon);
+    this.collapsingToolbarLayout.setTitleEnabled(false);
 
     this.keyword = getIntent().getStringExtra(KEYWORD);
     this.title = getIntent().getStringExtra(TITLE);
-    this.collapsingToolbarLayout.setTitle("");
 
     /*创建Adapter*/
     AllProductListActivity.this.setupAdapter();

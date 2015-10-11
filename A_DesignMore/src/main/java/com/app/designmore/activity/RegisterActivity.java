@@ -110,7 +110,29 @@ public class RegisterActivity extends BaseActivity {
     mobileChangeObservable = RxTextView.textChangeEvents(mobileEt).skip(1);
     codeChangeObservable = RxTextView.textChangeEvents(codeEt).skip(1);
 
-    compositeSubscription.add(mobileChangeObservable.doOnSubscribe(new Action0() {
+    Observable<TextViewTextChangeEvent> mobileChangeShareObservable = mobileChangeObservable.share();
+
+    compositeSubscription.add(mobileChangeShareObservable.publish(
+        new Func1<Observable<TextViewTextChangeEvent>, Observable<TextViewTextChangeEvent>>() {
+          @Override public Observable<TextViewTextChangeEvent> call(
+              Observable<TextViewTextChangeEvent> textChangeEventObservable) {
+            return textChangeEventObservable.debounce(Constants.MILLISECONDS_300,
+                TimeUnit.MILLISECONDS);
+          }
+        })
+        .doOnSubscribe(new Action0() {
+          @Override public void call() {
+            codeBtn.setEnabled(false);
+          }
+        })
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Action1<TextViewTextChangeEvent>() {
+          @Override public void call(TextViewTextChangeEvent textViewTextChangeEvents) {
+            codeBtn.setEnabled(!TextUtils.isEmpty(textViewTextChangeEvents.text().toString()));
+          }
+        }));
+
+   /* compositeSubscription.add(mobileChangeObservable.doOnSubscribe(new Action0() {
       @Override public void call() {
         codeBtn.setEnabled(false);
       }
@@ -121,7 +143,7 @@ public class RegisterActivity extends BaseActivity {
           @Override public void call(TextViewTextChangeEvent textEvent) {
             codeBtn.setEnabled(!TextUtils.isEmpty(textEvent.text().toString()));
           }
-        }));
+        }));*/
 
     compositeSubscription.add(
         Observable.combineLatest(userNameChangeObservable, passwordChangeObservable,

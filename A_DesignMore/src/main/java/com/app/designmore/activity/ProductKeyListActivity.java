@@ -140,7 +140,7 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
   @Override public void initView(Bundle savedInstanceState) {
 
     ProductKeyListActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(R.drawable.ic_arrow_back_icon);
+    this.toolbar.setNavigationIcon(R.drawable.ic_arrow_back_icon);
 
     this.keyword = getIntent().getStringExtra(KEYWORD);
     this.title = getIntent().getStringExtra(TITLE);

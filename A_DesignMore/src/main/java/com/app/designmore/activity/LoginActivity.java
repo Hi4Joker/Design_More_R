@@ -213,6 +213,7 @@ public class LoginActivity extends BaseActivity {
         .subscribe(new Subscriber<LoginEntity>() {
           @Override public void onCompleted() {
             HomeActivity.navigateToHome(LoginActivity.this);
+            LoginActivity.this.exit();
             overridePendingTransition(0, 0);
           }
 
@@ -237,7 +238,6 @@ public class LoginActivity extends BaseActivity {
 
   @Override protected void onDestroy() {
     super.onDestroy();
-
     if (toast != null && toast.getParent() != null) {
       getWindowManager().removeViewImmediate(toast);
     }

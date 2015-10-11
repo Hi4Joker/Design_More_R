@@ -120,7 +120,7 @@ public class RetrieveActivity extends BaseActivity {
         new Func1<Observable<TextViewTextChangeEvent>, Observable<TextViewTextChangeEvent>>() {
           @Override public Observable<TextViewTextChangeEvent> call(
               Observable<TextViewTextChangeEvent> textChangeEventObservable) {
-            return textChangeEventObservable.debounce(Constants.MILLISECONDS_400,
+            return textChangeEventObservable.debounce(Constants.MILLISECONDS_300,
                 TimeUnit.MILLISECONDS);
           }
         })
@@ -129,11 +129,9 @@ public class RetrieveActivity extends BaseActivity {
             codeBtn.setEnabled(false);
           }
         })
-        .debounce(Constants.MILLISECONDS_300, TimeUnit.MILLISECONDS)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Action1<TextViewTextChangeEvent>() {
           @Override public void call(TextViewTextChangeEvent textViewTextChangeEvents) {
-
             codeBtn.setEnabled(!TextUtils.isEmpty(textViewTextChangeEvents.text().toString()));
           }
         }));

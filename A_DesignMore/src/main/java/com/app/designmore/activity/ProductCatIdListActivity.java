@@ -140,7 +140,7 @@ public class ProductCatIdListActivity extends BaseActivity implements ProductAda
   @Override public void initView(Bundle savedInstanceState) {
 
     ProductCatIdListActivity.this.setSupportActionBar(toolbar);
-    toolbar.setNavigationIcon(R.drawable.ic_arrow_back_icon);
+    this.toolbar.setNavigationIcon(R.drawable.ic_arrow_back_icon);
 
     this.catId = getIntent().getStringExtra(CAT_ID);
     this.title = getIntent().getStringExtra(TITLE);
