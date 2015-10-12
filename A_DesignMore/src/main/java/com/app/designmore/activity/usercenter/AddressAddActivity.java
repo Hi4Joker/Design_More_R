@@ -44,6 +44,7 @@ import com.app.designmore.view.dialog.CustomWheelDialog;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
 import com.trello.rxlifecycle.ActivityEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,7 @@ import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.functions.Func6;
+import rx.functions.FuncN;
 import rx.subscriptions.Subscriptions;
 
 /**
@@ -186,6 +188,28 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
     cityChangeObservable = RxTextView.textChangeEvents(cityTv).skip(1);
     addressChangeObservable = RxTextView.textChangeEvents(addressEt).skip(1);
 
+    /*List<Observable<TextViewTextChangeEvent>> textChangeEvents = new ArrayList<>(6);
+    textChangeEvents.add(userNameChangeObservable);
+    textChangeEvents.add(mobileChangeObservable);
+    textChangeEvents.add(zipCodeChangeObservable);
+    textChangeEvents.add(provinceChangeObservable);
+    textChangeEvents.add(cityChangeObservable);
+    textChangeEvents.add(addressChangeObservable);
+    Observable.combineLatest(textChangeEvents, new FuncN<Boolean>() {
+      @Override public Boolean call(Object... args) {
+
+        for (Object arg : args) {
+
+          TextViewTextChangeEvent textChangeEvent = (TextViewTextChangeEvent) arg;
+          if (TextUtils.isEmpty(textChangeEvent.text().toString())) {
+            return false;
+          }
+        }
+
+        return true;
+      }
+    });*/
+
     Observable.combineLatest(userNameChangeObservable, mobileChangeObservable,
         zipCodeChangeObservable, provinceChangeObservable, cityChangeObservable,
         addressChangeObservable,
@@ -302,8 +326,8 @@ public class AddressAddActivity extends BaseActivity implements AddressView {
                 return !subscription.isUnsubscribed();
               }
             })
-            .compose(
-                AddressAddActivity.this.<RefreshAddressManagerEvent>bindUntilEvent(ActivityEvent.DESTROY))
+            .compose(AddressAddActivity.this.<RefreshAddressManagerEvent>bindUntilEvent(
+                ActivityEvent.DESTROY))
             .subscribe(new Subscriber<RefreshAddressManagerEvent>() {
               @Override public void onCompleted() {
                 /*增加成功，返回，刷新*/

@@ -18,6 +18,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.adapter.ProductAttrAdapter;
 import com.app.designmore.retrofit.entity.ProductAttrEntity;
@@ -79,7 +80,7 @@ public class CustomTrolleyDialog extends Dialog
   private void bindValue() {
 
     Glide.with(activity)
-        .load(currentProductAttrEntity.getAttrThumbUrl())
+        .load(Constants.THUMB_URL + currentProductAttrEntity.getAttrThumbUrl())
         .centerCrop()
         .crossFade()
         .placeholder(R.drawable.ic_default_1080_icon)
@@ -126,7 +127,7 @@ public class CustomTrolleyDialog extends Dialog
       CustomTrolleyDialog.this.priceTv.setText(productAttrEntity.getAttrPrice());
       CustomTrolleyDialog.this.valueTv.setText(productAttrEntity.getAttrValue());
       Glide.with(activity)
-          .load(productAttrEntity.getAttrThumbUrl())
+          .load(Constants.THUMB_URL + productAttrEntity.getAttrThumbUrl())
           .centerCrop()
           .crossFade()
           .placeholder(R.drawable.ic_default_1080_icon)

@@ -52,6 +52,7 @@ import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollStateChange
 import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +72,8 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
 
   private static final String TAG = AddressMangerActivity.class.getSimpleName();
   private static final String START_LOCATION_Y = "START_LOCATION_Y";
+  public static final Object DEFAULT_ADDRESS = "DEFAULT_ADDRESS";
+  public static final Object ADDRESS_LIST = "ADDRESS_LIST";
 
   @Nullable @Bind(R.id.address_manager_layout_root_view) LinearLayout rootView;
   @Nullable @Bind(R.id.white_toolbar_root_view) Toolbar toolbar;
@@ -90,9 +93,12 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
   private AddressEntity defaultAddress = null;
   /*编辑地址*/
   private AddressEntity editorAddress = null;
-  /*删除地址*/
-  //private int deletePosition = -1;
   private Subscription subscription = Subscriptions.empty();
+
+  public enum Type {
+    EXTEND,
+    UP
+  }
 
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
@@ -105,11 +111,6 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
       subscription.unsubscribe();
     }
   };
-
-  public enum Type {
-    EXTEND,
-    UP
-  }
 
   public static void startFromLocation(BaseActivity startingActivity, int startingLocationY,
       Type type) {
@@ -177,6 +178,8 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
         new DividerDecoration(AddressMangerActivity.this, R.dimen.material_16dp));
 
     RxRecyclerView.scrollStateChangeEvents(recyclerView)
+        .compose(AddressMangerActivity.this.<RecyclerViewScrollStateChangeEvent>bindUntilEvent(
+            ActivityEvent.DESTROY))
         .forEach(new Action1<RecyclerViewScrollStateChangeEvent>() {
           @Override
           public void call(RecyclerViewScrollStateChangeEvent recyclerViewScrollStateChangeEvent) {
@@ -186,36 +189,6 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
             }
           }
         });
-  }
-
-  private void startEnterAnim(int startLocationY) {
-
-    if (startLocationY != 0) {
-      rootView.setPivotY(startLocationY);
-      rootView.setScaleY(0.0f);
-      ViewCompat.animate(rootView)
-          .scaleY(1.0f)
-          .setDuration(Constants.MILLISECONDS_400 / 2)
-          .setInterpolator(new AccelerateInterpolator())
-          .withLayer()
-          .setListener(new ViewPropertyAnimatorListenerAdapter() {
-            @Override public void onAnimationEnd(View view) {
-              AddressMangerActivity.this.loadData();
-            }
-          });
-    } else {
-      ViewCompat.setTranslationY(rootView, rootView.getHeight());
-      ViewCompat.animate(rootView)
-          .translationY(0.0f)
-          .setDuration(Constants.MILLISECONDS_400)
-          .setInterpolator(new LinearInterpolator())
-          .withLayer()
-          .setListener(new ViewPropertyAnimatorListenerAdapter() {
-            @Override public void onAnimationEnd(View view) {
-              AddressMangerActivity.this.loadData();
-            }
-          });
-    }
   }
 
   /**
@@ -237,18 +210,8 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
             if (!swipeRefreshLayout.isRefreshing()) progressLayout.showLoading();
           }
         })
-        .doOnCompleted(new Action0() {
-          @Override public void call() {
-            for (AddressEntity addressEntity : items) {
-              if ("1".equals(addressEntity.isDefault())) {
-                AddressMangerActivity.this.defaultAddress = addressEntity;
-              }
-            }
-          }
-        })
-        .compose(
-            AddressMangerActivity.this.<List<AddressEntity>>bindUntilEvent(ActivityEvent.DESTROY))
-        .subscribe(new Subscriber<List<AddressEntity>>() {
+        .compose(AddressMangerActivity.this.<HashMap>bindUntilEvent(ActivityEvent.DESTROY))
+        .subscribe(new Subscriber<HashMap>() {
           @Override public void onCompleted() {
 
             /*加载完毕，显示内容界面*/
@@ -269,10 +232,14 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
             AddressMangerActivity.this.showErrorLayout(error);
           }
 
-          @Override public void onNext(List<AddressEntity> addresses) {
+          @Override public void onNext(HashMap hashMap) {
+
+            AddressMangerActivity.this.defaultAddress =
+                (AddressEntity) hashMap.get(DEFAULT_ADDRESS);
 
             AddressMangerActivity.this.items.clear();
-            AddressMangerActivity.this.items.addAll(addresses);
+            AddressMangerActivity.this.items.addAll(
+                (Collection<? extends AddressEntity>) hashMap.get(ADDRESS_LIST));
             addressAdapter.updateItems(items);
           }
         });
@@ -337,6 +304,8 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
             })
             .doOnCompleted(new Action0() {
               @Override public void call() {
+
+                if (defaultAddress == addressEntity) defaultAddress = null;
 
                 toast = DialogManager.getInstance()
                     .showNoMoreDialog(AddressMangerActivity.this, Gravity.TOP, "删除成功，O(∩_∩)O~~");
@@ -508,6 +477,36 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
     this.addressAdapter.updateItem(editorAddress, editorPosition);
   }
 
+  private void startEnterAnim(int startLocationY) {
+
+    if (startLocationY != 0) {
+      rootView.setPivotY(startLocationY);
+      rootView.setScaleY(0.0f);
+      ViewCompat.animate(rootView)
+          .scaleY(1.0f)
+          .setDuration(Constants.MILLISECONDS_400 / 2)
+          .setInterpolator(new AccelerateInterpolator())
+          .withLayer()
+          .setListener(new ViewPropertyAnimatorListenerAdapter() {
+            @Override public void onAnimationEnd(View view) {
+              AddressMangerActivity.this.loadData();
+            }
+          });
+    } else {
+      ViewCompat.setTranslationY(rootView, rootView.getHeight());
+      ViewCompat.animate(rootView)
+          .translationY(0.0f)
+          .setDuration(Constants.MILLISECONDS_400)
+          .setInterpolator(new LinearInterpolator())
+          .withLayer()
+          .setListener(new ViewPropertyAnimatorListenerAdapter() {
+            @Override public void onAnimationEnd(View view) {
+              AddressMangerActivity.this.loadData();
+            }
+          });
+    }
+  }
+
   @Override public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.menu_single, menu);
 
@@ -533,7 +532,7 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
     if (items != null && items.size() == 0) {
       AddressMangerActivity.this.exitWithoutDialog();
     } else {
-      if (items.contains(defaultAddress)) {
+      if (defaultAddress != null && items.contains(defaultAddress)) {
         AddressMangerActivity.this.exitWithoutDialog();
       } else {
         DialogManager.getInstance().showConfirmDialog(AddressMangerActivity.this, "请选择默认地址");
@@ -547,16 +546,18 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
         .translationY(DensityUtil.getScreenHeight(AddressMangerActivity.this))
         .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())
-        .withLayer().setListener(new ViewPropertyAnimatorListenerAdapter() {
-      @Override public void onAnimationEnd(View view) {
+        .withLayer()
+        .setListener(new ViewPropertyAnimatorListenerAdapter() {
+          @Override public void onAnimationEnd(View view) {
 
-        if (EventBusInstance.getDefault().hasSubscriberForEvent(RefreshOrderAddressEvent.class)) {
-          EventBusInstance.getDefault().post(new RefreshOrderAddressEvent());
-        }
+            if (EventBusInstance.getDefault()
+                .hasSubscriberForEvent(RefreshOrderAddressEvent.class)) {
+              EventBusInstance.getDefault().post(new RefreshOrderAddressEvent());
+            }
 
-        AddressMangerActivity.this.finish();
-      }
-    });
+            AddressMangerActivity.this.finish();
+          }
+        });
   }
 
   @Override protected void onDestroy() {

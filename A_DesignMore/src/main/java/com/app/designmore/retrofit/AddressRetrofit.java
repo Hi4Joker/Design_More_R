@@ -1,6 +1,8 @@
 package com.app.designmore.retrofit;
 
+import android.util.Log;
 import com.app.designmore.Constants;
+import com.app.designmore.activity.usercenter.AddressMangerActivity;
 import com.app.designmore.event.EditorAddressEvent;
 import com.app.designmore.event.RefreshAddressManagerEvent;
 import com.app.designmore.manager.OkClientInstance;
@@ -10,6 +12,9 @@ import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.rxAndroid.SchedulersCompat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +27,9 @@ import retrofit.http.FieldMap;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.POST;
 import rx.Observable;
+import rx.Subscriber;
+import rx.functions.Action0;
+import rx.functions.Action1;
 import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.functions.Func2;
@@ -90,7 +98,7 @@ public class AddressRetrofit {
   /**
    * 获取地址列表
    */
-  public Observable<List<AddressEntity>> getAddressList(final Map<String, String> params) {
+  public Observable<HashMap> getAddressList(final Map<String, String> params) {
 
     return addressService.getAddressList(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
@@ -130,7 +138,29 @@ public class AddressRetrofit {
           }
         })
         .toList()
-        .compose(SchedulersCompat.<List<AddressEntity>>applyExecutorSchedulers());
+        .map(new Func1<List<AddressEntity>, HashMap>() {
+          @Override public HashMap call(final List<AddressEntity> addressEntities) {
+
+            final HashMap hashMap = new HashMap(2);
+
+            Observable.from(addressEntities).filter(new Func1<AddressEntity, Boolean>() {
+              @Override public Boolean call(AddressEntity addressEntity) {
+                return "1".equals(addressEntity.isDefault());
+              }
+            }).doOnSubscribe(new Action0() {
+              @Override public void call() {
+                hashMap.put(AddressMangerActivity.ADDRESS_LIST, addressEntities);
+              }
+            }).forEach(new Action1<AddressEntity>() {
+              @Override public void call(AddressEntity addressEntity) {
+                hashMap.put(AddressMangerActivity.DEFAULT_ADDRESS, addressEntity);
+              }
+            });
+
+            return hashMap;
+          }
+        })
+        .compose(SchedulersCompat.<HashMap>applyExecutorSchedulers());
   }
 
   /**

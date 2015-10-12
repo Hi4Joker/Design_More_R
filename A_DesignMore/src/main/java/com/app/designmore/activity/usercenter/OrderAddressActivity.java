@@ -54,6 +54,7 @@ import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollStateChange
 import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -197,19 +198,8 @@ public class OrderAddressActivity extends BaseActivity implements SimpleAddressA
             if (!swipeRefreshLayout.isRefreshing()) progressLayout.showLoading();
           }
         })
-        .doOnCompleted(new Action0() {
-          @Override public void call() {
-
-            for (AddressEntity addressEntity : items) {
-              if ("1".equals(addressEntity.isDefault())) {
-                OrderAddressActivity.this.defaultAddress = addressEntity;
-              }
-            }
-          }
-        })
-        .compose(
-            OrderAddressActivity.this.<List<AddressEntity>>bindUntilEvent(ActivityEvent.DESTROY))
-        .subscribe(new Subscriber<List<AddressEntity>>() {
+        .compose(OrderAddressActivity.this.<HashMap>bindUntilEvent(ActivityEvent.DESTROY))
+        .subscribe(new Subscriber<HashMap>() {
           @Override public void onCompleted() {
 
             /*加载完毕，显示内容界面*/
@@ -230,12 +220,20 @@ public class OrderAddressActivity extends BaseActivity implements SimpleAddressA
             OrderAddressActivity.this.showErrorLayout(error);
           }
 
-          @Override public void onNext(List<AddressEntity> addresses) {
+          @Override public void onNext(HashMap hashMap) {
 
-            OrderAddressActivity.this.defaultAddress = null;
+            OrderAddressActivity.this.defaultAddress =
+                (AddressEntity) hashMap.get(AddressMangerActivity.DEFAULT_ADDRESS);
+
             OrderAddressActivity.this.items.clear();
-            OrderAddressActivity.this.items.addAll(addresses);
+            OrderAddressActivity.this.items.addAll(
+                (Collection<? extends AddressEntity>) hashMap.get(
+                    AddressMangerActivity.ADDRESS_LIST));
             simpleAddressAdapter.updateItems(items);
+          }
+
+          @Override public void onStart() {
+            //OrderAddressActivity.this.defaultAddress = null;
           }
         });
   }

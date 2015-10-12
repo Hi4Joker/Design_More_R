@@ -111,6 +111,10 @@ public class SimpleAddressAdapter extends RecyclerView.Adapter<SimpleAddressAdap
    * 更新整张列表
    */
   public void updateItems(List<AddressEntity> addresses) {
+
+    this.lastAnimatedPosition = -1;
+    this.animationsLocked = false;
+
     this.items = addresses;
     SimpleAddressAdapter.this.notifyDataSetChanged();
   }

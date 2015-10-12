@@ -59,6 +59,7 @@ import com.app.designmore.view.MaterialRippleLayout;
 import com.app.designmore.view.ProgressLayout;
 import com.app.designmore.manager.WrappingLinearLayoutManager;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
+import com.jakewharton.rxbinding.view.RxView;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.ArrayList;
 import java.util.HashMap;

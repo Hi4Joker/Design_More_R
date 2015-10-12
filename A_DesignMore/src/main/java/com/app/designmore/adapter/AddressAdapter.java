@@ -126,6 +126,10 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
    * 更新整张列表
    */
   public void updateItems(List<AddressEntity> addresses) {
+
+    this.lastAnimatedPosition = -1;
+    this.animationsLocked = false;
+
     this.items = addresses;
     AddressAdapter.this.notifyDataSetChanged();
   }
@@ -172,7 +176,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
     @Nullable @OnClick(R.id.address_manager_item_radio_btn) void onRadionClick(ImageButton button) {
 
       AddressEntity entity = (AddressEntity) button.getTag();
-      if (callback != null ) {
+      if (callback != null) {
         callback.onDefaultChange(entity);
       }
     }

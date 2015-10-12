@@ -190,14 +190,11 @@ public class OrderCommitActivity extends BaseActivity {
             progressLayout.showLoading();
           }
         })
-        .map(new Func1<List<AddressEntity>, AddressEntity>() {
-          @Override public AddressEntity call(List<AddressEntity> addressEntities) {
+        .map(new Func1<HashMap, AddressEntity>() {
+          @Override public AddressEntity call(HashMap hashMap) {
 
-            for (AddressEntity addressEntity : addressEntities) {
-              if ("1".equals(addressEntity.isDefault())) {
-                OrderCommitActivity.this.defaultAddress = addressEntity;
-              }
-            }
+            OrderCommitActivity.this.defaultAddress =
+                (AddressEntity) hashMap.get(AddressMangerActivity.DEFAULT_ADDRESS);
 
             return OrderCommitActivity.this.defaultAddress;
           }
