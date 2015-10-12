@@ -151,11 +151,13 @@ public class AddressRetrofit {
               @Override public void call() {
                 hashMap.put(AddressMangerActivity.ADDRESS_LIST, addressEntities);
               }
-            }).forEach(new Action1<AddressEntity>() {
-              @Override public void call(AddressEntity addressEntity) {
-                hashMap.put(AddressMangerActivity.DEFAULT_ADDRESS, addressEntity);
-              }
-            });
+            })//
+                .toBlocking()//
+                .forEach(new Action1<AddressEntity>() {
+                  @Override public void call(AddressEntity addressEntity) {
+                    hashMap.put(AddressMangerActivity.DEFAULT_ADDRESS, addressEntity);
+                  }
+                });
 
             return hashMap;
           }
