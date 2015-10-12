@@ -639,7 +639,7 @@ public class HomeActivity extends BaseActivity
   }
 
   @Override public void onAllCategoryClick() {
-    AllProductListActivity.navigateToAllProductList(HomeActivity.this, "精选", "精选");
+    AllProductListActivity.navigateToAllProductList(HomeActivity.this, "0", "全部商品");
     overridePendingTransition(0, 0);
   }
 

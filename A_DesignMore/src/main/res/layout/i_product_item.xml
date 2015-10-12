@@ -36,7 +36,8 @@
     <TextView
         android:id="@+id/product_item_des_tv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dip"
+        android:layout_weight="1"
         android:padding="@dimen/material_8dp"
         android:textColor="@color/black"
         android:textSize="@dimen/material_11sp"

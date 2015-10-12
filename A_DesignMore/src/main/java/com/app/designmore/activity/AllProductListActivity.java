@@ -30,7 +30,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
@@ -54,7 +53,6 @@ import com.app.designmore.utils.Utils;
 import com.app.designmore.view.ProgressLayout;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollEvent;
-import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollStateChangeEvent;
 import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.ArrayList;
@@ -81,7 +79,7 @@ public class AllProductListActivity extends BaseActivity
     implements ProductAdapter.Callback, SearchAdapter.Callback {
 
   private static final String TAG = AllProductListActivity.class.getCanonicalName();
-  private static final String KEYWORD = "KEYWORD";
+  private static final String CAT_ID = "CAT_ID";
   private static final String TITLE = "TITLE";
   private static final Object KEY_ENTITIES = "KEY_ENTITIES";
   private static final Object PRODUCT_ENTITIES = "PRODUCT_ENTITIES";
@@ -109,7 +107,7 @@ public class AllProductListActivity extends BaseActivity
   private volatile int currentCode = 0;
   private volatile int order_by = 1;/*1:降序; 0:升序*/
   private volatile int currentOrderBy = 1;/*1:降序; 0:升序*/
-  private volatile String keyword;
+  private volatile String catId;
   private volatile String title;
 
   private List<ProductEntity> productItems = new ArrayList<>();
@@ -148,10 +146,10 @@ public class AllProductListActivity extends BaseActivity
         }
       };
 
-  public static void navigateToAllProductList(AppCompatActivity startingActivity, String keyword,
+  public static void navigateToAllProductList(AppCompatActivity startingActivity, String catId,
       String title) {
     Intent intent = new Intent(startingActivity, AllProductListActivity.class);
-    intent.putExtra(KEYWORD, keyword);
+    intent.putExtra(CAT_ID, catId);
     intent.putExtra(TITLE, title);
     startingActivity.startActivity(intent);
   }
@@ -174,7 +172,7 @@ public class AllProductListActivity extends BaseActivity
     this.toolbar.setNavigationIcon(R.drawable.ic_arrow_back_icon);
     this.collapsingToolbarLayout.setTitleEnabled(false);
 
-    this.keyword = getIntent().getStringExtra(KEYWORD);
+    this.catId = getIntent().getStringExtra(CAT_ID);
     this.title = getIntent().getStringExtra(TITLE);
 
     /*创建Adapter*/
@@ -208,7 +206,7 @@ public class AllProductListActivity extends BaseActivity
     final Map<String, String> productParams = new HashMap<>(7);
     productParams.put("Action", "GetProductByKeyOrType");
     productParams.put("type", "keyword");
-    productParams.put("data", keyword);
+    productParams.put("data", "全部商品");
     productParams.put("page", String.valueOf(page = 1));
     productParams.put("count", "10");
     productParams.put("code", String.valueOf(code));
@@ -255,7 +253,7 @@ public class AllProductListActivity extends BaseActivity
               }
             } else {
               progressLayout.showEmpty(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
-                  "空空如也", null);
+                  "很抱歉，没有搜索到相关商品", null);
             }
           }
 
@@ -274,10 +272,6 @@ public class AllProductListActivity extends BaseActivity
             AllProductListActivity.this.productItems.clear();
             AllProductListActivity.this.productItems.addAll(
                 (Collection<ProductEntity>) map.get(PRODUCT_ENTITIES));
-            AllProductListActivity.this.productItems.addAll(
-                (Collection<ProductEntity>) map.get(PRODUCT_ENTITIES));
-            AllProductListActivity.this.productItems.addAll(
-                (Collection<ProductEntity>) map.get(PRODUCT_ENTITIES));
             productAdapter.updateItems(productItems);
           }
         });
@@ -285,6 +279,7 @@ public class AllProductListActivity extends BaseActivity
 
   private void loadData() {
 
+    /*data=0&code=0&count=10&type=cat&Action=GetProductByKeyOrType&page=1&order_by=1*/
     /*Action=GetProductByKeyOrType&type=keyword&data=%E5%A4%A9%E9%BC%8E&page=1&count=10*/
     /*code = 综合排序== 0   销量 == 1   新品 == 2  收藏 == 3  价格 == 4
     order_by = 0升序 1降序*/
@@ -292,7 +287,7 @@ public class AllProductListActivity extends BaseActivity
     Map<String, String> params = new HashMap<>(7);
     params.put("Action", "GetProductByKeyOrType");
     params.put("type", "keyword");
-    params.put("data", keyword);
+    params.put("data", "全部商品");
     params.put("page", String.valueOf(page = 1));
     params.put("count", "10");
     params.put("code", String.valueOf(code));
@@ -384,8 +379,6 @@ public class AllProductListActivity extends BaseActivity
 
                 AllProductListActivity.this.productItems.clear();
                 AllProductListActivity.this.productItems.addAll(productEntities);
-                AllProductListActivity.this.productItems.addAll(productEntities);
-                AllProductListActivity.this.productItems.addAll(productEntities);
                 productAdapter.updateItems(productItems);
               }
             });
@@ -458,7 +451,7 @@ public class AllProductListActivity extends BaseActivity
     Map<String, String> params = new HashMap<>(7);
     params.put("Action", "GetProductByKeyOrType");
     params.put("type", "keyword");
-    params.put("data", keyword);
+    params.put("data", "全部商品");
     params.put("page", String.valueOf(++page));
     params.put("count", "10");
     params.put("code", String.valueOf(code));

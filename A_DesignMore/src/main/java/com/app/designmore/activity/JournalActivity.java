@@ -40,6 +40,7 @@ import com.app.designmore.adapter.JournalAdapter;
 import com.app.designmore.event.FinishEvent;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
+import com.app.designmore.manager.DividerDecoration;
 import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.retrofit.JournalRetrofit;
 import com.app.designmore.retrofit.entity.JournalEntity;
@@ -169,6 +170,8 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
     recyclerView.setHasFixedSize(true);
     recyclerView.setAdapter(journalAdapter);
     recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+    recyclerView.addItemDecoration(
+        new DividerDecoration(JournalActivity.this, R.dimen.material_8dp));
 
     RxRecyclerView.scrollEvents(recyclerView)
         .skip(1)
