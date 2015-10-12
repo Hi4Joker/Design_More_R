@@ -1,5 +1,8 @@
 package com.app.designmore.activity;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -52,6 +56,7 @@ import com.app.designmore.retrofit.entity.ProductEntity;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
+import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.manager.DividerDecoration;
 import com.app.designmore.utils.Utils;
@@ -60,11 +65,13 @@ import com.app.designmore.view.ProgressLayout;
 import com.app.designmore.manager.WrappingLinearLayoutManager;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.jakewharton.rxbinding.view.RxView;
+import com.jakewharton.rxbinding.view.ViewClickEvent;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
 import rx.Observable;
@@ -390,11 +397,22 @@ public class HomeActivity extends BaseActivity
 
   private void setListener() {
 
+    MaterialRippleLayout.on(bottomBarFashionRl)
+        .rippleDiameterDp(DensityUtil.dip2px(5))
+        .rippleFadeDuration(Constants.MILLISECONDS_100)
+        .rippleAlpha(0.4f)
+        .rippleDuration(Constants.MILLISECONDS_600)
+        .rippleHover(true)
+        .rippleOverlay(true)
+        .rippleDelayClick(true)
+        .rippleColor(getResources().getColor(android.R.color.darker_gray))
+        .create();
+
     MaterialRippleLayout.on(bottomBarJournalRl)
         .rippleDiameterDp(DensityUtil.dip2px(5))
-        .rippleFadeDuration(100)
+        .rippleFadeDuration(Constants.MILLISECONDS_100)
         .rippleAlpha(0.4f)
-        .rippleDuration(600)
+        .rippleDuration(Constants.MILLISECONDS_600)
         .rippleHover(true)
         .rippleOverlay(true)
         .rippleDelayClick(true)
@@ -403,20 +421,9 @@ public class HomeActivity extends BaseActivity
 
     MaterialRippleLayout.on(bottomBarMineRl)
         .rippleDiameterDp(DensityUtil.dip2px(5))
-        .rippleFadeDuration(100)
+        .rippleFadeDuration(Constants.MILLISECONDS_100)
         .rippleAlpha(0.4f)
-        .rippleDuration(600)
-        .rippleHover(true)
-        .rippleOverlay(true)
-        .rippleDelayClick(true)
-        .rippleColor(getResources().getColor(android.R.color.darker_gray))
-        .create();
-
-    MaterialRippleLayout.on(bottomBarFashionRl)
-        .rippleDiameterDp(DensityUtil.dip2px(5))
-        .rippleFadeDuration(100)
-        .rippleAlpha(0.4f)
-        .rippleDuration(600)
+        .rippleDuration(Constants.MILLISECONDS_600)
         .rippleHover(true)
         .rippleOverlay(true)
         .rippleDelayClick(true)
@@ -524,7 +531,6 @@ public class HomeActivity extends BaseActivity
    * 上新
    */
   @Nullable @OnClick(R.id.bottom_bar_fashion_rl) void onFashionClick() {
-
     FashionActivity.navigateToFashion(HomeActivity.this);
     overridePendingTransition(0, 0);
   }
@@ -550,6 +556,12 @@ public class HomeActivity extends BaseActivity
     DrawableCompat.setTint(DrawableCompat.wrap(homeIv.getDrawable().mutate()),
         getResources().getColor(R.color.design_more_red));
     homeTv.setTextColor(getResources().getColor(R.color.design_more_red));
+
+    Animator iconAnim = ObjectAnimator.ofPropertyValuesHolder(homeIv,
+        PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.5f, 1.0f),
+        PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.5f, 1.0f));
+    iconAnim.setDuration(Constants.MILLISECONDS_400);
+    iconAnim.start();
 
     LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toolbarTitleIv.getLayoutParams();
     params.leftMargin = DensityUtil.getActionBarSize(HomeActivity.this) * 2;
@@ -598,13 +610,6 @@ public class HomeActivity extends BaseActivity
             }
           }
         });
-  }
-
-  @Override protected void onNewIntent(Intent intent) {
-    super.onNewIntent(intent);
-    HomeActivity.this.setIntent(intent);
-    /*刷新*/
-    //HomeActivity.this.loadData();
   }
 
   /**
@@ -679,5 +684,12 @@ public class HomeActivity extends BaseActivity
 
     this.bannerAdapter.detach();
     if (!subscription.isUnsubscribed()) subscription.unsubscribe();
+  }
+
+  @Override protected void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
+    HomeActivity.this.setIntent(intent);
+    /*刷新*/
+    //HomeActivity.this.loadData();
   }
 }

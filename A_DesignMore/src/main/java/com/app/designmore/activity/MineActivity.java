@@ -1,5 +1,8 @@
 package com.app.designmore.activity;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
@@ -8,6 +11,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.Menu;
@@ -18,6 +23,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import butterknife.Bind;
@@ -30,12 +36,15 @@ import com.app.designmore.activity.usercenter.OrderActivity;
 import com.app.designmore.activity.usercenter.ProfileActivity;
 import com.app.designmore.activity.usercenter.SettingActivity;
 import com.app.designmore.activity.usercenter.TrolleyActivity;
+import com.app.designmore.adapter.MineItemAdapter;
 import com.app.designmore.event.FinishEvent;
 import com.app.designmore.helper.DBHelper;
 import com.app.designmore.manager.CropCircleTransformation;
 import com.app.designmore.manager.DialogManager;
+import com.app.designmore.manager.DividerDecoration;
 import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.retrofit.LoginRetrofit;
+import com.app.designmore.retrofit.entity.MineItemEntity;
 import com.app.designmore.retrofit.response.UserInfoEntity;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
@@ -49,7 +58,9 @@ import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import rx.Subscriber;
 import rx.functions.Action1;
@@ -57,7 +68,7 @@ import rx.functions.Action1;
 /**
  * Created by Joker on 2015/8/25.
  */
-public class MineActivity extends BaseActivity {
+public class MineActivity extends BaseActivity implements MineItemAdapter.Callback {
 
   private static final String TAG = MineActivity.class.getSimpleName();
   private static WeakReference<AppCompatActivity> weakReference;
@@ -70,6 +81,8 @@ public class MineActivity extends BaseActivity {
   @Nullable @Bind(R.id.mine_layout_srl) SwipeRefreshLayout swipeRefreshLayout;
   @Nullable @Bind(R.id.mine_layout_avatar_iv) ImageView avatarIv;
   @Nullable @Bind(R.id.mine_layout_nickname_tv) TextView nickNameTv;
+  @Nullable @Bind(R.id.mine_layout_rv) RecyclerView recyclerView;
+
   @Nullable @Bind(R.id.bottom_bar_mine_iv) ImageView mineIv;
   @Nullable @Bind(R.id.bottom_bar_mine_tv) TextView mineTv;
   @Nullable @Bind(R.id.bottom_bar_home_rl) RelativeLayout bottomBarHomeRl;
@@ -109,6 +122,8 @@ public class MineActivity extends BaseActivity {
       }
     });
 
+    MineActivity.this.setupAdapter();
+
     if (savedInstanceState == null) {
       rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
         @Override public boolean onPreDraw() {
@@ -120,6 +135,28 @@ public class MineActivity extends BaseActivity {
     } else {
       MineActivity.this.loadData();
     }
+  }
+
+  private void setupAdapter() {
+
+    List<MineItemEntity> itemEntities = new ArrayList<>(5);
+    itemEntities.add(new MineItemEntity(R.drawable.mine_trolley_icon, "购物车"));
+    itemEntities.add(new MineItemEntity(R.drawable.mine_order_icon, "我的订单"));
+    itemEntities.add(new MineItemEntity(R.drawable.mine_favorite_icon, "我的收藏"));
+    itemEntities.add(new MineItemEntity(R.drawable.mine_information_icon, "个人资料"));
+    itemEntities.add(new MineItemEntity(R.drawable.mine_address_icon, "地址管理"));
+
+    MineItemAdapter mineItemAdapter = new MineItemAdapter(MineActivity.this, itemEntities);
+    mineItemAdapter.setCallback(MineActivity.this);
+
+    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MineActivity.this);
+    linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+    recyclerView.setLayoutManager(linearLayoutManager);
+    recyclerView.setAdapter(mineItemAdapter);
+    recyclerView.setHasFixedSize(true);
+    recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+    recyclerView.addItemDecoration(new DividerDecoration(MineActivity.this, R.dimen.material_1dp));
   }
 
   private void startEnterAnim() {
@@ -155,9 +192,9 @@ public class MineActivity extends BaseActivity {
 
     MaterialRippleLayout.on(bottomBarHomeRl)
         .rippleDiameterDp(DensityUtil.dip2px(5))
-        .rippleFadeDuration(100)
+        .rippleFadeDuration(Constants.MILLISECONDS_100)
         .rippleAlpha(0.4f)
-        .rippleDuration(600)
+        .rippleDuration(Constants.MILLISECONDS_600)
         .rippleHover(true)
         .rippleOverlay(true)
         .rippleDelayClick(true)
@@ -166,9 +203,9 @@ public class MineActivity extends BaseActivity {
 
     MaterialRippleLayout.on(bottomBarFashionRl)
         .rippleDiameterDp(DensityUtil.dip2px(5))
-        .rippleFadeDuration(100)
+        .rippleFadeDuration(Constants.MILLISECONDS_100)
         .rippleAlpha(0.4f)
-        .rippleDuration(600)
+        .rippleDuration(Constants.MILLISECONDS_600)
         .rippleHover(true)
         .rippleOverlay(true)
         .rippleDelayClick(true)
@@ -177,9 +214,9 @@ public class MineActivity extends BaseActivity {
 
     MaterialRippleLayout.on(bottomBarJournalRl)
         .rippleDiameterDp(DensityUtil.dip2px(5))
-        .rippleFadeDuration(100)
+        .rippleFadeDuration(Constants.MILLISECONDS_100)
         .rippleAlpha(0.4f)
-        .rippleDuration(600)
+        .rippleDuration(Constants.MILLISECONDS_600)
         .rippleHover(true)
         .rippleOverlay(true)
         .rippleDelayClick(true)
@@ -236,6 +273,12 @@ public class MineActivity extends BaseActivity {
         getResources().getColor(R.color.design_more_red));
     mineTv.setTextColor(getResources().getColor(R.color.design_more_red));
 
+    Animator iconAnim = ObjectAnimator.ofPropertyValuesHolder(mineIv,
+        PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.5f, 1.0f),
+        PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.5f, 1.0f));
+    iconAnim.setDuration(Constants.MILLISECONDS_400);
+    iconAnim.start();
+
     getMenuInflater().inflate(R.menu.menu_single, menu);
 
     MenuItem menuItem = menu.findItem(R.id.action_inbox);
@@ -254,53 +297,10 @@ public class MineActivity extends BaseActivity {
   }
 
   /**
-   * 购物车
-   */
-  @Nullable @OnClick(R.id.mine_layout_trolley_ll) void onTrolleyClick(View view) {
-    TrolleyActivity.startFromLocation(MineActivity.this, DensityUtil.getLocationY(view),
-        TrolleyActivity.Type.EXTEND);
-    overridePendingTransition(0, 0);
-  }
-
-  /**
-   * 我的订单
-   */
-  @Nullable @OnClick(R.id.mine_layout_order_ll) void onOrderClick(View view) {
-    OrderActivity.startFromLocation(MineActivity.this, DensityUtil.getLocationY(view));
-    overridePendingTransition(0, 0);
-  }
-
-  /**
-   * 我的收藏
-   */
-  @Nullable @OnClick(R.id.mine_layout_favorite_ll) void onFavoriteClick(View view) {
-    CollectionActivity.startFromLocation(MineActivity.this, DensityUtil.getLocationY(view));
-    overridePendingTransition(0, 0);
-  }
-
-  /**
-   * 个人资料
-   */
-  @Nullable @OnClick(R.id.mine_layout_information_ll) void onInfoClick(View view) {
-    ProfileActivity.startFromLocation(MineActivity.this, DensityUtil.getLocationY(view));
-    overridePendingTransition(0, 0);
-  }
-
-  /**
-   * 地址管理
-   */
-  @Nullable @OnClick(R.id.mine_layout_address_ll) void onAddressClick(View view) {
-    AddressMangerActivity.startFromLocation(MineActivity.this, DensityUtil.getLocationY(view),
-        AddressMangerActivity.Type.EXTEND);
-    overridePendingTransition(0, 0);
-  }
-
-  /**
    * 主页
    */
   @Nullable @OnClick(R.id.bottom_bar_home_rl) void onMineClick() {
     HomeActivity.navigateToHome(MineActivity.this);
-    //MineActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -309,7 +309,6 @@ public class MineActivity extends BaseActivity {
    */
   @Nullable @OnClick(R.id.bottom_bar_fashion_rl) void onFashionClick() {
     FashionActivity.navigateToFashion(MineActivity.this);
-    //MineActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -318,7 +317,6 @@ public class MineActivity extends BaseActivity {
    */
   @Nullable @OnClick(R.id.bottom_bar_journal_rl) void onJournalClick() {
     JournalActivity.navigateToJournal(MineActivity.this);
-    //MineActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -362,5 +360,39 @@ public class MineActivity extends BaseActivity {
       getWindowManager().removeViewImmediate(toast);
     }
     this.toast = null;
+  }
+
+  @Override public void onItemClick(int position, View itemView) {
+
+    int location = DensityUtil.getLocationY(itemView);
+
+    switch (position) {
+
+      case 0:
+        TrolleyActivity.startFromLocation(MineActivity.this, location, TrolleyActivity.Type.EXTEND);
+        overridePendingTransition(0, 0);
+        break;
+
+      case 1:
+        OrderActivity.startFromLocation(MineActivity.this, location);
+        overridePendingTransition(0, 0);
+        break;
+
+      case 2:
+        CollectionActivity.startFromLocation(MineActivity.this, location);
+        overridePendingTransition(0, 0);
+        break;
+
+      case 3:
+        ProfileActivity.startFromLocation(MineActivity.this, location);
+        overridePendingTransition(0, 0);
+        break;
+
+      case 4:
+        AddressMangerActivity.startFromLocation(MineActivity.this, location,
+            AddressMangerActivity.Type.EXTEND);
+        overridePendingTransition(0, 0);
+        break;
+    }
   }
 }

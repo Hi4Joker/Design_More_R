@@ -1,5 +1,9 @@
 package com.app.designmore.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -164,7 +169,6 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
     recyclerView.setHasFixedSize(true);
     recyclerView.setAdapter(journalAdapter);
     recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-    recyclerView.setItemAnimator(new DefaultItemAnimator());
 
     RxRecyclerView.scrollEvents(recyclerView)
         .skip(1)
@@ -294,9 +298,9 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
 
     MaterialRippleLayout.on(bottomBarHomeRl)
         .rippleDiameterDp(DensityUtil.dip2px(5))
-        .rippleFadeDuration(100)
+        .rippleFadeDuration(Constants.MILLISECONDS_100)
         .rippleAlpha(0.4f)
-        .rippleDuration(600)
+        .rippleDuration(Constants.MILLISECONDS_600)
         .rippleHover(true)
         .rippleOverlay(true)
         .rippleDelayClick(true)
@@ -305,9 +309,9 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
 
     MaterialRippleLayout.on(bottomBarFashionRl)
         .rippleDiameterDp(DensityUtil.dip2px(5))
-        .rippleFadeDuration(100)
+        .rippleFadeDuration(Constants.MILLISECONDS_100)
         .rippleAlpha(0.4f)
-        .rippleDuration(600)
+        .rippleDuration(Constants.MILLISECONDS_600)
         .rippleHover(true)
         .rippleOverlay(true)
         .rippleDelayClick(true)
@@ -316,9 +320,9 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
 
     MaterialRippleLayout.on(bottomBarMineRl)
         .rippleDiameterDp(DensityUtil.dip2px(5))
-        .rippleFadeDuration(100)
+        .rippleFadeDuration(Constants.MILLISECONDS_100)
         .rippleAlpha(0.4f)
-        .rippleDuration(600)
+        .rippleDuration(Constants.MILLISECONDS_600)
         .rippleHover(true)
         .rippleOverlay(true)
         .rippleDelayClick(true)
@@ -360,7 +364,6 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
    */
   @Nullable @OnClick(R.id.bottom_bar_home_rl) void onFashionClick() {
     HomeActivity.navigateToHome(JournalActivity.this);
-    //JournalActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -369,7 +372,6 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
    */
   @Nullable @OnClick(R.id.bottom_bar_fashion_rl) void onJournalClick() {
     FashionActivity.navigateToFashion(JournalActivity.this);
-    //JournalActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -378,7 +380,6 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
    */
   @Nullable @OnClick(R.id.bottom_bar_mine_rl) void onMineClick() {
     MineActivity.navigateToUserCenter(JournalActivity.this);
-    //JournalActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -387,6 +388,12 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
     DrawableCompat.setTint(DrawableCompat.wrap(journalIv.getDrawable().mutate()),
         getResources().getColor(R.color.design_more_red));
     journalTv.setTextColor(getResources().getColor(R.color.design_more_red));
+
+    Animator iconAnim = ObjectAnimator.ofPropertyValuesHolder(journalIv,
+        PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.5f, 1.0f),
+        PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.5f, 1.0f));
+    iconAnim.setDuration(Constants.MILLISECONDS_400);
+    iconAnim.start();
 
     LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toolbarTitleTv.getLayoutParams();
     params.leftMargin = DensityUtil.getActionBarSize(JournalActivity.this) * 2;

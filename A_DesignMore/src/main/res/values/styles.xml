@@ -111,6 +111,7 @@
   <style name="bottom_bar_icon_style">
     <item name="android:layout_width">match_parent</item>
     <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_weight">1</item>
     <item name="android:layout_alignParentTop">true</item>
     <item name="android:layout_marginTop">@dimen/material_8dp</item>
     <item name="android:layout_marginBottom">@dimen/material_2dp</item>

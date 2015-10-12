@@ -1,5 +1,8 @@
 package com.app.designmore.activity;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -37,6 +41,7 @@ import com.app.designmore.adapter.FashionAdapter;
 import com.app.designmore.event.FinishEvent;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
+import com.app.designmore.manager.DividerDecoration;
 import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.retrofit.FashionRetrofit;
 import com.app.designmore.retrofit.entity.FashionEntity;
@@ -166,6 +171,8 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
     recyclerView.setHasFixedSize(true);
     recyclerView.setAdapter(fashionAdapter);
     recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+    recyclerView.addItemDecoration(
+        new DividerDecoration(FashionActivity.this, R.dimen.material_8dp));
 
     RxRecyclerView.scrollEvents(recyclerView)
         .skip(1)
@@ -297,9 +304,9 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
 
     MaterialRippleLayout.on(bottomBarHomeRl)
         .rippleDiameterDp(DensityUtil.dip2px(5))
-        .rippleFadeDuration(100)
+        .rippleFadeDuration(Constants.MILLISECONDS_100)
         .rippleAlpha(0.4f)
-        .rippleDuration(600)
+        .rippleDuration(Constants.MILLISECONDS_600)
         .rippleHover(true)
         .rippleOverlay(true)
         .rippleDelayClick(true)
@@ -308,9 +315,9 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
 
     MaterialRippleLayout.on(bottomBarJournalRl)
         .rippleDiameterDp(DensityUtil.dip2px(5))
-        .rippleFadeDuration(100)
+        .rippleFadeDuration(Constants.MILLISECONDS_100)
         .rippleAlpha(0.4f)
-        .rippleDuration(600)
+        .rippleDuration(Constants.MILLISECONDS_600)
         .rippleHover(true)
         .rippleOverlay(true)
         .rippleDelayClick(true)
@@ -319,9 +326,9 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
 
     MaterialRippleLayout.on(bottomBarMineRl)
         .rippleDiameterDp(DensityUtil.dip2px(5))
-        .rippleFadeDuration(100)
+        .rippleFadeDuration(Constants.MILLISECONDS_100)
         .rippleAlpha(0.4f)
-        .rippleDuration(600)
+        .rippleDuration(Constants.MILLISECONDS_600)
         .rippleHover(true)
         .rippleOverlay(true)
         .rippleDelayClick(true)
@@ -351,7 +358,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
 
         FashionActivity.this.rootView.setLayerType(View.LAYER_TYPE_NONE, null);
 
-        if (weakReference!=null&&weakReference.get() != null) {
+        if (weakReference != null && weakReference.get() != null) {
           weakReference.get().finish();
           weakReference.clear();
           weakReference = null;
@@ -368,7 +375,6 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
    */
   @Nullable @OnClick(R.id.bottom_bar_home_rl) void onHomeClick() {
     HomeActivity.navigateToHome(FashionActivity.this);
-    //FashionActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -377,7 +383,6 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
    */
   @Nullable @OnClick(R.id.bottom_bar_journal_rl) void onJournalClick() {
     JournalActivity.navigateToJournal(FashionActivity.this);
-    //FashionActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -387,7 +392,6 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
   @Nullable @OnClick(R.id.bottom_bar_mine_rl) void onMineClick() {
 
     MineActivity.navigateToUserCenter(FashionActivity.this);
-    //FashionActivity.this.finish();
     overridePendingTransition(0, 0);
   }
 
@@ -396,6 +400,12 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
     DrawableCompat.setTint(DrawableCompat.wrap(fashionIv.getDrawable().mutate()),
         getResources().getColor(R.color.design_more_red));
     fashionTv.setTextColor(getResources().getColor(R.color.design_more_red));
+
+    Animator iconAnim = ObjectAnimator.ofPropertyValuesHolder(fashionIv,
+        PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.5f, 1.0f),
+        PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.5f, 1.0f));
+    iconAnim.setDuration(Constants.MILLISECONDS_400);
+    iconAnim.start();
 
     LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toolbarTitleTv.getLayoutParams();
     params.leftMargin = DensityUtil.getActionBarSize(FashionActivity.this) * 2;

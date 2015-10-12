@@ -19,7 +19,7 @@ import java.util.List;
 import rx.Observer;
 
 /**
- * Created by Administrator on 2015/9/13.
+ * Created by Joker on 2015/9/13.
  */
 public class HelpAdapter extends RecyclerView.Adapter<HelpAdapter.ViewHolder>
     implements Observer<List<HelpEntity>> {
