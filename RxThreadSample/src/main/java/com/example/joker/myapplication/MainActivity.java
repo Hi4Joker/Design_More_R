@@ -38,6 +38,12 @@ public class MainActivity extends AppCompatActivity {
   private Handler backgroundHandler;
   private Subscription subscription = Subscriptions.empty();
 
+  static class BackgroundThread extends HandlerThread {
+    BackgroundThread() {
+      super("SchedulerSample-BackgroundThread", THREAD_PRIORITY_BACKGROUND);
+    }
+  }
+
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
@@ -58,12 +64,6 @@ public class MainActivity extends AppCompatActivity {
         }
       }
     });
-  }
-
-  static class BackgroundThread extends HandlerThread {
-    BackgroundThread() {
-      super("SchedulerSample-BackgroundThread", THREAD_PRIORITY_BACKGROUND);
-    }
   }
 
   @Nullable @OnClick(R.id.defer) public void onDeferClick() {
@@ -423,7 +423,39 @@ public class MainActivity extends AppCompatActivity {
 
   @OnClick(R.id.unsub_operator) void onUnSubClick() {
 
-    if (!subscription.isUnsubscribed()) subscription.unsubscribe();
+    Observable.create(new Observable.OnSubscribe<String>() {
+      @Override public void call(final Subscriber<? super String> subscriber) {
+
+        subscriber.add(new Subscription() {
+          @Override public void unsubscribe() {
+            Log.e(TAG, "unsubscribe");
+          }
+
+          @Override public boolean isUnsubscribed() {
+            return subscriber.isUnsubscribed();
+          }
+        });
+
+        subscriber.onNext("1");
+        subscriber.onCompleted();
+      }
+    }).doOnUnsubscribe(new Action0() {
+      @Override public void call() {
+        Log.e(TAG, "doOnUnsubscribe");
+      }
+    }).subscribe(new Subscriber<String>() {
+      @Override public void onCompleted() {
+
+      }
+
+      @Override public void onError(Throwable e) {
+
+      }
+
+      @Override public void onNext(String s) {
+
+      }
+    });
   }
 
   @OnClick(R.id.to_operator) void onToClick() {
@@ -464,5 +496,86 @@ public class MainActivity extends AppCompatActivity {
         return integer;
       }
     }).subscribeOn(Schedulers.io()).toBlocking().first();
+  }
+
+  @OnClick(R.id.thread_operator) void onThreadClick() {
+
+    /*Observable.just(1).doOnSubscribe(new Action0() {
+      @Override public void call() {
+        Log.e(TAG, "doOnSubscribe0 run on the " + Thread.currentThread().getName());
+      }
+    }).map(new Func1<Integer, Integer>() {
+      @Override public Integer call(Integer integer) {
+
+        Log.e(TAG, "map0 run on the " + Thread.currentThread().getName());
+        return 1;
+      }
+    }).compose(SchedulersCompat.<Integer>applyNewSchedulers()).map(new Func1<Integer, Integer>() {
+      @Override public Integer call(Integer integer) {
+
+        Log.e(TAG, "map1 run on the " + Thread.currentThread().getName());
+        return 1;
+      }
+    }).subscribeOn(Schedulers.newThread()).doOnSubscribe(new Action0() {
+      @Override public void call() {
+        Log.e(TAG, "doOnSubscribe1 run on the " + Thread.currentThread().getName());
+      }
+    }).subscribe(new Action1<Integer>() {
+      @Override public void call(Integer integer) {
+        Log.e(TAG, "next1 run on the " + Thread.currentThread().getName());
+      }
+    });*/
+
+    Observable.just(1).doOnSubscribe(new Action0() {
+      @Override public void call() {
+
+        Log.e(TAG, "doOnSubscribe0 run on the " + Thread.currentThread().getName());
+      }
+    }).map(new Func1<Integer, Integer>() {
+      @Override public Integer call(Integer integer) {
+
+        Log.e(TAG, "map2 run on the " + Thread.currentThread().getName());
+        return 2;
+      }
+    }).doOnSubscribe(new Action0() {
+      @Override public void call() {
+
+        Log.e(TAG, "doOnSubscribe1 run on the " + Thread.currentThread().getName());
+      }
+    }).subscribeOn(Schedulers.io()).map(new Func1<Integer, Integer>() {
+      @Override public Integer call(Integer integer) {
+
+        Log.e(TAG, "map3 run on the " + Thread.currentThread().getName());
+        return 3;
+      }
+    }).subscribeOn(Schedulers.newThread()).doOnSubscribe(new Action0() {
+      @Override public void call() {
+
+        Log.e(TAG, "doOnSubscribe2 run on the " + Thread.currentThread().getName());
+      }
+    }).map(new Func1<Integer, Integer>() {
+      @Override public Integer call(Integer integer) {
+
+        Log.e(TAG, "map4 run on the " + Thread.currentThread().getName());
+        return 1;
+      }
+    }).subscribe(new Action1<Integer>() {
+      @Override public void call(Integer integer) {
+
+        Log.e(TAG, "next run on the " + Thread.currentThread().getName());
+      }
+    });
+  }
+
+  class Thread1 extends Thread {
+    public Thread1(String threadName) {
+      super(threadName);
+    }
+  }
+
+  class Thread2 extends Thread {
+    public Thread2(String threadName) {
+      super(threadName);
+    }
   }
 }

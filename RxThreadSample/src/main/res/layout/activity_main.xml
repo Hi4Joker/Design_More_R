@@ -113,6 +113,23 @@
           android:layout_height="wrap_content"
           android:text="blocking_operator"
           />
+
+      <Button
+          android:id="@+id/thread_operator"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="thread_operator"
+          />
+
+
+      <Button
+          android:id="@+id/thread_operator"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="thread_operator"
+          />
+
+
     </LinearLayout>
   </ScrollView>
 
