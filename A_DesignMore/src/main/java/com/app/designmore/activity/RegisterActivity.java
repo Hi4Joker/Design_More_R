@@ -203,6 +203,21 @@ public class RegisterActivity extends BaseActivity {
 
   private void startCountDown() {
 
+   /* final CountDownLatch latch = new CountDownLatch(5);
+    latch.countDown();
+
+    Observable
+        .interval(1, TimeUnit.SECONDS)
+        .take(5)
+        .toBlocking()
+        .forEach(new Action1<Long>() {
+          @Override public void call(Long counter) {
+            System.out.println("Got: " + counter);
+          }
+        });*/
+
+
+
     Observable.interval(0, 1, TimeUnit.SECONDS)
         .take(10)
         .map(new Func1<Long, Long>() {

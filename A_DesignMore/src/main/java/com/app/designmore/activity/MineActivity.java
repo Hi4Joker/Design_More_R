@@ -29,6 +29,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
+import com.app.designmore.IconAnim;
 import com.app.designmore.R;
 import com.app.designmore.activity.usercenter.AddressMangerActivity;
 import com.app.designmore.activity.usercenter.CollectionActivity;
@@ -68,7 +69,7 @@ import rx.functions.Action1;
 /**
  * Created by Joker on 2015/8/25.
  */
-public class MineActivity extends BaseActivity implements MineItemAdapter.Callback {
+public class MineActivity extends BaseActivity implements MineItemAdapter.Callback, IconAnim {
 
   private static final String TAG = MineActivity.class.getSimpleName();
   private static WeakReference<AppCompatActivity> weakReference;
@@ -273,11 +274,8 @@ public class MineActivity extends BaseActivity implements MineItemAdapter.Callba
         getResources().getColor(R.color.design_more_red));
     mineTv.setTextColor(getResources().getColor(R.color.design_more_red));
 
-    Animator iconAnim = ObjectAnimator.ofPropertyValuesHolder(mineIv,
-        PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.5f, 1.0f),
-        PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.5f, 1.0f));
-    iconAnim.setDuration(Constants.MILLISECONDS_400);
-    iconAnim.start();
+    /*执行进入icon动画*/
+    MineActivity.this.startIconAnim();
 
     getMenuInflater().inflate(R.menu.menu_single, menu);
 
@@ -394,5 +392,13 @@ public class MineActivity extends BaseActivity implements MineItemAdapter.Callba
         overridePendingTransition(0, 0);
         break;
     }
+  }
+
+  @Override public void startIconAnim() {
+    Animator iconAnim = ObjectAnimator.ofPropertyValuesHolder(mineIv,
+        PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.5f, 1.0f),
+        PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.5f, 1.0f));
+    iconAnim.setDuration(Constants.MILLISECONDS_400);
+    iconAnim.start();
   }
 }

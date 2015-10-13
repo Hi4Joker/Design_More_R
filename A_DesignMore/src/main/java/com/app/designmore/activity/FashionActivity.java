@@ -35,6 +35,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
+import com.app.designmore.IconAnim;
 import com.app.designmore.R;
 import com.app.designmore.activity.usercenter.TrolleyActivity;
 import com.app.designmore.adapter.FashionAdapter;
@@ -67,7 +68,7 @@ import rx.Subscriber;
 import rx.functions.Action0;
 import rx.functions.Action1;
 
-public class FashionActivity extends BaseActivity implements FashionAdapter.Callback {
+public class FashionActivity extends BaseActivity implements FashionAdapter.Callback, IconAnim {
 
   private static final String TAG = FashionActivity.class.getSimpleName();
   private static WeakReference<AppCompatActivity> weakReference;
@@ -86,7 +87,6 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
   @Nullable @Bind(R.id.bottom_bar_journal_rl) RelativeLayout bottomBarJournalRl;
   @Nullable @Bind(R.id.bottom_bar_mine_rl) RelativeLayout bottomBarMineRl;
 
-  private SupportAnimator revealAnimator;
   private ProgressDialog progressDialog;
   private ViewGroup toast;
 
@@ -348,7 +348,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
 
     FashionActivity.this.rootView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-    revealAnimator =
+    SupportAnimator revealAnimator =
         ViewAnimationUtils.createCircularReveal(rootView.getChildAt(0), 0, bounds.left, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
     revealAnimator.setDuration(Constants.MILLISECONDS_400);
@@ -401,11 +401,8 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
         getResources().getColor(R.color.design_more_red));
     fashionTv.setTextColor(getResources().getColor(R.color.design_more_red));
 
-    Animator iconAnim = ObjectAnimator.ofPropertyValuesHolder(fashionIv,
-        PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.5f, 1.0f),
-        PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.5f, 1.0f));
-    iconAnim.setDuration(Constants.MILLISECONDS_400);
-    iconAnim.start();
+    /*执行进入icon动画*/
+    FashionActivity.this.startIconAnim();
 
     LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toolbarTitleTv.getLayoutParams();
     params.leftMargin = DensityUtil.getActionBarSize(FashionActivity.this) * 2;
@@ -480,5 +477,13 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
     }
     this.toast = null;
     this.progressDialog = null;
+  }
+
+  @Override public void startIconAnim() {
+    Animator iconAnim = ObjectAnimator.ofPropertyValuesHolder(fashionIv,
+        PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.5f, 1.0f),
+        PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.5f, 1.0f));
+    iconAnim.setDuration(Constants.MILLISECONDS_400);
+    iconAnim.start();
   }
 }

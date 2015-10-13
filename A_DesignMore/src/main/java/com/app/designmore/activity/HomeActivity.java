@@ -37,6 +37,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
+import com.app.designmore.IconAnim;
 import com.app.designmore.R;
 import com.app.designmore.activity.usercenter.TrolleyActivity;
 import com.app.designmore.adapter.HomeBannerAdapter;
@@ -86,7 +87,7 @@ import rx.subscriptions.Subscriptions;
 
 public class HomeActivity extends BaseActivity
     implements HomeCategoryAdapter.Callback, HomeDiscountAdapter.Callback,
-    HomeProductAdapter.Callback, HomeBannerAdapter.Callback {
+    HomeProductAdapter.Callback, HomeBannerAdapter.Callback, IconAnim {
 
   private static final String TAG = HomeActivity.class.getSimpleName();
   private static final String BANNER = "BANNER";
@@ -272,7 +273,7 @@ public class HomeActivity extends BaseActivity
     final Map<String, String> bannerParams = new HashMap<>(7);
     bannerParams.put("Action", "GetProductByKeyOrType");
     bannerParams.put("type", "cat");
-    bannerParams.put("data", "1");
+    bannerParams.put("data", "2");
     bannerParams.put("page", "1");
     bannerParams.put("count", "3");
     bannerParams.put("code", "0");
@@ -289,14 +290,10 @@ public class HomeActivity extends BaseActivity
     discountParams.put("count", "2");
 
     /* 精选：Action: GetProductByKeyOrType  type:keyword  data:手表 count:10 page:1(下拉加载page = 2,3,4,5) code : 1(销量) order_by : 1（降序）*/
-    final Map<String, String> productParams = new HashMap<>();
-    productParams.put("Action", "GetProductByKeyOrType");
-    productParams.put("type", "keyword");
-    productParams.put("data", "手表");
+    final Map<String, String> productParams = new HashMap<>(3);
+    productParams.put("Action", "GetProductByHot");
     productParams.put("page", String.valueOf(count = 1));
-    productParams.put("count", "100");
-    productParams.put("code", "1");
-    productParams.put("order_by", "1");
+    productParams.put("count", "10");
 
     Observable.defer(new Func0<Observable<Map<String, List>>>() {
       @Override public Observable<Map<String, List>> call() {
@@ -465,13 +462,9 @@ public class HomeActivity extends BaseActivity
 
     /* 精选：Action: GetProductByKeyOrType  type:keyword  data:手表 count:10 page:1(下拉加载page = 2,3,4,5) code : 1(销量) order_by : 1（降序）*/
     final Map<String, String> productParams = new HashMap<>();
-    productParams.put("Action", "GetProductByKeyOrType");
-    productParams.put("type", "keyword");
-    productParams.put("data", "手表");
+    productParams.put("Action", "GetProductByHot");
     productParams.put("page", String.valueOf(++count));
     productParams.put("count", "10");
-    productParams.put("code", "1");
-    productParams.put("order_by", "1");
 
     subscription =
         HomeRetrofit.getInstance()
@@ -557,11 +550,8 @@ public class HomeActivity extends BaseActivity
         getResources().getColor(R.color.design_more_red));
     homeTv.setTextColor(getResources().getColor(R.color.design_more_red));
 
-    Animator iconAnim = ObjectAnimator.ofPropertyValuesHolder(homeIv,
-        PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.5f, 1.0f),
-        PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.5f, 1.0f));
-    iconAnim.setDuration(Constants.MILLISECONDS_400);
-    iconAnim.start();
+    /*执行进入icon动画*/
+    HomeActivity.this.startIconAnim();
 
     LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toolbarTitleIv.getLayoutParams();
     params.leftMargin = DensityUtil.getActionBarSize(HomeActivity.this) * 2;
@@ -689,7 +679,19 @@ public class HomeActivity extends BaseActivity
   @Override protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
     HomeActivity.this.setIntent(intent);
+
+    HomeActivity.this.startIconAnim();
+
     /*刷新*/
     //HomeActivity.this.loadData();
+  }
+
+  @Override public void startIconAnim() {
+
+    Animator iconAnim = ObjectAnimator.ofPropertyValuesHolder(homeIv,
+        PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.5f, 1.0f),
+        PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.5f, 1.0f));
+    iconAnim.setDuration(Constants.MILLISECONDS_400);
+    iconAnim.start();
   }
 }

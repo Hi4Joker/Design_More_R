@@ -34,6 +34,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
+import com.app.designmore.IconAnim;
 import com.app.designmore.R;
 import com.app.designmore.activity.usercenter.TrolleyActivity;
 import com.app.designmore.adapter.JournalAdapter;
@@ -66,7 +67,7 @@ import rx.Subscriber;
 import rx.functions.Action0;
 import rx.functions.Action1;
 
-public class JournalActivity extends BaseActivity implements JournalAdapter.Callback {
+public class JournalActivity extends BaseActivity implements JournalAdapter.Callback, IconAnim {
 
   private static final String TAG = JournalActivity.class.getSimpleName();
   private static WeakReference<AppCompatActivity> weakReference;
@@ -89,7 +90,6 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
   private List<JournalEntity> items = new ArrayList<>();
   private volatile int page = 1;
 
-  private SupportAnimator revealAnimator;
   private ProgressDialog progressDialog;
   private ViewGroup toast;
 
@@ -340,7 +340,7 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
 
     JournalActivity.this.rootView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-    revealAnimator =
+    SupportAnimator revealAnimator =
         ViewAnimationUtils.createCircularReveal(rootView.getChildAt(0), 0, bounds.left, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
     revealAnimator.setDuration(Constants.MILLISECONDS_400);
@@ -392,11 +392,8 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
         getResources().getColor(R.color.design_more_red));
     journalTv.setTextColor(getResources().getColor(R.color.design_more_red));
 
-    Animator iconAnim = ObjectAnimator.ofPropertyValuesHolder(journalIv,
-        PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.5f, 1.0f),
-        PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.5f, 1.0f));
-    iconAnim.setDuration(Constants.MILLISECONDS_400);
-    iconAnim.start();
+    /*执行进入icon动画*/
+    JournalActivity.this.startIconAnim();
 
     LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toolbarTitleTv.getLayoutParams();
     params.leftMargin = DensityUtil.getActionBarSize(JournalActivity.this) * 2;
@@ -474,5 +471,13 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
     }
     this.progressDialog = null;
     this.toast = null;
+  }
+
+  @Override public void startIconAnim() {
+    Animator iconAnim = ObjectAnimator.ofPropertyValuesHolder(journalIv,
+        PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.5f, 1.0f),
+        PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.5f, 1.0f));
+    iconAnim.setDuration(Constants.MILLISECONDS_400);
+    iconAnim.start();
   }
 }
