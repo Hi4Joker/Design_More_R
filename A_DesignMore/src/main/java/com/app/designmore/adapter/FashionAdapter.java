@@ -46,8 +46,8 @@ public class FashionAdapter extends RecyclerView.Adapter<FashionAdapter.ViewHold
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
 
     holder.rootView.setTag(items.get(position));
-    holder.titleTv.setText(items.get(position).getGoodName());
-    holder.contentTv.setText(items.get(position).getGoodDiscount());
+    holder.titleTv.setText(
+        items.get(position).getGoodName() + "\n" + items.get(position).getGoodDiscount());
 
     Glide.with(context)
         .load(Constants.THUMB_URL + items.get(position).getGoodThumbUrl())
@@ -90,8 +90,7 @@ public class FashionAdapter extends RecyclerView.Adapter<FashionAdapter.ViewHold
 
     @Nullable @Bind(R.id.fashion_item_root_view) RelativeLayout rootView;
     @Nullable @Bind(R.id.fashion_item_thumb_iv) ImageView thumbIv;
-    @Nullable @Bind(R.id.fashion_item_title_tv) TextView titleTv;
-    @Nullable @Bind(R.id.fashion_item_content_tv) TextView contentTv;
+    @Nullable @Bind(R.id.fashion_item_tv) TextView titleTv;
 
     public ViewHolder(View itemView) {
       super(itemView);

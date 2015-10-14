@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
@@ -100,11 +101,10 @@ public class HomeActivity extends BaseActivity
   @Nullable @Bind(R.id.home_layout_root_view) RevealFrameLayout rootView;
   @Nullable @Bind(R.id.home_layout_pl) ProgressLayout progressLayout;
   @Nullable @Bind(R.id.home_layout_srl) SwipeRefreshLayout swipeRefreshLayout;
-  @Nullable @Bind(R.id.home_layout_nest_view) NestedScrollView nestedScrollView;
 
+  @Nullable @Bind(R.id.home_layout_app_bar) AppBarLayout appBarLayout;
   @Nullable @Bind(R.id.home_layout_viewpager) ViewPager viewPager;
   @Nullable @Bind(R.id.home_layout_category_rv) RecyclerView categoryRecyclerView;
-  @Nullable @Bind(R.id.home_layout_discount_rv) RecyclerView fashionRecyclerView;
   @Nullable @Bind(R.id.home_layout_product_rv) RecyclerView productRecyclerView;
 
   @Nullable @Bind(R.id.bottom_bar_home_iv) ImageView homeIv;
@@ -127,10 +127,8 @@ public class HomeActivity extends BaseActivity
 
   private HomeBannerAdapter bannerAdapter;
   private HomeCategoryAdapter categoryAdapter;
-  private HomeDiscountAdapter discountAdapter;
   private HomeProductAdapter productAdapter;
 
-  private LinearLayoutManager discountLayoutManager;
   private GridLayoutManager productLayoutManager;
 
   private int visibleItemCount;
@@ -171,6 +169,17 @@ public class HomeActivity extends BaseActivity
           }
 
           HomeActivity.this.swipeRefreshLayout.setEnabled(state == ViewPager.SCROLL_STATE_IDLE);
+        }
+      };
+
+  private AppBarLayout.OnOffsetChangedListener offsetChangedListener =
+      new AppBarLayout.OnOffsetChangedListener() {
+        @Override public void onOffsetChanged(AppBarLayout appBarLayout, int offset) {
+          if (offset == 0) {
+            swipeRefreshLayout.setEnabled(true);
+          } else {
+            swipeRefreshLayout.setEnabled(false);
+          }
         }
       };
 
@@ -231,38 +240,30 @@ public class HomeActivity extends BaseActivity
     categoryLayoutManager.setSmoothScrollbarEnabled(true);
     categoryAdapter = new HomeCategoryAdapter(HomeActivity.this);
     categoryAdapter.setCallback(HomeActivity.this);
-    //categoryRecyclerView.setLayoutManager(categoryLayoutManager);
+    categoryRecyclerView.setLayoutManager(categoryLayoutManager);
     categoryRecyclerView.setHasFixedSize(true);
     categoryRecyclerView.setAdapter(categoryAdapter);
     categoryRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
     categoryRecyclerView.addItemDecoration(
-        new MarginDecoration(HomeActivity.this, R.dimen.material_1dp));
+        new MarginDecoration(HomeActivity.this, R.dimen.material_4dp));
 
-    discountLayoutManager = new WrappingLinearLayoutManager(HomeActivity.this);
-    discountLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-    discountLayoutManager.setSmoothScrollbarEnabled(true);
-    discountAdapter = new HomeDiscountAdapter(HomeActivity.this);
-    discountAdapter.setCallback(HomeActivity.this);
-    fashionRecyclerView.setLayoutManager(discountLayoutManager);
-    fashionRecyclerView.setHasFixedSize(true);
-    fashionRecyclerView.setAdapter(discountAdapter);
-    fashionRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-    fashionRecyclerView.addItemDecoration(
-        new DividerDecoration(HomeActivity.this, R.dimen.material_1dp));
-
-    productLayoutManager = new WrappingGridLayoutManager(HomeActivity.this, 2);
+    productLayoutManager = new GridLayoutManager(HomeActivity.this, 2);
     productLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
     productLayoutManager.setSmoothScrollbarEnabled(true);
+    productLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+      @Override public int getSpanSize(int position) {
+        return productAdapter.isHeader(position) ? productLayoutManager.getSpanCount() : 1;
+      }
+    });
+
     productAdapter = new HomeProductAdapter(HomeActivity.this);
     productAdapter.setCallback(HomeActivity.this);
     productRecyclerView.setLayoutManager(productLayoutManager);
     productRecyclerView.setHasFixedSize(true);
-    productRecyclerView.setNestedScrollingEnabled(false);
     productRecyclerView.setAdapter(productAdapter);
     productRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-    productRecyclerView.setItemAnimator(new DefaultItemAnimator());
     productRecyclerView.addItemDecoration(
-        new MarginDecoration(HomeActivity.this, R.dimen.material_8dp));
+        new DividerDecoration(HomeActivity.this, R.dimen.material_1dp));
   }
 
   private void loadData() {
@@ -336,10 +337,8 @@ public class HomeActivity extends BaseActivity
             HomeActivity.this.setupViewPager();
             /*设置category*/
             HomeActivity.this.categoryAdapter.updateItems(categoryItems);
-            /*设置discount*/
-            HomeActivity.this.discountAdapter.updateItems(discountItems);
             /*设置product*/
-            HomeActivity.this.productAdapter.updateItems(productItems);
+            HomeActivity.this.productAdapter.updateItems(discountItems, productItems);
           }
 
           @Override public void onError(Throwable e) {
@@ -427,35 +426,32 @@ public class HomeActivity extends BaseActivity
         .rippleColor(getResources().getColor(android.R.color.darker_gray))
         .create();
 
-    this.nestedScrollView.getViewTreeObserver()
+    this.productRecyclerView.getViewTreeObserver()
         .addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
           @Override public void onScrollChanged() {
 
-            if (nestedScrollView.getScrollY() == 0) {
+           /* if (nestedScrollView.getScrollY() == 0) {
               swipeRefreshLayout.setEnabled(true);
             } else {
               swipeRefreshLayout.setEnabled(false);
-            }
+            }*/
 
             visibleItemCount = productLayoutManager.getChildCount();
             totalItemCount = productLayoutManager.getItemCount();
             pastVisibleItems = productLayoutManager.findFirstVisibleItemPosition();
 
-         /*   Log.e(TAG, "visibleItemCount:  " + visibleItemCount);
-            Log.e(TAG, "totalItemCount:  " + totalItemCount);
-            Log.e(TAG, "pastVisibleItems:  " + pastVisibleItems);*/
-
             if (!isLoading) {
               if ((visibleItemCount + pastVisibleItems) >= totalItemCount && isEndless) {
 
-                /*加载更多*/
-                //HomeActivity.this.loadDataMore();
+               /* 加载更多*/
+                HomeActivity.this.loadDataMore();
               }
             }
           }
         });
 
     this.viewPager.addOnPageChangeListener(simpleOnPageChangeListener);
+    this.appBarLayout.addOnOffsetChangedListener(offsetChangedListener);
   }
 
   private void loadDataMore() {
@@ -634,10 +630,10 @@ public class HomeActivity extends BaseActivity
   }
 
   /**
-   * 新品条目被点击
+   * 折扣条目被点击
    */
-  @Override public void onDiscountItemClick(FashionEntity entity) {
-    DetailActivity.navigateToDetail(HomeActivity.this, entity.getGoodId());
+  @Override public void onDiscountItemClick(String goodId) {
+    DetailActivity.navigateToDetail(HomeActivity.this, goodId);
     overridePendingTransition(0, 0);
   }
 
@@ -651,9 +647,7 @@ public class HomeActivity extends BaseActivity
 
   @Override public void onNoData() {
     this.isEndless = false;
-    if (count != 2) {
-      toast = DialogManager.getInstance().showNoMoreDialog(HomeActivity.this, Gravity.TOP, null);
-    }
+    toast = DialogManager.getInstance().showNoMoreDialog(HomeActivity.this, Gravity.TOP, null);
   }
 
   @Override public void onError(Throwable error) {
@@ -665,6 +659,7 @@ public class HomeActivity extends BaseActivity
 
     this.viewPager.removeOnPageChangeListener(bannerAdapter);
     this.viewPager.removeOnPageChangeListener(simpleOnPageChangeListener);
+    this.appBarLayout.removeOnOffsetChangedListener(offsetChangedListener);
     super.onDestroy();
     if (toast != null && toast.getParent() != null) {
       getWindowManager().removeViewImmediate(toast);

@@ -31,8 +31,9 @@ public class HomeDiscountAdapter extends RecyclerView.Adapter<HomeDiscountAdapte
   /*数据*/
   private List<FashionEntity> items;
 
-  public HomeDiscountAdapter(Context context) {
+  public HomeDiscountAdapter(Context context, List<FashionEntity> fashionEntities) {
     this.context = context;
+    this.items = fashionEntities;
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -43,9 +44,9 @@ public class HomeDiscountAdapter extends RecyclerView.Adapter<HomeDiscountAdapte
 
   @Override public void onBindViewHolder(ViewHolder holder, int position) {
 
-    holder.rootView.setTag(items.get(position));
-    holder.titleTv.setText(items.get(position).getGoodName());
-    holder.contentTv.setText(items.get(position).getGoodDiscount());
+    holder.rootView.setTag(items.get(position).getGoodId());
+    holder.titleTv.setText(items.get(position).getGoodName() + "\n" +
+        items.get(position).getGoodDiscount());
 
     Glide.with(context)
         .load(Constants.THUMB_URL + items.get(position).getGoodThumbUrl())
@@ -70,8 +71,7 @@ public class HomeDiscountAdapter extends RecyclerView.Adapter<HomeDiscountAdapte
 
     @Nullable @Bind(R.id.fashion_item_root_view) RelativeLayout rootView;
     @Nullable @Bind(R.id.fashion_item_thumb_iv) ImageView thumbIv;
-    @Nullable @Bind(R.id.fashion_item_title_tv) TextView titleTv;
-    @Nullable @Bind(R.id.fashion_item_content_tv) TextView contentTv;
+    @Nullable @Bind(R.id.fashion_item_tv) TextView titleTv;
 
     public ViewHolder(View itemView) {
       super(itemView);
@@ -80,7 +80,7 @@ public class HomeDiscountAdapter extends RecyclerView.Adapter<HomeDiscountAdapte
 
     @Nullable @OnClick(R.id.fashion_item_root_view) void onItemClick(RelativeLayout rootView) {
 
-      FashionEntity fashionEntity = (FashionEntity) rootView.getTag();
+      String fashionEntity = (String) rootView.getTag();
       if (callback != null) {
         callback.onDiscountItemClick(fashionEntity);
       }
@@ -94,6 +94,6 @@ public class HomeDiscountAdapter extends RecyclerView.Adapter<HomeDiscountAdapte
   public interface Callback {
 
     /*条目点击事件 */
-    void onDiscountItemClick(FashionEntity entity);
+    void onDiscountItemClick(String goodId);
   }
 }

@@ -163,7 +163,7 @@ public class AllProductListActivity extends BaseActivity
   }
 
   private void setListener() {
-    appBarLayout.addOnOffsetChangedListener(offsetChangedListener);
+    this.appBarLayout.addOnOffsetChangedListener(offsetChangedListener);
   }
 
   @Override public void initView(Bundle savedInstanceState) {

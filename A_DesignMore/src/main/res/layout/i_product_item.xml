@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="@dimen/material_128dp"
     android:layout_height="wrap_content"
+    android:layout_margin="@dimen/material_4dp"
     android:layout_gravity="center"
     app:mrl_rippleDimension="10dip"
     app:mrl_rippleFadeDuration="100"

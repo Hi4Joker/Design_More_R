@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     >
 
   <include
@@ -10,7 +10,7 @@
   <com.app.designmore.revealLib.widget.RevealFrameLayout
       android:id="@+id/home_layout_root_view"
       android:layout_width="match_parent"
-      android:layout_height="match_parent"
+      android:layout_height="wrap_content"
       android:layout_marginTop="?attr/actionBarSize"
       android:layout_marginBottom="@dimen/material_48dp"
       android:layout_alignParentTop="true"
@@ -19,7 +19,7 @@
     <com.app.designmore.view.ProgressLayout
         android:id="@+id/home_layout_pl"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:progressEmptyStateBackgroundColor="@color/primary_background_color"
         app:progressEmptyStateTitleTextColor="@color/black"
         app:progressEmptyStateContentTextColor="@color/black"
@@ -36,202 +36,52 @@
           android:layout_height="match_parent"
           >
 
+
         <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             >
 
-          <!--<android.support.design.widget.AppBarLayout
+          <android.support.design.widget.AppBarLayout
               android:id="@+id/home_layout_app_bar"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-              app:layout_behavior="com.app.designmore.manager.HeaderBehavior"
-              >
-
-            <android.support.design.widget.CollapsingToolbarLayout
-                android:id="@+id/home_layout_collapsing_bar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:contentScrim="@color/white"
-                app:layout_scrollFlags="scroll"
-                app:expandedTitleMarginStart="@dimen/material_16dp"
-                app:collapsedTitleGravity="center"
-                >
-
-            </android.support.design.widget.CollapsingToolbarLayout>
-          </android.support.design.widget.AppBarLayout>-->
-
-          <!--  <LinearLayout
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              app:layout_behavior="@string/appbar_scrolling_view_behavior"
-              >-->
-
-
-          <android.support.v4.widget.NestedScrollView
-              android:id="@+id/home_layout_nest_view"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:fillViewport="true"
               >
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_gravity="fill_vertical"
+                app:layout_scrollFlags="scroll"
                 >
 
-              <LinearLayout
+              <!--轮播广告-->
+              <include layout="@layout/include_home_pager_layout"/>
+
+              <!-- 分类-->
+              <android.support.v7.widget.RecyclerView
+                  android:id="@+id/home_layout_category_rv"
                   android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:orientation="vertical"
-                  >
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/material_160dp">
-
-                  <android.support.v4.view.ViewPager
-                      android:id="@+id/home_layout_viewpager"
-                      android:layout_width="match_parent"
-                      android:layout_height="@dimen/material_160dp"
-                      android:layout_gravity="top"
-                      android:background="@color/white"
-                      android:overScrollMode="never"
-                      />
-
-                  <LinearLayout
-                      android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:layout_alignParentBottom="true"
-                      android:gravity="center"
-                      android:layout_marginBottom="@dimen/material_4dp"
-                      android:orientation="horizontal"
-                      >
-
-                    <ImageView
-                        android:id="@+id/home_layout_banner_indicator1"
-                        android:layout_width="@dimen/material_8dp"
-                        android:layout_height="@dimen/material_8dp"
-                        android:layout_marginRight="@dimen/material_4dp"
-                        android:background="@drawable/home_indicator_selected_background"
-                        />
-
-                    <ImageView
-                        android:id="@+id/home_layout_banner_indicator2"
-                        android:layout_width="@dimen/material_8dp"
-                        android:layout_height="@dimen/material_8dp"
-                        android:layout_marginRight="@dimen/material_4dp"
-                        android:background="@drawable/home_indicator_normal_background"
-                        />
-
-                    <ImageView
-                        android:id="@+id/home_layout_banner_indicator3"
-                        android:layout_width="@dimen/material_8dp"
-                        android:layout_height="@dimen/material_8dp"
-                        android:layout_marginRight="@dimen/material_4dp"
-                        android:background="@drawable/home_indicator_normal_background"
-                        />
-                  </LinearLayout>
-                </RelativeLayout>
-
-                <!-- 分类-->
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/home_layout_category_rv"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/material_128dp"
-                    android:layout_gravity="fill_horizontal"
-                    />
-
-                <!--三包广告-->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/material_1dp"
-                    android:padding="@dimen/material_8dp"
-                    android:orientation="horizontal"
-                    android:background="@color/white"
-                    >
-                  <ImageView
-                      android:layout_width="wrap_content"
-                      android:layout_height="match_parent"
-                      android:scaleType="centerCrop"
-                      android:src="@drawable/ic_start_icon"
-                      />
-                  <TextView
-                      android:layout_width="match_parent"
-                      android:layout_height="match_parent"
-                      android:layout_marginLeft="@dimen/material_4dp"
-                      android:layout_gravity="center"
-                      android:gravity="start|center"
-                      android:ellipsize="marquee"
-                      android:focusable="true"
-                      android:focusableInTouchMode="true"
-                      android:marqueeRepeatLimit="marquee_forever"
-                      android:singleLine="true"
-                      android:textSize="@dimen/material_11sp"
-                      android:text="@string/fashion_string"
-                      />
-                </LinearLayout>
-
-                <!--折扣-->
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/home_layout_discount_rv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/white"
-                    />
-
-                <!-- 精选标题-->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/material_16dp"
-                    android:orientation="horizontal"
-                    android:background="@color/primary_background_color"
-                    >
-
-                  <ImageView
-                      android:layout_width="@dimen/material_4dp"
-                      android:layout_height="@dimen/material_16dp"
-                      android:background="@color/design_more_red"/>
-
-                  <TextView
-                      android:id="@+id/journal_item_title_tv"
-                      android:layout_width="match_parent"
-                      android:layout_height="match_parent"
-                      android:layout_marginLeft="@dimen/material_8dp"
-                      android:gravity="start|center_vertical"
-                      android:text="精选商品"
-                      android:textSize="@dimen/material_13sp"
-                      android:textColor="@color/darker_gray"
-                      />
-                </LinearLayout>
-
-                <!--商品-->
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/home_layout_product_rv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/material_8dp"
-                    android:background="@color/primary_background_color"
-                    />
-
-              </LinearLayout>
+                  android:layout_height="@dimen/material_128dp"
+                  />
             </LinearLayout>
 
+          </android.support.design.widget.AppBarLayout>
 
-          </android.support.v4.widget.NestedScrollView>
+          <!--商品-->
+          <android.support.v7.widget.RecyclerView
+              android:id="@+id/home_layout_product_rv"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/primary_background_color"
+              app:layout_behavior="@string/appbar_scrolling_view_behavior"
 
-          <!--</LinearLayout>-->
-          <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
-          <!--android:nestedScrollingEnabled="false"-->
+              />
         </android.support.design.widget.CoordinatorLayout>
 
       </android.support.v4.widget.SwipeRefreshLayout>
+
     </com.app.designmore.view.ProgressLayout>
   </com.app.designmore.revealLib.widget.RevealFrameLayout>
 

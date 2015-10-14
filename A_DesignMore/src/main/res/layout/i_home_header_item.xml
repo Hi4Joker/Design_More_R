@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/primary_background_color"
+    >
+
+  <!--三包广告-->
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/material_1dp"
+      android:padding="@dimen/material_8dp"
+      android:orientation="horizontal"
+      android:background="@color/white"
+      >
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_start_icon"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/material_4dp"
+        android:layout_gravity="center"
+        android:gravity="start|center"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:singleLine="true"
+        android:textSize="@dimen/material_11sp"
+        android:text="@string/fashion_string"
+        />
+  </LinearLayout>
+
+  <!--折扣-->
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      >
+
+    <com.app.designmore.view.MaterialRippleLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/material_160dp"
+        android:layout_marginBottom="@dimen/material_1dp"
+        app:mrl_rippleDimension="60dip"
+        app:mrl_rippleFadeDuration="100"
+        app:mrl_rippleAlpha="0.4"
+        app:mrl_rippleDuration="600"
+        app:mrl_rippleHover="true"
+        app:mrl_rippleOverlay="true"
+        app:mrl_rippleDelayClick="true"
+        app:mrl_rippleColor="@color/darker_gray"
+        >
+
+      <RelativeLayout
+          android:id="@+id/home_header_fashion_rl_1"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+
+
+        <ImageView
+            android:id="@+id/home_header_fashion_thumb_iv_1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:scaleType="centerCrop"
+            />
+
+        <TextView
+            android:id="@+id/home_header_fashion_title_tv_1"
+            android:layout_width="@dimen/material_150dp"
+            android:layout_height="@dimen/material_48dp"
+            android:layout_marginBottom="@dimen/material_24dp"
+            android:padding="@dimen/material_8dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:orientation="vertical"
+            android:gravity="center|start"
+            android:text=""
+            android:textSize="@dimen/material_13sp"
+            android:textColor="@color/white"
+            android:background="#465898"
+            />
+
+      </RelativeLayout>
+    </com.app.designmore.view.MaterialRippleLayout>
+
+
+    <com.app.designmore.view.MaterialRippleLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/material_160dp"
+        app:mrl_rippleDimension="60dip"
+        app:mrl_rippleFadeDuration="100"
+        app:mrl_rippleAlpha="0.4"
+        app:mrl_rippleDuration="600"
+        app:mrl_rippleHover="true"
+        app:mrl_rippleOverlay="true"
+        app:mrl_rippleDelayClick="true"
+        app:mrl_rippleColor="@color/darker_gray"
+        >
+
+      <RelativeLayout
+          android:id="@+id/home_header_fashion_rl_2"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+
+
+        <ImageView
+            android:id="@+id/home_header_fashion_thumb_iv_2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:scaleType="centerCrop"
+            />
+        <TextView
+            android:id="@+id/home_header_fashion_title_tv_2"
+            android:layout_width="@dimen/material_150dp"
+            android:layout_height="@dimen/material_48dp"
+            android:layout_marginBottom="@dimen/material_24dp"
+            android:padding="@dimen/material_8dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:orientation="vertical"
+            android:background="#465898"
+            android:gravity="center|start"
+            android:textSize="@dimen/material_13sp"
+            android:textColor="@color/white"
+            />
+      </RelativeLayout>
+    </com.app.designmore.view.MaterialRippleLayout>
+
+  </LinearLayout>
+
+  <!-- 精选标题-->
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:padding="@dimen/material_8dp"
+      android:orientation="horizontal"
+      android:background="@color/primary_background_color"
+      >
+
+    <ImageView
+        android:layout_width="@dimen/material_4dp"
+        android:layout_height="@dimen/material_16dp"
+        android:background="@color/design_more_red"/>
+
+    <TextView
+        android:id="@+id/journal_item_title_tv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/material_8dp"
+        android:gravity="start|center_vertical"
+        android:text="精选商品"
+        android:textSize="@dimen/material_13sp"
+        android:textColor="@color/darker_gray"
+        />
+  </LinearLayout>
+
+</LinearLayout>
