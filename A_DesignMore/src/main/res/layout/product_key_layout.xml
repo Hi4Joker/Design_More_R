@@ -45,6 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="@dimen/material_8dp"
+            android:clipToPadding="false"
             android:background="@color/primary_background_color"
             />
       </android.support.v4.widget.SwipeRefreshLayout>

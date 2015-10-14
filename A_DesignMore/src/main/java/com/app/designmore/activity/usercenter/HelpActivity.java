@@ -97,12 +97,7 @@ public class HelpActivity extends BaseActivity implements HelpAdapter.Callback {
 
   private void setupAdapter() {
 
-    int[] colors = new int[] {
-        R.color.design_more_red, R.color.accent_material_light, R.color.design_more_red,
-        R.color.accent_material_light
-    };
-
-    swipeRefreshLayout.setColorSchemeResources(colors);
+    swipeRefreshLayout.setColorSchemeResources(Constants.colors);
     RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
       @Override public void call(Void aVoid) {
         HelpActivity.this.loadData();
@@ -149,7 +144,6 @@ public class HelpActivity extends BaseActivity implements HelpAdapter.Callback {
 
   private void startEnterAnim(int startLocationY) {
 
-    ViewCompat.setLayerType(rootView, ViewCompat.LAYER_TYPE_HARDWARE, null);
     rootView.setPivotY(startLocationY);
     ViewCompat.setScaleY(rootView, 0.0f);
 
@@ -185,9 +179,5 @@ public class HelpActivity extends BaseActivity implements HelpAdapter.Callback {
             HelpActivity.this.finish();
           }
         });
-  }
-
-  @Override protected void onDestroy() {
-    super.onDestroy();
   }
 }

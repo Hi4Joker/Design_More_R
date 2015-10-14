@@ -31,8 +31,6 @@ public class AboutActivity extends BaseActivity {
   @Nullable @Bind(R.id.white_toolbar_title_tv) TextView toolbarTitleTv;
   @Nullable @Bind(R.id.about_layout_about_wv) WebView aboutWv;
 
-  private String ABOUT_HTML = "file:///android_asset/about_designMore.html";
-
   public static void startFromLocation(SettingActivity startingActivity, int startingLocationY) {
 
     Intent intent = new Intent(startingActivity, AboutActivity.class);
@@ -49,6 +47,7 @@ public class AboutActivity extends BaseActivity {
 
   @Override public void initView(Bundle savedInstanceState) {
 
+    String ABOUT_HTML = "file:///android_asset/about_designMore.html";
     aboutWv.loadUrl(ABOUT_HTML);
 
     AboutActivity.this.setSupportActionBar(toolbar);
@@ -72,7 +71,6 @@ public class AboutActivity extends BaseActivity {
 
   private void startEnterAnim(int startLocationY) {
 
-    ViewCompat.setLayerType(rootView, ViewCompat.LAYER_TYPE_HARDWARE, null);
     rootView.setPivotY(startLocationY);
     ViewCompat.setScaleY(rootView, 0.0f);
 
@@ -83,24 +81,18 @@ public class AboutActivity extends BaseActivity {
         .withLayer();
   }
 
-  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
-    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-      AboutActivity.this.exit();
-    }
-    return false;
-  }
-
   @Override public void exit() {
 
     ViewCompat.animate(rootView)
         .translationY(DensityUtil.getScreenHeight(AboutActivity.this))
         .setDuration(Constants.MILLISECONDS_400)
         .setInterpolator(new LinearInterpolator())
-        .withLayer().setListener(new ViewPropertyAnimatorListenerAdapter() {
-      @Override public void onAnimationEnd(View view) {
-        AboutActivity.this.finish();
-        overridePendingTransition(0, 0);
-      }
+        .withLayer()
+        .setListener(new ViewPropertyAnimatorListenerAdapter() {
+          @Override public void onAnimationEnd(View view) {
+            AboutActivity.this.finish();
+            overridePendingTransition(0, 0);
+          }
         });
   }
 }

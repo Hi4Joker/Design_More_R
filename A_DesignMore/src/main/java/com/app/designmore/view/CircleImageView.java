@@ -100,6 +100,7 @@ public class CircleImageView extends ImageView {
   }
 
   private void initTypeArray(Context context, AttributeSet attrs) {
+
     TypedArray typedArray =
         context.obtainStyledAttributes(attrs, R.styleable.CircleImageView, 0, 0);
 
@@ -271,7 +272,6 @@ public class CircleImageView extends ImageView {
     /*回收BitmapShader中的sourceBitmap，然而这并没有什么乱用*/
     if (sourceBitmap != null && !sourceBitmap.isRecycled()) sourceBitmap.recycle();
     if (mBorderPaint != null) {
-
 
       tempCanvas.drawCircle(getWidth() / 2, getHeight() / 2, mRadius + mBorderOffset, mBorderPaint);
     }

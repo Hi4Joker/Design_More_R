@@ -17,7 +17,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.List;
 
 /**
- * Created by Administrator on 2015/10/8.
+ * Created by Joker on 2015/10/8.
  */
 public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ViewHolder> {
 

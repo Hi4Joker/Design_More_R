@@ -231,7 +231,7 @@ public class HomeActivity extends BaseActivity
     categoryLayoutManager.setSmoothScrollbarEnabled(true);
     categoryAdapter = new HomeCategoryAdapter(HomeActivity.this);
     categoryAdapter.setCallback(HomeActivity.this);
-    categoryRecyclerView.setLayoutManager(categoryLayoutManager);
+    //categoryRecyclerView.setLayoutManager(categoryLayoutManager);
     categoryRecyclerView.setHasFixedSize(true);
     categoryRecyclerView.setAdapter(categoryAdapter);
     categoryRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);

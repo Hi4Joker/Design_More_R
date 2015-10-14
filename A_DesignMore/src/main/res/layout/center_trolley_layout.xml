@@ -119,14 +119,14 @@
         android:id="@+id/trolley_layout_srl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/material_1dp"
         android:background="@color/primary_background_color"
         >
       <android.support.v7.widget.RecyclerView
           android:id="@+id/trolley_layout_rv"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
-          android:visibility="visible"
+          android:paddingTop="@dimen/material_24dp"
+          android:clipToPadding="false"
           android:background="@color/primary_background_color"
           />
     </android.support.v4.widget.SwipeRefreshLayout>

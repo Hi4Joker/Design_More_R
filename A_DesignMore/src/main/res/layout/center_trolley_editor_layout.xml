@@ -95,7 +95,8 @@
           android:id="@+id/trolley_editor_layout_rv"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
-          android:visibility="visible"
+          android:paddingTop="@dimen/material_24dp"
+          android:clipToPadding="false"
           android:background="@color/primary_background_color"
           />
 
