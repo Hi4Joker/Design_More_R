@@ -121,6 +121,8 @@ public class AllProductListActivity extends BaseActivity
   private Dialog progressDialog;
   private ViewGroup toast;
 
+  private GridLayoutManager gridLayoutManager;
+
   private Subscription subscription = Subscriptions.empty();
 
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
@@ -131,6 +133,8 @@ public class AllProductListActivity extends BaseActivity
 
   private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
     @Override public void onCancel(DialogInterface dialog) {
+
+      AllProductListActivity.this.isLoading = false;
       subscription.unsubscribe();
     }
   };
@@ -138,7 +142,7 @@ public class AllProductListActivity extends BaseActivity
   private AppBarLayout.OnOffsetChangedListener offsetChangedListener =
       new AppBarLayout.OnOffsetChangedListener() {
         @Override public void onOffsetChanged(AppBarLayout appBarLayout, int offset) {
-          if (offset == 0) {
+          if (offset == 0 && gridLayoutManager.findFirstVisibleItemPosition() == 0) {
             swipeRefreshLayout.setEnabled(true);
           } else {
             swipeRefreshLayout.setEnabled(false);
@@ -387,11 +391,13 @@ public class AllProductListActivity extends BaseActivity
   private void setupAdapter() {
 
     swipeRefreshLayout.setColorSchemeResources(Constants.colors);
-    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
-      @Override public void call(Void aVoid) {
-        AllProductListActivity.this.loadData();
-      }
-    });
+    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout)
+        .compose(AllProductListActivity.this.<Void>bindUntilEvent(ActivityEvent.DESTROY))
+        .forEach(new Action1<Void>() {
+          @Override public void call(Void aVoid) {
+            AllProductListActivity.this.loadData();
+          }
+        });
 
     GridLayoutManager keywordGridLayoutManager =
         new GridLayoutManager(AllProductListActivity.this, 5);
@@ -407,8 +413,7 @@ public class AllProductListActivity extends BaseActivity
     collRecyclerView.addItemDecoration(
         new MarginDecoration(AllProductListActivity.this, R.dimen.material_4dp));
 
-    final GridLayoutManager gridLayoutManager =
-        new GridLayoutManager(AllProductListActivity.this, 2);
+    gridLayoutManager = new GridLayoutManager(AllProductListActivity.this, 2);
     gridLayoutManager.setSmoothScrollbarEnabled(true);
 
     productAdapter = new ProductAdapter(AllProductListActivity.this);
@@ -424,6 +429,8 @@ public class AllProductListActivity extends BaseActivity
 
     RxRecyclerView.scrollEvents(recyclerView)
         .skip(1)
+        .compose(AllProductListActivity.this.<RecyclerViewScrollEvent>bindUntilEvent(
+            ActivityEvent.DESTROY))
         .forEach(new Action1<RecyclerViewScrollEvent>() {
           @Override public void call(RecyclerViewScrollEvent recyclerViewScrollEvent) {
 

@@ -64,8 +64,10 @@ import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Action1;
+import rx.subscriptions.Subscriptions;
 
 public class JournalActivity extends BaseActivity implements JournalAdapter.Callback, IconAnim {
 
@@ -97,7 +99,9 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
   private int totalItemCount;
   private int pastVisibleItems;
   private boolean isLoading = false;
-  private boolean isEndless;
+  private boolean isEndless = true;
+
+  private Subscription subscription = Subscriptions.empty();
 
   private View.OnClickListener goHomeClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
@@ -109,6 +113,14 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
       JournalActivity.this.loadData();
+    }
+  };
+
+  private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
+    @Override public void onCancel(DialogInterface dialog) {
+
+      JournalActivity.this.isLoading = false;
+      subscription.unsubscribe();
     }
   };
 
@@ -153,11 +165,13 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
   private void setupAdapter() {
 
     swipeRefreshLayout.setColorSchemeResources(Constants.colors);
-    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
-      @Override public void call(Void aVoid) {
-        JournalActivity.this.loadData();
-      }
-    });
+    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout)
+        .compose(JournalActivity.this.<Void>bindUntilEvent(ActivityEvent.DESTROY))
+        .forEach(new Action1<Void>() {
+          @Override public void call(Void aVoid) {
+            JournalActivity.this.loadData();
+          }
+        });
 
     final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(JournalActivity.this);
     linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -175,6 +189,8 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
 
     RxRecyclerView.scrollEvents(recyclerView)
         .skip(1)
+        .compose(
+            JournalActivity.this.<RecyclerViewScrollEvent>bindUntilEvent(ActivityEvent.DESTROY))
         .forEach(new Action1<RecyclerViewScrollEvent>() {
           @Override public void call(RecyclerViewScrollEvent recyclerViewScrollEvent) {
 
@@ -201,43 +217,47 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
     params.put("count", "10");
     params.put("page", String.valueOf(page = 1));
 
-    JournalRetrofit.getInstance()
-        .getJournalList(params)
-        .doOnSubscribe(new Action0() {
-          @Override public void call() {
+    subscription =
+        JournalRetrofit.getInstance()
+            .getJournalList(params)
+            .doOnSubscribe(new Action0() {
+              @Override public void call() {
             /*加载数据，显示进度条*/
-            if (!swipeRefreshLayout.isRefreshing()) progressLayout.showLoading();
-          }
-        })
-        .compose(JournalActivity.this.<List<JournalEntity>>bindUntilEvent(ActivityEvent.DESTROY))
-        .subscribe(new Subscriber<List<JournalEntity>>() {
-          @Override public void onCompleted() {
-            /*加载完毕，显示内容界面*/
-            if (items != null && items.size() != 0) {
-              JournalActivity.this.isEndless = true;
-              if (swipeRefreshLayout.isRefreshing()) {
-                swipeRefreshLayout.setRefreshing(false);
-              } else if (!progressLayout.isContent()) {
-                progressLayout.showContent();
+                if (!swipeRefreshLayout.isRefreshing()) progressLayout.showLoading();
               }
-            } else if (items != null && items.size() == 0) {
-              progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
-                  "当前没有杂志可看", null, "去首页看看", goHomeClickListener);
-            }
-          }
+            })
+            .compose(
+                JournalActivity.this.<List<JournalEntity>>bindUntilEvent(ActivityEvent.DESTROY))
+            .subscribe(new Subscriber<List<JournalEntity>>() {
+              @Override public void onCompleted() {
 
-          @Override public void onError(Throwable error) {
-            /*加载失败，显示错误界面*/
-            JournalActivity.this.showErrorLayout(error);
-          }
+                JournalActivity.this.isEndless = true;
 
-          @Override public void onNext(List<JournalEntity> journalEntities) {
+                /*加载完毕，显示内容界面*/
+                if (items != null && items.size() != 0) {
+                  if (swipeRefreshLayout.isRefreshing()) {
+                    swipeRefreshLayout.setRefreshing(false);
+                  } else if (!progressLayout.isContent()) {
+                    progressLayout.showContent();
+                  }
+                } else if (items != null && items.size() == 0) {
+                  progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
+                      "当前没有杂志可看", null, "去首页看看", goHomeClickListener);
+                }
+              }
 
-            JournalActivity.this.items.clear();
-            JournalActivity.this.items.addAll(journalEntities);
-            journalAdapter.updateItems(items);
-          }
-        });
+              @Override public void onError(Throwable error) {
+                /*加载失败，显示错误界面*/
+                JournalActivity.this.showErrorLayout(error);
+              }
+
+              @Override public void onNext(List<JournalEntity> journalEntities) {
+
+                JournalActivity.this.items.clear();
+                JournalActivity.this.items.addAll(journalEntities);
+                journalAdapter.updateItems(items);
+              }
+            });
   }
 
   private void loadDataMore() {
@@ -248,30 +268,32 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
     params.put("count", "10");
     params.put("page", String.valueOf(++page));
 
-    JournalRetrofit.getInstance()
-        .getJournalList(params)
-        .doOnSubscribe(new Action0() {
-          @Override public void call() {
-            /*正在加载*/
-            JournalActivity.this.isLoading = true;
-            /*加载数据，显示进度条*/
-            if (progressDialog == null) {
-              progressDialog =
-                  DialogManager.getInstance().showSimpleProgressDialog(JournalActivity.this, null);
-            } else {
-              progressDialog.show();
-            }
-          }
-        })
-        .doOnTerminate(new Action0() {
-          @Override public void call() {
-            /*加载完毕*/
-            JournalActivity.this.isLoading = false;
-            progressDialog.dismiss();
-          }
-        })
-        .compose(JournalActivity.this.<List<JournalEntity>>bindUntilEvent(ActivityEvent.DESTROY))
-        .subscribe(journalAdapter);
+    subscription =
+        JournalRetrofit.getInstance()
+            .getJournalList(params)
+            .doOnSubscribe(new Action0() {
+              @Override public void call() {
+                /*正在加载*/
+                JournalActivity.this.isLoading = true;
+                /*加载数据，显示进度条*/
+                if (progressDialog == null) {
+                  progressDialog = DialogManager.getInstance()
+                      .showSimpleProgressDialog(JournalActivity.this, cancelListener);
+                } else {
+                  progressDialog.show();
+                }
+              }
+            })
+            .doOnTerminate(new Action0() {
+              @Override public void call() {
+                /*加载完毕*/
+                JournalActivity.this.isLoading = false;
+                progressDialog.dismiss();
+              }
+            })
+            .compose(
+                JournalActivity.this.<List<JournalEntity>>bindUntilEvent(ActivityEvent.DESTROY))
+            .subscribe(journalAdapter);
   }
 
   private void showErrorLayout(Throwable error) {
@@ -439,7 +461,7 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
   }
 
   @Override public void onNoData() {
-    isEndless = false;
+    this.isEndless = false;
     toast = DialogManager.getInstance().showNoMoreDialog(JournalActivity.this, Gravity.TOP, null);
   }
 
@@ -471,13 +493,23 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
     }
     this.progressDialog = null;
     this.toast = null;
+
+    if (subscription != null && !subscription.isUnsubscribed()) subscription.unsubscribe();
   }
 
   @Override public void startIconAnim() {
+
+    journalIv.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
     Animator iconAnim = ObjectAnimator.ofPropertyValuesHolder(journalIv,
         PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.5f, 1.0f),
         PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.5f, 1.0f));
     iconAnim.setDuration(Constants.MILLISECONDS_400);
+    iconAnim.addListener(new AnimatorListenerAdapter() {
+      @Override public void onAnimationEnd(Animator animation) {
+        journalIv.setLayerType(View.LAYER_TYPE_NONE, null);
+      }
+    });
     iconAnim.start();
   }
 }

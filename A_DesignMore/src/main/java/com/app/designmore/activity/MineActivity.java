@@ -1,6 +1,7 @@
 package com.app.designmore.activity;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.content.DialogInterface;
@@ -50,6 +51,7 @@ import com.app.designmore.retrofit.response.UserInfoEntity;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
+import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.MaterialRippleLayout;
@@ -63,8 +65,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import rx.Subscriber;
+import rx.Subscription;
+import rx.functions.Action0;
 import rx.functions.Action1;
+import rx.subscriptions.Subscriptions;
 
 /**
  * Created by Joker on 2015/8/25.
@@ -90,8 +96,9 @@ public class MineActivity extends BaseActivity implements MineItemAdapter.Callba
   @Nullable @Bind(R.id.bottom_bar_fashion_rl) RelativeLayout bottomBarFashionRl;
   @Nullable @Bind(R.id.bottom_bar_journal_rl) RelativeLayout bottomBarJournalRl;
 
-  private SupportAnimator revealAnimator;
   private ViewGroup toast;
+
+  private Subscription subscription = Subscriptions.empty();
 
   public static void navigateToUserCenter(AppCompatActivity startingActivity) {
 
@@ -116,13 +123,6 @@ public class MineActivity extends BaseActivity implements MineItemAdapter.Callba
     MineActivity.this.setSupportActionBar(toolbar);
     MineActivity.this.getSupportActionBar().setTitle("");
 
-    swipeRefreshLayout.setColorSchemeResources(Constants.colors);
-    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
-      @Override public void call(Void aVoid) {
-        MineActivity.this.loadData();
-      }
-    });
-
     MineActivity.this.setupAdapter();
 
     if (savedInstanceState == null) {
@@ -139,6 +139,18 @@ public class MineActivity extends BaseActivity implements MineItemAdapter.Callba
   }
 
   private void setupAdapter() {
+
+    swipeRefreshLayout.setColorSchemeResources(Constants.colors);
+    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout)
+        .sample(Constants.MILLISECONDS_600 * 10, TimeUnit.MILLISECONDS,
+            AndroidSchedulers.mainThread())
+        .compose(MineActivity.this.<Void>bindUntilEvent(ActivityEvent.DESTROY))
+        .forEach(new Action1<Void>() {
+          @Override public void call(Void aVoid) {
+
+            MineActivity.this.loadData();
+          }
+        });
 
     List<MineItemEntity> itemEntities = new ArrayList<>(5);
     itemEntities.add(new MineItemEntity(R.drawable.mine_trolley_icon, "购物车"));
@@ -167,7 +179,7 @@ public class MineActivity extends BaseActivity implements MineItemAdapter.Callba
 
     MineActivity.this.rootView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-    revealAnimator =
+    SupportAnimator revealAnimator =
         ViewAnimationUtils.createCircularReveal(rootView.getChildAt(0), bounds.left, bounds.top, 0,
             Utils.pythagorean(bounds.width(), bounds.height()));
     revealAnimator.setDuration(Constants.MILLISECONDS_400);
@@ -232,14 +244,19 @@ public class MineActivity extends BaseActivity implements MineItemAdapter.Callba
     params.put("Action", "GetUserInfo");
     params.put("uid", DBHelper.getInstance(getApplicationContext()).getUserID(MineActivity.this));
 
-    LoginRetrofit.getInstance()
+    subscription = LoginRetrofit.getInstance()
         .requestUserInfo(params)
         .compose(MineActivity.this.<UserInfoEntity>bindUntilEvent(ActivityEvent.DESTROY))
+        .doOnSubscribe(new Action0() {
+          @Override public void call() {
+            //RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(true);
+          }
+        })
         .subscribe(new Subscriber<UserInfoEntity>() {
           @Override public void onCompleted() {
 
             if (swipeRefreshLayout.isRefreshing()) {
-              swipeRefreshLayout.setRefreshing(false);
+              RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(false);
             }
           }
 
@@ -358,6 +375,8 @@ public class MineActivity extends BaseActivity implements MineItemAdapter.Callba
       getWindowManager().removeViewImmediate(toast);
     }
     this.toast = null;
+
+    if (subscription != null && !subscription.isUnsubscribed()) subscription.unsubscribe();
   }
 
   @Override public void onItemClick(int position, View itemView) {
@@ -395,10 +414,18 @@ public class MineActivity extends BaseActivity implements MineItemAdapter.Callba
   }
 
   @Override public void startIconAnim() {
+
+    mineIv.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
     Animator iconAnim = ObjectAnimator.ofPropertyValuesHolder(mineIv,
         PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.5f, 1.0f),
         PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.5f, 1.0f));
     iconAnim.setDuration(Constants.MILLISECONDS_400);
+    iconAnim.addListener(new AnimatorListenerAdapter() {
+      @Override public void onAnimationEnd(Animator animation) {
+        mineIv.setLayerType(View.LAYER_TYPE_NONE, null);
+      }
+    });
     iconAnim.start();
   }
 }

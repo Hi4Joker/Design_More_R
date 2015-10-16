@@ -98,11 +98,13 @@ public class HelpActivity extends BaseActivity implements HelpAdapter.Callback {
   private void setupAdapter() {
 
     swipeRefreshLayout.setColorSchemeResources(Constants.colors);
-    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
-      @Override public void call(Void aVoid) {
-        HelpActivity.this.loadData();
-      }
-    });
+    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout)
+        .compose(HelpActivity.this.<Void>bindUntilEvent(ActivityEvent.DESTROY))
+        .forEach(new Action1<Void>() {
+          @Override public void call(Void aVoid) {
+            HelpActivity.this.loadData();
+          }
+        });
 
     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(HelpActivity.this);
     linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);

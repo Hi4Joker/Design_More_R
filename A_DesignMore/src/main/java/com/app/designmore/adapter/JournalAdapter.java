@@ -79,7 +79,7 @@ public class JournalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
   }
 
   @Override public int getItemViewType(int position) {
-    if (position == 1) {//往期回顾，四个大字
+    if (position == 1) {//往期回顾，四个大字。。。。。
       return TYPE_TEXT;
     } else {//普通item
       return TYPE_CONTENT;

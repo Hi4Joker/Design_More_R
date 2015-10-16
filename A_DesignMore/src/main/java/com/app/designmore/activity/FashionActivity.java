@@ -1,6 +1,7 @@
 package com.app.designmore.activity;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.app.ProgressDialog;
@@ -65,8 +66,10 @@ import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Action1;
+import rx.subscriptions.Subscriptions;
 
 public class FashionActivity extends BaseActivity implements FashionAdapter.Callback, IconAnim {
 
@@ -93,12 +96,14 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
   private int visibleItemCount;
   private int totalItemCount;
   private int pastVisibleItems;
-  private boolean isLoading = false;
+  private volatile boolean isLoading = false;
+  private volatile boolean isEndless = true;
 
   private FashionAdapter fashionAdapter;
   private List<FashionEntity> items = new ArrayList<>();
   private volatile int page = 1;
-  private volatile boolean isEndless = true;
+
+  private Subscription subscription = Subscriptions.empty();
 
   private View.OnClickListener goHomeClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
@@ -110,6 +115,14 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
       FashionActivity.this.loadData();
+    }
+  };
+
+  private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
+    @Override public void onCancel(DialogInterface dialog) {
+
+      FashionActivity.this.isLoading = false;
+      subscription.unsubscribe();
     }
   };
 
@@ -154,7 +167,8 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
   private void setupAdapter() {
 
     swipeRefreshLayout.setColorSchemeResources(Constants.colors);
-    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
+    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).compose(
+        FashionActivity.this.<Void>bindUntilEvent(ActivityEvent.DESTROY)).forEach(new Action1<Void>() {
       @Override public void call(Void aVoid) {
         FashionActivity.this.loadData();
       }
@@ -176,6 +190,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
 
     RxRecyclerView.scrollEvents(recyclerView)
         .skip(1)
+        .compose(FashionActivity.this.<RecyclerViewScrollEvent>bindUntilEvent(ActivityEvent.DESTROY))
         .forEach(new Action1<RecyclerViewScrollEvent>() {
           @Override public void call(RecyclerViewScrollEvent recyclerViewScrollEvent) {
 
@@ -203,44 +218,47 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
     params.put("count", "10");
     params.put("page", String.valueOf(page = 1));
 
-    FashionRetrofit.getInstance()
-        .getFashionList(params)
-        .doOnSubscribe(new Action0() {
-          @Override public void call() {
+    subscription =
+        FashionRetrofit.getInstance()
+            .getFashionList(params)
+            .doOnSubscribe(new Action0() {
+              @Override public void call() {
             /*加载数据，显示进度条*/
-            if (!swipeRefreshLayout.isRefreshing()) progressLayout.showLoading();
-          }
-        })
-        .compose(FashionActivity.this.<List<FashionEntity>>bindUntilEvent(ActivityEvent.DESTROY))
-        .subscribe(new Subscriber<List<FashionEntity>>() {
-          @Override public void onCompleted() {
-
-            /*加载完毕，显示内容界面*/
-            if (items != null && items.size() != 0) {
-              FashionActivity.this.isEndless = true;
-              if (swipeRefreshLayout.isRefreshing()) {
-                swipeRefreshLayout.setRefreshing(false);
-              } else if (!progressLayout.isContent()) {
-                progressLayout.showContent();
+                if (!swipeRefreshLayout.isRefreshing()) progressLayout.showLoading();
               }
-            } else if (items != null && items.size() == 0) {
-              progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
-                  "当前没有新品可看", null, "去首页看看", goHomeClickListener);
-            }
-          }
+            })
+            .compose(
+                FashionActivity.this.<List<FashionEntity>>bindUntilEvent(ActivityEvent.DESTROY))
+            .subscribe(new Subscriber<List<FashionEntity>>() {
+              @Override public void onCompleted() {
 
-          @Override public void onError(Throwable error) {
+                FashionActivity.this.isEndless = true;
+
+                /*加载完毕，显示内容界面*/
+                if (items != null && items.size() != 0) {
+                  if (swipeRefreshLayout.isRefreshing()) {
+                    swipeRefreshLayout.setRefreshing(false);
+                  } else if (!progressLayout.isContent()) {
+                    progressLayout.showContent();
+                  }
+                } else if (items != null && items.size() == 0) {
+                  progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
+                      "当前没有新品可看", null, "去首页看看", goHomeClickListener);
+                }
+              }
+
+              @Override public void onError(Throwable error) {
             /*加载失败，显示错误界面*/
-            FashionActivity.this.showErrorLayout(error);
-          }
+                FashionActivity.this.showErrorLayout(error);
+              }
 
-          @Override public void onNext(List<FashionEntity> fashionEntities) {
+              @Override public void onNext(List<FashionEntity> fashionEntities) {
 
-            FashionActivity.this.items.clear();
-            FashionActivity.this.items.addAll(fashionEntities);
-            fashionAdapter.updateItems(items);
-          }
-        });
+                FashionActivity.this.items.clear();
+                FashionActivity.this.items.addAll(fashionEntities);
+                fashionAdapter.updateItems(items);
+              }
+            });
   }
 
   private void showErrorLayout(Throwable error) {
@@ -274,30 +292,32 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
     params.put("count", "10");
     params.put("page", String.valueOf(++page));
 
-    FashionRetrofit.getInstance()
-        .getFashionList(params)
-        .doOnSubscribe(new Action0() {
-          @Override public void call() {
+    subscription =
+        FashionRetrofit.getInstance()
+            .getFashionList(params)
+            .doOnSubscribe(new Action0() {
+              @Override public void call() {
             /*正在加载*/
-            FashionActivity.this.isLoading = true;
+                FashionActivity.this.isLoading = true;
             /*加载数据，显示进度条*/
-            if (progressDialog == null) {
-              progressDialog =
-                  DialogManager.getInstance().showSimpleProgressDialog(FashionActivity.this, null);
-            } else {
-              progressDialog.show();
-            }
-          }
-        })
-        .doOnTerminate(new Action0() {
-          @Override public void call() {
-            /*加载完毕*/
-            FashionActivity.this.isLoading = false;
-            progressDialog.dismiss();
-          }
-        })
-        .compose(FashionActivity.this.<List<FashionEntity>>bindUntilEvent(ActivityEvent.DESTROY))
-        .subscribe(fashionAdapter);
+                if (progressDialog == null) {
+                  progressDialog = DialogManager.getInstance()
+                      .showSimpleProgressDialog(FashionActivity.this, cancelListener);
+                } else {
+                  progressDialog.show();
+                }
+              }
+            })
+            .doOnTerminate(new Action0() {
+              @Override public void call() {
+                /*加载完毕*/
+                FashionActivity.this.isLoading = false;
+                progressDialog.dismiss();
+              }
+            })
+            .compose(
+                FashionActivity.this.<List<FashionEntity>>bindUntilEvent(ActivityEvent.DESTROY))
+            .subscribe(fashionAdapter);
   }
 
   private void setListener() {
@@ -477,13 +497,22 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
     }
     this.toast = null;
     this.progressDialog = null;
+    if (subscription != null && !subscription.isUnsubscribed()) subscription.unsubscribe();
   }
 
   @Override public void startIconAnim() {
+
+    fashionIv.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
     Animator iconAnim = ObjectAnimator.ofPropertyValuesHolder(fashionIv,
         PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.5f, 1.0f),
         PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.5f, 1.0f));
     iconAnim.setDuration(Constants.MILLISECONDS_400);
+    iconAnim.addListener(new AnimatorListenerAdapter() {
+      @Override public void onAnimationEnd(Animator animation) {
+        fashionIv.setLayerType(View.LAYER_TYPE_NONE, null);
+      }
+    });
     iconAnim.start();
   }
 }

@@ -144,8 +144,9 @@ public class HomeProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     } else {
       this.productEntities.addAll(productEntities);
 
-      HomeProductAdapter.this.notifyDataSetChanged();
-      //HomeProductAdapter.this.notifyItemInserted(productEntities.size() - productEntities.size() - 1);
+      //HomeProductAdapter.this.notifyDataSetChanged();
+      HomeProductAdapter.this.notifyItemInserted(
+          this.productEntities.size() - productEntities.size() + 1);
     }
   }
 

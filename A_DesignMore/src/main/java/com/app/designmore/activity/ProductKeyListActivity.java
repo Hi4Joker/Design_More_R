@@ -118,6 +118,8 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
 
   private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
     @Override public void onCancel(DialogInterface dialog) {
+
+      ProductKeyListActivity.this.isLoading = false;
       subscription.unsubscribe();
     }
   };
@@ -263,7 +265,8 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
   private void setupAdapter() {
 
     swipeRefreshLayout.setColorSchemeResources(Constants.colors);
-    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
+    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).compose(
+        ProductKeyListActivity.this.<Void>bindUntilEvent(ActivityEvent.DESTROY)).forEach(new Action1<Void>() {
       @Override public void call(Void aVoid) {
         ProductKeyListActivity.this.loadData();
       }
@@ -286,6 +289,7 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
 
     RxRecyclerView.scrollEvents(recyclerView)
         .skip(1)
+        .compose(ProductKeyListActivity.this.<RecyclerViewScrollEvent>bindUntilEvent(ActivityEvent.DESTROY))
         .forEach(new Action1<RecyclerViewScrollEvent>() {
           @Override public void call(RecyclerViewScrollEvent recyclerViewScrollEvent) {
 

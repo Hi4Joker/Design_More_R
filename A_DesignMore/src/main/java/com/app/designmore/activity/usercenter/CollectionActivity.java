@@ -140,11 +140,13 @@ public class CollectionActivity extends BaseActivity
   private void setupAdapter() {
 
     swipeRefreshLayout.setColorSchemeResources(Constants.colors);
-    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
-      @Override public void call(Void aVoid) {
-        CollectionActivity.this.loadData();
-      }
-    });
+    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout)
+        .compose(CollectionActivity.this.<Void>bindUntilEvent(ActivityEvent.DESTROY))
+        .forEach(new Action1<Void>() {
+          @Override public void call(Void aVoid) {
+            CollectionActivity.this.loadData();
+          }
+        });
 
     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(CollectionActivity.this);
     linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);

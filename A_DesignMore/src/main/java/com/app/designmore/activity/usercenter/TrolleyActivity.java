@@ -146,11 +146,13 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
   private void setupAdapter() {
 
     swipeRefreshLayout.setColorSchemeResources(Constants.colors);
-    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
-      @Override public void call(Void aVoid) {
-        TrolleyActivity.this.loadData();
-      }
-    });
+    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout)
+        .compose(TrolleyActivity.this.<Void>bindUntilEvent(ActivityEvent.DESTROY))
+        .forEach(new Action1<Void>() {
+          @Override public void call(Void aVoid) {
+            TrolleyActivity.this.loadData();
+          }
+        });
 
     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(TrolleyActivity.this);
     linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);

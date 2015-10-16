@@ -156,11 +156,13 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
   private void setupAdapter() {
 
     swipeRefreshLayout.setColorSchemeResources(Constants.colors);
-    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
-      @Override public void call(Void aVoid) {
-        AddressMangerActivity.this.loadData();
-      }
-    });
+    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout)
+        .compose(AddressMangerActivity.this.<Void>bindUntilEvent(ActivityEvent.DESTROY))
+        .forEach(new Action1<Void>() {
+          @Override public void call(Void aVoid) {
+            AddressMangerActivity.this.loadData();
+          }
+        });
 
     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(AddressMangerActivity.this);
     linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);

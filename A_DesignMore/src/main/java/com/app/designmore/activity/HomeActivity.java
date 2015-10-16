@@ -1,6 +1,7 @@
 package com.app.designmore.activity;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.app.ProgressDialog;
@@ -9,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -58,7 +60,9 @@ import com.app.designmore.retrofit.entity.ProductEntity;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
+import com.app.designmore.rxAndroid.plugins.RxAndroidPlugins;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
+import com.app.designmore.rxAndroid.schedulers.HandlerScheduler;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.manager.DividerDecoration;
 import com.app.designmore.utils.Utils;
@@ -66,6 +70,9 @@ import com.app.designmore.view.MaterialRippleLayout;
 import com.app.designmore.view.ProgressLayout;
 import com.app.designmore.manager.WrappingLinearLayoutManager;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
+import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollEvent;
+import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollStateChangeEvent;
+import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
 import com.jakewharton.rxbinding.view.RxView;
 import com.jakewharton.rxbinding.view.ViewClickEvent;
 import com.trello.rxlifecycle.ActivityEvent;
@@ -84,6 +91,8 @@ import rx.functions.Action1;
 import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.functions.Func4;
+import rx.internal.schedulers.ScheduledAction;
+import rx.schedulers.Schedulers;
 import rx.subscriptions.Subscriptions;
 
 public class HomeActivity extends BaseActivity
@@ -117,6 +126,7 @@ public class HomeActivity extends BaseActivity
   @Nullable @Bind(R.id.home_layout_banner_indicator2) ImageView bannerIndicator2;
   @Nullable @Bind(R.id.home_layout_banner_indicator3) ImageView bannerIndicator3;
 
+  private int appBarHeight;
   private ProgressDialog progressDialog;
   private ViewGroup toast;
 
@@ -142,16 +152,26 @@ public class HomeActivity extends BaseActivity
   private Drawable indicatorNormal;
   private Drawable indicatorSelected;
 
+  private boolean offsetEnable = false;
+
   private Subscription subscription = Subscriptions.empty();
 
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
+
+      Observable.create(new Observable.OnSubscribe<Object>() {
+        @Override public void call(Subscriber<? super Object> subscriber) {
+
+        }
+      });
       HomeActivity.this.loadData();
     }
   };
 
   private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
     @Override public void onCancel(DialogInterface dialog) {
+
+      HomeActivity.this.isLoading = false;
       subscription.unsubscribe();
     }
   };
@@ -168,17 +188,20 @@ public class HomeActivity extends BaseActivity
             }
           }
 
-          HomeActivity.this.swipeRefreshLayout.setEnabled(state == ViewPager.SCROLL_STATE_IDLE);
+          HomeActivity.this.swipeRefreshLayout.setEnabled(
+              state == ViewPager.SCROLL_STATE_IDLE && offsetEnable);
         }
       };
 
   private AppBarLayout.OnOffsetChangedListener offsetChangedListener =
       new AppBarLayout.OnOffsetChangedListener() {
         @Override public void onOffsetChanged(AppBarLayout appBarLayout, int offset) {
-          if (offset == 0) {
-            swipeRefreshLayout.setEnabled(true);
+
+          /*如果喜欢，可以尝试 https://yassirh.com/2014/05/how-to-use-swiperefreshlayout-the-right-way*/
+          if (offset == 0 && productLayoutManager.findFirstVisibleItemPosition() == 0) {
+            swipeRefreshLayout.setEnabled(offsetEnable = true);
           } else {
-            swipeRefreshLayout.setEnabled(false);
+            swipeRefreshLayout.setEnabled(offsetEnable = false);
           }
         }
       };
@@ -212,6 +235,8 @@ public class HomeActivity extends BaseActivity
       rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
         @Override public boolean onPreDraw() {
           rootView.getViewTreeObserver().removeOnPreDrawListener(this);
+
+          HomeActivity.this.appBarHeight = appBarLayout.getHeight();
           HomeActivity.this.startEnterAnim();
           return true;
         }
@@ -224,11 +249,13 @@ public class HomeActivity extends BaseActivity
   private void setupAdapter() {
 
     swipeRefreshLayout.setColorSchemeResources(Constants.colors);
-    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
-      @Override public void call(Void aVoid) {
-        HomeActivity.this.loadData();
-      }
-    });
+    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout)
+        .compose(HomeActivity.this.<Void>bindUntilEvent(ActivityEvent.DESTROY))
+        .forEach(new Action1<Void>() {
+          @Override public void call(Void aVoid) {
+            HomeActivity.this.loadData();
+          }
+        });
 
     bannerAdapter = new HomeBannerAdapter(HomeActivity.this, viewPager);
     bannerAdapter.setCallback(HomeActivity.this);
@@ -296,26 +323,22 @@ public class HomeActivity extends BaseActivity
     productParams.put("page", String.valueOf(count = 1));
     productParams.put("count", "10");
 
-    Observable.defer(new Func0<Observable<Map<String, List>>>() {
-      @Override public Observable<Map<String, List>> call() {
-        return Observable.zip(homeRetrofit.getProductByXxx(bannerParams),
-            homeRetrofit.getCategoryList(catParams), homeRetrofit.getDiscountList(discountParams),
-            homeRetrofit.getProductByXxx(productParams),
-            new Func4<List<ProductEntity>, List<CategoryEntity>, List<FashionEntity>, List<ProductEntity>, Map<String, List>>() {
-              @Override public Map call(List<ProductEntity> bannerEntities,
-                  List<CategoryEntity> categoryEntities, List<FashionEntity> discountEntities,
-                  List<ProductEntity> productEntities) {
+    subscription = Observable.zip(homeRetrofit.getProductByXxx(bannerParams),
+        homeRetrofit.getCategoryList(catParams), homeRetrofit.getDiscountList(discountParams),
+        homeRetrofit.getProductByXxx(productParams),
+        new Func4<List<ProductEntity>, List<CategoryEntity>, List<FashionEntity>, List<ProductEntity>, Map<String, List>>() {
+          @Override
+          public Map call(List<ProductEntity> bannerEntities, List<CategoryEntity> categoryEntities,
+              List<FashionEntity> discountEntities, List<ProductEntity> productEntities) {
 
-                Map<String, List> map = new HashMap(4);
-                map.put(BANNER, bannerEntities);
-                map.put(CAT, categoryEntities);
-                map.put(DISCOUNT, discountEntities);
-                map.put(PRODUCT, productEntities);
-                return map;
-              }
-            });
-      }
-    })
+            Map<String, List> map = new HashMap(4);
+            map.put(BANNER, bannerEntities);
+            map.put(CAT, categoryEntities);
+            map.put(DISCOUNT, discountEntities);
+            map.put(PRODUCT, productEntities);
+            return map;
+          }
+        })
         .doOnSubscribe(new Action0() {
           @Override public void call() {
             /*加载数据，显示进度条*/
@@ -324,7 +347,10 @@ public class HomeActivity extends BaseActivity
         })
         .compose(HomeActivity.this.<Map<String, List>>bindUntilEvent(ActivityEvent.DESTROY))
         .subscribe(new Subscriber<Map<String, List>>() {
+
           @Override public void onCompleted() {
+
+            HomeActivity.this.isEndless = true;
 
             /*显示内容*/
             if (swipeRefreshLayout.isRefreshing()) {
@@ -426,16 +452,13 @@ public class HomeActivity extends BaseActivity
         .rippleColor(getResources().getColor(android.R.color.darker_gray))
         .create();
 
-    this.productRecyclerView.getViewTreeObserver()
-        .addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-          @Override public void onScrollChanged() {
+    RxRecyclerView.scrollEvents(productRecyclerView)
+        .skip(1)
+        .compose(HomeActivity.this.<RecyclerViewScrollEvent>bindUntilEvent(ActivityEvent.DESTROY))
+        .forEach(new Action1<RecyclerViewScrollEvent>() {
+          @Override public void call(RecyclerViewScrollEvent recyclerViewScrollEvent) {
 
-           /* if (nestedScrollView.getScrollY() == 0) {
-              swipeRefreshLayout.setEnabled(true);
-            } else {
-              swipeRefreshLayout.setEnabled(false);
-            }*/
-
+            //stackoverflow.com/questions/26543131/how-to-implement-endless-list-with-recyclerview/26561717#26561717
             visibleItemCount = productLayoutManager.getChildCount();
             totalItemCount = productLayoutManager.getItemCount();
             pastVisibleItems = productLayoutManager.findFirstVisibleItemPosition();
@@ -450,6 +473,30 @@ public class HomeActivity extends BaseActivity
           }
         });
 
+   /* this.productRecyclerView.getViewTreeObserver()
+        .addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+          @Override public void onScrollChanged() {
+
+           *//* if (nestedScrollView.getScrollY() == 0) {
+              swipeRefreshLayout.setEnabled(true);
+            } else {
+              swipeRefreshLayout.setEnabled(false);
+            }*//*
+
+            visibleItemCount = productLayoutManager.getChildCount();
+            totalItemCount = productLayoutManager.getItemCount();
+            pastVisibleItems = productLayoutManager.findFirstVisibleItemPosition();
+
+            if (!isLoading) {
+              if ((visibleItemCount + pastVisibleItems) >= totalItemCount && isEndless) {
+
+               *//* 加载更多*//*
+                HomeActivity.this.loadDataMore();
+              }
+            }
+          }
+        });*/
+
     this.viewPager.addOnPageChangeListener(simpleOnPageChangeListener);
     this.appBarLayout.addOnOffsetChangedListener(offsetChangedListener);
   }
@@ -457,9 +504,10 @@ public class HomeActivity extends BaseActivity
   private void loadDataMore() {
 
     /* 精选：Action: GetProductByKeyOrType  type:keyword  data:手表 count:10 page:1(下拉加载page = 2,3,4,5) code : 1(销量) order_by : 1（降序）*/
-    final Map<String, String> productParams = new HashMap<>();
+    final Map<String, String> productParams = new HashMap<>(3);
     productParams.put("Action", "GetProductByHot");
-    productParams.put("page", String.valueOf(++count));
+    //productParams.put("page", String.valueOf(++count));
+    productParams.put("page", String.valueOf(count));
     productParams.put("count", "10");
 
     subscription =
@@ -563,10 +611,6 @@ public class HomeActivity extends BaseActivity
     searchItem.getActionView().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
 
-        //AllProductListActivity.navigateToAllProductList(HomeActivity.this, "手表", "手表");
-        //ProductKeyListActivity.navigateToProductKeyList(HomeActivity.this, "手表", "手表");
-        //overridePendingTransition(0, 0);
-
         SearchActivity.navigateToSearch(HomeActivity.this);
         overridePendingTransition(0, 0);
       }
@@ -668,7 +712,7 @@ public class HomeActivity extends BaseActivity
     this.progressDialog = null;
 
     this.bannerAdapter.detach();
-    if (!subscription.isUnsubscribed()) subscription.unsubscribe();
+    if (subscription != null && !subscription.isUnsubscribed()) subscription.unsubscribe();
   }
 
   @Override protected void onNewIntent(Intent intent) {
@@ -683,10 +727,17 @@ public class HomeActivity extends BaseActivity
 
   @Override public void startIconAnim() {
 
+    homeIv.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
     Animator iconAnim = ObjectAnimator.ofPropertyValuesHolder(homeIv,
         PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.5f, 1.0f),
         PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.5f, 1.0f));
     iconAnim.setDuration(Constants.MILLISECONDS_400);
+    iconAnim.addListener(new AnimatorListenerAdapter() {
+      @Override public void onAnimationEnd(Animator animation) {
+        homeIv.setLayerType(View.LAYER_TYPE_NONE, null);
+      }
+    });
     iconAnim.start();
   }
 }

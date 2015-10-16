@@ -118,6 +118,8 @@ public class ProductCatIdListActivity extends BaseActivity implements ProductAda
 
   private DialogInterface.OnCancelListener cancelListener = new DialogInterface.OnCancelListener() {
     @Override public void onCancel(DialogInterface dialog) {
+
+      ProductCatIdListActivity.this.isLoading = false;
       subscription.unsubscribe();
     }
   };
@@ -263,11 +265,13 @@ public class ProductCatIdListActivity extends BaseActivity implements ProductAda
   private void setupAdapter() {
 
     swipeRefreshLayout.setColorSchemeResources(Constants.colors);
-    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
-      @Override public void call(Void aVoid) {
-        ProductCatIdListActivity.this.loadData();
-      }
-    });
+    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout)
+        .compose(ProductCatIdListActivity.this.<Void>bindUntilEvent(ActivityEvent.DESTROY))
+        .forEach(new Action1<Void>() {
+          @Override public void call(Void aVoid) {
+            ProductCatIdListActivity.this.loadData();
+          }
+        });
 
     final GridLayoutManager gridLayoutManager =
         new GridLayoutManager(ProductCatIdListActivity.this, 2);
@@ -286,6 +290,8 @@ public class ProductCatIdListActivity extends BaseActivity implements ProductAda
 
     RxRecyclerView.scrollEvents(recyclerView)
         .skip(1)
+        .compose(ProductCatIdListActivity.this.<RecyclerViewScrollEvent>bindUntilEvent(
+            ActivityEvent.DESTROY))
         .forEach(new Action1<RecyclerViewScrollEvent>() {
           @Override public void call(RecyclerViewScrollEvent recyclerViewScrollEvent) {
 

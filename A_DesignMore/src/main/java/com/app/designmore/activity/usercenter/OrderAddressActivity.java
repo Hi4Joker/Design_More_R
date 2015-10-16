@@ -150,11 +150,13 @@ public class OrderAddressActivity extends BaseActivity implements SimpleAddressA
   private void setupAdapter() {
 
     swipeRefreshLayout.setColorSchemeResources(Constants.colors);
-    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).forEach(new Action1<Void>() {
-      @Override public void call(Void aVoid) {
-        OrderAddressActivity.this.loadData();
-      }
-    });
+    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout)
+        .compose(OrderAddressActivity.this.<Void>bindUntilEvent(ActivityEvent.DESTROY))
+        .forEach(new Action1<Void>() {
+          @Override public void call(Void aVoid) {
+            OrderAddressActivity.this.loadData();
+          }
+        });
 
     linearLayoutManager = new LinearLayoutManager(OrderAddressActivity.this);
     linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
