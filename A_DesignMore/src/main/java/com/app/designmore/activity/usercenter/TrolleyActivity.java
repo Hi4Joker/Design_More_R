@@ -264,6 +264,13 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
             if (!swipeRefreshLayout.isRefreshing()) progressLayout.showLoading();
           }
         })
+        .doOnTerminate(new Action0() {
+          @Override public void call() {
+            if (swipeRefreshLayout.isRefreshing()) {
+              RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(false);
+            }
+          }
+        })
         .doOnCompleted(new Action0() {
           @Override public void call() {
             TrolleyActivity.this.payBtn.setEnabled(false);
@@ -274,13 +281,9 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
           @Override public void onCompleted() {
 
             /*加载完毕，显示内容界面*/
-            if (items != null && items.size() != 0) {
+            if (items != null && items.size() != 0 && !progressLayout.isContent()) {
               TrolleyActivity.this.actionButton.setEnabled(true);
-              if (swipeRefreshLayout.isRefreshing()) {
-                swipeRefreshLayout.setRefreshing(false);
-              } else if (!progressLayout.isContent()) {
-                progressLayout.showContent();
-              }
+              progressLayout.showContent();
             } else if (items != null && items.size() == 0) {
               progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
                   "您的购物车空空如也，快去购物吧", null, "去首页逛逛", goHomeClickListener);

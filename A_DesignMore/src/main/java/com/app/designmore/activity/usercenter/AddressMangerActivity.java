@@ -212,17 +212,20 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
             if (!swipeRefreshLayout.isRefreshing()) progressLayout.showLoading();
           }
         })
+        .doOnTerminate(new Action0() {
+          @Override public void call() {
+            if (swipeRefreshLayout.isRefreshing()) {
+              RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(false);
+            }
+          }
+        })
         .compose(AddressMangerActivity.this.<HashMap>bindUntilEvent(ActivityEvent.DESTROY))
         .subscribe(new Subscriber<HashMap>() {
           @Override public void onCompleted() {
 
             /*加载完毕，显示内容界面*/
-            if (items != null && items.size() != 0) {
-              if (swipeRefreshLayout.isRefreshing()) {
-                swipeRefreshLayout.setRefreshing(false);
-              } else if (!progressLayout.isContent()) {
-                progressLayout.showContent();
-              }
+            if (items != null && items.size() != 0 && !progressLayout.isContent()) {
+              progressLayout.showContent();
             } else if (items != null && items.size() == 0) {
               progressLayout.showEmpty(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
                   "您还没有收货地址", null);

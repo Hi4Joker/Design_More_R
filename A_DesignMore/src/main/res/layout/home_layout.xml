@@ -53,7 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_scrollFlags="scroll"
+                app:layout_scrollFlags="scroll|snap"
                 >
 
               <!--轮播广告-->

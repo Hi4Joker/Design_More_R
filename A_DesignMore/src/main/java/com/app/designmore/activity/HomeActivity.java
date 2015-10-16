@@ -11,6 +11,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -92,7 +93,9 @@ import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.functions.Func4;
 import rx.internal.schedulers.ScheduledAction;
+import rx.observables.ConnectableObservable;
 import rx.schedulers.Schedulers;
+import rx.subjects.PublishSubject;
 import rx.subscriptions.Subscriptions;
 
 public class HomeActivity extends BaseActivity
@@ -126,7 +129,6 @@ public class HomeActivity extends BaseActivity
   @Nullable @Bind(R.id.home_layout_banner_indicator2) ImageView bannerIndicator2;
   @Nullable @Bind(R.id.home_layout_banner_indicator3) ImageView bannerIndicator3;
 
-  private int appBarHeight;
   private ProgressDialog progressDialog;
   private ViewGroup toast;
 
@@ -235,8 +237,6 @@ public class HomeActivity extends BaseActivity
       rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
         @Override public boolean onPreDraw() {
           rootView.getViewTreeObserver().removeOnPreDrawListener(this);
-
-          HomeActivity.this.appBarHeight = appBarLayout.getHeight();
           HomeActivity.this.startEnterAnim();
           return true;
         }
@@ -345,6 +345,13 @@ public class HomeActivity extends BaseActivity
             if (!swipeRefreshLayout.isRefreshing()) progressLayout.showLoading();
           }
         })
+        .doOnTerminate(new Action0() {
+          @Override public void call() {
+            if (swipeRefreshLayout.isRefreshing()) {
+              RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(false);
+            }
+          }
+        })
         .compose(HomeActivity.this.<Map<String, List>>bindUntilEvent(ActivityEvent.DESTROY))
         .subscribe(new Subscriber<Map<String, List>>() {
 
@@ -353,9 +360,7 @@ public class HomeActivity extends BaseActivity
             HomeActivity.this.isEndless = true;
 
             /*显示内容*/
-            if (swipeRefreshLayout.isRefreshing()) {
-              swipeRefreshLayout.setRefreshing(false);
-            } else if (!progressLayout.isContent()) {
+            if (!progressLayout.isContent()) {
               progressLayout.showContent();
             }
 

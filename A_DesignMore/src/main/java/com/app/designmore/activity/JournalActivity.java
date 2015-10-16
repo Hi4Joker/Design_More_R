@@ -222,8 +222,15 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
             .getJournalList(params)
             .doOnSubscribe(new Action0() {
               @Override public void call() {
-            /*加载数据，显示进度条*/
+                /*加载数据，显示进度条*/
                 if (!swipeRefreshLayout.isRefreshing()) progressLayout.showLoading();
+              }
+            })
+            .doOnTerminate(new Action0() {
+              @Override public void call() {
+                if (swipeRefreshLayout.isRefreshing()) {
+                  RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(false);
+                }
               }
             })
             .compose(
@@ -234,12 +241,8 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
                 JournalActivity.this.isEndless = true;
 
                 /*加载完毕，显示内容界面*/
-                if (items != null && items.size() != 0) {
-                  if (swipeRefreshLayout.isRefreshing()) {
-                    swipeRefreshLayout.setRefreshing(false);
-                  } else if (!progressLayout.isContent()) {
-                    progressLayout.showContent();
-                  }
+                if (items != null && items.size() != 0 && !progressLayout.isContent()) {
+                  progressLayout.showContent();
                 } else if (items != null && items.size() == 0) {
                   progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
                       "当前没有杂志可看", null, "去首页看看", goHomeClickListener);

@@ -137,7 +137,9 @@ public class HelpActivity extends BaseActivity implements HelpAdapter.Callback {
         })
         .finallyDo(new Action0() {
           @Override public void call() {
-            if (swipeRefreshLayout.isRefreshing()) swipeRefreshLayout.setRefreshing(false);
+            if (swipeRefreshLayout.isRefreshing()) {
+              RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(false);
+            }
           }
         })
         .compose(HelpActivity.this.<List<HelpEntity>>bindUntilEvent(ActivityEvent.DESTROY))

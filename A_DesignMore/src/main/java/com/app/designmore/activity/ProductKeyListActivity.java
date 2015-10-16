@@ -212,6 +212,11 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
             })
             .doOnTerminate(new Action0() {
               @Override public void call() {
+
+                if (swipeRefreshLayout.isRefreshing()) {
+                  RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(false);
+                }
+
                 if (progressDialog != null && progressDialog.isShowing()) {
                   progressDialog.dismiss();
                 }
@@ -237,9 +242,7 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
                     }
                   });
 
-                  if (swipeRefreshLayout.isRefreshing()) {
-                    swipeRefreshLayout.setRefreshing(false);
-                  } else if (!progressLayout.isContent()) {
+                  if (!progressLayout.isContent()) {
                     progressLayout.showContent();
                   }
                 } else {
@@ -265,12 +268,13 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
   private void setupAdapter() {
 
     swipeRefreshLayout.setColorSchemeResources(Constants.colors);
-    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).compose(
-        ProductKeyListActivity.this.<Void>bindUntilEvent(ActivityEvent.DESTROY)).forEach(new Action1<Void>() {
-      @Override public void call(Void aVoid) {
-        ProductKeyListActivity.this.loadData();
-      }
-    });
+    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout)
+        .compose(ProductKeyListActivity.this.<Void>bindUntilEvent(ActivityEvent.DESTROY))
+        .forEach(new Action1<Void>() {
+          @Override public void call(Void aVoid) {
+            ProductKeyListActivity.this.loadData();
+          }
+        });
 
     final GridLayoutManager gridLayoutManager =
         new GridLayoutManager(ProductKeyListActivity.this, 2);
@@ -289,7 +293,8 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
 
     RxRecyclerView.scrollEvents(recyclerView)
         .skip(1)
-        .compose(ProductKeyListActivity.this.<RecyclerViewScrollEvent>bindUntilEvent(ActivityEvent.DESTROY))
+        .compose(ProductKeyListActivity.this.<RecyclerViewScrollEvent>bindUntilEvent(
+            ActivityEvent.DESTROY))
         .forEach(new Action1<RecyclerViewScrollEvent>() {
           @Override public void call(RecyclerViewScrollEvent recyclerViewScrollEvent) {
 

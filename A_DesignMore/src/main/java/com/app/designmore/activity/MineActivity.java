@@ -142,8 +142,6 @@ public class MineActivity extends BaseActivity implements MineItemAdapter.Callba
 
     swipeRefreshLayout.setColorSchemeResources(Constants.colors);
     RxSwipeRefreshLayout.refreshes(swipeRefreshLayout)
-        .sample(Constants.MILLISECONDS_600 * 10, TimeUnit.MILLISECONDS,
-            AndroidSchedulers.mainThread())
         .compose(MineActivity.this.<Void>bindUntilEvent(ActivityEvent.DESTROY))
         .forEach(new Action1<Void>() {
           @Override public void call(Void aVoid) {
@@ -246,18 +244,17 @@ public class MineActivity extends BaseActivity implements MineItemAdapter.Callba
 
     subscription = LoginRetrofit.getInstance()
         .requestUserInfo(params)
-        .compose(MineActivity.this.<UserInfoEntity>bindUntilEvent(ActivityEvent.DESTROY))
-        .doOnSubscribe(new Action0() {
+        .doOnTerminate(new Action0() {
           @Override public void call() {
-            //RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(true);
-          }
-        })
-        .subscribe(new Subscriber<UserInfoEntity>() {
-          @Override public void onCompleted() {
-
             if (swipeRefreshLayout.isRefreshing()) {
               RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(false);
             }
+          }
+        })
+        .compose(MineActivity.this.<UserInfoEntity>bindUntilEvent(ActivityEvent.DESTROY))
+        .subscribe(new Subscriber<UserInfoEntity>() {
+          @Override public void onCompleted() {
+
           }
 
           @Override public void onError(Throwable error) {

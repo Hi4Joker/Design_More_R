@@ -212,6 +212,11 @@ public class ProductCatIdListActivity extends BaseActivity implements ProductAda
             })
             .doOnTerminate(new Action0() {
               @Override public void call() {
+
+                if (swipeRefreshLayout.isRefreshing()) {
+                  RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(false);
+                }
+
                 if (progressDialog != null && progressDialog.isShowing()) {
                   progressDialog.dismiss();
                 }
@@ -237,9 +242,7 @@ public class ProductCatIdListActivity extends BaseActivity implements ProductAda
                     }
                   });
 
-                  if (swipeRefreshLayout.isRefreshing()) {
-                    swipeRefreshLayout.setRefreshing(false);
-                  } else if (!progressLayout.isContent()) {
+                  if (!progressLayout.isContent()) {
                     progressLayout.showContent();
                   }
                 } else {

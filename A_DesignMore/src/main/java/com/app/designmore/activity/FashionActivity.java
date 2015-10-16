@@ -167,12 +167,13 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
   private void setupAdapter() {
 
     swipeRefreshLayout.setColorSchemeResources(Constants.colors);
-    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout).compose(
-        FashionActivity.this.<Void>bindUntilEvent(ActivityEvent.DESTROY)).forEach(new Action1<Void>() {
-      @Override public void call(Void aVoid) {
-        FashionActivity.this.loadData();
-      }
-    });
+    RxSwipeRefreshLayout.refreshes(swipeRefreshLayout)
+        .compose(FashionActivity.this.<Void>bindUntilEvent(ActivityEvent.DESTROY))
+        .forEach(new Action1<Void>() {
+          @Override public void call(Void aVoid) {
+            FashionActivity.this.loadData();
+          }
+        });
 
     final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(FashionActivity.this);
     linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -190,7 +191,8 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
 
     RxRecyclerView.scrollEvents(recyclerView)
         .skip(1)
-        .compose(FashionActivity.this.<RecyclerViewScrollEvent>bindUntilEvent(ActivityEvent.DESTROY))
+        .compose(
+            FashionActivity.this.<RecyclerViewScrollEvent>bindUntilEvent(ActivityEvent.DESTROY))
         .forEach(new Action1<RecyclerViewScrollEvent>() {
           @Override public void call(RecyclerViewScrollEvent recyclerViewScrollEvent) {
 
@@ -223,8 +225,15 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
             .getFashionList(params)
             .doOnSubscribe(new Action0() {
               @Override public void call() {
-            /*加载数据，显示进度条*/
+                /*加载数据，显示进度条*/
                 if (!swipeRefreshLayout.isRefreshing()) progressLayout.showLoading();
+              }
+            })
+            .doOnTerminate(new Action0() {
+              @Override public void call() {
+                if (swipeRefreshLayout.isRefreshing()) {
+                  RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(false);
+                }
               }
             })
             .compose(
@@ -235,12 +244,8 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
                 FashionActivity.this.isEndless = true;
 
                 /*加载完毕，显示内容界面*/
-                if (items != null && items.size() != 0) {
-                  if (swipeRefreshLayout.isRefreshing()) {
-                    swipeRefreshLayout.setRefreshing(false);
-                  } else if (!progressLayout.isContent()) {
-                    progressLayout.showContent();
-                  }
+                if (items != null && items.size() != 0 && !progressLayout.isContent()) {
+                  progressLayout.showContent();
                 } else if (items != null && items.size() == 0) {
                   progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
                       "当前没有新品可看", null, "去首页看看", goHomeClickListener);

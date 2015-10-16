@@ -78,7 +78,7 @@ import rx.subscriptions.Subscriptions;
 public class AllProductListActivity extends BaseActivity
     implements ProductAdapter.Callback, SearchAdapter.Callback {
 
-  private static final String TAG = AllProductListActivity.class.getCanonicalName();
+  private static final String TAG = AllProductListActivity.class.getSimpleName();
   private static final String CAT_ID = "CAT_ID";
   private static final String TITLE = "TITLE";
   private static final Object KEY_ENTITIES = "KEY_ENTITIES";
@@ -89,6 +89,7 @@ public class AllProductListActivity extends BaseActivity
   @Nullable @Bind(R.id.product_all_layout_app_bar) AppBarLayout appBarLayout;
   @Nullable @Bind(R.id.product_all_layout_collapsing_bar) CollapsingToolbarLayout
       collapsingToolbarLayout;
+  @Nullable @Bind(R.id.product_all_layout_category_ll) LinearLayout categoryLl;
   @Nullable @Bind(R.id.product_all_layout_keyword_rl) RecyclerView collRecyclerView;
   @Nullable @Bind(R.id.product_all_layout_toolbar) Toolbar toolbar;
   @Nullable @Bind(R.id.product_all_layout_toolbar_title_tv) TextView toolbarTitleTv;
@@ -121,6 +122,8 @@ public class AllProductListActivity extends BaseActivity
   private Dialog progressDialog;
   private ViewGroup toast;
 
+  private int appBarHeight;
+
   private GridLayoutManager gridLayoutManager;
 
   private Subscription subscription = Subscriptions.empty();
@@ -142,6 +145,12 @@ public class AllProductListActivity extends BaseActivity
   private AppBarLayout.OnOffsetChangedListener offsetChangedListener =
       new AppBarLayout.OnOffsetChangedListener() {
         @Override public void onOffsetChanged(AppBarLayout appBarLayout, int offset) {
+
+          /*Log.e(TAG, "TranslationY::::" + categoryLl.getTranslationY());
+          Log.e(TAG, "Y::::" + categoryLl.getY());
+          Log.e(TAG, "Top::::" + categoryLl.getTop());
+          Log.e(TAG, "getScrollY::::" + categoryLl.getScrollY());*/
+
           if (offset == 0 && gridLayoutManager.findFirstVisibleItemPosition() == 0) {
             swipeRefreshLayout.setEnabled(true);
           } else {
@@ -186,6 +195,9 @@ public class AllProductListActivity extends BaseActivity
       rootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
         @Override public boolean onPreDraw() {
           rootView.getViewTreeObserver().removeOnPreDrawListener(this);
+
+          AllProductListActivity.this.appBarHeight = appBarLayout.getHeight();
+
           AllProductListActivity.this.startEnterAnim();
           return true;
         }
@@ -336,6 +348,11 @@ public class AllProductListActivity extends BaseActivity
             })
             .doOnTerminate(new Action0() {
               @Override public void call() {
+
+                if (swipeRefreshLayout.isRefreshing()) {
+                  RxSwipeRefreshLayout.refreshing(swipeRefreshLayout).call(false);
+                }
+
                 if (progressDialog != null && progressDialog.isShowing()) {
                   progressDialog.dismiss();
                 }
@@ -361,9 +378,7 @@ public class AllProductListActivity extends BaseActivity
                     }
                   });
 
-                  if (swipeRefreshLayout.isRefreshing()) {
-                    swipeRefreshLayout.setRefreshing(false);
-                  } else if (!productProgressLayout.isContent()) {
+                  if (!productProgressLayout.isContent()) {
                     productProgressLayout.showContent();
                   } else if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
