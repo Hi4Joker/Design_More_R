@@ -2,7 +2,6 @@ package com.app.designmore.adapter;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,8 +15,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
-import com.app.designmore.manager.DividerDecoration;
-import com.app.designmore.manager.WrappingLinearLayoutManager;
 import com.app.designmore.retrofit.entity.FashionEntity;
 import com.app.designmore.retrofit.entity.ProductEntity;
 import com.bumptech.glide.Glide;
@@ -59,13 +56,13 @@ public class HomeProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     int viewType = this.getItemViewType(position);
     if (viewType == ITEM_VIEW_HEADER) {
-      HomeProductAdapter.this.bindValue((HeaderHolder) holder);
+      HomeProductAdapter.this.bindHeaderValue((HeaderHolder) holder);
     } else {
-      HomeProductAdapter.this.bindValue((ItemHolder) holder, position - 1);
+      HomeProductAdapter.this.bindItemValue((ItemHolder) holder, position - 1);
     }
   }
 
-  private void bindValue(HeaderHolder holder) {
+  private void bindHeaderValue(HeaderHolder holder) {
 
     FashionEntity fashionEntity1 = fashionEntities.get(0);
     FashionEntity fashionEntity2 = fashionEntities.get(1);
@@ -97,7 +94,7 @@ public class HomeProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         .into(holder.imageView2);
   }
 
-  private void bindValue(ItemHolder holder, int position) {
+  private void bindItemValue(ItemHolder holder, int position) {
 
     holder.rootView.setTag(productEntities.get(position).getGoodId());
     holder.desTv.setText(productEntities.get(position).getGoodName());
@@ -165,7 +162,14 @@ public class HomeProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
       ButterKnife.bind(HeaderHolder.this, itemView);
     }
 
-    @Nullable @OnClick(R.id.home_header_fashion_rl_1) void onItemClick(
+    @Nullable @OnClick(R.id.home_header_fashion_rl_1) void onItem1Click(
+        RelativeLayout relativeLayout) {
+
+      String goodId = (String) relativeLayout.getTag();
+      if (callback != null) callback.onDiscountItemClick(goodId);
+    }
+
+    @Nullable @OnClick(R.id.home_header_fashion_rl_2) void onItem2Click(
         RelativeLayout relativeLayout) {
 
       String goodId = (String) relativeLayout.getTag();
