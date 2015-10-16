@@ -9,6 +9,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -50,6 +52,7 @@ import com.app.designmore.retrofit.entity.FashionEntity;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
+import com.app.designmore.rxAndroid.schedulers.HandlerScheduler;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.MaterialRippleLayout;
@@ -63,6 +66,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
 import rx.Subscriber;
@@ -104,6 +108,8 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
   private volatile int page = 1;
 
   private Subscription subscription = Subscriptions.empty();
+
+  private Subscription errorSchedule;
 
   private View.OnClickListener goHomeClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
@@ -225,6 +231,12 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
             .getFashionList(params)
             .doOnSubscribe(new Action0() {
               @Override public void call() {
+
+                 /*网络错误规避*/
+                if (errorSchedule != null && !errorSchedule.isUnsubscribed()) {
+                  errorSchedule.unsubscribe();
+                }
+
                 /*加载数据，显示进度条*/
                 if (!swipeRefreshLayout.isRefreshing()) progressLayout.showLoading();
               }
@@ -491,17 +503,42 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
   }
 
   @Override public void onError(Throwable error) {
-    toast = DialogManager.getInstance()
-        .showNoMoreDialog(FashionActivity.this, Gravity.TOP, "加载更多失败，请重试,/(ㄒoㄒ)/~~");
+
+    this.isEndless = false;
+
+    if (errorSchedule != null && !errorSchedule.isUnsubscribed()) {
+      errorSchedule.unsubscribe();
+    }
+
+    errorSchedule = HandlerScheduler.from(new Handler(Looper.getMainLooper()))
+        .createWorker()
+        .schedule(new Action0() {
+          @Override public void call() {
+            FashionActivity.this.isEndless = true;
+          }
+        }, Constants.MILLISECONDS_2800, TimeUnit.MILLISECONDS);
+
+    if (error instanceof RetrofitError) {
+      toast = DialogManager.getInstance()
+          .showNoMoreDialog(FashionActivity.this, Gravity.TOP, "请检查您的网络设置");
+    } else {
+      toast = DialogManager.getInstance()
+          .showNoMoreDialog(FashionActivity.this, Gravity.TOP, "加载更多失败，请重试,/(ㄒoㄒ)/~~");
+    }
   }
 
   @Override protected void onDestroy() {
     super.onDestroy();
     if (toast != null && toast.getParent() != null) {
       getWindowManager().removeViewImmediate(toast);
+
+      if (toast.getTag() instanceof Subscription) {
+        ((Subscription) toast.getTag()).unsubscribe();
+      }
     }
     this.toast = null;
     this.progressDialog = null;
+    if (errorSchedule != null && !errorSchedule.isUnsubscribed()) errorSchedule.unsubscribe();
     if (subscription != null && !subscription.isUnsubscribed()) subscription.unsubscribe();
   }
 

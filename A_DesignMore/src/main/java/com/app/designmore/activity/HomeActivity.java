@@ -11,15 +11,13 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,7 +30,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.OvershootInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -53,7 +50,6 @@ import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.manager.MarginDecoration;
-import com.app.designmore.manager.WrappingGridLayoutManager;
 import com.app.designmore.retrofit.HomeRetrofit;
 import com.app.designmore.retrofit.entity.CategoryEntity;
 import com.app.designmore.retrofit.entity.FashionEntity;
@@ -61,22 +57,17 @@ import com.app.designmore.retrofit.entity.ProductEntity;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
-import com.app.designmore.rxAndroid.plugins.RxAndroidPlugins;
-import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.rxAndroid.schedulers.HandlerScheduler;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.manager.DividerDecoration;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.MaterialRippleLayout;
 import com.app.designmore.view.ProgressLayout;
-import com.app.designmore.manager.WrappingLinearLayoutManager;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollEvent;
-import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollStateChangeEvent;
 import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
-import com.jakewharton.rxbinding.view.RxView;
-import com.jakewharton.rxbinding.view.ViewClickEvent;
 import com.trello.rxlifecycle.ActivityEvent;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -85,17 +76,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
 import rx.Observable;
+import rx.Scheduler;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Action1;
-import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.functions.Func4;
-import rx.internal.schedulers.ScheduledAction;
-import rx.observables.ConnectableObservable;
-import rx.schedulers.Schedulers;
-import rx.subjects.PublishSubject;
 import rx.subscriptions.Subscriptions;
 
 public class HomeActivity extends BaseActivity
@@ -157,6 +144,7 @@ public class HomeActivity extends BaseActivity
   private boolean offsetEnable = false;
 
   private Subscription subscription = Subscriptions.empty();
+  private Subscription errorSchedule;
 
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
@@ -323,9 +311,9 @@ public class HomeActivity extends BaseActivity
     productParams.put("page", String.valueOf(count = 1));
     productParams.put("count", "10");
 
-    subscription = Observable.zip(homeRetrofit.getProductByXxx(bannerParams),
+    subscription = Observable.zip(homeRetrofit.getHotProduct(bannerParams),
         homeRetrofit.getCategoryList(catParams), homeRetrofit.getDiscountList(discountParams),
-        homeRetrofit.getProductByXxx(productParams),
+        homeRetrofit.getHotProduct(productParams),
         new Func4<List<ProductEntity>, List<CategoryEntity>, List<FashionEntity>, List<ProductEntity>, Map<String, List>>() {
           @Override
           public Map call(List<ProductEntity> bannerEntities, List<CategoryEntity> categoryEntities,
@@ -341,6 +329,12 @@ public class HomeActivity extends BaseActivity
         })
         .doOnSubscribe(new Action0() {
           @Override public void call() {
+
+            /*网络错误规避*/
+            if (errorSchedule != null && !errorSchedule.isUnsubscribed()) {
+              errorSchedule.unsubscribe();
+            }
+
             /*加载数据，显示进度条*/
             if (!swipeRefreshLayout.isRefreshing()) progressLayout.showLoading();
           }
@@ -517,7 +511,7 @@ public class HomeActivity extends BaseActivity
 
     subscription =
         HomeRetrofit.getInstance()
-            .getProductByXxx(productParams)
+            .getHotProduct(productParams)
             .doOnSubscribe(new Action0() {
               @Override public void call() {
                 /*正在加载*/
@@ -700,8 +694,28 @@ public class HomeActivity extends BaseActivity
   }
 
   @Override public void onError(Throwable error) {
-    toast = DialogManager.getInstance()
-        .showNoMoreDialog(HomeActivity.this, Gravity.TOP, "加载更多失败，请重试,/(ㄒoㄒ)/~~");
+
+    this.isEndless = false;
+
+    if (errorSchedule != null && !errorSchedule.isUnsubscribed()) {
+      errorSchedule.unsubscribe();
+    }
+
+    errorSchedule = HandlerScheduler.from(new Handler(Looper.getMainLooper()))
+        .createWorker()
+        .schedule(new Action0() {
+          @Override public void call() {
+            HomeActivity.this.isEndless = true;
+          }
+        }, Constants.MILLISECONDS_2800, TimeUnit.MILLISECONDS);
+
+    if (error instanceof RetrofitError) {
+      toast =
+          DialogManager.getInstance().showNoMoreDialog(HomeActivity.this, Gravity.TOP, "请检查您的网络设置");
+    } else {
+      toast = DialogManager.getInstance()
+          .showNoMoreDialog(HomeActivity.this, Gravity.TOP, "加载更多失败，请重试,/(ㄒoㄒ)/~~");
+    }
   }
 
   @Override protected void onDestroy() {
@@ -712,11 +726,16 @@ public class HomeActivity extends BaseActivity
     super.onDestroy();
     if (toast != null && toast.getParent() != null) {
       getWindowManager().removeViewImmediate(toast);
+
+      if (toast.getTag() instanceof Subscription) {
+        ((Subscription) toast.getTag()).unsubscribe();
+      }
     }
     this.toast = null;
     this.progressDialog = null;
 
     this.bannerAdapter.detach();
+    if (errorSchedule != null && !errorSchedule.isUnsubscribed()) errorSchedule.unsubscribe();
     if (subscription != null && !subscription.isUnsubscribed()) subscription.unsubscribe();
   }
 
@@ -725,9 +744,6 @@ public class HomeActivity extends BaseActivity
     HomeActivity.this.setIntent(intent);
 
     HomeActivity.this.startIconAnim();
-
-    /*刷新*/
-    //HomeActivity.this.loadData();
   }
 
   @Override public void startIconAnim() {

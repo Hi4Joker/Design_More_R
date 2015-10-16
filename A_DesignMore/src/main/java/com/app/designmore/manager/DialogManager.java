@@ -33,6 +33,7 @@ import com.app.designmore.view.dialog.CustomTrolleyDialog;
 import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import rx.Subscription;
 import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
@@ -223,9 +224,6 @@ public class DialogManager {
     TextView toast = (TextView) parent.findViewById(R.id.custom_toast_content_tv);
     if (!TextUtils.isEmpty(content)) toast.setText(content);
 
-     /*final WindowManager windowManager =
-        (WindowManager) MyApplication.get().getSystemService(Context.WINDOW_SERVICE);*/
-
     final WindowManager windowManager =
         (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
 
@@ -238,7 +236,8 @@ public class DialogManager {
     layoutParams.format = PixelFormat.TRANSLUCENT;
 
     layoutParams.width = DensityUtil.getScreenWidth(activity);
-    layoutParams.height = DensityUtil.dip2px(64.0f);
+    layoutParams.height =
+        DensityUtil.dip2px(DensityUtil.getXmlValue(activity, R.dimen.material_64dp));
     layoutParams.gravity = gravity;
 
     switch (gravity) {
@@ -258,16 +257,19 @@ public class DialogManager {
 
     windowManager.addView(parent, layoutParams);
 
-    HandlerScheduler.from(new Handler(Looper.getMainLooper()))
+    Subscription schedule = HandlerScheduler.from(new Handler(Looper.getMainLooper()))
         .createWorker()
         .schedule(new Action0() {
           @Override public void call() {
+
             if (parent != null && parent.getParent() != null) {
               /*rootView ViewRootImpl*/
               windowManager.removeView(parent);
             }
           }
         }, Constants.MILLISECONDS_2000, TimeUnit.MILLISECONDS);
+
+    parent.setTag(schedule);
 
     return parent;
   }

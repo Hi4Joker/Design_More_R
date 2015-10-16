@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,16 @@ public class DensityUtil {
   private static int screenWidth;
   private static int statusBarHeight;
   private static int actionBarSize;
+
+  private static TypedValue mTmpValue = new TypedValue();
+
+  public static int getXmlValue(Context context, int id) {
+    synchronized (mTmpValue) {
+      TypedValue value = mTmpValue;
+      context.getResources().getValue(id, value, true);
+      return (int) TypedValue.complexToFloat(value.data);
+    }
+  }
 
   /**
    * 根据手机的分辨率从 dp 的单位 转成为 px(像素)

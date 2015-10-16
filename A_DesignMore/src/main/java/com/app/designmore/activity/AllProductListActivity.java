@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -48,6 +50,7 @@ import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
+import com.app.designmore.rxAndroid.schedulers.HandlerScheduler;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.ProgressLayout;
@@ -127,6 +130,8 @@ public class AllProductListActivity extends BaseActivity
   private GridLayoutManager gridLayoutManager;
 
   private Subscription subscription = Subscriptions.empty();
+
+  private Subscription errorSchedule;
 
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
@@ -314,6 +319,11 @@ public class AllProductListActivity extends BaseActivity
             .getProductByCatId(params)
             .doOnSubscribe(new Action0() {
               @Override public void call() {
+
+                 /*网络错误规避*/
+                if (errorSchedule != null && !errorSchedule.isUnsubscribed()) {
+                  errorSchedule.unsubscribe();
+                }
 
                 /*加载数据，显示进度条*/
                 if (!swipeRefreshLayout.isRefreshing()) {
@@ -755,8 +765,28 @@ public class AllProductListActivity extends BaseActivity
   }
 
   @Override public void onError(Throwable error) {
-    toast = DialogManager.getInstance()
-        .showNoMoreDialog(AllProductListActivity.this, Gravity.TOP, "加载更多失败，请重试,/(ㄒoㄒ)/~~");
+
+    this.isEndless = false;
+
+    if (errorSchedule != null && !errorSchedule.isUnsubscribed()) {
+      errorSchedule.unsubscribe();
+    }
+
+    errorSchedule = HandlerScheduler.from(new Handler(Looper.getMainLooper()))
+        .createWorker()
+        .schedule(new Action0() {
+          @Override public void call() {
+            AllProductListActivity.this.isEndless = true;
+          }
+        }, Constants.MILLISECONDS_2800, TimeUnit.MILLISECONDS);
+
+    if (error instanceof RetrofitError) {
+      toast = DialogManager.getInstance()
+          .showNoMoreDialog(AllProductListActivity.this, Gravity.TOP, "请检查您的网络设置");
+    } else {
+      toast = DialogManager.getInstance()
+          .showNoMoreDialog(AllProductListActivity.this, Gravity.TOP, "加载更多失败，请重试,/(ㄒoㄒ)/~~");
+    }
   }
 
   /*keyword 回调*/
@@ -772,9 +802,14 @@ public class AllProductListActivity extends BaseActivity
     super.onDestroy();
     if (toast != null && toast.getParent() != null) {
       getWindowManager().removeViewImmediate(toast);
+
+      if (toast.getTag() instanceof Subscription) {
+        ((Subscription) toast.getTag()).unsubscribe();
+      }
     }
     this.toast = null;
     this.progressDialog = null;
-    if (!subscription.isUnsubscribed()) subscription.unsubscribe();
+    if (errorSchedule != null && !errorSchedule.isUnsubscribed()) subscription.unsubscribe();
+    if (subscription != null && !subscription.isUnsubscribed()) subscription.unsubscribe();
   }
 }

@@ -161,9 +161,9 @@ public class HomeRetrofit {
   }
 
   /**
-   * 获取轮播图和精选商品
+   * 获取精选商品
    */
-  public Observable<List<ProductEntity>> getProductByXxx(final Map<String, String> params) {
+  public Observable<List<ProductEntity>> getHotProduct(final Map<String, String> params) {
 
     return homeService.getProductByXxx(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
