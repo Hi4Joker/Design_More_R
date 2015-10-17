@@ -67,7 +67,6 @@ import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollEvent;
 import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
 import com.trello.rxlifecycle.ActivityEvent;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -76,7 +75,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import retrofit.RetrofitError;
 import rx.Observable;
-import rx.Scheduler;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
@@ -103,6 +101,7 @@ public class HomeActivity extends BaseActivity
 
   @Nullable @Bind(R.id.home_layout_app_bar) AppBarLayout appBarLayout;
   @Nullable @Bind(R.id.home_layout_viewpager) ViewPager viewPager;
+  @Nullable @Bind(R.id.home_layout_pager_indicator_ll) LinearLayout indicatorLayout;
   @Nullable @Bind(R.id.home_layout_category_rv) RecyclerView categoryRecyclerView;
   @Nullable @Bind(R.id.home_layout_product_rv) RecyclerView productRecyclerView;
 
@@ -111,10 +110,6 @@ public class HomeActivity extends BaseActivity
   @Nullable @Bind(R.id.bottom_bar_fashion_rl) RelativeLayout bottomBarFashionRl;
   @Nullable @Bind(R.id.bottom_bar_journal_rl) RelativeLayout bottomBarJournalRl;
   @Nullable @Bind(R.id.bottom_bar_mine_rl) RelativeLayout bottomBarMineRl;
-
-  @Nullable @Bind(R.id.home_layout_banner_indicator1) ImageView bannerIndicator1;
-  @Nullable @Bind(R.id.home_layout_banner_indicator2) ImageView bannerIndicator2;
-  @Nullable @Bind(R.id.home_layout_banner_indicator3) ImageView bannerIndicator3;
 
   private ProgressDialog progressDialog;
   private ViewGroup toast;
@@ -137,7 +132,7 @@ public class HomeActivity extends BaseActivity
   private volatile boolean isEndless = true;
   private volatile int count = 1;
 
-  private ImageView[] bannerIndicators;
+  private TextView[] bannerIndicators;
   private Drawable indicatorNormal;
   private Drawable indicatorSelected;
 
@@ -215,9 +210,6 @@ public class HomeActivity extends BaseActivity
 
     HomeActivity.this.setupAdapter();
 
-    bannerIndicators = new ImageView[] {
-        bannerIndicator1, bannerIndicator2, bannerIndicator3
-    };
     indicatorNormal = getResources().getDrawable(R.drawable.home_indicator_normal_background);
     indicatorSelected = getResources().getDrawable(R.drawable.home_indicator_selected_background);
 
@@ -291,7 +283,7 @@ public class HomeActivity extends BaseActivity
     bannerParams.put("type", "cat");
     bannerParams.put("data", "2");
     bannerParams.put("page", "1");
-    bannerParams.put("count", "3");
+    bannerParams.put("count", "10");
     bannerParams.put("code", "0");
     bannerParams.put("order_by", "1");
 
@@ -389,6 +381,27 @@ public class HomeActivity extends BaseActivity
   }
 
   private void setupViewPager() {
+
+    int count = bannerItems.size();
+    int size = DensityUtil.dip2px(DensityUtil.getXmlValue(HomeActivity.this, R.dimen.material_8dp));
+    int margin =
+        DensityUtil.dip2px(DensityUtil.getXmlValue(HomeActivity.this, R.dimen.material_8dp));
+
+    bannerIndicators = new TextView[count];
+    for (int i = 0; i < count; i++) {
+
+      bannerIndicators[i] = new TextView(HomeActivity.this);
+      bannerIndicators[i].setWidth(size);
+      bannerIndicators[i].setHeight(size);
+      bannerIndicators[i].setGravity(Gravity.CENTER);
+      LinearLayout.LayoutParams params =
+          new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+              LinearLayout.LayoutParams.WRAP_CONTENT);
+      params.setMargins(0, 0, margin, 0);
+      bannerIndicators[i].setLayoutParams(params);
+      bannerIndicators[i].setBackgroundDrawable(indicatorNormal);
+      indicatorLayout.addView(bannerIndicators[i]);
+    }
 
     bannerAdapter.updateItems(bannerItems);
   }
@@ -651,11 +664,14 @@ public class HomeActivity extends BaseActivity
 
   @Override public void changeIndicator(int position) {
 
-    for (ImageView indicator : bannerIndicators) {
-      indicator.setBackgroundDrawable(indicatorNormal);
+    if (bannerIndicators != null && bannerIndicators.length != 0) {
+      if (position == 0) {
+        bannerIndicators[bannerIndicators.length - 1].setBackgroundDrawable(indicatorNormal);
+      } else {
+        bannerIndicators[position - 1].setBackgroundDrawable(indicatorNormal);
+      }
+      bannerIndicators[position].setBackgroundDrawable(indicatorSelected);
     }
-
-    bannerIndicators[position].setBackgroundDrawable(indicatorSelected);
   }
 
   /**

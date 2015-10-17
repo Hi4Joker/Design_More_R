@@ -14,6 +14,7 @@
         />
 
     <LinearLayout
+        android:id="@+id/home_layout_pager_indicator_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -22,28 +23,5 @@
         android:orientation="horizontal"
         >
 
-        <ImageView
-            android:id="@+id/home_layout_banner_indicator1"
-            android:layout_width="@dimen/material_8dp"
-            android:layout_height="@dimen/material_8dp"
-            android:layout_marginRight="@dimen/material_4dp"
-            android:background="@drawable/home_indicator_selected_background"
-            />
-
-        <ImageView
-            android:id="@+id/home_layout_banner_indicator2"
-            android:layout_width="@dimen/material_8dp"
-            android:layout_height="@dimen/material_8dp"
-            android:layout_marginRight="@dimen/material_4dp"
-            android:background="@drawable/home_indicator_normal_background"
-            />
-
-        <ImageView
-            android:id="@+id/home_layout_banner_indicator3"
-            android:layout_width="@dimen/material_8dp"
-            android:layout_height="@dimen/material_8dp"
-            android:layout_marginRight="@dimen/material_4dp"
-            android:background="@drawable/home_indicator_normal_background"
-            />
     </LinearLayout>
 </RelativeLayout>
