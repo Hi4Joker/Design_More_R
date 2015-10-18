@@ -49,6 +49,10 @@ public class HomeBannerAdapter extends PagerAdapter implements ViewPager.OnPageC
 
   private Scheduler.Worker worker;
 
+  private float previousPositionOffset;
+  private int previousPosition = -1;
+  private boolean scrollingLeft;
+
   public HomeBannerAdapter(Context context, final ViewPager viewPager) {
     this.context = context;
     this.viewPager = viewPager;
@@ -69,7 +73,7 @@ public class HomeBannerAdapter extends PagerAdapter implements ViewPager.OnPageC
     ImageView imageView = (ImageView) view.findViewById(R.id.banner_item_iv);
 
     Glide.with(context)
-        .load(Constants.THUMB_URL +items.get(position).getGoodThumbUrl())
+        .load(Constants.THUMB_URL + items.get(position).getGoodThumbUrl())
         .centerCrop()
         .crossFade()
         .placeholder(R.drawable.ic_default_1080_icon)
@@ -84,6 +88,7 @@ public class HomeBannerAdapter extends PagerAdapter implements ViewPager.OnPageC
     });
 
     container.addView(view);
+
     return view;
   }
 
@@ -100,6 +105,19 @@ public class HomeBannerAdapter extends PagerAdapter implements ViewPager.OnPageC
 
   @Override
   public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+   /* if ((positionOffset > previousPositionOffset && position == previousPosition) || (positionOffset
+        < previousPositionOffset && position > previousPosition)) {
+
+      scrollingLeft = true;
+    } else if (positionOffset < previousPositionOffset) {
+
+      scrollingLeft = false;
+    }
+
+    *//*towards left [0,1]; towards right [1,0]*/
+    /*previousPositionOffset = positionOffset;
+    previousPosition = position;*/
   }
 
   @Override public void onPageScrollStateChanged(int state) {

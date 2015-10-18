@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class EventBusInstance {
 
-  private static EventBus defaultInstance;
+  private volatile static EventBus defaultInstance;
 
   public static EventBus getDefault() {
     if (defaultInstance == null) {

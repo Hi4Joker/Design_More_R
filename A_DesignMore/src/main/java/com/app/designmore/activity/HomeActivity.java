@@ -15,6 +15,7 @@ import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -387,16 +388,15 @@ public class HomeActivity extends BaseActivity
     int margin =
         DensityUtil.dip2px(DensityUtil.getXmlValue(HomeActivity.this, R.dimen.material_8dp));
 
+    indicatorLayout.removeAllViews();
     bannerIndicators = new TextView[count];
     for (int i = 0; i < count; i++) {
 
       bannerIndicators[i] = new TextView(HomeActivity.this);
-      bannerIndicators[i].setWidth(size);
-      bannerIndicators[i].setHeight(size);
+      /*bannerIndicators[i].setWidth(size);
+      bannerIndicators[i].setHeight(size);*/
       bannerIndicators[i].setGravity(Gravity.CENTER);
-      LinearLayout.LayoutParams params =
-          new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-              LinearLayout.LayoutParams.WRAP_CONTENT);
+      LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(size, size);
       params.setMargins(0, 0, margin, 0);
       bannerIndicators[i].setLayoutParams(params);
       bannerIndicators[i].setBackgroundDrawable(indicatorNormal);
@@ -662,15 +662,38 @@ public class HomeActivity extends BaseActivity
     overridePendingTransition(0, 0);
   }
 
+  private int lastIndicatorPos = -1;
+
   @Override public void changeIndicator(int position) {
 
+    /*I HATE THI ANIMATION BUT IOS .......YOU KNOW*/
     if (bannerIndicators != null && bannerIndicators.length != 0) {
-      if (position == 0) {
-        bannerIndicators[bannerIndicators.length - 1].setBackgroundDrawable(indicatorNormal);
+
+      if (lastIndicatorPos != -1) {
+
+        ViewCompat.animate(bannerIndicators[lastIndicatorPos])
+            .scaleX(1.0f)
+            .scaleY(1.0f)
+            .setDuration(Constants.MILLISECONDS_100)
+            .withLayer();
+
+        ViewCompat.animate(bannerIndicators[position])
+            .scaleX(1.38f)
+            .scaleY(1.38f)
+            .setDuration(Constants.MILLISECONDS_100)
+            .withLayer();
+
+        bannerIndicators[lastIndicatorPos].setBackgroundDrawable(indicatorNormal);
       } else {
-        bannerIndicators[position - 1].setBackgroundDrawable(indicatorNormal);
+        ViewCompat.animate(bannerIndicators[position])
+            .scaleX(1.38f)
+            .scaleY(1.38f)
+            .setDuration(Constants.MILLISECONDS_100)
+            .withLayer();
       }
+
       bannerIndicators[position].setBackgroundDrawable(indicatorSelected);
+      lastIndicatorPos = position;
     }
   }
 

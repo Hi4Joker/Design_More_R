@@ -15,7 +15,7 @@ public class Constants {
   public static final int RESULT_FAIL = 0;
   public static final int RESULT_OK = 1;
   public static final int RESULT_100 = 100;
-  public static final long TIME_OUT = 8 * 1000;
+  public static final int TIME_OUT = 8 * 1000;
   public static final int MILLISECONDS_100 = 100;
   public static final int MILLISECONDS_200 = 200;
   public static final int MILLISECONDS_300 = 300;

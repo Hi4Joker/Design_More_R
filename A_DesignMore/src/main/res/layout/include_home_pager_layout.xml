@@ -16,7 +16,7 @@
     <LinearLayout
         android:id="@+id/home_layout_pager_indicator_ll"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/material_16dp"
         android:layout_alignParentBottom="true"
         android:gravity="center"
         android:layout_marginBottom="@dimen/material_4dp"
