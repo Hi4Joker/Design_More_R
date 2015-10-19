@@ -193,6 +193,7 @@ public class CollectionActivity extends BaseActivity
     params.put("uid",
         DBHelper.getInstance(getApplicationContext()).getUserID(CollectionActivity.this));
 
+
     CollectionRetrofit.getInstance()
         .getCollectionList(params)
         .doOnSubscribe(new Action0() {

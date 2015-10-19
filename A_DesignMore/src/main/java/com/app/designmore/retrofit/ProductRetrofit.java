@@ -1,5 +1,6 @@
 package com.app.designmore.retrofit;
 
+import android.support.annotation.CheckResult;
 import com.app.designmore.Constants;
 import com.app.designmore.manager.OkClientInstance;
 import com.app.designmore.retrofit.entity.ProductEntity;
@@ -72,7 +73,8 @@ public class ProductRetrofit {
   /**
    * 搜索分类
    */
-  public Observable<List<ProductEntity>> getProductByCatId(final Map<String, String> params) {
+  @CheckResult public Observable<List<ProductEntity>> getProductByCatId(
+      final Map<String, String> params) {
 
     return productService.getProductByCatId(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)

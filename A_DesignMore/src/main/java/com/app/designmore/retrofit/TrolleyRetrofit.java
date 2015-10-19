@@ -1,5 +1,6 @@
 package com.app.designmore.retrofit;
 
+import android.support.annotation.CheckResult;
 import android.util.Log;
 import com.app.designmore.Constants;
 import com.app.designmore.manager.OkClientInstance;
@@ -93,7 +94,8 @@ public class TrolleyRetrofit {
   /**
    * 获取购物车列表
    */
-  public Observable<List<TrolleyEntity>> getTrolleyList(final Map<String, String> params) {
+  @CheckResult public Observable<List<TrolleyEntity>> getTrolleyList(
+      final Map<String, String> params) {
 
     return trolleyService.getTrolleyList(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
@@ -137,8 +139,8 @@ public class TrolleyRetrofit {
   /**
    * 修改购物车
    */
-  public Observable<BaseResponse> requestChangeTrolley(final Map<String, String> params,
-      final SimpleTrolleyEntity simpleTrolleyEntity) {
+  @CheckResult public Observable<BaseResponse> requestChangeTrolley(
+      final Map<String, String> params, final SimpleTrolleyEntity simpleTrolleyEntity) {
 
     List<SimpleTrolleyEntity> list = new ArrayList<>(1);
     list.add(simpleTrolleyEntity);
@@ -164,7 +166,8 @@ public class TrolleyRetrofit {
   /**
    * 批量删除购物车
    */
-  public Observable<BaseResponse> requestDeleteTrolley(final Map<String, String> params) {
+  @CheckResult public Observable<BaseResponse> requestDeleteTrolley(
+      final Map<String, String> params) {
 
     return trolleyService.requestDeleteTrolley(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
@@ -184,7 +187,8 @@ public class TrolleyRetrofit {
   /**
    * 获取商品属性
    */
-  public Observable<List<ProductAttrEntity>> getTrolleyAttrList(final Map<String, String> params) {
+  @CheckResult public Observable<List<ProductAttrEntity>> getTrolleyAttrList(
+      final Map<String, String> params) {
 
     return trolleyService.getTrolleyAttrList(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)

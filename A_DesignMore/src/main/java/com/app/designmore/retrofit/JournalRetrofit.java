@@ -1,5 +1,6 @@
 package com.app.designmore.retrofit;
 
+import android.support.annotation.CheckResult;
 import com.app.designmore.Constants;
 import com.app.designmore.manager.OkClientInstance;
 import com.app.designmore.retrofit.entity.JournalEntity;
@@ -78,7 +79,8 @@ public class JournalRetrofit {
   /**
    * 获取杂志列表
    */
-  public Observable<List<JournalEntity>> getJournalList(final Map<String, String> params) {
+  @CheckResult public Observable<List<JournalEntity>> getJournalList(
+      final Map<String, String> params) {
 
     return collectionService.getJournalList(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)

@@ -1,5 +1,6 @@
 package com.app.designmore.retrofit;
 
+import android.support.annotation.CheckResult;
 import com.app.designmore.Constants;
 import com.app.designmore.manager.OkClientInstance;
 import com.app.designmore.retrofit.entity.DetailEntity;
@@ -73,7 +74,7 @@ public class DetailRetrofit {
   /**
    * 获取商品详情
    */
-  public Observable<DetailEntity> getGoodDetail(final Map<String, String> params) {
+  @CheckResult public Observable<DetailEntity> getGoodDetail(final Map<String, String> params) {
 
     return detailService.getGoodDetail(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
@@ -106,7 +107,7 @@ public class DetailRetrofit {
   /**
    * 添加购物车
    */
-  public Observable<BaseResponse> requestBuyGood(final Map<String, String> params) {
+  @CheckResult public Observable<BaseResponse> requestBuyGood(final Map<String, String> params) {
 
     return detailService.requestBuyGood(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)

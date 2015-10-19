@@ -1,5 +1,6 @@
 package com.app.designmore.retrofit;
 
+import android.support.annotation.CheckResult;
 import android.util.Log;
 import com.app.designmore.Constants;
 import com.app.designmore.activity.usercenter.AddressMangerActivity;
@@ -98,7 +99,7 @@ public class AddressRetrofit {
   /**
    * 获取地址列表
    */
-  public Observable<HashMap> getAddressList(final Map<String, String> params) {
+  @CheckResult public Observable<HashMap> getAddressList(final Map<String, String> params) {
 
     return addressService.getAddressList(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
@@ -168,7 +169,8 @@ public class AddressRetrofit {
   /**
    * 编辑地址
    */
-  public Observable<EditorAddressEvent> requestEditorAddress(final Map<String, String> params) {
+  @CheckResult public Observable<EditorAddressEvent> requestEditorAddress(
+      final Map<String, String> params) {
 
     return addressService.requestEditorAddress(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
@@ -198,7 +200,7 @@ public class AddressRetrofit {
   /**
    * 添加地址
    */
-  public Observable<RefreshAddressManagerEvent> requestAddAddress(
+  @CheckResult public Observable<RefreshAddressManagerEvent> requestAddAddress(
       final Map<String, String> params) {
 
     return addressService.requestAddAddress(params)
@@ -225,7 +227,8 @@ public class AddressRetrofit {
   /**
    * 删除地址
    */
-  public Observable<BaseResponse> requestDeleteAddress(final Map<String, String> params) {
+  @CheckResult public Observable<BaseResponse> requestDeleteAddress(
+      final Map<String, String> params) {
 
     return addressService.requestDeleteAddress(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
@@ -245,7 +248,8 @@ public class AddressRetrofit {
   /**
    * 设置默认地址
    */
-  public Observable<BaseResponse> requestSetDefaultAddress(final Map<String, String> params) {
+  @CheckResult public Observable<BaseResponse> requestSetDefaultAddress(
+      final Map<String, String> params) {
 
     return addressService.requestSetDefaultAddress(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)

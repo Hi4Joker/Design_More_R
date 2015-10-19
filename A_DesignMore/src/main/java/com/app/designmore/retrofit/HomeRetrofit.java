@@ -1,5 +1,6 @@
 package com.app.designmore.retrofit;
 
+import android.support.annotation.CheckResult;
 import com.app.designmore.Constants;
 import com.app.designmore.manager.OkClientInstance;
 import com.app.designmore.retrofit.entity.CategoryEntity;
@@ -85,7 +86,8 @@ public class HomeRetrofit {
   /**
    * 获取打折列表
    */
-  public Observable<List<FashionEntity>> getDiscountList(final Map<String, String> params) {
+  @CheckResult public Observable<List<FashionEntity>> getDiscountList(
+      final Map<String, String> params) {
 
     return homeService.getDiscountList(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
@@ -124,7 +126,8 @@ public class HomeRetrofit {
   /**
    * 获取分类列表
    */
-  public Observable<List<CategoryEntity>> getCategoryList(final Map<String, String> params) {
+  @CheckResult public Observable<List<CategoryEntity>> getCategoryList(
+      final Map<String, String> params) {
 
     return homeService.getCategoryList(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
@@ -163,7 +166,8 @@ public class HomeRetrofit {
   /**
    * 获取精选商品
    */
-  public Observable<List<ProductEntity>> getHotProduct(final Map<String, String> params) {
+  @CheckResult public Observable<List<ProductEntity>> getHotProduct(
+      final Map<String, String> params) {
 
     return homeService.getProductByXxx(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)

@@ -1,5 +1,6 @@
 package com.app.designmore.retrofit;
 
+import android.support.annotation.CheckResult;
 import android.util.Log;
 import com.app.designmore.Constants;
 import com.app.designmore.exception.WebServiceException;
@@ -118,7 +119,7 @@ public class LoginRetrofit {
   /**
    * 获取验证码
    */
-  public Observable<LoginCodeEntity> getAuthCode(final Map<String, String> params) {
+  @CheckResult public Observable<LoginCodeEntity> getAuthCode(final Map<String, String> params) {
 
     return loginService.getLoginCode(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
@@ -146,7 +147,7 @@ public class LoginRetrofit {
   /**
    * 注册
    */
-  public Observable<RegisterEntity> requestRegister(final Map<String, String> params) {
+  @CheckResult public Observable<RegisterEntity> requestRegister(final Map<String, String> params) {
 
     return loginService.requestRegister(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
@@ -180,7 +181,7 @@ public class LoginRetrofit {
   /**
    * 找回密码
    */
-  public Observable<RetrieveEntity> requestRetrieve(final Map<String, String> params) {
+  @CheckResult public Observable<RetrieveEntity> requestRetrieve(final Map<String, String> params) {
 
     return loginService.requestRetrieve(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
@@ -214,7 +215,7 @@ public class LoginRetrofit {
   /**
    * 登陆
    */
-  public Observable<LoginEntity> requestLogin(final Map<String, String> params) {
+  @CheckResult public Observable<LoginEntity> requestLogin(final Map<String, String> params) {
 
     return loginService.requestLogin(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
@@ -240,7 +241,7 @@ public class LoginRetrofit {
   /**
    * 获取用户信息   requestUserInfo
    */
-  public Observable<UserInfoEntity> requestUserInfo(final Map<String, String> params) {
+  @CheckResult public Observable<UserInfoEntity> requestUserInfo(final Map<String, String> params) {
 
     return loginService.requestUserInfo(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
@@ -273,7 +274,8 @@ public class LoginRetrofit {
   /**
    * 修改密码
    */
-  public Observable<BaseResponse> requestChangePassword(final Map<String, String> params) {
+  @CheckResult public Observable<BaseResponse> requestChangePassword(
+      final Map<String, String> params) {
 
     return loginService.requestChangePassword(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
@@ -293,7 +295,8 @@ public class LoginRetrofit {
   /**
    * 修改用户信息
    */
-  public Observable<BaseResponse> requestChangeUserInfo(final Map<String, String> params) {
+  @CheckResult public Observable<BaseResponse> requestChangeUserInfo(
+      final Map<String, String> params) {
 
     return loginService.requestChangeUserInfo(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
@@ -313,8 +316,8 @@ public class LoginRetrofit {
   /**
    * 上传头像
    */
-  public Observable<BaseResponse> uploadProfileHeader(final Map<String, TypedString> params,
-      final TypedFile avatarFile) {
+  @CheckResult public Observable<BaseResponse> uploadProfileHeader(
+      final Map<String, TypedString> params, final TypedFile avatarFile) {
 
     return loginService.uploadProfileHeader(params, avatarFile)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
@@ -334,7 +337,7 @@ public class LoginRetrofit {
   /**
    * 获取帮助中心列表
    */
-  public Observable<List<HelpEntity>> getHelpList(final Map<String, String> params) {
+  @CheckResult public Observable<List<HelpEntity>> getHelpList(final Map<String, String> params) {
 
     return loginService.getHelpList(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)

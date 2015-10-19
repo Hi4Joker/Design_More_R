@@ -1,5 +1,6 @@
 package com.app.designmore.retrofit;
 
+import android.support.annotation.CheckResult;
 import com.app.designmore.Constants;
 import com.app.designmore.manager.OkClientInstance;
 import com.app.designmore.retrofit.entity.FashionEntity;
@@ -74,7 +75,8 @@ public class FashionRetrofit {
   /**
    * 获取新品列表
    */
-  public Observable<List<FashionEntity>> getFashionList(final Map<String, String> params) {
+  @CheckResult public Observable<List<FashionEntity>> getFashionList(
+      final Map<String, String> params) {
 
     return collectionService.getFashionList(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)

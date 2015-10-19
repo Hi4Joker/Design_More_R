@@ -1,5 +1,6 @@
 package com.app.designmore.retrofit;
 
+import android.support.annotation.CheckResult;
 import com.app.designmore.Constants;
 import com.app.designmore.manager.OkClientInstance;
 import com.app.designmore.retrofit.entity.DeliveryEntity;
@@ -76,7 +77,8 @@ public class OrderRetrofit {
   /**
    * 获取配送方式
    */
-  public Observable<List<DeliveryEntity>> getDeliveryList(final Map<String, String> params) {
+  @CheckResult public Observable<List<DeliveryEntity>> getDeliveryList(
+      final Map<String, String> params) {
 
     return orderService.getDeliveryList(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)

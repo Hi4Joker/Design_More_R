@@ -1,5 +1,6 @@
 package com.app.designmore.retrofit;
 
+import android.support.annotation.CheckResult;
 import com.app.designmore.Constants;
 import com.app.designmore.manager.OkClientInstance;
 import com.app.designmore.retrofit.entity.CollectionEntity;
@@ -82,7 +83,8 @@ public class CollectionRetrofit {
   /**
    * 获取收藏列表
    */
-  public Observable<List<CollectionEntity>> getCollectionList(final Map<String, String> params) {
+  @CheckResult public Observable<List<CollectionEntity>> getCollectionList(
+      final Map<String, String> params) {
 
     return collectionService.getMyCollectionList(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
@@ -124,7 +126,8 @@ public class CollectionRetrofit {
   /**
    * 删除收藏
    */
-  public Observable<BaseResponse> requestDeleteCollection(final Map<String, String> params) {
+  @CheckResult public Observable<BaseResponse> requestDeleteCollection(
+      final Map<String, String> params) {
 
     return collectionService.requestDeleteCollection(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
@@ -144,7 +147,8 @@ public class CollectionRetrofit {
   /**
    * 收藏商品
    */
-  public Observable<BaseResponse> requestCollectionGood(final Map<String, String> params) {
+  @CheckResult public Observable<BaseResponse> requestCollectionGood(
+      final Map<String, String> params) {
 
     return collectionService.requestCollectionGood(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)

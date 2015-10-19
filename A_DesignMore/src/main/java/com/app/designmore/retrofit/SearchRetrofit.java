@@ -1,5 +1,6 @@
 package com.app.designmore.retrofit;
 
+import android.support.annotation.CheckResult;
 import com.app.designmore.Constants;
 import com.app.designmore.manager.OkClientInstance;
 import com.app.designmore.retrofit.entity.SearchItemEntity;
@@ -73,7 +74,8 @@ public class SearchRetrofit {
   /**
    * 获取热搜列表
    */
-  public Observable<List<SearchItemEntity>> getHotSearchList(final Map<String, String> params) {
+  @CheckResult public Observable<List<SearchItemEntity>> getHotSearchList(
+      final Map<String, String> params) {
 
     return searchService.getHotSearchList(params)
         .timeout(Constants.TIME_OUT, TimeUnit.MILLISECONDS)
