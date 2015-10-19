@@ -25,6 +25,7 @@ public class Constants {
   public static final int MILLISECONDS_1000 = 1000;
   public static final int MILLISECONDS_2000 = 2 * 1000;
   public static final int MILLISECONDS_4000 = 4 * 1000;
+  public static final int MILLISECONDS_8000 = 8 * 1000;
 
   public static final int MILLISECONDS_2800 = 2800;
 

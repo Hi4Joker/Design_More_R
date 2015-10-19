@@ -7,13 +7,16 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.retrofit.entity.CollectionEntity;
 import com.app.designmore.retrofit.entity.ProductEntity;
+import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.rxAndroid.schedulers.HandlerScheduler;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -27,6 +30,7 @@ import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Action1;
+import rx.observables.ConnectableObservable;
 import rx.subscriptions.Subscriptions;
 
 /**
@@ -50,8 +54,19 @@ public class HomeBannerAdapter extends PagerAdapter implements ViewPager.OnPageC
   private Scheduler.Worker worker;
 
   private float previousPositionOffset;
-  private int previousPosition = -1;
+  private int previousPosition = 0;
   private boolean scrollingLeft;
+  private boolean isUserTouch;
+
+  private Action0 action = new Action0() {
+    @Override public void call() {
+      if (currentPosition != lastPosition) {
+        viewPager.setCurrentItem(++currentPosition, true);
+      } else {
+        viewPager.setCurrentItem(currentPosition = 0, true);
+      }
+    }
+  };
 
   public HomeBannerAdapter(Context context, final ViewPager viewPager) {
     this.context = context;
@@ -71,7 +86,6 @@ public class HomeBannerAdapter extends PagerAdapter implements ViewPager.OnPageC
 
     View view = layoutInflater.inflate(R.layout.i_banner_item, container, false);
     ImageView imageView = (ImageView) view.findViewById(R.id.banner_item_iv);
-
     Glide.with(context)
         .load(Constants.THUMB_URL + items.get(position).getGoodThumbUrl())
         .centerCrop()
@@ -80,7 +94,6 @@ public class HomeBannerAdapter extends PagerAdapter implements ViewPager.OnPageC
         .error(R.drawable.ic_default_1080_icon)
         .diskCacheStrategy(DiskCacheStrategy.RESULT)
         .into(imageView);
-
     imageView.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         if (callback != null) callback.onItemClick(items.get(position));
@@ -106,7 +119,7 @@ public class HomeBannerAdapter extends PagerAdapter implements ViewPager.OnPageC
   @Override
   public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-   /* if ((positionOffset > previousPositionOffset && position == previousPosition) || (positionOffset
+    if ((positionOffset > previousPositionOffset && position == previousPosition) || (positionOffset
         < previousPositionOffset && position > previousPosition)) {
 
       scrollingLeft = true;
@@ -115,9 +128,13 @@ public class HomeBannerAdapter extends PagerAdapter implements ViewPager.OnPageC
       scrollingLeft = false;
     }
 
-    *//*towards left [0,1]; towards right [1,0]*/
-    /*previousPositionOffset = positionOffset;
-    previousPosition = position;*/
+    /*Log.e(TAG, "position::::" + position);
+    Log.e(TAG, "positionOffset::::" + positionOffset);
+    Log.e(TAG, "positionOffsetPixels::::" + positionOffsetPixels);*/
+
+    /*towards left [0,1]; towards right [1,0]*/
+    previousPositionOffset = positionOffset;
+    previousPosition = position;
   }
 
   @Override public void onPageScrollStateChanged(int state) {
@@ -146,7 +163,8 @@ public class HomeBannerAdapter extends PagerAdapter implements ViewPager.OnPageC
   /**
    * 更新整张列表
    */
-  public void updateItems(List<ProductEntity> productEntities) {
+  public void updateItems(List<ProductEntity> productEntities,
+      ConnectableObservable<Boolean> connectableObservable) {
 
     if (worker != null && !worker.isUnsubscribed()) {
       worker.unsubscribe();
@@ -159,18 +177,29 @@ public class HomeBannerAdapter extends PagerAdapter implements ViewPager.OnPageC
     this.viewPager.setCurrentItem(currentPosition = 0, false);
 
     if (items.size() != 0) {
-      worker.schedulePeriodically(new Action0() {
-                                    @Override public void call() {
-
-                                      if (currentPosition != lastPosition) {
-                                        viewPager.setCurrentItem(++currentPosition, true);
-                                      } else {
-                                        viewPager.setCurrentItem(currentPosition = 0, true);
-                                      }
-                                    }
-                                  }, Constants.MILLISECONDS_4000, Constants.MILLISECONDS_4000,
+      worker.schedulePeriodically(action, Constants.MILLISECONDS_4000, Constants.MILLISECONDS_4000,
           TimeUnit.MILLISECONDS);
     }
+
+    connectableObservable.debounce(Constants.MILLISECONDS_100, TimeUnit.MILLISECONDS,
+        AndroidSchedulers.mainThread()).subscribe(new Action1<Boolean>() {
+      @Override public void call(Boolean isUserTouch) {
+
+        //Log.e(TAG, "isUserTouch::::" + isUserTouch);
+
+        if (isUserTouch && worker != null && !worker.isUnsubscribed()) {
+          worker.unsubscribe();
+        } else if (!isUserTouch && worker != null ) {
+
+          worker.unsubscribe();
+          worker = HandlerScheduler.from(new Handler(Looper.getMainLooper())).createWorker();
+          worker.schedulePeriodically(action, Constants.MILLISECONDS_4000,
+              Constants.MILLISECONDS_4000, TimeUnit.MILLISECONDS);
+        }
+      }
+    });
+
+    connectableObservable.connect();
   }
 
   public void detach() {

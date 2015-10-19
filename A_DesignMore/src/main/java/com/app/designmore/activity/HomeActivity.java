@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -27,6 +28,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -67,6 +69,8 @@ import com.app.designmore.view.ProgressLayout;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollEvent;
 import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
+import com.jakewharton.rxbinding.view.RxView;
+import com.jakewharton.rxbinding.view.ViewTouchEvent;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,6 +86,7 @@ import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.functions.Func4;
+import rx.observables.ConnectableObservable;
 import rx.subscriptions.Subscriptions;
 
 public class HomeActivity extends BaseActivity
@@ -389,12 +394,10 @@ public class HomeActivity extends BaseActivity
         DensityUtil.dip2px(DensityUtil.getXmlValue(HomeActivity.this, R.dimen.material_8dp));
 
     indicatorLayout.removeAllViews();
-    bannerIndicators = new TextView[count];
+    bannerIndicators = new TextView[count + 2];
     for (int i = 0; i < count; i++) {
 
       bannerIndicators[i] = new TextView(HomeActivity.this);
-      /*bannerIndicators[i].setWidth(size);
-      bannerIndicators[i].setHeight(size);*/
       bannerIndicators[i].setGravity(Gravity.CENTER);
       LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(size, size);
       params.setMargins(0, 0, margin, 0);
@@ -403,7 +406,52 @@ public class HomeActivity extends BaseActivity
       indicatorLayout.addView(bannerIndicators[i]);
     }
 
-    bannerAdapter.updateItems(bannerItems);
+/*    bannerAdapter.updateItems(bannerItems,
+        RxView.touches(viewPager).map(new Func1<MotionEvent, Boolean>() {
+          @Override public Boolean call(MotionEvent motionEvent) {
+
+            int action = motionEvent.getAction();
+
+            if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE) {
+              return true;
+            } else if (action == MotionEvent.ACTION_UP) {
+              return false;
+            }
+
+            return false;
+          }
+        }).compose(HomeActivity.this.<Boolean>bindUntilEvent(ActivityEvent.DESTROY)));*/
+
+    ConnectableObservable<Boolean> connectableObservable =
+        Observable.create(new Observable.OnSubscribe<Boolean>() {
+          @Override public void call(final Subscriber<? super Boolean> subscriber) {
+
+            View.OnTouchListener listener = new View.OnTouchListener() {
+              @Override public boolean onTouch(View v, @NonNull MotionEvent motionEvent) {
+
+                if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                  subscriber.onNext(false);
+                } else if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
+                  subscriber.onNext(true);
+                }
+                return false;
+              }
+            };
+            viewPager.setOnTouchListener(listener);
+
+            subscriber.add(new Subscription() {
+              @Override public void unsubscribe() {
+                viewPager.setOnTouchListener(null);
+              }
+
+              @Override public boolean isUnsubscribed() {
+                return false;
+              }
+            });
+          }
+        }).publish();
+
+    bannerAdapter.updateItems(bannerItems, connectableObservable);
   }
 
   private void showErrorLayout(Throwable error) {
