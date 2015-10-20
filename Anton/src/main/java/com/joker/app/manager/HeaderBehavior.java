@@ -1,4 +1,4 @@
-package com.app.designmore.manager;
+package com.joker.app.manager;
 
 import android.content.Context;
 import android.support.design.widget.CoordinatorLayout;
@@ -8,25 +8,25 @@ import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.widget.LinearLayout;
-import com.app.designmore.Constants;
-import com.app.designmore.utils.DensityUtil;
+import com.joker.app.utils.DensityUtil;
 
 /**
  * Created by Joker on 2015/9/18.
  */
-public class BottomBehavior extends CoordinatorLayout.Behavior<LinearLayout> {
+public class HeaderBehavior extends CoordinatorLayout.Behavior<LinearLayout> {
 
-  private static final String TAG = BottomBehavior.class.getCanonicalName();
+  private static final String TAG = HeaderBehavior.class.getCanonicalName();
   private static final int MIN_SCROLL_TO_HIDE = 10;
   private int totalDy;
   private int initialOffset;
   private int accummulatedDy;
 
-  public BottomBehavior(Context context, AttributeSet attrs) {
+  public HeaderBehavior(Context context, AttributeSet attrs) {
     super(context, attrs);
     this.initialOffset = DensityUtil.getStatusBarHeight(context);
   }
@@ -40,6 +40,8 @@ public class BottomBehavior extends CoordinatorLayout.Behavior<LinearLayout> {
   @Override public void onNestedPreScroll(CoordinatorLayout coordinatorLayout, LinearLayout child,
       View target, int dx, int dy, int[] consumed) {
 
+    Log.e(TAG, "dy:  " + dy);
+
     totalDy += dy;
 
     if (totalDy < initialOffset) {
@@ -49,18 +51,18 @@ public class BottomBehavior extends CoordinatorLayout.Behavior<LinearLayout> {
     if (dy > 0) {
       accummulatedDy = accummulatedDy > 0 ? accummulatedDy + dy : dy;
       if (accummulatedDy > MIN_SCROLL_TO_HIDE) {
-        BottomBehavior.this.hideView(child);
+        HeaderBehavior.this.hideView(child);
       }
     } else if (dy < 0) {
       accummulatedDy = accummulatedDy < 0 ? accummulatedDy + dy : dy;
       if (accummulatedDy < -MIN_SCROLL_TO_HIDE) {
-        BottomBehavior.this.showView(child);
+        HeaderBehavior.this.showView(child);
       }
     }
   }
 
   private void showView(final View view) {
-    BottomBehavior.this.runTranslateAnimation(view, 0, new FastOutSlowInInterpolator(),
+    HeaderBehavior.this.runTranslateAnimation(view, 0, new FastOutSlowInInterpolator(),
         new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationStart(View view) {
             /*do something*/
@@ -69,8 +71,9 @@ public class BottomBehavior extends CoordinatorLayout.Behavior<LinearLayout> {
   }
 
   private void hideView(final View view) {
-    int translateY = BottomBehavior.this.calculateTranslation(view);
-    BottomBehavior.this.runTranslateAnimation(view, translateY, new FastOutLinearInInterpolator(),
+    int height = HeaderBehavior.this.calculateTranslation(view);
+    int translateY = height;
+    HeaderBehavior.this.runTranslateAnimation(view, translateY, new FastOutLinearInInterpolator(),
         new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationEnd(View view) {
             /*do something*/
@@ -90,7 +93,7 @@ public class BottomBehavior extends CoordinatorLayout.Behavior<LinearLayout> {
     ViewCompat.animate(view)
         .translationY(translateY)
         .setInterpolator(interpolator)
-        .setDuration(Constants.MILLISECONDS_400)
+        .setDuration(400)
         .setListener(new ViewPropertyAnimatorListenerAdapter() {
           @Override public void onAnimationStart(View view) {
             if (listener != null) {

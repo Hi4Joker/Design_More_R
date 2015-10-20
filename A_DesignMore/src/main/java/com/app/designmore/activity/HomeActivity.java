@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -405,22 +406,6 @@ public class HomeActivity extends BaseActivity
       bannerIndicators[i].setBackgroundDrawable(indicatorNormal);
       indicatorLayout.addView(bannerIndicators[i]);
     }
-
-/*    bannerAdapter.updateItems(bannerItems,
-        RxView.touches(viewPager).map(new Func1<MotionEvent, Boolean>() {
-          @Override public Boolean call(MotionEvent motionEvent) {
-
-            int action = motionEvent.getAction();
-
-            if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE) {
-              return true;
-            } else if (action == MotionEvent.ACTION_UP) {
-              return false;
-            }
-
-            return false;
-          }
-        }).compose(HomeActivity.this.<Boolean>bindUntilEvent(ActivityEvent.DESTROY)));*/
 
     ConnectableObservable<Boolean> connectableObservable =
         Observable.create(new Observable.OnSubscribe<Boolean>() {
