@@ -52,11 +52,12 @@ public abstract class BaseActivity extends RxAppCompatActivity {
   @Override public void finish() {
     super.finish();
 
-    if (this instanceof HomeActivity
+    if (this instanceof RegisterActivity
+        || this instanceof HomeActivity
         || this instanceof FashionActivity
         || this instanceof JournalActivity
         || this instanceof MineActivity) {
-      overridePendingTransition(0, R.anim.scale_out);
+      overridePendingTransition(R.anim.anim_none, R.anim.scale_out);
     } else {
       overridePendingTransition(0, 0);
     }

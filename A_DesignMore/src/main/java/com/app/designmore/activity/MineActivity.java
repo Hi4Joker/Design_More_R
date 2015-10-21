@@ -333,14 +333,7 @@ public class MineActivity extends BaseActivity implements MineItemAdapter.Callba
   }
 
   @Override public void exit() {
-    DialogManager.getInstance()
-        .showExitDialog(MineActivity.this, new DialogInterface.OnClickListener() {
-          @Override public void onClick(DialogInterface dialog, int which) {
-            if (EventBusInstance.getDefault().hasSubscriberForEvent(FinishEvent.class)) {
-              EventBusInstance.getDefault().post(new FinishEvent());
-            }
-          }
-        });
+    DialogManager.getInstance().showExitDialog(MineActivity.this);
   }
 
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {

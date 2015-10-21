@@ -21,6 +21,7 @@ import com.app.designmore.Constants;
 import com.app.designmore.R;
 import com.app.designmore.activity.BaseActivity;
 import com.app.designmore.activity.FashionActivity;
+import com.app.designmore.event.FinishEvent;
 import com.app.designmore.helper.MyApplication;
 import com.app.designmore.retrofit.response.BaseResponse;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
@@ -92,6 +93,21 @@ public class DialogManager {
 
   public AlertDialog showGenderPickerDialog(Context context, String initGender,
       final DialogInterface.OnClickListener onClickListener) {
+    DetachableClickListener choiceClickListener =
+        DetachableClickListener.wrap(new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialog, int which) {
+            if (onClickListener != null) {
+              onClickListener.onClick(dialog, which);
+            }
+          }
+        });
+
+    DetachableClickListener warpClickListener =
+        DetachableClickListener.wrap(new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialog, int which) {
+            dialog.dismiss();
+          }
+        });
 
     final String[] arrayGender = new String[] { "男", "女" };
     int which = "男".endsWith(initGender) ? 0 : 1;
@@ -99,53 +115,50 @@ public class DialogManager {
     AlertDialog genderDialog = new AlertDialog.Builder(context).setTitle("请选择性别")
         .setCancelable(false)
         .setInverseBackgroundForced(false)
-        .setSingleChoiceItems(arrayGender, which, new DialogInterface.OnClickListener() {
-          @Override public void onClick(DialogInterface dialog, int which) {
-            if (onClickListener != null) {
-              onClickListener.onClick(dialog, which);
-            }
-          }
-        })
-        .setPositiveButton("确认", new DialogInterface.OnClickListener() {
-          @Override public void onClick(DialogInterface dialog, int which) {
-            dialog.dismiss();
-          }
-        })
-        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-          @Override public void onClick(DialogInterface dialog, int which) {
-            dialog.dismiss();
-          }
-        })
+        .setSingleChoiceItems(arrayGender, which, choiceClickListener)
+        .setPositiveButton("确认", warpClickListener)
+        .setNegativeButton("取消", warpClickListener)
         .create();
 
+    choiceClickListener.clearOnDetach(genderDialog);
+    warpClickListener.clearOnDetach(genderDialog);
     genderDialog.getWindow().setWindowAnimations(R.style.AnimCenter);
     genderDialog.show();
 
     return genderDialog;
   }
 
-  public void showExitDialog(Context context,
-      final DialogInterface.OnClickListener onClickListener) {
+  public void showExitDialog(Context context) {
+
+    DetachableClickListener positiveClickListener =
+        DetachableClickListener.wrap(new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialog, int which) {
+
+            dialog.dismiss();
+
+            if (EventBusInstance.getDefault().hasSubscriberForEvent(FinishEvent.class)) {
+              EventBusInstance.getDefault().removeAllStickyEvents();
+              EventBusInstance.getDefault().post(new FinishEvent());
+            }
+          }
+        });
+    DetachableClickListener negativeClickListener =
+        DetachableClickListener.wrap(new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialog, int which) {
+            dialog.dismiss();
+          }
+        });
 
     AlertDialog exitDialog = new AlertDialog.Builder(context).setTitle("提示")
         .setMessage("确认退出吗？")
         .setCancelable(false)
         .setInverseBackgroundForced(false)
-        .setPositiveButton("确认", new DialogInterface.OnClickListener() {
-          @Override public void onClick(DialogInterface dialog, int which) {
-            dialog.dismiss();
-            if (onClickListener != null) {
-              onClickListener.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
-            }
-            EventBusInstance.getDefault().removeAllStickyEvents();
-          }
-        })
-        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-          @Override public void onClick(DialogInterface dialog, int which) {
-            dialog.dismiss();
-          }
-        })
+        .setPositiveButton("确认", positiveClickListener)
+        .setNegativeButton("取消", negativeClickListener)
         .create();
+
+    positiveClickListener.clearOnDetach(exitDialog);
+    negativeClickListener.clearOnDetach(exitDialog);
 
     exitDialog.getWindow().setWindowAnimations(R.style.AnimCenter);
     exitDialog.show();
@@ -154,27 +167,33 @@ public class DialogManager {
   public void showNormalDialog(Context context, String content,
       final DialogInterface.OnClickListener onClickListener) {
 
-    AlertDialog normalDialog = new AlertDialog.Builder(context).setTitle("提示")
-        .setMessage(content)
-        .setCancelable(false)
-        .setInverseBackgroundForced(false)
-        .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+    DetachableClickListener positiveClickListener =
+        DetachableClickListener.wrap(new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {
             dialog.dismiss();
             if (onClickListener != null) {
               onClickListener.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
             }
           }
-        })
-        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+        });
+
+    DetachableClickListener negativeClickListener =
+        DetachableClickListener.wrap(new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {
             dialog.dismiss();
-            if (onClickListener != null) {
-              onClickListener.onClick(dialog, DialogInterface.BUTTON_NEGATIVE);
-            }
           }
-        })
+        });
+
+    AlertDialog normalDialog = new AlertDialog.Builder(context).setTitle("提示")
+        .setMessage(content)
+        .setCancelable(false)
+        .setInverseBackgroundForced(false)
+        .setPositiveButton("确认", positiveClickListener)
+        .setNegativeButton("取消", negativeClickListener)
         .create();
+
+    positiveClickListener.clearOnDetach(normalDialog);
+    negativeClickListener.clearOnDetach(normalDialog);
 
     normalDialog.getWindow().setWindowAnimations(R.style.AnimCenter);
     normalDialog.show();
@@ -182,16 +201,21 @@ public class DialogManager {
 
   public void showConfirmDialog(Context context, String content) {
 
+    DetachableClickListener warpClickListener =
+        DetachableClickListener.wrap(new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialog, int which) {
+            dialog.dismiss();
+          }
+        });
+
     AlertDialog confirmDialog = new AlertDialog.Builder(context).setTitle("提示")
         .setMessage(content)
         .setCancelable(false)
         .setInverseBackgroundForced(false)
-        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-          @Override public void onClick(DialogInterface dialog, int which) {
-            dialog.dismiss();
-          }
-        })
+        .setPositiveButton("确定", warpClickListener)
         .create();
+
+    warpClickListener.clearOnDetach(confirmDialog);
 
     confirmDialog.getWindow().setWindowAnimations(R.style.AnimCenter);
     confirmDialog.show();

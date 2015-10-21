@@ -477,14 +477,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
   }
 
   @Override public void exit() {
-    DialogManager.getInstance()
-        .showExitDialog(FashionActivity.this, new DialogInterface.OnClickListener() {
-          @Override public void onClick(DialogInterface dialog, int which) {
-            if (EventBusInstance.getDefault().hasSubscriberForEvent(FinishEvent.class)) {
-              EventBusInstance.getDefault().post(new FinishEvent());
-            }
-          }
-        });
+    DialogManager.getInstance().showExitDialog(FashionActivity.this);
   }
 
   @Override protected void onNewIntent(Intent intent) {

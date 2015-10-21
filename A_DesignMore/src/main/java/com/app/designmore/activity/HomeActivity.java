@@ -677,14 +677,7 @@ public class HomeActivity extends BaseActivity
   }
 
   @Override public void exit() {
-    DialogManager.getInstance()
-        .showExitDialog(HomeActivity.this, new DialogInterface.OnClickListener() {
-          @Override public void onClick(DialogInterface dialog, int which) {
-            if (EventBusInstance.getDefault().hasSubscriberForEvent(FinishEvent.class)) {
-              EventBusInstance.getDefault().post(new FinishEvent());
-            }
-          }
-        });
+    DialogManager.getInstance().showExitDialog(HomeActivity.this);
   }
 
   /**

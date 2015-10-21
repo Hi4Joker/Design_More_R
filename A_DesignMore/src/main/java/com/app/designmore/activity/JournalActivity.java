@@ -506,14 +506,7 @@ public class JournalActivity extends BaseActivity implements JournalAdapter.Call
   }
 
   @Override public void exit() {
-    DialogManager.getInstance()
-        .showExitDialog(JournalActivity.this, new DialogInterface.OnClickListener() {
-          @Override public void onClick(DialogInterface dialog, int which) {
-            if (EventBusInstance.getDefault().hasSubscriberForEvent(FinishEvent.class)) {
-              EventBusInstance.getDefault().post(new FinishEvent());
-            }
-          }
-        });
+    DialogManager.getInstance().showExitDialog(JournalActivity.this);
   }
 
   @Override protected void onNewIntent(Intent intent) {

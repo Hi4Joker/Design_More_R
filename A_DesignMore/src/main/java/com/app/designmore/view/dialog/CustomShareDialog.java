@@ -45,7 +45,6 @@ public class CustomShareDialog extends Dialog {
   private enum Type {
     weibo,
     wechat
-
   }
 
   public CustomShareDialog(Activity activity, Callback callback) {
