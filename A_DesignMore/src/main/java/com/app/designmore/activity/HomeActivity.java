@@ -149,12 +149,6 @@ public class HomeActivity extends BaseActivity
 
   private View.OnClickListener retryClickListener = new View.OnClickListener() {
     @Override public void onClick(View v) {
-
-      Observable.create(new Observable.OnSubscribe<Object>() {
-        @Override public void call(Subscriber<? super Object> subscriber) {
-
-        }
-      });
       HomeActivity.this.loadData();
     }
   };

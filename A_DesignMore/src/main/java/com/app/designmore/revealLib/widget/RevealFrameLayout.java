@@ -30,6 +30,7 @@ public class RevealFrameLayout extends FrameLayout implements RevealAnimator {
   public RevealFrameLayout(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
     mRevealPath = new Path();
+    //setLayerType(View.LAYER_TYPE_NONE, null);
   }
 
   @Override public void onRevealAnimationStart() {

@@ -166,7 +166,6 @@ public class CollectionActivity extends BaseActivity
 
   private void startEnterAnim(int startLocationY) {
 
-    ViewCompat.setLayerType(rootView, ViewCompat.LAYER_TYPE_HARDWARE, null);
     rootView.setPivotY(startLocationY);
     ViewCompat.setScaleY(rootView, 0.0f);
 

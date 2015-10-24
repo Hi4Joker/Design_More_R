@@ -49,6 +49,7 @@ public class AboutActivity extends BaseActivity {
 
     String ABOUT_HTML = "file:///android_asset/about_designMore.html";
     aboutWv.loadUrl(ABOUT_HTML);
+    aboutWv.setLayerType(View.LAYER_TYPE_NONE, null);
 
     AboutActivity.this.setSupportActionBar(toolbar);
     toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_icon));

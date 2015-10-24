@@ -236,8 +236,7 @@ public class TrolleyEditorActivity extends BaseActivity
     this.trolleyEditorAdapter.updateItems(items);
   }
 
-  @Nullable @OnClick(R.id.trolley_editor_layout_radio_btn) void onRadioClick(
-      ImageButton imageButton) {
+  @Nullable @OnClick(R.id.trolley_editor_layout_radio_btn) void onRadioClick() {
 
     if (deleteEntities.size() == items.size()) {/*全选 -> 清空*/
       TrolleyEditorActivity.this.observableListenerWrapper(

@@ -565,6 +565,7 @@ public class ProductKeyListActivity extends BaseActivity implements ProductAdapt
   }
 
   private void startEnterAnim() {
+
     final Rect bounds = new Rect();
     revealFrameLayout.getHitRect(bounds);
 

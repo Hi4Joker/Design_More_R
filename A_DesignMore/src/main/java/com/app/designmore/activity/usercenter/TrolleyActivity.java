@@ -396,8 +396,6 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
 
   private void startEnterAnim(int startLocationY) {
 
-    rootView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-
     if (startLocationY != 0) {
       rootView.setPivotY(startLocationY);
       rootView.setScaleY(0.0f);
@@ -412,6 +410,7 @@ public class TrolleyActivity extends BaseActivity implements TrolleyAdapter.Call
             }
           });
     } else {
+
       ViewCompat.setTranslationY(rootView, rootView.getHeight());
       ViewCompat.animate(rootView)
           .translationY(0.0f)

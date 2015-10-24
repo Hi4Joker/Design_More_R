@@ -381,11 +381,6 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
 
   private void startEnterAnim() {
 
-   /* CoordinatorLayout.LayoutParams layoutParams =
-        (CoordinatorLayout.LayoutParams) marqueeLl.getLayoutParams();
-    layoutParams.topMargin =
-        DensityUtil.getActionBarSize(FashionActivity.this) + DensityUtil.dip2px(10.0f);*/
-
     final Rect bounds = new Rect();
     rootView.getHitRect(bounds);
 

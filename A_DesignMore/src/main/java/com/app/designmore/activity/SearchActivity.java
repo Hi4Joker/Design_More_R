@@ -152,7 +152,6 @@ public class SearchActivity extends BaseActivity implements SearchAdapter.Callba
 
   private void startEnterAnim() {
 
-    ViewCompat.setLayerType(progressLayout, ViewCompat.LAYER_TYPE_HARDWARE, null);
     ViewCompat.setTranslationY(progressLayout, progressLayout.getHeight());
 
     final Rect bounds = new Rect();

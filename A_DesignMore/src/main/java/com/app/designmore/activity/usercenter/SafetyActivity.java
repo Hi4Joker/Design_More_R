@@ -115,7 +115,6 @@ public class SafetyActivity extends BaseActivity {
 
   private void startEnterAnim(int startLocationY) {
 
-    ViewCompat.setLayerType(rootView, ViewCompat.LAYER_TYPE_HARDWARE, null);
     rootView.setScaleY(0.0f);
     ViewCompat.setPivotY(rootView, startLocationY);
 
