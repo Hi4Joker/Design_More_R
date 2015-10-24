@@ -1,5 +1,6 @@
 package com.app.designmore.utils;
 
+import android.os.Looper;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -53,5 +54,16 @@ public class Utils {
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("", Locale.SIMPLIFIED_CHINESE);
     simpleDateFormat.applyPattern("MMddHHmmss");
     return simpleDateFormat.format(time);
+  }
+
+  public static boolean isUiThread() {
+    return Looper.getMainLooper() != Looper.myLooper();
+  }
+
+  public static void checkUiThread() {
+    if (Looper.getMainLooper() != Looper.myLooper()) {
+      throw new IllegalStateException(
+          "Must be called from the main thread. Was: " + Thread.currentThread());
+    }
   }
 }

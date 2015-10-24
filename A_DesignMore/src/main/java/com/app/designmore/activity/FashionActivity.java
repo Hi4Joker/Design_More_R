@@ -13,11 +13,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -29,7 +27,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.OvershootInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,16 +39,15 @@ import com.app.designmore.IconAnim;
 import com.app.designmore.R;
 import com.app.designmore.activity.usercenter.TrolleyActivity;
 import com.app.designmore.adapter.FashionAdapter;
-import com.app.designmore.event.FinishEvent;
 import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.DividerDecoration;
-import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.retrofit.FashionRetrofit;
 import com.app.designmore.retrofit.entity.FashionEntity;
 import com.app.designmore.revealLib.animation.SupportAnimator;
 import com.app.designmore.revealLib.animation.ViewAnimationUtils;
 import com.app.designmore.revealLib.widget.RevealFrameLayout;
+import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
 import com.app.designmore.rxAndroid.schedulers.HandlerScheduler;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.utils.Utils;
@@ -68,11 +64,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 import retrofit.RetrofitError;
+import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
+import rx.subjects.BehaviorSubject;
+import rx.subjects.SerializedSubject;
 import rx.subscriptions.Subscriptions;
 
 public class FashionActivity extends BaseActivity implements FashionAdapter.Callback, IconAnim {
@@ -257,6 +259,10 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
 
                 /*加载完毕，显示内容界面*/
                 if (items != null && items.size() != 0 && !progressLayout.isContent()) {
+
+                  FashionActivity.this.marqueeLl.setVisibility(View.VISIBLE);
+                  FashionActivity.this.marqueeLl.bringToFront();
+
                   progressLayout.showContent();
                 } else if (items != null && items.size() == 0) {
                   progressLayout.showError(getResources().getDrawable(R.drawable.ic_grey_logo_icon),
@@ -375,10 +381,10 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
 
   private void startEnterAnim() {
 
-    CoordinatorLayout.LayoutParams layoutParams =
+   /* CoordinatorLayout.LayoutParams layoutParams =
         (CoordinatorLayout.LayoutParams) marqueeLl.getLayoutParams();
     layoutParams.topMargin =
-        DensityUtil.getActionBarSize(FashionActivity.this) + DensityUtil.dip2px(10.0f);
+        DensityUtil.getActionBarSize(FashionActivity.this) + DensityUtil.dip2px(10.0f);*/
 
     final Rect bounds = new Rect();
     rootView.getHitRect(bounds);
@@ -522,6 +528,7 @@ public class FashionActivity extends BaseActivity implements FashionAdapter.Call
 
   @Override protected void onDestroy() {
     super.onDestroy();
+
     if (toast != null && toast.getParent() != null) {
       getWindowManager().removeViewImmediate(toast);
 

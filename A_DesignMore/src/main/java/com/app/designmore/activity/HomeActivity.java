@@ -71,7 +71,6 @@ import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
 import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollEvent;
 import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
 import com.jakewharton.rxbinding.view.RxView;
-import com.jakewharton.rxbinding.view.ViewTouchEvent;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.ArrayList;
 import java.util.HashMap;

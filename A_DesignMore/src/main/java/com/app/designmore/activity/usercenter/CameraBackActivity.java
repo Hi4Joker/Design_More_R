@@ -12,6 +12,8 @@ import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
@@ -41,6 +43,7 @@ import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.EventBusInstance;
 import com.app.designmore.rxAndroid.SimpleObserver;
 import com.app.designmore.rxAndroid.schedulers.AndroidSchedulers;
+import com.app.designmore.rxAndroid.schedulers.HandlerScheduler;
 import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.utils.Utils;
 import com.app.designmore.view.CropImageView;
@@ -279,12 +282,14 @@ public class CameraBackActivity extends BaseActivity implements CameraHostProvid
     }
 
     @Override public void saveImage(PictureTransaction xact, final Bitmap bitmap) {
-      AndroidSchedulers.mainThread().createWorker().schedule(new Action0() {
-        @Override public void call() {
+      HandlerScheduler.from(new Handler(Looper.getMainLooper()))
+          .createWorker()
+          .schedule(new Action0() {
+            @Override public void call() {
           /*显示照片*/
-          CameraBackActivity.this.showTakenPicture(bitmap);
-        }
-      });
+              CameraBackActivity.this.showTakenPicture(bitmap);
+            }
+          });
     }
 
     @Override public void saveImage(PictureTransaction xact, byte[] image) {

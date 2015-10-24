@@ -5,16 +5,52 @@
     android:layout_height="match_parent"
     >
 
+  <include layout="@layout/include_white_toolbar_layout"/>
+
   <android.support.design.widget.CoordinatorLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
+      android:layout_marginTop="?attr/actionBarSize"
       >
+
+    <LinearLayout
+        android:id="@+id/fashion_layout_marquee_ll"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/material_2dp"
+        android:padding="@dimen/material_8dp"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:visibility="invisible"
+        app:layout_behavior="com.app.designmore.manager.HeaderBehavior"
+        >
+      <ImageView
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:scaleType="centerCrop"
+          android:src="@drawable/ic_start_icon"
+          />
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_marginLeft="@dimen/material_4dp"
+          android:layout_gravity="center"
+          android:gravity="start|center"
+          android:ellipsize="marquee"
+          android:focusable="true"
+          android:focusableInTouchMode="true"
+          android:marqueeRepeatLimit="marquee_forever"
+          android:singleLine="true"
+          android:textSize="@dimen/material_11sp"
+          android:text="@string/fashion_string"
+          />
+    </LinearLayout>
 
     <com.app.designmore.revealLib.widget.RevealFrameLayout
         android:id="@+id/fashion_layout_root_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
         android:layout_marginBottom="@dimen/material_48dp"
         >
 
@@ -47,40 +83,6 @@
         </android.support.v4.widget.SwipeRefreshLayout>
       </com.app.designmore.view.ProgressLayout>
     </com.app.designmore.revealLib.widget.RevealFrameLayout>
-
-    <LinearLayout
-        android:id="@+id/fashion_layout_marquee_ll"
-        android:layout_alignParentTop="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/material_8dp"
-        android:orientation="horizontal"
-        android:background="@color/white"
-        app:layout_behavior="com.app.designmore.manager.HeaderBehavior"
-        >
-      <ImageView
-          android:layout_width="wrap_content"
-          android:layout_height="match_parent"
-          android:scaleType="centerCrop"
-          android:src="@drawable/ic_start_icon"
-          />
-      <TextView
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:layout_marginLeft="@dimen/material_4dp"
-          android:layout_gravity="center"
-          android:gravity="start|center"
-          android:ellipsize="marquee"
-          android:focusable="true"
-          android:focusableInTouchMode="true"
-          android:marqueeRepeatLimit="marquee_forever"
-          android:singleLine="true"
-          android:textSize="@dimen/material_11sp"
-          android:text="@string/fashion_string"
-          />
-    </LinearLayout>
-
-    <include layout="@layout/include_white_toolbar_layout"/>
 
   </android.support.design.widget.CoordinatorLayout>
 

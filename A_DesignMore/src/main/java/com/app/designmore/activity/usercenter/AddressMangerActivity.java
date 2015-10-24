@@ -48,7 +48,6 @@ import com.app.designmore.utils.DensityUtil;
 import com.app.designmore.manager.DividerDecoration;
 import com.app.designmore.view.ProgressLayout;
 import com.jakewharton.rxbinding.support.v4.widget.RxSwipeRefreshLayout;
-import com.jakewharton.rxbinding.support.v7.widget.RecyclerViewScrollStateChangeEvent;
 import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerView;
 import com.trello.rxlifecycle.ActivityEvent;
 import java.util.ArrayList;
@@ -179,14 +178,11 @@ public class AddressMangerActivity extends BaseActivity implements AddressAdapte
     recyclerView.addItemDecoration(
         new DividerDecoration(AddressMangerActivity.this, R.dimen.material_16dp));
 
-    RxRecyclerView.scrollStateChangeEvents(recyclerView)
-        .compose(AddressMangerActivity.this.<RecyclerViewScrollStateChangeEvent>bindUntilEvent(
-            ActivityEvent.DESTROY))
-        .forEach(new Action1<RecyclerViewScrollStateChangeEvent>() {
-          @Override
-          public void call(RecyclerViewScrollStateChangeEvent recyclerViewScrollStateChangeEvent) {
-            if (recyclerViewScrollStateChangeEvent.newState()
-                == RecyclerView.SCROLL_STATE_DRAGGING) {
+    RxRecyclerView.scrollStateChanges(recyclerView)
+        .compose(AddressMangerActivity.this.<Integer>bindUntilEvent(ActivityEvent.DESTROY))
+        .forEach(new Action1<Integer>() {
+          @Override public void call(Integer recyclerViewScrollStateChangeEvent) {
+            if (recyclerViewScrollStateChangeEvent == RecyclerView.SCROLL_STATE_DRAGGING) {
               addressAdapter.setAnimationsLocked(true);
             }
           }

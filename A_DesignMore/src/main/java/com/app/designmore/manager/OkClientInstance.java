@@ -7,7 +7,7 @@ import retrofit.client.OkClient;
  */
 public class OkClientInstance {
 
-  private volatile static OkClient clientSingleton;
+  private static volatile OkClient clientSingleton;
 
   public static OkClient getInstance() {
     if (clientSingleton == null) {
