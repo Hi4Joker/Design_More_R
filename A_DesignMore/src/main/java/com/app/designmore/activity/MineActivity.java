@@ -270,7 +270,7 @@ public class MineActivity extends BaseActivity implements MineItemAdapter.Callba
 
             BitmapPool bitmapPool = Glide.get(MineActivity.this).getBitmapPool();
             Glide.with(MineActivity.this)
-                .load(userInfoEntity.getHeaderUrl())
+                .load(Constants.THUMB_URL + userInfoEntity.getHeaderUrl())
                 .centerCrop()
                 .crossFade()
                 .bitmapTransform(new CropCircleTransformation(bitmapPool))

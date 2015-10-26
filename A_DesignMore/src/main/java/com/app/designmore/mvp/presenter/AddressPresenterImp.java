@@ -104,17 +104,16 @@ public class AddressPresenterImp implements AddressPresenter, ExecutorCallback {
 
   @Override public void onDataFinish(Observable<List<Province>> observable) {
 
+
+    /*doOnSubscribe() 执行线程取决于最近的下行subscribeOn()*/
     subscribe = observable.doOnSubscribe(new Action0() {
       @Override public void call() {
-
-        Log.e(TAG, "doOnSubscribe run on the " + Thread.currentThread().getName());
         addressView.showProgress();
       }
     })
         .finallyDo(new Action0() {
           @Override public void call() {
 
-            Log.e(TAG, "finallyDo run on the " + Thread.currentThread().getName());
             addressView.hideProgress();
           }
         })

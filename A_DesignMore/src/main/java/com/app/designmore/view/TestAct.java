@@ -87,12 +87,11 @@ public class TestAct extends AppCompatActivity {
     }).skip(1).compose(new Observable.Transformer<int[], int[]>() {
       @Override public Observable<int[]> call(Observable<int[]> transformer) {
 
-        return transformer.takeUntil(
-            lifecycleSubject.takeFirst(new Func1<ACTEvent, Boolean>() {
-              @Override public Boolean call(ACTEvent actEvent) {
-                return ACTEvent.Destroy == actEvent;
-              }
-            }));
+        return transformer.takeUntil(lifecycleSubject.takeFirst(new Func1<ACTEvent, Boolean>() {
+          @Override public Boolean call(ACTEvent actEvent) {
+            return ACTEvent.Destroy == actEvent;
+          }
+        }));
       }
     }).forEach(new Action1<int[]>() {
       @Override public void call(int[] recyclerViewScrollEvent) {

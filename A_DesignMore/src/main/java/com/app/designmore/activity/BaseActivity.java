@@ -1,6 +1,7 @@
 package com.app.designmore.activity;
 
 import android.os.Bundle;
+import android.support.annotation.CallSuper;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import butterknife.ButterKnife;
@@ -25,7 +26,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
     EventBusInstance.getDefault().register(BaseActivity.this);
   }
 
-  @Override protected void onDestroy() {
+  @CallSuper @Override protected void onDestroy() {
     super.onDestroy();
 
     ButterKnife.unbind(BaseActivity.this);
