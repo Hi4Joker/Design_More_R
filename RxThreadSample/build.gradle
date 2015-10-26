@@ -17,16 +17,18 @@ android {
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
   }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_7
+    targetCompatibility JavaVersion.VERSION_1_7
+  }
 }
 
 dependencies {
-  compile fileTree(dir: 'libs', include: ['*.jar'])
+  compile fileTree(include: ['*.jar'], dir: 'libs')
   testCompile 'junit:junit:4.12'
   compile 'com.android.support:appcompat-v7:23.0.0'
-
   compile 'com.jakewharton:butterknife:7.0.1'
   compile 'io.reactivex:rxjava:1.0.3'
-
   compile 'com.trello:rxlifecycle:0.2.0'
   compile 'com.trello:rxlifecycle-components:0.2.0'
 }

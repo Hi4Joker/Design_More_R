@@ -48,25 +48,16 @@ public class SchedulersCompat {
     return (Observable.Transformer<T, T>) computationTransformer;
   }
 
-  /**
-   * Don't break the chain: use RxJava's compose() operator
-   */
   public static <T> Observable.Transformer<T, T> applyIoSchedulers() {
 
     return (Observable.Transformer<T, T>) ioTransformer;
   }
 
-  /**
-   * Don't break the chain: use RxJava's compose() operator
-   */
   public static <T> Observable.Transformer<T, T> applyNewSchedulers() {
 
     return (Observable.Transformer<T, T>) newTransformer;
   }
 
-  /**
-   * Don't break the chain: use RxJava's compose() operator
-   */
   public static <T> Observable.Transformer<T, T> applyTrampolineSchedulers() {
 
     return (Observable.Transformer<T, T>) trampolineTransformer;
