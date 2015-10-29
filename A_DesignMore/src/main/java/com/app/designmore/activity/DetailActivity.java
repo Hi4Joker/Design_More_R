@@ -50,8 +50,6 @@ import com.app.designmore.exception.WebServiceException;
 import com.app.designmore.helper.DBHelper;
 import com.app.designmore.manager.DialogManager;
 import com.app.designmore.manager.DividerDecoration;
-import com.app.designmore.manager.MarginDecoration;
-import com.app.designmore.manager.WrappingLinearLayoutManager;
 import com.app.designmore.retrofit.CollectionRetrofit;
 import com.app.designmore.retrofit.DetailRetrofit;
 import com.app.designmore.retrofit.entity.DetailEntity;
@@ -145,6 +143,7 @@ public class DetailActivity extends BaseActivity
   private ViewPager.SimpleOnPageChangeListener simpleOnPageChangeListener =
       new ViewPager.SimpleOnPageChangeListener() {
         @Override public void onPageSelected(int position) {
+
           DetailActivity.this.bannerPageTv.setText(++position + "/" + productBanners.size());
         }
 
@@ -533,6 +532,10 @@ public class DetailActivity extends BaseActivity
     rootView.getGlobalVisibleRect(finalBounds, globalOffset);
     startBounds.offset(-globalOffset.x, -globalOffset.y);
     finalBounds.offset(-globalOffset.x, -globalOffset.y);
+
+    /*Log.e(TAG, startBounds.toString());
+    Log.e(TAG, finalBounds.toString());
+    Log.e(TAG, globalOffset.toString());*/
 
     this.thumbScale = DensityUtil.calculateScale(startBounds, finalBounds);
 

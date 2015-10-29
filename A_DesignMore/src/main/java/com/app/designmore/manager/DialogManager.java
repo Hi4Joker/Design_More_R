@@ -43,7 +43,7 @@ import rx.schedulers.Schedulers;
  */
 public class DialogManager {
 
-  private static final String TAG = DialogManager.class.getCanonicalName();
+  private static final String TAG = DialogManager.class.getSimpleName();
 
   private DialogManager() {
 

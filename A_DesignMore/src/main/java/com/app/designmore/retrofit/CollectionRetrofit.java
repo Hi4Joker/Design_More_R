@@ -99,7 +99,7 @@ public class CollectionRetrofit {
             return collectionResponse.filterWebServiceErrors();
           }
         })
-        .flatMap(new Func1<CollectionResponse, Observable<CollectionResponse.Collect>>() {
+        .concatMap(new Func1<CollectionResponse, Observable<CollectionResponse.Collect>>() {
           @Override public Observable<CollectionResponse.Collect> call(
               CollectionResponse collectionResponse) {
             return Observable.from(collectionResponse.getCollections());

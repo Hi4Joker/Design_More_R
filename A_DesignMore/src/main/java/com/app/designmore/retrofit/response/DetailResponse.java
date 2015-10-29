@@ -147,7 +147,7 @@ public class DetailResponse extends BaseResponse {
     @Expose @SerializedName("goods_number") public String goodRepertory;
 
     /*轮播图*/
-    @Expose @SerializedName("product_images") public List<ProductBanner> productBanners;
+    @Expose @SerializedName("lunbo") public List<ProductBanner> productBanners;
     /*详情介绍图*/
     @Expose @SerializedName("goods_desc") public List<String> productImages;
     /*属性图*/

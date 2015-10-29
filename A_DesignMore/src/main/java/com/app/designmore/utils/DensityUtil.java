@@ -151,6 +151,7 @@ public class DensityUtil {
   }
 
   public static float calculateScale(Rect startBounds, Rect finalBounds) {
+
     float scale;
     if ((float) finalBounds.width() / finalBounds.height()
         > (float) startBounds.width() / startBounds.height()) {
